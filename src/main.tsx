@@ -1,30 +1,28 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Link, Routes, Route } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from "react-router";
 import './index.css'
 
 //Routes and React Elements
+import App from './App'
 import Rules from './routes/Rules'
+
+let router = createBrowserRouter([
+  {
+    path : "/",
+    element : <App />,
+    children: [
+      {
+      path : "rules",
+      element : <Rules />
+      }
+    ]
+  }
+]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <RouterProvider router={router} />
   </StrictMode>,
 )
 
-function App() {
-  return (
-    <>
-      <h1>Quill</h1>
-      <nav>
-        <Link to="/rules">Rules</Link>
-      </nav>
-
-      <Routes>
-        <Route path="/rules" element={<Rules />} />
-      </Routes>
-    </>
-  )
-}
