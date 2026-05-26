@@ -40,10 +40,21 @@ export default function App() {
         <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
         <p>{welcomeMessage}</p>
       }
-
-      <nav>
-        {/* <Link to="/rules">Rules</Link> */}
-      </nav>
+      {
+        userData && userData.campaigns ? (
+          <div>
+            <h2>Your Campaigns:</h2>
+          </div>
+        ) : null
+      }
+      {
+        userData && !userData.campaigns ? (
+          <div>
+            <h2>You don't have any campaigns yet.</h2>
+            <Link to="/setupcampaign">Set up your first campaign</Link>
+          </div>
+        ) : null
+      }
       <Outlet />
     </>
   )

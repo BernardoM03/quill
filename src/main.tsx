@@ -6,6 +6,7 @@ import './index.css'
 //Routes and React Elements
 import App from './App'
 import Rules from './routes/Rules'
+import SetupCampaign from './routes/SetupCampaign'
 
 let router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ let router = createBrowserRouter([
       element : <Rules />
       }
     ]
+  },
+  {
+    path : "/setupcampaign",
+    element : <SetupCampaign />
   }
 ]);
 
