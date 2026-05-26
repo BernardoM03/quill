@@ -11,7 +11,7 @@ function campaignHandler(data: FormData) {
     };
 
     console.log('Creating campaign:', newCampaign);
-    // Send the campaign name to your backend to create a new campaign
+    // Send the campaign name to the backend to create a new campaign
 }
 
 export default function SetupCampaign() {
