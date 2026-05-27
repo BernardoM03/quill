@@ -39,9 +39,10 @@ def update_user_campaign():
     campaign_id = content.get('id')
     new_name = content.get('name')
     
+    # Update campaign info in user.json
     with open(USER_JSON_URL, 'r') as f:
         data = json.load(f)
-    
+
     campaign = next((c for c in data['campaigns'] if c['id'] == campaign_id), None)
 
     if not campaign:
@@ -51,6 +52,16 @@ def update_user_campaign():
 
     with open(USER_JSON_URL, 'w') as f:
         json.dump(data, f, indent=4)
+    
+    # Update campaign info in ${campaign_id}.json
+    
+    with open(CAMPAIGNS_FOLDER_URL + campaign_id + '.json', 'r') as f:
+        details = json.load(f)
+        
+    details['name'] = new_name
+    
+    with open(CAMPAIGNS_FOLDER_URL + campaign_id + '.json', 'w') as f:
+        json.dump(details, f, indent=4)
 
     return jsonify({'success': True, 'campaign': campaign}), 200
 

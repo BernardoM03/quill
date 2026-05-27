@@ -1,6 +1,8 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from 'react'
+import axios from "axios";
 
+import type { campaign } from "../datatypes/campaign";
 import type { campaignDetails } from "../datatypes/campaignDetails";
 
 export default function CampaignSettings() {
@@ -17,8 +19,14 @@ export default function CampaignSettings() {
 
     function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
-        const newCampaignName = new FormData(e.currentTarget).get('campaignName') as string;
-        console.log(newCampaignName)
+
+        const updatedCampaignInfo: campaign = {
+            name: new FormData(e.currentTarget).get('campaignName') as string,
+            id: campaignID as string
+        };        
+        axios.put('http://localhost:5174/update/campaign-name', updatedCampaignInfo)
+            .then(() => setCampaignDetails(details => details ? { ...details, name: updatedCampaignInfo.name } : null))
+            .catch((error) => console.error('Error changing campaign name:', error));
     }
 
     return (

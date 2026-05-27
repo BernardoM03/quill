@@ -28,4 +28,4 @@ venv
 .env
 .env.local
 user.json
-/campaigns
+public/.campaigns

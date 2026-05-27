@@ -16,8 +16,6 @@ export default function SetupCampaign() {
             id: uuidv4()
         };
 
-        console.log(newCampaign)
-
         axios.post('http://localhost:5174/createcampaign', newCampaign)
             .then(() => navigate(`/campaignsettings/${newCampaign.id}`))
             .catch((error) => console.error('Error creating campaign:', error));
