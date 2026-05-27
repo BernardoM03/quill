@@ -8,41 +8,31 @@ import type { campaign } from "../datatypes/campaign";
 export default function SetupCampaign() {
     const navigate = useNavigate();
 
-    function campaignHandler(data: FormData) {
-        const campaignName = data.get('campaignName');
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+        e.preventDefault()
 
         const newCampaign: campaign = {
-            name: campaignName as string,
+            name: new FormData(e.currentTarget).get('campaignName') as string,
             id: uuidv4()
         };
 
-        console.log('Creating campaign:', newCampaign);
+        console.log(newCampaign)
 
         axios.post('http://localhost:5174/createcampaign', newCampaign)
-            .then((response) => {
-                console.log('Campaign created:', response.data);
-                navigate(`/campaignsettings/${newCampaign.id}`);
-            })
-            .catch((error) => {
-                console.error('Error creating campaign:', error);
-            });
+            .then(() => navigate(`/campaignsettings/${newCampaign.id}`))
+            .catch((error) => console.error('Error creating campaign:', error));
     }
 
     return (
         <div>
-            <h2>Setup Campaign</h2>
-            <p>This is the setup campaign page.</p>
-            <Form method="post" onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                campaignHandler(formData);
-            }}> 
+            <h1>Setup Campaign</h1>
+            <form method="post" onSubmit={handleSubmit}> 
                 <label>
                     Campaign Name:
                     <input type="text" name="campaignName" />
                 </label>
                 <button type="submit">Create Campaign</button>
-            </Form>
+            </form>
         </div>
     )
 }
