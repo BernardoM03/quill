@@ -3,6 +3,7 @@ from flask_cors import CORS
 import json
 
 USER_JSON_URL = '../public/user.json'
+CAMPAIGNS_FOLDER_URL = '../public/.campaigns/'
 
 app = Flask(__name__)
 CORS(app)
@@ -10,7 +11,18 @@ CORS(app)
 @app.route('/createcampaign', methods=['POST'])
 def create_campaign():
     content = request.get_json()
-    
+    campaign_id = content.get('id')
+    campaign_name = content.get('name')
+        
+    with open(CAMPAIGNS_FOLDER_URL + campaign_id + 'c.json', 'w') as f:
+        details = {
+            "name": campaign_name,
+            "description": None,
+            "characters": None,
+            "alternate-rules": None
+        }
+        json.dump(details, f, indent=4)
+        
     with open(USER_JSON_URL, 'r') as f:
         data = json.load(f)
     
