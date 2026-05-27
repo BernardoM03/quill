@@ -1,0 +1,100 @@
+{
+    "classes": [
+        {
+            "name": "Barbarian",
+            "subclasses": [
+                {
+                    "name": "Path of the Berserker"
+                }
+            ]
+        },
+        {
+            "name": "Bard",
+            "subclasses": [
+                {
+                    "name": "College of Lore"
+                }
+            ]
+        },
+        {
+            "name": "Cleric",
+            "subclasses": [
+                {
+                    "name": "Life Domain"
+                }
+            ]
+        },
+        {
+            "name": "Druid",
+            "subclasses": [
+                {
+                    "name": "Circle of the Land"
+                }
+            ]
+        },
+        {
+            "name": "Fighter",
+            "subclasses": [
+                {
+                    "name": "Champion"
+                }
+            ]
+        },
+        {
+            "name": "Monk",
+            "subclasses": [
+                {
+                    "name": "Warrior of the Open Hand"
+                }
+            ]
+        },
+        {
+            "name": "Paladin",
+            "subclasses": [
+                {
+                    "name": "Oath of Devotion"
+                }
+            ]
+        },
+        {
+            "name": "Ranger",
+            "subclasses": [
+                {
+                    "name": "Hunter"
+                }
+            ]
+        },
+        {
+            "name": "Rogue",
+            "subclasses": [
+                {
+                    "name": "Thief"
+                }
+            ]
+        },
+        {
+            "name": "Sorcerer",
+            "subclasses": [
+                {
+                    "name": "Draconic Sorcery"
+                }
+            ]
+        },
+        {
+            "name": "Warlock",
+            "subclasses": [
+                {
+                    "name": "Fiend Patron"
+                }
+            ]
+        },
+        {
+            "name": "Wizard",
+            "subclasses": [
+                {
+                    "name": "Evoker"
+                }
+            ]
+        }
+    ]
+}
