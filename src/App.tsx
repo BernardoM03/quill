@@ -2,6 +2,9 @@ import {Link, Outlet} from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
 import { LifeLine } from 'react-loading-indicators'
+import CampaignCard from './components/CampaignCard'
+
+import './App.css'
 
 export default function App() {
   const [userData, setUserData] = useState<user | null>(null)
@@ -41,14 +44,20 @@ export default function App() {
         <p>{welcomeMessage}</p>
       }
       {
-        userData && userData.campaigns ? (
-          <div>
+        userData && userData.campaigns && userData.campaigns.length > 0 ? (
+          <div className="campaign-section">
             <h2>Your Campaigns:</h2>
+            <div className="campaign-grid">
+              {userData.campaigns.map(campaign => (
+                <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
+              ))}
+            </div>
+            <Link to="/setupcampaign">Create New Campaign</Link>
           </div>
         ) : null
       }
       {
-        userData && !userData.campaigns ? (
+        userData && (!userData.campaigns || userData.campaigns.length === 0) ? (
           <div>
             <h2>You don't have any campaigns yet.</h2>
             <Link to="/setupcampaign">Set up your first campaign</Link>
