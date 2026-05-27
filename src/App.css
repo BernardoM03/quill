@@ -1,0 +1,13 @@
+.campaign-section {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.campaign-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 22vw);
+  gap: 1rem;
+}

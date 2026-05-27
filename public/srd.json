@@ -1,0 +1,185 @@
+{
+    "classes": [
+        {
+            "name": "Barbarian",
+            "subclasses": [
+                {
+                    "name": "Path of the Berserker"
+                }
+            ]
+        },
+        {
+            "name": "Bard",
+            "subclasses": [
+                {
+                    "name": "College of Lore"
+                }
+            ]
+        },
+        {
+            "name": "Cleric",
+            "subclasses": [
+                {
+                    "name": "Life Domain"
+                }
+            ]
+        },
+        {
+            "name": "Druid",
+            "subclasses": [
+                {
+                    "name": "Circle of the Land"
+                }
+            ]
+        },
+        {
+            "name": "Fighter",
+            "subclasses": [
+                {
+                    "name": "Champion"
+                }
+            ]
+        },
+        {
+            "name": "Monk",
+            "subclasses": [
+                {
+                    "name": "Warrior of the Open Hand"
+                }
+            ]
+        },
+        {
+            "name": "Paladin",
+            "subclasses": [
+                {
+                    "name": "Oath of Devotion"
+                }
+            ]
+        },
+        {
+            "name": "Ranger",
+            "subclasses": [
+                {
+                    "name": "Hunter"
+                }
+            ]
+        },
+        {
+            "name": "Rogue",
+            "subclasses": [
+                {
+                    "name": "Thief"
+                }
+            ]
+        },
+        {
+            "name": "Sorcerer",
+            "primary-ability": "CHA",
+            "hitpoint-dice": 6,
+            "saving-throw-proficiencies": ["CHA", "CON"],
+            "skill-proficiencies-count": 2,
+            "skill-proficiencies-pool": ["Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion"],
+            "weapon-proficiencies": "simple",
+            "armor-proficiencies": "none",
+            "spellcasting": {
+                "caster-ability": "CHA",
+                "caster-type": "full",
+                "cantrip-count": 4,
+                "prepared-spells": {
+                    "1": "2",
+                    "2": "4",
+                    "3": "6",
+                    "4": "7",
+                    "5": "9",
+                    "6": "10",
+                    "7": "11",
+                    "8": "12",
+                    "9": "14",
+                    "10": "15",
+                    "11": "16",
+                    "12": "16",
+                    "13": "17",
+                    "14": "17",
+                    "15": "18",
+                    "16": "18",
+                    "17": "19",
+                    "18": "20",
+                    "19": "21",
+                    "20": "22"
+                }
+            },
+            "abilities": [
+                {
+                    "name": "Innate Sorcery",
+                    "decription": "",
+                    "level": 1,
+                    "type" : "bonus-action"
+                }
+            ],
+            "subclasses": [
+                {
+                    "name": "Draconic Sorcery"
+                }
+            ]
+        },
+        {
+            "name": "Warlock",
+            "subclasses": [
+                {
+                    "name": "Fiend Patron"
+                }
+            ]
+        },
+        {
+            "name": "Wizard",
+            "subclasses": [
+                {
+                    "name": "Evoker"
+                }
+            ]
+        }
+    ],
+    "origins": [
+        {
+            "name" : "Acolyte"
+        },
+        {
+            "name" : "Criminal"
+        },
+        {
+            "name" : "Sage"
+        },
+        {
+            "name" : "Soldier"
+        }
+    ],
+    "species": [
+        {
+            "name" : "Dragonborn"
+        },
+        {
+            "name" : "Dwarf"
+        },
+        {
+            "name" : "Elf"
+        },
+        {
+            "name" : "Gnome"
+        },
+        {
+            "name" : "Goliath"
+        },
+        {
+            "name" : "Halfling"
+        },
+        {
+            "name" : "Human"
+        },
+        {
+            "name" : "Orc"
+        },
+        {
+            "name" : "Tiefling"
+        }
+    ]
+}
