@@ -1,8 +1,7 @@
-// import { Form } from "react-router";
 import axios from "axios";
 
 export default function CampaignSettings() {
-    
+
     function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
         const newCampaignName = new FormData(e.currentTarget).get('campaignName') as string;
