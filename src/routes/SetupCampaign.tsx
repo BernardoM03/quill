@@ -27,7 +27,7 @@ export default function SetupCampaign() {
             <form method="post" onSubmit={handleSubmit}> 
                 <label>
                     Campaign Name:
-                    <input type="text" name="campaignName" />
+                    <input type="text" maxLength={64} name="campaignName" />
                 </label>
                 <button type="submit">Create Campaign</button>
             </form>

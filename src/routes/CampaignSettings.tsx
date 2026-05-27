@@ -39,7 +39,7 @@ export default function CampaignSettings() {
                 <form method="post" onSubmit={handleNameSubmit}> 
                     <label>
                         Campaign Name:
-                        <input type="text" name="campaignName" />
+                        <input type="text" maxLength={64} name="campaignName" />
                     </label>
                     <button type="submit">Modify Campaign</button>
                 </form>
