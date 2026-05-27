@@ -9,6 +9,7 @@
 - [ ] UI / styling
 - [ ] Refactor
 - [ ] Config / tooling
+- [ ] Data
 
 ## Related area
 
@@ -16,6 +17,7 @@
 - [ ] Campaign / worldbuilding tools
 - [ ] DM configuration
 - [ ] Routing / layout
+- [ ] SRD
 - [ ] Other: <!-- describe -->
 
 ## Notes
