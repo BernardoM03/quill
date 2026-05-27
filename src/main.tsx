@@ -25,7 +25,7 @@ let router = createBrowserRouter([
     element : <SetupCampaign />
   },
   {
-    path : "campaignsettings/:id",
+    path : "campaignsettings/:campaignID",
     element : <CampaignSettings />
   }
 ]);

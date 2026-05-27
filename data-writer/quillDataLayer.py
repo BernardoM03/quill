@@ -14,7 +14,7 @@ def create_campaign():
     campaign_id = content.get('id')
     campaign_name = content.get('name')
         
-    with open(CAMPAIGNS_FOLDER_URL + campaign_id + 'c.json', 'w') as f:
+    with open(CAMPAIGNS_FOLDER_URL + campaign_id + '.json', 'w') as f:
         details = {
             "name": campaign_name,
             "description": None,
