@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from 'react'
-import axios from "axios";
 
-import type { campaign } from "../datatypes/campaign";
+import { updateCampaignName } from "../api/campaigns";
+import FormField from "../components/FormField";
 import type { campaignDetails } from "../datatypes/campaignDetails";
 
 export default function CampaignSettings() {
@@ -20,12 +20,10 @@ export default function CampaignSettings() {
     function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
 
-        const updatedCampaignInfo: campaign = {
-            name: new FormData(e.currentTarget).get('campaignName') as string,
-            id: campaignID as string
-        };        
-        axios.put('http://localhost:5174/update/campaign-name', updatedCampaignInfo)
-            .then(() => setCampaignDetails(details => details ? { ...details, name: updatedCampaignInfo.name } : null))
+        const name = new FormData(e.currentTarget).get('campaignName') as string;
+
+        updateCampaignName(campaignID as string, name)
+            .then(() => setCampaignDetails(details => details ? { ...details, name } : null))
             .catch((error) => console.error('Error changing campaign name:', error));
     }
 
@@ -36,11 +34,8 @@ export default function CampaignSettings() {
             campaignDetails.name : "Loading..."}</h2>
             <div className="campaign-basic-info">
                 <h2>Change Campaign Name</h2>
-                <form method="post" onSubmit={handleNameSubmit}> 
-                    <label>
-                        Campaign Name:
-                        <input type="text" name="campaignName" />
-                    </label>
+                <form method="post" onSubmit={handleNameSubmit}>
+                    <FormField label="Campaign Name:" name="campaignName" maxLength={64} />
                     <button type="submit">Modify Campaign</button>
                 </form>
             </div>

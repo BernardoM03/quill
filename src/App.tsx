@@ -52,7 +52,7 @@ export default function App() {
                 <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
               ))}
             </div>
-            <Link to="/setupcampaign">Create New Campaign</Link>
+            <Link to="/setup/campaign">Create New Campaign</Link>
           </div>
         ) : null
       }
@@ -60,9 +60,17 @@ export default function App() {
         userData && (!userData.campaigns || userData.campaigns.length === 0) ? (
           <div>
             <h2>You don't have any campaigns yet.</h2>
-            <Link to="/setupcampaign">Set up your first campaign</Link>
+            <Link to="/setup/campaign">Setup Your First Campaign</Link>
           </div>
         ) : null
+      }
+      {
+        !userData ? (
+        <div>
+          <h2>You are a new User!</h2>
+          <Link to="/setup/user">Setup Your Account</Link>
+        </div>
+        ) : null 
       }
       <Outlet />
     </>

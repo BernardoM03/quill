@@ -8,7 +8,22 @@ CAMPAIGNS_FOLDER_URL = '../public/.campaigns/'
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/createcampaign', methods=['POST'])
+@app.route('/create/user', methods=['POST'])
+def create_user():
+    content = request.get_json()
+    username = content.get('name')
+    
+    with open(USER_JSON_URL, 'w') as f:
+        data = {
+            "name": username,
+            "campaigns": []
+        }
+        json.dump(data, f, indent=4)
+    
+    return jsonify({'success': True}), 201
+    
+
+@app.route('/create/campaign', methods=['POST'])
 def create_campaign():
     content = request.get_json()
     campaign_id = content.get('id')
