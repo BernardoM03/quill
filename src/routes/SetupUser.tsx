@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
-import axios from "axios";
 
+import { createUser } from "../api/users";
+import FormField from "../components/FormField";
 
 export default function SetupUser() {
     const navigate = useNavigate();
@@ -8,10 +9,9 @@ export default function SetupUser() {
     function handleUserSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
 
-        const newUser = new FormData(e.currentTarget).get('userName') as string 
+        const name = new FormData(e.currentTarget).get('userName') as string;
 
-        // Create user.json file using quillDataLayer
-        axios.post('http://localhost:5174/create/user', { name: newUser })
+        createUser(name)
             .then(() => navigate('/'))
             .catch((error) => console.error('Error creating user:', error));
     }
@@ -20,10 +20,7 @@ export default function SetupUser() {
         <div>
             <h1>Welcome to Quill</h1>
             <form method="post" onSubmit={handleUserSubmit}>
-                <label>
-                    Enter a Username:
-                    <input type="text" maxLength={20} name="userName" />
-                </label>
+                <FormField label="Enter a Username:" name="userName" maxLength={20} />
                 <button type="submit">Create User</button>
             </form>
         </div>
