@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/common.schema.json",
+  "title": "Quill shared definitions",
+  "description": "Shared building blocks referenced by the per-entity schemas. Not validated against directly.",
+
+  "$defs": {
+    "id": {
+      "type": "string",
+      "description": "Namespaced content id: <packId>:<type>/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:[a-z-]+/[a-z0-9-]+$"
+    },
+
+    "ability": {
+      "type": "string",
+      "enum": ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+    },
+
+    "rest": {
+      "type": "string",
+      "enum": ["short", "long", "dawn", "none"]
+    },
+
+    "activation": {
+      "type": "object",
+      "description": "What it costs to use a feature, in action economy.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "action",
+            "bonusAction",
+            "reaction",
+            "free",
+            "passive",
+            "ritual",
+            "special"
+          ]
+        },
+        "trigger": {
+          "type": "string",
+          "description": "Required when type is reaction: what the reaction responds to."
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+
+    "uses": {
+      "type": "object",
+      "description": "A bounded pool of uses attached to a single feature.",
+      "properties": {
+        "max": {
+          "description": "Fixed number, or a named formula the app resolves (e.g. 'proficiencyBonus').",
+          "type": ["integer", "string"]
+        },
+        "recharge": { "$ref": "#/$defs/rest" }
+      },
+      "required": ["max", "recharge"],
+      "additionalProperties": false
+    },
+
+    "duration": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "number" },
+        "unit": {
+          "type": "string",
+          "enum": ["round", "minute", "hour", "day", "instantaneous", "untilDispelled"]
+        }
+      },
+      "required": ["value", "unit"],
+      "additionalProperties": false
+    },
+
+    "choice": {
+      "type": "object",
+      "description": "A decision the player makes when this feature is gained.",
+      "properties": {
+        "id": { "type": "string" },
+        "prompt": { "type": "string" },
+        "count": { "type": "integer", "minimum": 1 },
+        "from": {
+          "description": "Either a list id to resolve, or a literal set of options.",
+          "type": ["string", "array"],
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "count", "from"],
+      "additionalProperties": false
+    },
+
+    "scalingRow": {
+      "type": "object",
+      "description": "Level-keyed values for features that grow (Sneak Attack dice, Martial Arts die).",
+      "properties": {
+        "level": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "value": { "type": ["number", "string"] }
+      },
+      "required": ["level", "value"],
+      "additionalProperties": false
+    },
+
+    "effect": {
+      "type": "object",
+      "description": "Machine-readable half of a feature. The vocabulary is deliberately closed: anything that does not fit stays prose in `description` for the DM to adjudicate.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "grantProficiency",
+            "grantExpertise",
+            "modifier",
+            "setBaseAc",
+            "grantResistance",
+            "grantImmunity",
+            "grantAdvantage",
+            "grantSpeed",
+            "grantSpells",
+            "applyCondition",
+            "grantFeature"
+          ]
+        },
+        "target": {
+          "type": "string",
+          "description": "What the effect applies to: an ability, a skill, 'spellSaveDC', 'hitPointMaximum', a damage type, etc."
+        },
+        "value": { "type": ["number", "string", "array"], "items": { "type": "string" } },
+        "condition": {
+          "type": "string",
+          "description": "Free-text qualifier for when the effect applies. Display-only; not evaluated."
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+
+    "feature": {
+      "type": "object",
+      "description": "A class or subclass feature. Splits display (description) from mechanics (effects).",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "sourceId": {
+          "$ref": "#/$defs/id",
+          "description": "The class or subclass that grants this feature."
+        },
+        "description": { "type": "string", "description": "Markdown prose rendered by the UI." },
+        "shortDescription": { "type": "string", "description": "Tooltip / VTT hover text." },
+        "activation": { "$ref": "#/$defs/activation" },
+        "uses": { "$ref": "#/$defs/uses" },
+        "duration": { "$ref": "#/$defs/duration" },
+        "concentration": { "type": "boolean" },
+        "supersedes": {
+          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }],
+          "description": "Feature id this one replaces, e.g. Extra Attack (2) over Extra Attack."
+        },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "choices": { "type": "array", "items": { "$ref": "#/$defs/choice" } },
+        "scaling": { "type": "array", "items": { "$ref": "#/$defs/scalingRow" } },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+      },
+      "required": ["id", "name", "level", "sourceId", "description"],
+      "additionalProperties": false
+    },
+
+    "proficiencyGrant": {
+      "type": "object",
+      "description": "Either a flat grant (`items`) or a player choice from a pool (`count` + `from`).",
+      "properties": {
+        "items": { "type": "array", "items": { "type": "string" } },
+        "count": { "type": "integer", "minimum": 0 },
+        "from": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}
