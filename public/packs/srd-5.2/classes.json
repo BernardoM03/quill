@@ -51,12 +51,12 @@
     "skillProficiencies": {
       "count": 2,
       "from": [
-        "Arcana",
-        "Deception",
-        "Insight",
-        "Intimidation",
-        "Persuasion",
-        "Religion"
+        "srd-5.2:skill/arcana",
+        "srd-5.2:skill/deception",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/intimidation",
+        "srd-5.2:skill/persuasion",
+        "srd-5.2:skill/religion"
       ]
     },
     "weaponProficiencies": {
@@ -654,7 +654,7 @@
             "qualifiers": [
               {
                 "type": "spellSource",
-                "spellListId": "srd-5.2:spell-list/sorcerer"
+                "classId": "srd-5.2:class/sorcerer"
               },
               {
                 "type": "selfState",
@@ -669,7 +669,7 @@
             "qualifiers": [
               {
                 "type": "spellSource",
-                "spellListId": "srd-5.2:spell-list/sorcerer"
+                "classId": "srd-5.2:class/sorcerer"
               },
               {
                 "type": "selfState",

@@ -2,11 +2,10 @@
   {
     "id": "srd-5.2:feat/magic-initiate-cleric",
     "name": "Magic Initiate (Cleric)",
-    "category": "origin",
     "description": "You have learned the basics of the Cleric spellcasting tradition. Wisdom is your spellcasting ability for this feat's spells.",
-    "shortDescription": "Learn two Cleric cantrips and one level 1 Cleric spell.",
+    "category": "origin",
     "prerequisites": [],
-    "repeatable": true,
+    "repeatable": false,
     "abilityScoreIncrease": null,
     "uses": {
       "max": 1,
@@ -15,11 +14,11 @@
     "benefits": [
       {
         "name": "Two Cantrips",
-        "description": "Choose two cantrips from the Cleric spell list. Wisdom is your spellcasting ability for this feat's spells.",
+        "description": "You learn two cantrips of your choice from the Cleric spell list. Intelligence, Wisdomm, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)",
         "effects": [
           {
             "type": "grantSpells",
-            "target": "srd-5.2:spell-list/cleric",
+            "target": "srd-5.2:class/cleric",
             "value": 2,
             "qualifiers": [
               {
@@ -55,7 +54,7 @@
         ]
       },
       {
-        "name": "Changing Spells",
+        "name": "Spell Change",
         "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Cleric spell list."
       }
     ],

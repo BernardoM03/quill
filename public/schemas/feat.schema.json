@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://quill.local/schemas/feat.schema.json",
   "title": "D&D 5.5e SRD Feats",
-  "description": "Top-level array of feats. Feats deliberately do not reuse common.schema.json#/$defs/feature: a feature is granted by a class at a level, so it requires `level` and `sourceId`, while a feat is chosen and has neither. The mechanical vocabulary (activation, uses, effects) is shared.",
+  "description": "Feats are special perks that represent an speciality or expertise for a character.",
   "type": "array",
   "items": {
     "type": "object",
@@ -23,7 +23,7 @@
       },
       "category": {
         "type": "string",
-        "description": "Governs where the feat may be taken from: origin feats come only from a background, epic boons only at level 19+, fighting styles only from features that grant them.",
+        "description": "Governs where the feat may be taken from: Origin feats come only from a background. Epic boons only at level 19+. Fighting styles only from features that grant them.",
         "enum": [
           "origin",
           "general",

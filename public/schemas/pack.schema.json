@@ -10,13 +10,17 @@
       "description": "Pack namespace. Prefixes every content id this pack defines.",
       "pattern": "^[a-z0-9][a-z0-9.-]*$"
     },
-    "name": { "type": "string" },
+    "name": {
+      "type": "string"
+    },
     "version": {
       "type": "string",
       "description": "Semver. Campaigns pin this so an old campaign resolves the content it was built against.",
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
-    "license": { "type": "string" },
+    "license": {
+      "type": "string"
+    },
     "attribution": {
       "type": "string",
       "description": "Required for CC-BY content; surfaced in the UI."
@@ -24,7 +28,9 @@
     "providesEffectTypes": {
       "type": "array",
       "description": "Namespaced effect types this pack introduces (`homebrew:effect/soul-burn`). The loader unions these across all loaded packs and rejects any effect whose non-core `type` was never declared. This is how a third-party pack adds mechanics without editing the shared schemas.",
-      "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/id" },
+      "items": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/id"
+      },
       "uniqueItems": true
     },
     "provides": {
@@ -40,12 +46,18 @@
           "origins",
           "feats",
           "equipment",
+          "skills",
           "conditions"
         ]
       },
       "uniqueItems": true
     }
   },
-  "required": ["id", "name", "version", "provides"],
+  "required": [
+    "id",
+    "name",
+    "version",
+    "provides"
+  ],
   "additionalProperties": false
 }

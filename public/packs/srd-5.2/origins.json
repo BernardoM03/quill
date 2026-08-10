@@ -3,10 +3,23 @@
     "id": "srd-5.2:origin/acolyte",
     "name": "Acolyte",
     "description": "You devoted yourself to service in a temple, either nestled in a town or secluded in a sacred grove. There you performed rites in honor of a god or pantheon. You served under a priest and studied religion.",
-    "abilityScores": ["INT", "WIS", "CHA"],
+    "abilityScores": [
+      "INT",
+      "WIS",
+      "CHA"
+    ],
     "featId": "srd-5.2:feat/magic-initiate-cleric",
-    "skillProficiencies": { "items": ["Insight", "Religion"] },
-    "toolProficiencies": { "items": ["Calligrapher's Supplies"] },
+    "skillProficiencies": {
+      "items": [
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/religion"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "Calligrapher's Supplies"
+      ]
+    },
     "startingEquipment": {
       "options": [
         {

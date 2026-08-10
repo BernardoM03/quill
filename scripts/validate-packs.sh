@@ -14,6 +14,7 @@ PAIRS=(
   "species:species"
   "origin:origins"
   "feat:feats"
+  "skill:skills"
   "conditions:conditions"
   "pack:pack"
 )

@@ -39,10 +39,10 @@
       "description": "Namespaced content id for Spells: <packId>:spell/<slug>",
       "pattern": "^[a-z0-9][a-z0-9.-]*:spell/[a-z0-9-]+$"
     },
-    "spellListId": {
+    "skillId": {
       "type": "string",
-      "description": "Namespaced content id for Spell Lists: <packId>:spell-list/<slug>",
-      "pattern": "^[a-z0-9][a-z0-9.-]*:spell-list/[a-z0-9-]+$"
+      "description": "Namespaced content id for Skills: <packId>:skill/<slug>. The skill-to-ability mapping lives in skills.json, not here — it is game content a pack can extend or change, not schema shape.",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:skill/[a-z0-9-]+$"
     },
     "ability": {
       "type": "string",
@@ -1144,9 +1144,9 @@
             "type": {
               "const": "spellSource"
             },
-            "spellListId": {
-              "$ref": "#/$defs/spellListId",
-              "description": "Applies only to spells drawn from this list, e.g. 'Sorcerer spells'."
+            "classId": {
+              "$ref": "#/$defs/classId",
+              "description": "Applies only to spells drawn from this class"
             },
             "negate": {
               "type": "boolean"
@@ -1154,7 +1154,7 @@
           },
           "required": [
             "type",
-            "spellListId"
+            "classId"
           ],
           "additionalProperties": false
         },
