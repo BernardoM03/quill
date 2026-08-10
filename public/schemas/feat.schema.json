@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/feat.schema.json",
+  "title": "D&D 5.5e SRD Feats",
+  "description": "Top-level array of feats. Feats deliberately do not reuse common.schema.json#/$defs/feature: a feature is granted by a class at a level, so it requires `level` and `sourceId`, while a feat is chosen and has neither. The mechanical vocabulary (activation, uses, effects) is shared.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/featId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string",
+        "description": "Markdown prose rendered by the UI."
+      },
+      "shortDescription": {
+        "type": "string",
+        "description": "Tooltip / VTT hover text."
+      },
+      "category": {
+        "type": "string",
+        "description": "Governs where the feat may be taken from: origin feats come only from a background, epic boons only at level 19+, fighting styles only from features that grant them.",
+        "enum": [
+          "origin",
+          "general",
+          "fightingStyle",
+          "epicBoon"
+        ]
+      },
+      "prerequisites": {
+        "type": "array",
+        "description": "All entries must be satisfied. An empty array means the feat has no prerequisites.",
+        "items": {
+          "$ref": "#/$defs/prerequisite"
+        }
+      },
+      "repeatable": {
+        "type": "boolean",
+        "description": "Whether the feat may be taken more than once. Defaults to false when absent."
+      },
+      "abilityScoreIncrease": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/abilityScoreIncrease"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "benefits": {
+        "type": "array",
+        "description": "Feats are written as named sub-bullets rather than one prose block. Each benefit may carry its own mechanical effects.",
+        "items": {
+          "$ref": "#/$defs/benefit"
+        }
+      },
+      "activation": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation"
+      },
+      "uses": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/uses"
+      },
+      "choices": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "effects": {
+        "type": "array",
+        "description": "Feat-level effects. Use a benefit's own `effects` instead when the effect belongs to one named bullet.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "category",
+      "description"
+    ],
+    "additionalProperties": false
+  },
+  "$defs": {
+    "prerequisite": {
+      "type": "object",
+      "description": "One requirement that must be met before the feat can be taken. Discriminated on `type`.",
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "ability"
+            },
+            "ability": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+            },
+            "minimum": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30
+            }
+          },
+          "required": [
+            "type",
+            "ability",
+            "minimum"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "level"
+            },
+            "minimum": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          },
+          "required": [
+            "type",
+            "minimum"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "feat"
+            },
+            "featId": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/featId"
+            }
+          },
+          "required": [
+            "type",
+            "featId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "proficiency"
+            },
+            "proficiency": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "proficiency"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spellcasting"
+            },
+            "note": {
+              "type": "string",
+              "description": "Free text, e.g. 'Spellcasting or Pact Magic feature'. Display-only; not evaluated."
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "any"
+            },
+            "of": {
+              "type": "array",
+              "description": "Satisfied when at least one nested prerequisite is met. Covers disjunctions such as Grappler's 'Strength or Dexterity 13+'.",
+              "items": {
+                "$ref": "#/$defs/prerequisite"
+              },
+              "minItems": 2
+            }
+          },
+          "required": [
+            "type",
+            "of"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "abilityScoreIncrease": {
+      "type": "object",
+      "description": "The '+1 to one ability score of your choice, to a maximum of 20' clause most General feats carry.",
+      "properties": {
+        "from": {
+          "type": "array",
+          "description": "Abilities eligible for the increase.",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+          },
+          "minItems": 1
+        },
+        "amount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum": {
+          "type": "integer",
+          "description": "Cap the score may be raised to. Normally 20.",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "from",
+        "amount"
+      ],
+      "additionalProperties": false
+    },
+    "benefit": {
+      "type": "object",
+      "description": "One named bullet within a feat.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

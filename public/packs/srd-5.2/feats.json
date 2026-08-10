@@ -1,0 +1,81 @@
+[
+  {
+    "id": "srd-5.2:feat/magic-initiate-cleric",
+    "name": "Magic Initiate (Cleric)",
+    "category": "origin",
+    "description": "You have learned the basics of the Cleric spellcasting tradition. Wisdom is your spellcasting ability for this feat's spells.",
+    "shortDescription": "Learn two Cleric cantrips and one level 1 Cleric spell.",
+    "prerequisites": [],
+    "repeatable": true,
+    "abilityScoreIncrease": null,
+    "uses": {
+      "max": 1,
+      "recharge": "long"
+    },
+    "benefits": [
+      {
+        "name": "Two Cantrips",
+        "description": "Choose two cantrips from the Cleric spell list. Wisdom is your spellcasting ability for this feat's spells.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell-list/cleric",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevel": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Level 1 Spell",
+        "description": "Choose one level 1 spell from the Cleric spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell-list/cleric",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevel": 1
+              }
+            ],
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Changing Spells",
+        "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Cleric spell list."
+      }
+    ],
+    "choices": [
+      {
+        "id": "magic-initiate-cleric-cantrips",
+        "prompt": "Choose two cantrips from the Cleric spell list.",
+        "count": 2,
+        "from": "srd-5.2:spell-list/cleric"
+      },
+      {
+        "id": "magic-initiate-cleric-level-1-spell",
+        "prompt": "Choose one level 1 spell from the Cleric spell list.",
+        "count": 1,
+        "from": "srd-5.2:spell-list/cleric"
+      }
+    ],
+    "tags": [
+      "spellcasting",
+      "origin-feat"
+    ]
+  }
+]

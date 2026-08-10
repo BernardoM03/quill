@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/species.schema.json",
+  "title": "D&D 5.5e SRD Species",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/speciesId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "creatureType": {
+        "type": "string"
+      },
+      "size": {
+        "type": "array",
+        "description": "More than one entry when the species offers a size choice.",
+        "items": {
+          "type": "string",
+          "enum": [
+            "Tiny",
+            "Small",
+            "Medium",
+            "Large",
+            "Huge",
+            "Gargantuan"
+          ]
+        }
+      },
+      "speed": {
+        "type": "integer"
+      },
+      "traits": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -3,24 +3,308 @@
   "$id": "https://quill.local/schemas/common.schema.json",
   "title": "Quill shared definitions",
   "description": "Shared building blocks referenced by the per-entity schemas. Not validated against directly.",
-
   "$defs": {
     "id": {
       "type": "string",
-      "description": "Namespaced content id: <packId>:<type>/<slug>",
+      "description": "Any namespaced content id: <packId>:<type>/<slug>. Prefer a typed id (classId, conditionId, ...) wherever the kind is known; this stays for ids whose type segment is open, such as pack-declared effect types.",
       "pattern": "^[a-z0-9][a-z0-9.-]*:[a-z-]+/[a-z0-9-]+$"
     },
-
+    "conditionId": {
+      "type": "string",
+      "description": "Namespaced content id for Conditions: <packId>:condition/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:condition/[a-z0-9-]+$"
+    },
+    "originId": {
+      "type": "string",
+      "description": "Namespaced content id for Origins: <packId>:origin/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:origin/[a-z0-9-]+$"
+    },
+    "speciesId": {
+      "type": "string",
+      "description": "Namespaced content id for Species: <packId>:species/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:species/[a-z0-9-]+$"
+    },
+    "featId": {
+      "type": "string",
+      "description": "Namespaced content id for Feats: <packId>:feat/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:feat/[a-z0-9-]+$"
+    },
+    "classId": {
+      "type": "string",
+      "description": "Namespaced content id for Classes: <packId>:class/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:class/[a-z0-9-]+$"
+    },
+    "spellId": {
+      "type": "string",
+      "description": "Namespaced content id for Spells: <packId>:spell/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:spell/[a-z0-9-]+$"
+    },
+    "spellListId": {
+      "type": "string",
+      "description": "Namespaced content id for Spell Lists: <packId>:spell-list/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:spell-list/[a-z0-9-]+$"
+    },
     "ability": {
       "type": "string",
-      "enum": ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+      "enum": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ]
     },
-
+    "rollType": {
+      "type": "string",
+      "enum": [
+        "d3",
+        "d4",
+        "d6",
+        "d8",
+        "d10",
+        "d12",
+        "d20",
+        "d100"
+      ]
+    },
+    "rollTarget": {
+      "type": "string",
+      "description": "Which roll is affected. `d20Test` is the umbrella the SRD itself names — attack rolls, saving throws, and ability checks together. Use it when a rule applies to all three (Exhaustion) rather than emitting three near-identical effects.",
+      "enum": [
+        "d20Test",
+        "attackRoll",
+        "savingThrow",
+        "abilityCheck",
+        "initiative",
+        "deathSave",
+        "concentration"
+      ]
+    },
+    "diceExpression": {
+      "type": "object",
+      "description": "A rolled quantity, e.g. Bardic Inspiration's 1d6.",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "die": {
+          "$ref": "#/$defs/rollType"
+        }
+      },
+      "required": [
+        "count",
+        "die"
+      ],
+      "additionalProperties": false
+    },
+    "damageType": {
+      "type": "string",
+      "enum": [
+        "acid",
+        "bludgeoning",
+        "cold",
+        "fire",
+        "force",
+        "lightning",
+        "necrotic",
+        "piercing",
+        "poison",
+        "psychic",
+        "radiant",
+        "slashing",
+        "thunder"
+      ]
+    },
+    "damageTarget": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/damageType"
+        },
+        {
+          "const": "allDamage"
+        },
+        {
+          "const": "elementalDamage"
+        }
+      ]
+    },
+    "speedType": {
+      "type": "string",
+      "enum": [
+        "base",
+        "walk",
+        "fly",
+        "swim",
+        "climb",
+        "burrow"
+      ]
+    },
+    "sense": {
+      "type": "string",
+      "enum": [
+        "sight",
+        "hearing",
+        "smell",
+        "touch",
+        "taste"
+      ]
+    },
+    "component": {
+      "type": "string",
+      "enum": [
+        "material",
+        "somatic",
+        "verbal"
+      ]
+    },
+    "creatureType": {
+      "type": "string",
+      "enum": [
+        "aberration",
+        "beast",
+        "celestial",
+        "construct",
+        "dragon",
+        "elemental",
+        "fey",
+        "fiend",
+        "giant",
+        "humanoid",
+        "monstrosity",
+        "ooze",
+        "plant",
+        "undead"
+      ]
+    },
+    "situationType": {
+      "type": "string",
+      "enum": [
+        "combat",
+        "social",
+        "travel"
+      ]
+    },
+    "travelPace": {
+      "type": "string",
+      "enum": [
+        "slow",
+        "normal",
+        "fast"
+      ]
+    },
+    "relation": {
+      "type": "string",
+      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive.",
+      "enum": [
+        "self",
+        "others",
+        "conditionSource",
+        "ally",
+        "enemy"
+      ]
+    },
+    "acFormula": {
+      "type": "object",
+      "description": "Structured unarmored-AC formula",
+      "properties": {
+        "base": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ability"
+          }
+        }
+      },
+      "required": [
+        "base",
+        "abilities"
+      ],
+      "additionalProperties": false
+    },
+    "equipmentCategory": {
+      "type": "string",
+      "description": "What the character is wearing or wielding. Negate for 'while not wearing armor'.",
+      "enum": [
+        "armor",
+        "lightArmor",
+        "mediumArmor",
+        "heavyArmor",
+        "shield"
+      ]
+    },
+    "castingOverrides": {
+      "type": "object",
+      "description": "Modifications to HOW a granted spell may be cast. Distinct from qualifiers, which narrow WHEN an effect applies.",
+      "properties": {
+        "ignoreMaterialComponent": {
+          "type": "boolean"
+        },
+        "alwaysPrepared": {
+          "type": "boolean"
+        },
+        "freeCasts": {
+          "type": "object",
+          "description": "Casts allowed without expending a spell slot.",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "recharge": {
+              "$ref": "#/$defs/rest"
+            }
+          },
+          "required": [
+            "count",
+            "recharge"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "effectGroup": {
+      "type": "object",
+      "description": "One named bullet of a condition or feature, mirroring how the SRD writes them ('Can't See', 'Attacks Affected'). Prose in `description`, mechanics in `effects`.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "effect": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "deferredValue": {
+      "type": "string",
+      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id on the same feature, resolved when the player picks. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves.",
+      "pattern": "^\\$(choice|derived):[A-Za-z][A-Za-z0-9-]*$"
+    },
     "rest": {
       "type": "string",
-      "enum": ["short", "long", "dawn", "none"]
+      "enum": [
+        "short",
+        "long",
+        "dawn",
+        "none"
+      ]
     },
-
     "activation": {
       "type": "object",
       "description": "What it costs to use a feature, in action economy.",
@@ -42,139 +326,932 @@
           "description": "Required when type is reaction: what the reaction responds to."
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
-
     "uses": {
       "type": "object",
       "description": "A bounded pool of uses attached to a single feature.",
       "properties": {
         "max": {
           "description": "Fixed number, or a named formula the app resolves (e.g. 'proficiencyBonus').",
-          "type": ["integer", "string"]
+          "type": [
+            "integer",
+            "string"
+          ]
         },
-        "recharge": { "$ref": "#/$defs/rest" }
+        "recharge": {
+          "$ref": "#/$defs/rest"
+        }
       },
-      "required": ["max", "recharge"],
+      "required": [
+        "max",
+        "recharge"
+      ],
       "additionalProperties": false
     },
-
     "duration": {
       "type": "object",
       "properties": {
-        "value": { "type": "number" },
+        "value": {
+          "type": "number"
+        },
         "unit": {
           "type": "string",
-          "enum": ["round", "minute", "hour", "day", "instantaneous", "untilDispelled"]
+          "enum": [
+            "round",
+            "minute",
+            "hour",
+            "day",
+            "instantaneous",
+            "untilDispelled"
+          ]
         }
       },
-      "required": ["value", "unit"],
+      "required": [
+        "value",
+        "unit"
+      ],
       "additionalProperties": false
     },
-
     "choice": {
       "type": "object",
       "description": "A decision the player makes when this feature is gained.",
       "properties": {
-        "id": { "type": "string" },
-        "prompt": { "type": "string" },
-        "count": { "type": "integer", "minimum": 1 },
+        "id": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
         "from": {
           "description": "Either a list id to resolve, or a literal set of options.",
-          "type": ["string", "array"],
-          "items": { "type": "string" }
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
         }
       },
-      "required": ["id", "count", "from"],
+      "required": [
+        "id",
+        "count",
+        "from"
+      ],
       "additionalProperties": false
     },
-
     "scalingRow": {
       "type": "object",
       "description": "Level-keyed values for features that grow (Sneak Attack dice, Martial Arts die).",
       "properties": {
-        "level": { "type": "integer", "minimum": 1, "maximum": 20 },
-        "value": { "type": ["number", "string"] }
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "value": {
+          "type": [
+            "number",
+            "string"
+          ]
+        }
       },
-      "required": ["level", "value"],
+      "required": [
+        "level",
+        "value"
+      ],
       "additionalProperties": false
     },
-
+    "coreEffectType": {
+      "type": "string",
+      "enum": [
+        "grantProficiency",
+        "grantExpertise",
+        "modifier",
+        "setBaseAc",
+        "grantResistance",
+        "grantImmunity",
+        "grantVulnerability",
+        "grantAdvantage",
+        "grantDisadvantage",
+        "autoFail",
+        "rollBonus",
+        "cannotTarget",
+        "cannotApproach",
+        "preventIncrease",
+        "loseSense",
+        "concealFrom",
+        "grantSpeed",
+        "grantSpells",
+        "applyCondition",
+        "grantFeature",
+        "loseAction",
+        "loseBonusAction",
+        "loseReaction",
+        "loseConcentration",
+        "silenced",
+        "autoCrit",
+        "prone",
+        "dropHeldItem"
+      ]
+    },
     "effect": {
       "type": "object",
-      "description": "Machine-readable half of a feature. The vocabulary is deliberately closed: anything that does not fit stays prose in `description` for the DM to adjudicate.",
+      "description": "Machine-readable half of a feature, feat, or condition. There is no prose field: every clause with a mechanical consequence must be expressible here, because a display-only string is silently dropped by any consumer trying to automate. Direction, scope, and timing are expressed compositionally via `affects`, `qualifiers`, `scaling`, and the owning feature's `duration` — never baked into the type name.",
       "properties": {
         "type": {
-          "type": "string",
-          "enum": [
-            "grantProficiency",
-            "grantExpertise",
-            "modifier",
-            "setBaseAc",
-            "grantResistance",
-            "grantImmunity",
-            "grantAdvantage",
-            "grantSpeed",
-            "grantSpells",
-            "applyCondition",
-            "grantFeature"
+          "description": "A core effect type, or a namespaced id declared by the pack that introduces it (`homebrew:effect/soul-burn`). The schema validates the form; the loader verifies that any namespaced type was declared in some loaded pack's `providesEffectTypes`. This is what lets a third-party pack introduce mechanics without editing these schemas.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/coreEffectType"
+            },
+            {
+              "$ref": "#/$defs/id"
+            }
           ]
         },
         "target": {
-          "type": "string",
-          "description": "What the effect applies to: an ability, a skill, 'spellSaveDC', 'hitPointMaximum', a damage type, etc."
+          "description": "What the effect applies to: a damage type, a speed type, a roll ('attackRoll', 'savingThrow', 'abilityCheck'), a stat ('spellSaveDC', 'hitPointMaximum'), or a content id. An array where the effect applies to a set, as `loseSense` does. Deliberately untyped here — the allOf pairs below narrow it per effect type, and a base `type` would make an array target unsatisfiable, since allOf can only add constraints, never loosen them."
         },
-        "value": { "type": ["number", "string", "array"], "items": { "type": "string" } },
-        "condition": {
+        "value": {
+          "description": "Shape depends on `type`; see the allOf constraints below. Unconstrained for effect types that do not yet have an if/then pair."
+        },
+        "multiplier": {
+          "type": "integer",
+          "description": "Scales `value` when it is a derived quantity. `value: \"$derived:exhaustionLevel\"` with `multiplier: -2` is 'reduced by 2 times your Exhaustion level'. Omit when `value` is already the final amount."
+        },
+        "affects": {
           "type": "string",
-          "description": "Free-text qualifier for when the effect applies. Display-only; not evaluated."
+          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'.",
+          "enum": [
+            "self",
+            "affector",
+            "others"
+          ]
+        },
+        "qualifiers": {
+          "type": "array",
+          "description": "Machine-readable narrowings, ANDed together. Every restriction on when this effect applies must appear here.",
+          "items": {
+            "$ref": "#/$defs/qualifier"
+          }
+        },
+        "scaling": {
+          "type": "array",
+          "description": "The effect's value at each character level, when it grows. Stated explicitly per level rather than as a formula, matching the class progression tables.",
+          "items": {
+            "$ref": "#/$defs/scalingRow"
+          }
+        },
+        "appliesOnce": {
+          "type": "boolean",
+          "description": "True when the effect applies to a single roll of the triggering event rather than every roll, e.g. 'add your Charisma modifier to one damage roll of that spell'."
+        },
+        "castingOverrides": {
+          "$ref": "#/$defs/castingOverrides"
+        },
+        "repeatable": {
+          "type": "boolean",
+          "description": "Whether or not this condition stacks"
         }
       },
-      "required": ["type"],
-      "additionalProperties": false
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "grantResistance",
+                  "grantVulnerability"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/damageTarget"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "grantImmunity"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/damageTarget"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "$ref": "#/$defs/conditionId"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantSpeed"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/speedType"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "grantAdvantage",
+                  "grantDisadvantage",
+                  "autoFail"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rollBonus"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
+              },
+              "value": {
+                "description": "A flat integer (negative for a penalty), a derived quantity to be scaled by `multiplier`, or a dice expression such as Bardic Inspiration's 1d6.",
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "$ref": "#/$defs/diceExpression"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setBaseAc"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/acFormula"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "autoCrit"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "const": "attackRoll"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "loseSense",
+                  "concealFrom"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "description": "The senses lost or concealed from. Always an array, even for one sense — a set matches the `ability` and `creatureType` qualifiers, and a consumer never has to handle both a string and an array.",
+                "items": {
+                  "$ref": "#/$defs/sense"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "preventIncrease"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "description": "What may not be raised — a speed type, an ability score, or a named stat. Pairs with a sibling effect that sets the value.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "applyCondition"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/conditionId"
+              }
+            }
+          }
+        }
+      ]
     },
-
     "feature": {
       "type": "object",
       "description": "A class or subclass feature. Splits display (description) from mechanics (effects).",
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "type": "string" },
-        "level": { "type": "integer", "minimum": 1, "maximum": 20 },
-        "sourceId": {
-          "$ref": "#/$defs/id",
-          "description": "The class or subclass that grants this feature."
+        "id": {
+          "$ref": "#/$defs/featureId"
         },
-        "description": { "type": "string", "description": "Markdown prose rendered by the UI." },
-        "shortDescription": { "type": "string", "description": "Tooltip / VTT hover text." },
-        "activation": { "$ref": "#/$defs/activation" },
-        "uses": { "$ref": "#/$defs/uses" },
-        "duration": { "$ref": "#/$defs/duration" },
-        "concentration": { "type": "boolean" },
+        "name": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "sourceId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/classId"
+            },
+            {
+              "$ref": "#/$defs/subclassId"
+            }
+          ],
+          "description": "The class or subclass that grants this feature — legitimately either."
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown prose rendered by the UI."
+        },
+        "shortDescription": {
+          "type": "string",
+          "description": "Tooltip / hover text."
+        },
+        "activation": {
+          "$ref": "#/$defs/activation"
+        },
+        "uses": {
+          "$ref": "#/$defs/uses"
+        },
+        "duration": {
+          "$ref": "#/$defs/duration"
+        },
+        "concentration": {
+          "type": "boolean"
+        },
         "supersedes": {
-          "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }],
+          "oneOf": [
+            {
+              "$ref": "#/$defs/featureId"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "description": "Feature id this one replaces, e.g. Extra Attack (2) over Extra Attack."
         },
-        "prerequisites": { "type": "array", "items": { "type": "string" } },
-        "choices": { "type": "array", "items": { "$ref": "#/$defs/choice" } },
-        "scaling": { "type": "array", "items": { "$ref": "#/$defs/scalingRow" } },
-        "tags": { "type": "array", "items": { "type": "string" } },
-        "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/choice"
+          }
+        },
+        "scaling": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scalingRow"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
       },
-      "required": ["id", "name", "level", "sourceId", "description"],
+      "required": [
+        "id",
+        "name",
+        "level",
+        "sourceId",
+        "description"
+      ],
       "additionalProperties": false
     },
-
     "proficiencyGrant": {
       "type": "object",
       "description": "Either a flat grant (`items`) or a player choice from a pool (`count` + `from`).",
       "properties": {
-        "items": { "type": "array", "items": { "type": "string" } },
-        "count": { "type": "integer", "minimum": 0 },
-        "from": { "type": "array", "items": { "type": "string" } }
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
+    },
+    "qualifier": {
+      "type": "object",
+      "description": "A machine-readable narrowing of when an effect applies. Qualifiers compose: an effect carrying both a `sense` and a `creatureType` qualifier applies only when both hold. Each axis is its own entry rather than a combined enum value, so 'sight' and 'against Fiends' never need a merged 'sightAgainstFiends' spelling. Every branch accepts `negate`, which inverts that one qualifier — this is what expresses 'against any target other than the grappler' without a second enum value for every exclusion.",
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "const": "sense"
+            },
+            "sense": {
+              "$ref": "#/$defs/sense"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "sense"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "creatureType"
+            },
+            "creatureTypes": {
+              "type": "array",
+              "description": "Matches if the creature is ANY of these. Set membership is an OR within this one axis, while separate qualifiers still AND across axes — so 'Fiends and Undead' is one qualifier, not two effects.",
+              "items": {
+                "$ref": "#/$defs/creatureType"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "creatureTypes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "ability"
+            },
+            "abilities": {
+              "type": "array",
+              "description": "Matches if the roll uses ANY of these abilities",
+              "items": {
+                "$ref": "#/$defs/ability"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "abilities"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "range"
+            },
+            "within": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "feet",
+                "miles"
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "within",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "targetCondition"
+            },
+            "conditionId": {
+              "$ref": "#/$defs/conditionId",
+              "description": "Applies only against creatures that have this condition, e.g. a creature you are Grappling."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "conditionId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "targetRelation"
+            },
+            "relation": {
+              "$ref": "#/$defs/relation"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "relation"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "situationType"
+            },
+            "situationType": {
+              "$ref": "#/$defs/situationType"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "situationType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "perceives"
+            },
+            "perceiver": {
+              "$ref": "#/$defs/relation",
+              "description": "Who is doing the perceiving."
+            },
+            "perceived": {
+              "$ref": "#/$defs/relation",
+              "description": "Who must be perceived. Both roles are explicit because the direction matters: Frightened asks whether YOU can see the source, Invisible asks whether THEY can see YOU."
+            },
+            "sense": {
+              "$ref": "#/$defs/sense"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "perceiver",
+            "perceived",
+            "sense"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "selfState"
+            },
+            "featureId": {
+              "$ref": "#/$defs/featureId",
+              "description": "Applies only while one of your own features is active, e.g. 'while Innate Sorcery is active'."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "featureId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spellSource"
+            },
+            "spellListId": {
+              "$ref": "#/$defs/spellListId",
+              "description": "Applies only to spells drawn from this list, e.g. 'Sorcerer spells'."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "spellListId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spellLevel"
+            },
+            "spellLevel": {
+              "type": "integer",
+              "description": "0 means cantrip.",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "spellLevel"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "damageType"
+            },
+            "damageType": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/damageType"
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ],
+              "description": "Applies only to damage of this type. Accepts a $choice: sentinel when the type is chosen by the player."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "damageType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "equipment"
+            },
+            "equipment": {
+              "$ref": "#/$defs/equipmentCategory"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "equipment"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "conditionLevel"
+            },
+            "atLeast": {
+              "type": "integer",
+              "description": "Applies only once the owning condition has reached this level. Covers thresholds that are not linear, such as Exhaustion level 6.",
+              "minimum": 1
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "atLeast"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "subclassId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:subclass/[a-z0-9-]+$"
+    },
+    "featureId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:feature/[a-z0-9-]+$"
     }
   }
 }

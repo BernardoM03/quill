@@ -1,0 +1,840 @@
+[
+  {
+    "id": "srd-5.2:class/barbarian",
+    "name": "Barbarian"
+  },
+  {
+    "id": "srd-5.2:class/bard",
+    "name": "Bard"
+  },
+  {
+    "id": "srd-5.2:class/cleric",
+    "name": "Cleric"
+  },
+  {
+    "id": "srd-5.2:class/druid",
+    "name": "Druid"
+  },
+  {
+    "id": "srd-5.2:class/fighter",
+    "name": "Fighter"
+  },
+  {
+    "id": "srd-5.2:class/monk",
+    "name": "Monk"
+  },
+  {
+    "id": "srd-5.2:class/paladin",
+    "name": "Paladin"
+  },
+  {
+    "id": "srd-5.2:class/ranger",
+    "name": "Ranger"
+  },
+  {
+    "id": "srd-5.2:class/rogue",
+    "name": "Rogue"
+  },
+  {
+    "id": "srd-5.2:class/sorcerer",
+    "name": "Sorcerer",
+    "description": "Sorcerers wield innate magic that is stamped on their being. Some Sorcerers can't determine the origin of their magical abilities, while others trace it to strange events in their own lives or their ancestors' lives.",
+    "flavor": "Channel raw magic that comes from within.",
+    "primaryAbility": [
+      "CHA"
+    ],
+    "hitDie": 6,
+    "savingThrowProficiencies": [
+      "CON",
+      "CHA"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "Arcana",
+        "Deception",
+        "Insight",
+        "Intimidation",
+        "Persuasion",
+        "Religion"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": []
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": null,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            "Spear",
+            "2 Daggers",
+            "Arcane Focus (crystal)",
+            "Dungeoneer's Pack"
+          ],
+          "gold": 28
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    },
+    "startingGold": 50,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "ability": "CHA",
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [],
+        "armor": [],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      6,
+      14,
+      18
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": {
+      "ability": "CHA",
+      "progression": "full",
+      "preparationType": "prepared",
+      "ritualCasting": false,
+      "focus": "Arcane Focus",
+      "spellListId": "srd-5.2:spell-list/sorcerer",
+      "swapOnLevelUp": 1
+    },
+    "resources": [
+      {
+        "id": "sorceryPoints",
+        "name": "Sorcery Points",
+        "recharge": "long",
+        "column": "sorceryPoints"
+      }
+    ],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-spellcasting",
+          "srd-5.2:feature/sorcerer-innate-sorcery"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 2,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 0,
+          "metamagicOptions": 0
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-font-of-magic",
+          "srd-5.2:feature/sorcerer-metamagic"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 4,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 2,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-subclass"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 3,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-ability-score-improvement"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 4,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-sorcerous-restoration"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 5,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 6,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-sorcery-incarnate"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 7,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-ability-score-improvement"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 8,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 9,
+          "metamagicOptions": 2
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-metamagic"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 10,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 6,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 11,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-ability-score-improvement"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 12,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 6,
+        "preparedSpells": 17,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 13,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 6,
+        "preparedSpells": 17,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 14,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 6,
+        "preparedSpells": 18,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 15,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-ability-score-improvement"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 18,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {
+          "sorceryPoints": 16,
+          "metamagicOptions": 3
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-metamagic"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 19,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "sorceryPoints": 17,
+          "metamagicOptions": 4
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "cantripsKnown": 6,
+        "preparedSpells": 20,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "sorceryPoints": 18,
+          "metamagicOptions": 4
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-epic-boon"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 21,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "sorceryPoints": 19,
+          "metamagicOptions": 4
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/sorcerer-arcane-apotheosis"
+        ],
+        "cantripsKnown": 6,
+        "preparedSpells": 22,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "resources": {
+          "sorceryPoints": 20,
+          "metamagicOptions": 4
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/sorcerer-spellcasting",
+        "name": "Spellcasting",
+        "level": 1,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "Drawing from your innate magic, you can cast spells. Charisma is your spellcasting ability for your Sorcerer spells. You can use an Arcane Focus as a Spellcasting Focus for your Sorcerer spells.",
+        "shortDescription": "Cast Sorcerer spells using Charisma.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-innate-sorcery",
+        "name": "Innate Sorcery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "An event in your past left an indelible mark on you, infusing you with simmering magic. As a Bonus Action, you can unleash that magic for 1 minute, during which you gain the following benefits:\n\n- The spell save DC of your Sorcerer spells increases by 1.\n- You have Advantage on the attack rolls of Sorcerer spells you cast.\n\nYou can use this feature twice, and you regain all expended uses of it when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: +1 spell save DC and Advantage on Sorcerer spell attacks for 1 minute.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 2,
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "concentration": false,
+        "supersedes": null,
+        "tags": [
+          "buff",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellSaveDC",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "spellSource",
+                "spellListId": "srd-5.2:spell-list/sorcerer"
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/sorcerer-innate-sorcery"
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "spellSource",
+                "spellListId": "srd-5.2:spell-list/sorcerer"
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/sorcerer-innate-sorcery"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-font-of-magic",
+        "name": "Font of Magic",
+        "level": 2,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "You can tap into the wellspring of magic within yourself. This wellspring is represented by Sorcery Points, which allow you to create a variety of magical effects.\n\nYou have 2 Sorcery Points, and you gain more as you reach higher levels. You can't have more Sorcery Points than the maximum for your level. You regain all expended Sorcery Points when you finish a Long Rest.\n\n**Converting Spell Slots to Sorcery Points.** You can expend a spell slot to gain a number of Sorcery Points equal to the slot's level (no action required).\n\n**Creating Spell Slots.** As a Bonus Action, you can transform unexpended Sorcery Points into one spell slot.",
+        "shortDescription": "Gain Sorcery Points; convert them to and from spell slots.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "resource"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-metamagic",
+        "name": "Metamagic",
+        "level": 2,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "You gain the ability to twist your spells to suit your needs. You gain two Metamagic options of your choice. You gain another one at Sorcerer levels 10 and 17.\n\nYou can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options.",
+        "shortDescription": "Alter your spells by spending Sorcery Points.",
+        "activation": {
+          "type": "special"
+        },
+        "choices": [
+          {
+            "id": "metamagic-options",
+            "prompt": "Choose a Metamagic option.",
+            "count": 2,
+            "from": "srd-5.2:list/metamagic-options"
+          }
+        ],
+        "scaling": [
+          {
+            "level": 2,
+            "value": 2
+          },
+          {
+            "level": 10,
+            "value": 3
+          },
+          {
+            "level": 17,
+            "value": 4
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-subclass",
+        "name": "Sorcerer Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "You gain a Sorcerer subclass of your choice. A subclass is a specialization that grants you features at certain Sorcerer levels. For the rest of your career, you gain each of your subclass's features that are of your Sorcerer level or lower.",
+        "shortDescription": "Choose a Sorcerer subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify. You gain this feature again at Sorcerer levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "progression"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-sorcerous-restoration",
+        "name": "Sorcerous Restoration",
+        "level": 5,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest.",
+        "shortDescription": "Regain Sorcery Points on a Short Rest, once per Long Rest.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "resource",
+          "recovery"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-sorcery-incarnate",
+        "name": "Sorcery Incarnate",
+        "level": 7,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "If you have no uses of Innate Sorcery left, you can use it if you expend 2 Sorcery Points when you take the Bonus Action to activate it.\n\nIn addition, while your Innate Sorcery feature is active, you can use up to two of your Metamagic options on each spell you cast.",
+        "shortDescription": "Fuel Innate Sorcery with Sorcery Points; use two Metamagic options per spell while it is active.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify.",
+        "shortDescription": "Gain an Epic Boon feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "progression"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/sorcerer-arcane-apotheosis",
+        "name": "Arcane Apotheosis",
+        "level": 20,
+        "sourceId": "srd-5.2:class/sorcerer",
+        "description": "While your Innate Sorcery feature is active, you can use one Metamagic option on each of your turns without spending Sorcery Points on it.",
+        "shortDescription": "One free Metamagic option per turn while Innate Sorcery is active.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "capstone",
+          "spellcasting"
+        ],
+        "effects": []
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:class/warlock",
+    "name": "Warlock"
+  },
+  {
+    "id": "srd-5.2:class/wizard",
+    "name": "Wizard"
+  }
+]

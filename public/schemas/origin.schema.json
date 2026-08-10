@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/origin.schema.json",
+  "title": "D&D 5.5e SRD Origins",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/originId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      },
+      "abilityScores": {
+        "type": "array",
+        "description": "The abilities this origin may improve.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+        }
+      },
+      "featId": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/featId",
+        "description": "The origin feat this background grants. Resolved against feats.json at load."
+      },
+      "skillProficiencies": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+      },
+      "toolProficiencies": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+      },
+      "startingEquipment": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "gold": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "options"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "additionalProperties": false
+  }
+}

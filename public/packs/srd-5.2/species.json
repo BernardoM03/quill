@@ -1,0 +1,38 @@
+[
+  {
+    "id": "srd-5.2:species/dragonborn",
+    "name": "Dragonborn"
+  },
+  {
+    "id": "srd-5.2:species/dwarf",
+    "name": "Dwarf"
+  },
+  {
+    "id": "srd-5.2:species/elf",
+    "name": "Elf"
+  },
+  {
+    "id": "srd-5.2:species/gnome",
+    "name": "Gnome"
+  },
+  {
+    "id": "srd-5.2:species/goliath",
+    "name": "Goliath"
+  },
+  {
+    "id": "srd-5.2:species/halfling",
+    "name": "Halfling"
+  },
+  {
+    "id": "srd-5.2:species/human",
+    "name": "Human"
+  },
+  {
+    "id": "srd-5.2:species/orc",
+    "name": "Orc"
+  },
+  {
+    "id": "srd-5.2:species/tiefling",
+    "name": "Tiefling"
+  }
+]
