@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://quill.local/schemas/conditions.schema.json",
   "title": "D&D 5.5 SRD Conditions",
-  "description": "Top-level array of conditions. Each condition's mechanics are grouped into named bullets matching how the SRD writes them; the prose lives in each group's `description` and the machine-readable half in its `effects`.",
+  "description": "A condition is a temporary game state. The effects of condition define how it affects the target.",
   "type": "array",
   "items": {
     "type": "object",
@@ -13,13 +13,9 @@
       "name": {
         "type": "string"
       },
-      "description": {
-        "type": "string",
-        "description": "Optional lead-in prose. SRD conditions omit it: each effect group's own description carries the rules text, so a condition-level summary would only restate them."
-      },
       "levels": {
         "type": "object",
-        "description": "Present only on conditions that stack in levels — Exhaustion is the sole SRD example. `derivedValueId` names the counter that effects reference as `$derived:<id>`.",
+        "description": "Present only on conditions that stack in levels. (i.e Exhaustion ). `derivedValueId` names the counter that effects reference as `$derived:<id>`.",
         "properties": {
           "min": {
             "type": "integer",
@@ -33,25 +29,18 @@
             "type": "string"
           }
         },
-        "required": [
-          "min",
-          "max",
-          "derivedValueId"
-        ],
+        "required": ["min", "max", "derivedValueId"],
         "additionalProperties": false
       },
       "effectGroup": {
         "type": "array",
-        "description": "The named bullets that make up this condition.",
+        "description": "The effects that make up this condition",
         "items": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effectGroup"
         }
       }
     },
-    "required": [
-      "id",
-      "name"
-    ],
+    "required": ["id", "name"],
     "additionalProperties": false
   }
 }
