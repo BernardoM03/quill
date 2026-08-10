@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://quill.local/schemas/pack.schema.json",
   "title": "Content pack manifest",
-  "description": "Envelope for a body of game content. SRD is simply the first pack; homebrew and expansions use the identical shape.",
+  "description": "Envelope for a body of importable game content.",
   "type": "object",
   "properties": {
     "id": {
       "type": "string",
-      "description": "Pack namespace. Prefixes every content id this pack defines.",
+      "description": "Pack namespace prefix. Present in every content id this pack defines. i.e srd-5.2",
       "pattern": "^[a-z0-9][a-z0-9.-]*$"
     },
     "name": {
@@ -23,11 +23,11 @@
     },
     "attribution": {
       "type": "string",
-      "description": "Required for CC-BY content; surfaced in the UI."
+      "description": "Required for CC-BY content"
     },
     "providesEffectTypes": {
       "type": "array",
-      "description": "Namespaced effect types this pack introduces (`homebrew:effect/soul-burn`). The loader unions these across all loaded packs and rejects any effect whose non-core `type` was never declared. This is how a third-party pack adds mechanics without editing the shared schemas.",
+      "description": "Namespaced effect types this pack introduces",
       "items": {
         "$ref": "https://quill.local/schemas/common.schema.json#/$defs/id"
       },
@@ -35,7 +35,7 @@
     },
     "provides": {
       "type": "array",
-      "description": "Collections this pack ships. Each entry maps to <name>.json in the pack directory.",
+      "description": "Content packs this pack ships. Each entry maps to <name>.json in the pack directory.",
       "items": {
         "type": "string",
         "enum": [
