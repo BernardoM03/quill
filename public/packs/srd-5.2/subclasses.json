@@ -215,7 +215,7 @@
             "qualifiers": [
               {
                 "type": "spellSource",
-                "classId": "srd-5.2:class/sorcerer"
+                "sourceId": "srd-5.2:class/sorcerer"
               },
               {
                 "type": "damageType",

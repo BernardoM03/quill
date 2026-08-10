@@ -60,6 +60,9 @@
           "items": {
             "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
           }
+        },
+        "spellList": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellList"
         }
       },
       "required": [

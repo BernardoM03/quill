@@ -235,6 +235,9 @@
           "items": {
             "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
           }
+        },
+        "spellList": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellList"
         }
       },
       "required": [
@@ -321,9 +324,6 @@
           "type": "boolean"
         },
         "focus": {
-          "type": "string"
-        },
-        "spellListId": {
           "type": "string"
         },
         "swapOnLevelUp": {

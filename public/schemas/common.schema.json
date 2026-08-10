@@ -817,6 +817,35 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantSpells"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/spellListSourceId"
+                  },
+                  {
+                    "$ref": "#/$defs/spellId"
+                  }
+                ]
+              }
+            }
+          }
         }
       ]
     },
@@ -1144,9 +1173,9 @@
             "type": {
               "const": "spellSource"
             },
-            "classId": {
-              "$ref": "#/$defs/classId",
-              "description": "Applies only to spells drawn from this class"
+            "sourceId": {
+              "$ref": "#/$defs/spellListSourceId",
+              "description": "Applies only to spells on this class's or subclass's list."
             },
             "negate": {
               "type": "boolean"
@@ -1154,7 +1183,7 @@
           },
           "required": [
             "type",
-            "classId"
+            "sourceId"
           ],
           "additionalProperties": false
         },
@@ -1252,6 +1281,45 @@
     "featureId": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9.-]*:feature/[a-z0-9-]+$"
+    },
+    "spellListSourceId": {
+      "description": "A class whose spell list is meant.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/classId"
+        }
+      ]
+    },
+    "spellList": {
+      "type": "object",
+      "description": "A class's or subclass's claim on spells, for the half of the relation this side owns. Spell-list membership is many-to-many and either side may assert it: a spell names its lists in `sourceIds`, and a list names extra spells here. Both are unioned at load, so a new class can draw on existing spells and a new spell can join an existing list, neither editing the other's pack. Resolution order: inheritFrom, minus excludes, plus spells, plus every spell naming this id in its own sourceIds. `excludes` deliberately filters only the inherited set — it must not silently drop a spell from a pack that did not exist when the exclusion was written.",
+      "properties": {
+        "inheritFrom": {
+          "type": "array",
+          "description": "Take the whole resolved list of these classes/subclasses.",
+          "items": {
+            "$ref": "#/$defs/spellListSourceId"
+          },
+          "uniqueItems": true
+        },
+        "excludes": {
+          "type": "array",
+          "description": "Removed from the inherited set only.",
+          "items": {
+            "$ref": "#/$defs/spellId"
+          },
+          "uniqueItems": true
+        },
+        "spells": {
+          "type": "array",
+          "description": "Individually added spells.",
+          "items": {
+            "$ref": "#/$defs/spellId"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

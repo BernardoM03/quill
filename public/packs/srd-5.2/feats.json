@@ -2,7 +2,7 @@
   {
     "id": "srd-5.2:feat/magic-initiate-cleric",
     "name": "Magic Initiate (Cleric)",
-    "description": "You have learned the basics of the Cleric spellcasting tradition. Wisdom is your spellcasting ability for this feat's spells.",
+    "description": "You have learned the basics of the Cleric spellcasting tradition.",
     "category": "origin",
     "prerequisites": [],
     "repeatable": false,
@@ -35,7 +35,7 @@
         "effects": [
           {
             "type": "grantSpells",
-            "target": "srd-5.2:spell-list/cleric",
+            "target": "srd-5.2:class/cleric",
             "value": 1,
             "qualifiers": [
               {
@@ -60,16 +60,106 @@
     ],
     "choices": [
       {
+        "id": "",
+        "prompt": "Choose your spellcasting ability",
+        "count": 1,
+        "from": "spellcastingAbilities"
+      },
+      {
         "id": "magic-initiate-cleric-cantrips",
         "prompt": "Choose two cantrips from the Cleric spell list.",
         "count": 2,
-        "from": "srd-5.2:spell-list/cleric"
+        "from": "srd-5.2:class/cleric"
       },
       {
         "id": "magic-initiate-cleric-level-1-spell",
         "prompt": "Choose one level 1 spell from the Cleric spell list.",
         "count": 1,
-        "from": "srd-5.2:spell-list/cleric"
+        "from": "srd-5.2:class/cleric"
+      }
+    ],
+    "tags": [
+      "spellcasting",
+      "origin-feat"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/magic-initiate-druid",
+    "name": "Magic Initiate (Druid)",
+    "description": "You have learned the basics of the Druid spellcasting tradition.",
+    "category": "origin",
+    "prerequisites": [],
+    "repeatable": false,
+    "abilityScoreIncrease": null,
+    "uses": {
+      "max": 1,
+      "recharge": "long"
+    },
+    "benefits": [
+      {
+        "name": "Two Cantrips",
+        "description": "You learn two cantrips of your choice from the Druid spell list. Intelligence, Wisdomm, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/druid",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevel": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Level 1 Spell",
+        "description": "Choose one level 1 spell from the Druid spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/druid",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevel": 1
+              }
+            ],
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spell Change",
+        "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Druid spell list."
+      }
+    ],
+    "choices": [
+      {
+        "id": "",
+        "prompt": "Choose your spellcasting ability",
+        "count": 1,
+        "from": "spellcastingAbilities"
+      },
+      {
+        "id": "magic-initiate-druid-cantrips",
+        "prompt": "Choose two cantrips from the Druid spell list.",
+        "count": 2,
+        "from": "srd-5.2:class/druid"
+      },
+      {
+        "id": "magic-initiate-druid-level-1-spell",
+        "prompt": "Choose one level 1 spell from the Druid spell list.",
+        "count": 1,
+        "from": "srd-5.2:class/druid"
       }
     ],
     "tags": [
