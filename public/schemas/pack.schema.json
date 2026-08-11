@@ -47,7 +47,8 @@
           "feats",
           "equipment",
           "skills",
-          "conditions"
+          "conditions",
+          "tools"
         ]
       },
       "uniqueItems": true
