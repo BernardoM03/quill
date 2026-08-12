@@ -440,5 +440,132 @@
       "martial",
       "progression"
     ]
+  },
+  {
+    "id": "srd-5.2:feat/archery",
+    "name": "Archery",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroup": [
+      {
+        "name": "Archery",
+        "description": "You gain a +2 bonus to attack rolls you make with ranged weapons",
+        "effect": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "attackOrigin",
+                "attackOrigin": "rangedWeapon"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/defense",
+    "name": "Defense",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroup": [
+      {
+        "name": "Defense",
+        "description": "While you're wearing Light, Medium, or Heavy armor, you gain a +1 bonus to Armor Class",
+        "effect": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "armor"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/great-weapon-fighting",
+    "name": "Great Weapon Fighting",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroup": [
+      {
+        "name": "Great Weapon Fighting",
+        "description": "When you roll damage for an attack you make with a Melee weapon that you are holding with two hands, you can treat any 1 or 2 on a damage die as a 3. The weapon must have the Two-Handed or Versatile property to gain this benefit.",
+        "effect": [
+          {
+            "type": "rerollDamage",
+            "qualifiers": [
+              {
+                "type": "attackOrigin",
+                "attackOrigin": "meleeWeapon"
+              },
+              {
+                "type": "weaponProperty",
+                "weaponProperties": [
+                  "twoHanded",
+                  "versatile"
+                ]
+              }
+            ],
+            "reroll": {
+              "mode": "minimum",
+              "triggerValues": [
+                1,
+                2
+              ],
+              "minimum": 3
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/two-weapon-fighting",
+    "name": "Two-Weapon Fighting",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroup": [
+      {
+        "name": "Two-Weapon Fighting",
+        "description": "When you make an extra attack as a result of using a weapon that has the Light property, you can add your ability modifier to the damage of that attack if you aren’t already adding it to the damage.",
+        "effect": [
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": "$derived:abilityModifier",
+            "qualifiers": [
+              {
+                "type": "weaponProperty",
+                "weaponProperties": [
+                  "light"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
   }
 ]

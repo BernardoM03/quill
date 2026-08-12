@@ -74,11 +74,22 @@
       "enum": [
         "d20Test",
         "attackRoll",
+        "damageRoll",
         "savingThrow",
         "abilityCheck",
         "initiative",
         "deathSave",
         "concentration"
+      ]
+    },
+    "attackOrigin": {
+      "type": "string",
+      "description": "The source of an attack",
+      "enum": [
+        "meleeWeapon",
+        "rangedWeapon",
+        "meleeSpell",
+        "rangedSpell"
       ]
     },
     "diceExpression": {
@@ -1341,6 +1352,24 @@
         {
           "properties": {
             "type": {
+              "const": "attackOrigin"
+            },
+            "attackOrigin": {
+              "$ref": "#/$defs/attackOrigin"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "attackOrigin"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
               "const": "conditionLevel"
             },
             "atLeast": {
@@ -1355,6 +1384,30 @@
           "required": [
             "type",
             "atLeast"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "weaponProperty"
+            },
+            "weaponProperties": {
+              "type": "array",
+              "description": "Matches if the weapon has ANY of these properties, so 'Two-Handed or Versatile' is one qualifier. Combine with an attackOrigin qualifier to pin melee vs ranged. This tests the weapon's static properties only. How the weapon is currently held is runtime state, not content: Great Weapon Fighting requires a two-handed grip, and the sheet or VTT checks that against the live equipment state. Same division as the range qualifier.",
+              "items": {
+                "$ref": "#/$defs/weaponProperty"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "weaponProperties"
           ],
           "additionalProperties": false
         }
@@ -1533,6 +1586,21 @@
         "species",
         "origin",
         "condition"
+      ]
+    },
+    "weaponProperty": {
+      "type": "string",
+      "enum": [
+        "ammunition",
+        "finesse",
+        "heavy",
+        "light",
+        "loading",
+        "range",
+        "reach",
+        "thrown",
+        "twoHanded",
+        "versatile"
       ]
     }
   }
