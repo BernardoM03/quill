@@ -399,14 +399,41 @@
           "items": {
             "type": "string"
           }
+        },
+        "fromTypes": {
+          "type": "array",
+          "description": "Any loaded entity of these kinds is selectable. Use for open pools such as Skilled's 'any skill or tool'.",
+          "items": {
+            "$ref": "#/$defs/entityKind"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "qualifiers": {
+          "type": "array",
+          "description": "Narrows the pool, ANDed. Reuses the effect qualifier vocabulary so a cantrip-only pick is `from` the class list plus a spellLevel qualifier — the filter is stated once, on the choice, rather than duplicated onto the effect that consumes it.",
+          "items": {
+            "$ref": "#/$defs/qualifier"
+          }
         }
       },
       "required": [
         "id",
-        "count",
-        "from"
+        "count"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "from"
+          ]
+        },
+        {
+          "required": [
+            "fromTypes"
+          ]
+        }
+      ]
     },
     "scalingRow": {
       "type": "object",
@@ -460,7 +487,10 @@
         "silenced",
         "autoCrit",
         "prone",
-        "dropHeldItem"
+        "dropHeldItem",
+        "initiativeSwap",
+        "rerollDamage",
+        "setSpellcastingAbility"
       ]
     },
     "effect": {
@@ -521,6 +551,9 @@
         "repeatable": {
           "type": "boolean",
           "description": "Whether or not this condition stacks"
+        },
+        "reroll": {
+          "$ref": "#/$defs/rerollSpec"
         }
       },
       "required": [
@@ -682,7 +715,7 @@
                 "$ref": "#/$defs/rollTarget"
               },
               "value": {
-                "description": "A flat integer (negative for a penalty), a derived quantity to be scaled by `multiplier`, or a dice expression such as Bardic Inspiration's 1d6.",
+                "description": "A flat integer, a derived quantity to be scaled by `multiplier`, or a dice expression such as Bardic Inspiration's 1d6.",
                 "oneOf": [
                   {
                     "type": "integer"
@@ -841,6 +874,55 @@
                   },
                   {
                     "$ref": "#/$defs/spellId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rerollDamage"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "reroll"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setSpellcastingAbility"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ability"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
                   }
                 ]
               }
@@ -1074,6 +1156,10 @@
             "conditionId": {
               "$ref": "#/$defs/conditionId",
               "description": "Applies only against creatures that have this condition, e.g. a creature you are Grappling."
+            },
+            "source": {
+              "$ref": "#/$defs/relation",
+              "description": "Who inflicted the condition. `self` means 'Grappled by you'. Omit to match the condition regardless of who caused it. Kept on this qualifier rather than as a separate targetRelation so the binding to THIS condition is unambiguous when an effect carries more than one."
             },
             "negate": {
               "type": "boolean"
@@ -1320,6 +1406,134 @@
         }
       },
       "additionalProperties": false
+    },
+    "rerollSpec": {
+      "type": "object",
+      "description": "How damage dice are re-rolled or floored. Covers both shapes because they express the same intent — suppress low damage rolls — and consumers apply them at the same moment: after the dice land, before the total is used. `mode: reroll` rolls again; `mode: minimum` leaves the die alone and treats anything below the floor as the floor. Narrow WHICH damage this applies to with qualifiers (damageType, spellSource, ...), not with fields here.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "`reroll` rolls the die again. `minimum` never rerolls; a rolled value below `minimum` counts as `minimum`.",
+          "enum": [
+            "reroll",
+            "minimum"
+          ]
+        },
+        "triggerValues": {
+          "type": "array",
+          "description": "Rolled values that qualify, e.g. [1, 2]. Omit to mean any value qualifies.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "dice": {
+          "description": "How many dice are affected. `each` treats every qualifying die independently. `all` rerolls the whole damage roll as a set, so `keep` compares totals rather than single dice. A number or $derived: value caps how many may be chosen.",
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "each",
+                "all"
+              ]
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
+        },
+        "keep": {
+          "type": "string",
+          "description": "`new` forces the second result. `best` lets the roller choose the higher result. Only meaningful when mode is `reroll`.",
+          "enum": [
+            "new",
+            "best"
+          ]
+        },
+        "minimum": {
+          "type": "integer",
+          "description": "The floor a qualifying die counts as. Only meaningful when mode is `minimum`.",
+          "minimum": 1
+        },
+        "frequency": {
+          "type": "string",
+          "description": "How often the allowance refreshes. Defaults to `unlimited`, i.e. every qualifying die every time.",
+          "enum": [
+            "unlimited",
+            "perAttack",
+            "perCast",
+            "perTurn",
+            "perRound"
+          ]
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "reroll"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "dice",
+              "keep"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "minimum"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "minimum"
+            ]
+          }
+        }
+      ]
+    },
+    "toolId": {
+      "type": "string",
+      "description": "Namespaced content id for Tools: <packId>:tool/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:tool/[a-z0-9-]+$"
+    },
+    "entityKind": {
+      "type": "string",
+      "description": "An entity type segment, matching the middle part of an id. Naming a kind rather than listing members keeps an open pool open: a skill added by a later pack becomes selectable without editing the feature that offers the choice.",
+      "enum": [
+        "skill",
+        "tool",
+        "spell",
+        "feat",
+        "class",
+        "subclass",
+        "species",
+        "origin",
+        "condition"
+      ]
     }
   }
 }
