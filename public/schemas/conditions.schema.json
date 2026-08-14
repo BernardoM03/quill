@@ -13,6 +13,10 @@
       "name": {
         "type": "string"
       },
+      "repeatable": {
+        "type": "boolean",
+        "description": "Whether the condition stacks. A property of the condition as a whole, so two effect groups can never disagree about it."
+      },
       "levels": {
         "type": "object",
         "description": "Present only on conditions that stack in levels. (i.e Exhaustion ). `derivedValueId` names the counter that effects reference as `$derived:<id>`.",
@@ -29,10 +33,14 @@
             "type": "string"
           }
         },
-        "required": ["min", "max", "derivedValueId"],
+        "required": [
+          "min",
+          "max",
+          "derivedValueId"
+        ],
         "additionalProperties": false
       },
-      "effectGroup": {
+      "effectGroups": {
         "type": "array",
         "description": "The effects that make up this condition",
         "items": {
@@ -40,7 +48,10 @@
         }
       }
     },
-    "required": ["id", "name"],
+    "required": [
+      "id",
+      "name"
+    ],
     "additionalProperties": false
   }
 }

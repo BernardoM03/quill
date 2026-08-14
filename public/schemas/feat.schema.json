@@ -48,7 +48,7 @@
           }
         ]
       },
-      "effectGroup": {
+      "effectGroups": {
         "type": "array",
         "description": "Feats are written as named sub-bullets rather than one prose block. Each benefit may carry its own mechanical effects.",
         "items": {
@@ -72,13 +72,6 @@
         "items": {
           "type": "string"
         }
-      },
-      "effects": {
-        "type": "array",
-        "description": "Feat-level effects.",
-        "items": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
-        }
       }
     },
     "required": [
@@ -86,7 +79,7 @@
       "name",
       "category",
       "repeatable",
-      "effectGroup",
+      "effectGroups",
       "tags"
     ],
     "additionalProperties": false

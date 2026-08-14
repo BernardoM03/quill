@@ -82,16 +82,6 @@
         "concentration"
       ]
     },
-    "attackOrigin": {
-      "type": "string",
-      "description": "The source of an attack",
-      "enum": [
-        "meleeWeapon",
-        "rangedWeapon",
-        "meleeSpell",
-        "rangedSpell"
-      ]
-    },
     "diceExpression": {
       "type": "object",
       "description": "A rolled quantity, e.g. Bardic Inspiration's 1d6.",
@@ -135,9 +125,6 @@
         },
         {
           "const": "allDamage"
-        },
-        {
-          "const": "elementalDamage"
         }
       ]
     },
@@ -195,14 +182,6 @@
         "combat",
         "social",
         "travel"
-      ]
-    },
-    "travelPace": {
-      "type": "string",
-      "enum": [
-        "slow",
-        "normal",
-        "fast"
       ]
     },
     "relation": {
@@ -289,7 +268,7 @@
         "description": {
           "type": "string"
         },
-        "effect": {
+        "effects": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/effect"
@@ -492,16 +471,13 @@
         "applyCondition",
         "grantFeature",
         "loseAction",
-        "loseBonusAction",
-        "loseReaction",
         "loseConcentration",
-        "silenced",
         "autoCrit",
-        "prone",
         "dropHeldItem",
         "initiativeSwap",
         "rerollDamage",
-        "setSpellcastingAbility"
+        "setSpellcastingAbility",
+        "loseComponent"
       ]
     },
     "effect": {
@@ -520,7 +496,7 @@
           ]
         },
         "target": {
-          "description": "What the effect applies to: a damage type, a speed type, a roll ('attackRoll', 'savingThrow', 'abilityCheck'), a stat ('spellSaveDC', 'hitPointMaximum'), or a content id. An array where the effect applies to a set, as `loseSense` does. Deliberately untyped here — the allOf pairs below narrow it per effect type, and a base `type` would make an array target unsatisfiable, since allOf can only add constraints, never loosen them."
+          "description": "What the effect applies to: a damage type, a speed type, a roll, a stat, or a content id. Stat names are camelCase (armorClass, hitPointMaximum, baseSpeed). Use `modifier` to adjust a stat and `grantSpeed` to set a speed outright; the two are different operations, not duplicates. An array where the effect applies to a set, as `loseSense` does. Deliberately untyped here, since the allOf pairs narrow it per effect type and a base `type` would make an array target unsatisfiable."
         },
         "value": {
           "description": "Shape depends on `type`; see the allOf constraints below. Unconstrained for effect types that do not yet have an if/then pair."
@@ -558,10 +534,6 @@
         },
         "castingOverrides": {
           "$ref": "#/$defs/castingOverrides"
-        },
-        "repeatable": {
-          "type": "boolean",
-          "description": "Whether or not this condition stacks"
         },
         "reroll": {
           "$ref": "#/$defs/rerollSpec"
@@ -939,6 +911,60 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "loseAction"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/actionType"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "loseComponent"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/component"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
         }
       ]
     },
@@ -1041,7 +1067,7 @@
     },
     "proficiencyGrant": {
       "type": "object",
-      "description": "Either a flat grant (`items`) or a player choice from a pool (`count` + `from`).",
+      "description": "Either a flat grant (`items`) or a player choice from a pool (`count` + `from`). Exactly one form, so an empty object is rejected.",
       "properties": {
         "items": {
           "type": "array",
@@ -1060,7 +1086,20 @@
           }
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "items"
+          ]
+        },
+        {
+          "required": [
+            "count",
+            "from"
+          ]
+        }
+      ]
     },
     "qualifier": {
       "type": "object",
@@ -1352,24 +1391,6 @@
         {
           "properties": {
             "type": {
-              "const": "attackOrigin"
-            },
-            "attackOrigin": {
-              "$ref": "#/$defs/attackOrigin"
-            },
-            "negate": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "type",
-            "attackOrigin"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "properties": {
-            "type": {
               "const": "conditionLevel"
             },
             "atLeast": {
@@ -1408,6 +1429,42 @@
           "required": [
             "type",
             "weaponProperties"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "attackRange"
+            },
+            "attackRange": {
+              "$ref": "#/$defs/attackRange"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "attackRange"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "attackSource"
+            },
+            "attackSource": {
+              "$ref": "#/$defs/attackSource"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "attackSource"
           ],
           "additionalProperties": false
         }
@@ -1601,6 +1658,29 @@
         "thrown",
         "twoHanded",
         "versatile"
+      ]
+    },
+    "actionType": {
+      "type": "string",
+      "enum": [
+        "action",
+        "bonusAction",
+        "reaction"
+      ]
+    },
+    "attackRange": {
+      "type": "string",
+      "enum": [
+        "melee",
+        "ranged"
+      ]
+    },
+    "attackSource": {
+      "type": "string",
+      "enum": [
+        "weapon",
+        "spell",
+        "unarmed"
       ]
     }
   }
