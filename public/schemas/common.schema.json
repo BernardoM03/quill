@@ -176,6 +176,17 @@
         "undead"
       ]
     },
+    "creatureSize": {
+      "type" : "string",
+      "enum": [
+        "tiny",
+        "small",
+        "medium",
+        "large",
+        "huge",
+        "gargantuan"
+      ]
+    },
     "situationType": {
       "type": "string",
       "enum": [
