@@ -16,22 +16,10 @@
         "type": "string"
       },
       "creatureType": {
-        "type": "string"
+        "$ref" : "https://quill.local/schemas/common.schema.json#/$defs/creatureType"
       },
-      "size": {
-        "type": "array",
-        "description": "More than one entry when the species offers a size choice.",
-        "items": {
-          "type": "string",
-          "enum": [
-            "Tiny",
-            "Small",
-            "Medium",
-            "Large",
-            "Huge",
-            "Gargantuan"
-          ]
-        }
+      "creatureSize": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureSize"
       },
       "speed": {
         "type": "integer"

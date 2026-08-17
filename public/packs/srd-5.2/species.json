@@ -1,7 +1,10 @@
 [
   {
     "id": "srd-5.2:species/dragonborn",
-    "name": "Dragonborn"
+    "name": "Dragonborn",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30
   },
   {
     "id": "srd-5.2:species/dwarf",

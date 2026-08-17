@@ -177,7 +177,7 @@
       ]
     },
     "creatureSize": {
-      "type" : "string",
+      "type": "string",
       "enum": [
         "tiny",
         "small",
@@ -991,6 +991,7 @@
         },
         "level": {
           "type": "integer",
+          "description": "The class level at which the feature is gained. Omit for features with no level, such as species traits, which you have from level 1.",
           "minimum": 1,
           "maximum": 20
         },
@@ -1001,9 +1002,12 @@
             },
             {
               "$ref": "#/$defs/subclassId"
+            },
+            {
+              "$ref": "#/$defs/speciesId"
             }
           ],
-          "description": "The class or subclass that grants this feature — legitimately either."
+          "description": "What grants this feature. A class, a subclass, or a species."
         },
         "description": {
           "type": "string",
@@ -1070,7 +1074,6 @@
       "required": [
         "id",
         "name",
-        "level",
         "sourceId",
         "description"
       ],
