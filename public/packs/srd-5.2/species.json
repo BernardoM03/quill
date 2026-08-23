@@ -4,7 +4,224 @@
     "name": "Dragonborn",
     "creatureType": "humanoid",
     "creatureSize": "medium",
-    "speed": 30
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/dragonborn-draconic-ancestry",
+        "name": "Draconic Ancestry",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "Your lineage stems from a dragon progenitor. Choose the kind of dragon from the Draconic Ancestors table. Your choice affects your Breath Weapon and Damage Resistance traits as well as your appearance.",
+        "shortDescription": "Choose a dragon ancestor; it sets your damage type.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "draconic-ancestry",
+            "prompt": "Choose your draconic ancestor.",
+            "count": 1,
+            "from": [
+              {
+                "value": "acid",
+                "label": "Black"
+              },
+              {
+                "value": "lightning",
+                "label": "Blue"
+              },
+              {
+                "value": "fire",
+                "label": "Brass"
+              },
+              {
+                "value": "lightning",
+                "label": "Bronze"
+              },
+              {
+                "value": "acid",
+                "label": "Copper"
+              },
+              {
+                "value": "fire",
+                "label": "Gold"
+              },
+              {
+                "value": "poison",
+                "label": "Green"
+              },
+              {
+                "value": "fire",
+                "label": "Red"
+              },
+              {
+                "value": "cold",
+                "label": "Silver"
+              },
+              {
+                "value": "cold",
+                "label": "White"
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "origin"
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-breath-weapon",
+        "name": "Breath Weapon",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "When you take the Attack action on your turn, you can replace one of your attacks with an exhalation of magical energy in either a 15-foot Cone or a 30-foot Line that is 5 feet wide (choose the shape each time). Each creature in that area must make a Dexterity saving throw (DC 8 plus your Constitution modifier and Proficiency Bonus). On a failed save, a creature takes 1d10 damage of the type determined by your Draconic Ancestry trait. On a successful save, a creature takes half as much damage. This damage increases by 1d10 when you reach character levels 5 (2d10), 11 (3d10), and 17 (4d10).\n\nYou can use this Breath Weapon a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Replace an attack with a Cone or Line of damage; Dexterity save for half.",
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "damage",
+          "area"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "$choice:draconic-ancestry",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "affects": "others",
+            "area": [
+              {
+                "shape": "cone",
+                "size": 15
+              },
+              {
+                "shape": "line",
+                "size": 30,
+                "width": 5
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "base": 8,
+                "ability": "CON",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            },
+            "scaling": [
+              {
+                "level": 1,
+                "value": {
+                  "count": 1,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 5,
+                "value": {
+                  "count": 2,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 11,
+                "value": {
+                  "count": 3,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 17,
+                "value": {
+                  "count": 4,
+                  "die": "d10"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-damage-resistance",
+        "name": "Damage Resistance",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "You have Resistance to the damage type determined by your Draconic Ancestry trait.",
+        "shortDescription": "Resistance to your Draconic Ancestry damage type.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$choice:draconic-ancestry"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "You have Darkvision with a range of 60 feet.",
+        "shortDescription": "See in dim light and darkness within 60 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 60
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-draconic-flight",
+        "name": "Draconic Flight",
+        "level": 5,
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "When you reach character level 5, you can channel draconic magic to give yourself temporary flight. As a Bonus Action, you sprout spectral wings on your back that last for 10 minutes or until you retract the wings (no action required) or have the Incapacitated condition. During that time, you have a Fly Speed equal to your Speed. Your wings appear to be made of the same energy as your Breath Weapon. Once you use this trait, you can't use it again until you finish a Long Rest.",
+        "shortDescription": "Bonus Action: sprout wings and gain a Fly Speed equal to your Speed for 10 minutes.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": "$derived:walkingSpeed",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/dragonborn-draconic-flight"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:species/dwarf",

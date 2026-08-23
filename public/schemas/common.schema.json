@@ -141,6 +141,7 @@
     },
     "sense": {
       "type": "string",
+      "description": "An ordinary perception channel a creature can lose or be concealed from. Unranged by nature - you do not have 30 feet of hearing. A granted perception mode carrying a distance is a `specialSense` instead.",
       "enum": [
         "sight",
         "hearing",
@@ -148,6 +149,120 @@
         "touch",
         "taste"
       ]
+    },
+    "specialSense": {
+      "type": "string",
+      "description": "A perception mode a creature is granted, always with a range in feet. Kept separate from `sense` because the two run in opposite directions and only one carries a distance: effects take away a `sense` and grant a `specialSense`.",
+      "enum": [
+        "darkvision",
+        "blindsight",
+        "tremorsense",
+        "truesight"
+      ]
+    },
+    "areaOfEffect": {
+      "type": "object",
+      "description": "A templated region an effect fills. `size` is the defining dimension in feet - a Cone's or Line's length, a Sphere's, Cylinder's or Emanation's radius, a Cube's edge - so one field covers every shape rather than a differently named dimension per shape.",
+      "properties": {
+        "shape": {
+          "type": "string",
+          "enum": [
+            "cone",
+            "line",
+            "sphere",
+            "cube",
+            "cylinder",
+            "emanation"
+          ]
+        },
+        "size": {
+          "type": "number",
+          "minimum": 0
+        },
+        "width": {
+          "type": "number",
+          "description": "Line width in feet.",
+          "minimum": 0
+        },
+        "height": {
+          "type": "number",
+          "description": "Cylinder height in feet.",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "shape",
+        "size"
+      ],
+      "additionalProperties": false
+    },
+    "saveDc": {
+      "type": "object",
+      "description": "How a DC is computed. The SRD writes these as a formula - 'DC 8 plus your Constitution modifier and Proficiency Bonus' - so it is stored as one, letting a sheet recompute the DC as the character levels instead of freezing a number that silently goes stale. `fixed` is the other form: a DC belonging to the content itself, such as a trap, which no character stat feeds.",
+      "properties": {
+        "base": {
+          "type": "integer"
+        },
+        "ability": {
+          "description": "Ability modifier added to `base`. Accepts a $derived: sentinel for the spellcasting ability, which varies by the class doing the casting.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ability"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
+        },
+        "proficiency": {
+          "type": "boolean",
+          "description": "Add the Proficiency Bonus."
+        },
+        "fixed": {
+          "type": "integer",
+          "description": "A flat DC independent of the character."
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "base"
+          ]
+        },
+        {
+          "required": [
+            "fixed"
+          ]
+        }
+      ]
+    },
+    "savingThrow": {
+      "type": "object",
+      "description": "A save made against an effect by whoever the effect is aimed at. Distinct from the `savingThrow` rollTarget, which is the character's own save being modified.",
+      "properties": {
+        "ability": {
+          "$ref": "#/$defs/ability"
+        },
+        "dc": {
+          "$ref": "#/$defs/saveDc"
+        },
+        "onSuccess": {
+          "type": "string",
+          "description": "What a successful save does. `half` halves the damage, `negate` prevents the effect entirely, `none` means success alone changes nothing.",
+          "enum": [
+            "half",
+            "negate",
+            "none"
+          ]
+        }
+      },
+      "required": [
+        "ability",
+        "dc",
+        "onSuccess"
+      ],
+      "additionalProperties": false
     },
     "component": {
       "type": "string",
@@ -294,7 +409,7 @@
     },
     "deferredValue": {
       "type": "string",
-      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id on the same feature, resolved when the player picks. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves.",
+      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id declared by any feature of the same grantor - the species, class, subclass, or feat - resolved when the player picks. Scoped to the grantor rather than to the single feature because the SRD routinely lets one decision drive several traits: Draconic Ancestry is chosen once and read by both Breath Weapon and Damage Resistance. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves.",
       "pattern": "^\\$(choice|derived):[A-Za-z][A-Za-z0-9-]*$"
     },
     "rest": {
@@ -392,13 +507,35 @@
           "minimum": 1
         },
         "from": {
-          "description": "Either a list id to resolve, or a literal set of options.",
+          "description": "Either a list id to resolve, or a literal set of options. An option is a bare string when what the player reads is also what the mechanics consume, and a {value,label} pair when they differ: Draconic Ancestry offers ten dragons that collapse to five damage types, so the label names the dragon while the value carries the type an effect picks up through $choice:. Without the pair that mapping would have to live inside a consumer, and the dragon would stop being data.",
           "type": [
             "string",
             "array"
           ],
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "description": "What $choice: resolves to."
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "What the player is shown."
+                  }
+                },
+                "required": [
+                  "value",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            ]
           }
         },
         "fromTypes": {
@@ -446,9 +583,17 @@
           "maximum": 20
         },
         "value": {
-          "type": [
-            "number",
-            "string"
+          "description": "The value at this level. A dice expression where the thing that grows is dice - Breath Weapon's 1d10 through 4d10 - so a row states the whole quantity and a consumer never has to pair it with a die size held somewhere else.",
+          "oneOf": [
+            {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            {
+              "$ref": "#/$defs/diceExpression"
+            }
           ]
         }
       },
@@ -488,7 +633,9 @@
         "initiativeSwap",
         "rerollDamage",
         "setSpellcastingAbility",
-        "loseComponent"
+        "loseComponent",
+        "grantSense",
+        "dealDamage"
       ]
     },
     "effect": {
@@ -548,6 +695,17 @@
         },
         "reroll": {
           "$ref": "#/$defs/rerollSpec"
+        },
+        "area": {
+          "type": "array",
+          "description": "The region(s) the effect fills. More than one entry means the shape is picked at the moment of use, as in Breath Weapon's 'either a 15-foot Cone or a 30-foot Line ... (choose the shape each time)'. Deliberately not a `choice`: a choice is settled once when the feature is gained, this is re-answered on every use.",
+          "items": {
+            "$ref": "#/$defs/areaOfEffect"
+          },
+          "minItems": 1
+        },
+        "save": {
+          "$ref": "#/$defs/savingThrow"
         }
       },
       "required": [
@@ -973,6 +1131,86 @@
                 },
                 "minItems": 1,
                 "uniqueItems": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantSense"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/specialSense"
+              },
+              "value": {
+                "description": "Range in feet.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dealDamage"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "description": "The damage type dealt. `allDamage` is not accepted here - it is a defensive breadth, and meaningless when dealing damage.",
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/damageType"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/diceExpression"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               }
             }
           }
