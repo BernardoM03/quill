@@ -310,6 +310,20 @@
         "travel"
       ]
     },
+    "terrainMaterial": {
+      "type": "string",
+      "description": "A surface a creature can be in contact with. Deliberately NOT a biome: Circle of the Land's Arid, Polar, Temperate and Tropical describe where you are, not what you are touching, and a feature keyed to one of those wants its own qualifier rather than a widened member here. Keeping the two apart is what stops `stone` and `arctic` ending up in the same enum, where no consumer could tell a contact test from an environment test.",
+      "enum": [
+        "stone",
+        "earth",
+        "sand",
+        "snow",
+        "ice",
+        "water",
+        "wood",
+        "metal"
+      ]
+    },
     "relation": {
       "type": "string",
       "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive.",
@@ -1476,6 +1490,25 @@
         {
           "properties": {
             "type": {
+              "const": "againstCondition"
+            },
+            "conditionId": {
+              "$ref": "#/$defs/conditionId",
+              "description": "Applies only to a roll made to avoid or shake off this condition - Dwarven Resilience's Advantage on 'saving throws you make to avoid or end the Poisoned condition'. The mirror of `targetCondition`, and the reason both exist: that one asks whether the creature you are rolling AGAINST already carries the condition, this one asks whether the roll itself is your attempt to escape it. Collapsing them would make the direction of a save ambiguous."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "conditionId"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
               "const": "targetRelation"
             },
             "relation": {
@@ -1506,6 +1539,25 @@
           "required": [
             "type",
             "situationType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "terrain"
+            },
+            "material": {
+              "$ref": "#/$defs/terrainMaterial",
+              "description": "The surface the character must be in physical contact with. Stonecunning's 'on a stone surface or touching a stone surface' is one requirement written two ways, so contact is the whole of what this qualifier tests - there is no separate on/touching axis to choose between. Nor does it distinguish natural stone from worked, which the SRD explicitly declines to do."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "material"
           ],
           "additionalProperties": false
         },

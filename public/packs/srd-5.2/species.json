@@ -225,34 +225,175 @@
   },
   {
     "id": "srd-5.2:species/dwarf",
-    "name": "Dwarf"
+    "name": "Dwarf",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/dwarven-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "You have Darkvision with a range of 120 feet.",
+        "shortDescription": "See in dim light and darkness within 120 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 120
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-resilience",
+        "name": "Dwarven Resilience",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "You have Resistance to Poison damage. You also have Advantage on saving throws you make to avoid or end the Poisoned condition.",
+        "shortDescription": "Resistance to Poison damage, and Advantage on saves against the Poisoned condition.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "poison"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "againstCondition",
+                "conditionId": "srd-5.2:condition/poisoned"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-toughness",
+        "name": "Dwarven Toughness",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "Your Hit Point maximum increases by 1, and it increases by 1 again whenever you gain a level.",
+        "shortDescription": "+1 Hit Point maximum per character level.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "hitPointMaximum",
+            "value": "$derived:characterLevel"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-stonecunning",
+        "name": "Stonecunning",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "As a Bonus Action, you gain Tremorsense with a range of 60 feet for 10 minutes. You must be on a stone surface or touching a stone surface to use this Tremorsense. The stone can be natural or worked.\n\nYou can use this Bonus Action a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: Tremorsense 60 feet for 10 minutes while on or touching stone.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "tremorsense",
+            "value": 60,
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/dwarven-stonecunning"
+              },
+              {
+                "type": "terrain",
+                "material": "stone"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:species/elf",
-    "name": "Elf"
+    "name": "Elf",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/gnome",
-    "name": "Gnome"
+    "name": "Gnome",
+    "creatureType": "humanoid",
+    "creatureSize": "small",
+    "speed": 30,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/goliath",
-    "name": "Goliath"
+    "name": "Goliath",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 35,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/halfling",
-    "name": "Halfling"
+    "name": "Halfling",
+    "creatureType": "humanoid",
+    "creatureSize": "small",
+    "speed": 30,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/human",
-    "name": "Human"
+    "name": "Human",
+    "creatureType": "humanoid",
+    "creatureSize": "$choice:human-size",
+    "speed": 30,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/orc",
-    "name": "Orc"
+    "name": "Orc",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": []
   },
   {
     "id": "srd-5.2:species/tiefling",
-    "name": "Tiefling"
+    "name": "Tiefling",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": []
   }
 ]

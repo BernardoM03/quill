@@ -19,7 +19,15 @@
         "$ref" : "https://quill.local/schemas/common.schema.json#/$defs/creatureType"
       },
       "creatureSize": {
-        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureSize"
+        "description": "Fixed for most species. A $choice: sentinel where the species lets the player pick, as Human does between Small and Medium - the size is then a build decision like any other, not a property of the species. Widened here rather than in the shared creatureSize enum, which other consumers still need to read strictly.",
+        "oneOf": [
+          {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureSize"
+          },
+          {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/deferredValue"
+          }
+        ]
       },
       "speed": {
         "type": "integer"
