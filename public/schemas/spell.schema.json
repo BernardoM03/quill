@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/spell.schema.json",
+  "title": "D&D 5.5e SRD Spells",
+  "description": "Top-level array of spells. Spell lists are not entities: a spell names the classes and subclasses whose list it belongs to in `sourceIds`, and a list is derived by filtering. A pack adds a spell to an existing class's list by shipping a spell that names that class — no edit to the owning pack, the same child-points-at-parent rule as subclass.classId.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellId" },
+      "name": { "type": "string" },
+      "level": {
+        "type": "integer",
+        "description": "0 means cantrip.",
+        "minimum": 0,
+        "maximum": 9
+      },
+      "school": {
+        "type": "string",
+        "enum": [
+          "abjuration",
+          "conjuration",
+          "divination",
+          "enchantment",
+          "evocation",
+          "illusion",
+          "necromancy",
+          "transmutation"
+        ]
+      },
+      "sourceIds": {
+        "type": "array",
+        "description": "Classes whose spell list includes this spell. A subclass entry covers domain-style lists (Life Domain), which the subclass alone dictates.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellListSourceId"
+        },
+        "uniqueItems": true
+      },
+      "castingTime": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation" },
+      "range": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["self", "touch", "ranged", "sight", "unlimited"] },
+          "distance": { "type": "number", "minimum": 0 },
+          "unit": { "type": "string", "enum": ["feet", "miles"] }
+        },
+        "required": ["type"],
+        "additionalProperties": false
+      },
+      "components": {
+        "type": "array",
+        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/component" },
+        "uniqueItems": true
+      },
+      "materialComponent": { "type": "string" },
+      "duration": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration" },
+      "concentration": { "type": "boolean" },
+      "ritual": { "type": "boolean" },
+      "description": { "type": "string", "description": "Markdown prose rendered by the UI." },
+      "shortDescription": { "type": "string" },
+      "higherLevels": {
+        "type": "string",
+        "description": "The 'Using a Higher-Level Spell Slot' clause."
+      },
+      "tags": { "type": "array", "items": { "type": "string" } },
+      "effects": {
+        "type": "array",
+        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect" }
+      }
+    },
+    "required": ["id", "name", "level", "school", "sourceIds", "description"],
+    "additionalProperties": false
+  }
+}

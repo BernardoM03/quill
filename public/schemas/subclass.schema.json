@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/subclass.schema.json",
+  "title": "D&D 5.5e SRD Subclasses",
+  "description": "Top-level array of subclasses. Each points at its parent class via classId (child -> parent), which is what lets a homebrew pack extend an SRD class without copying or patching it. The reference must never be inverted onto the class.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/subclass"
+  },
+  "$defs": {
+    "subclass": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/subclassId"
+        },
+        "classId": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/classId",
+          "description": "Parent class. May belong to a different pack than this subclass."
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "flavor": {
+          "type": "string"
+        },
+        "subclassFeatureLevels": {
+          "type": "array",
+          "description": "Levels at which this subclass grants features. Usually mirrors the parent class, but a pack may deviate.",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "spellcasting": {
+          "type": "object",
+          "description": "Subclass-granted spellcasting, e.g. Domain Spells.",
+          "properties": {
+            "alwaysPrepared": {
+              "type": "boolean"
+            },
+            "spellsByLevel": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
+          }
+        },
+        "spellList": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellList"
+        }
+      },
+      "required": [
+        "id",
+        "classId",
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

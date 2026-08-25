@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/pack.schema.json",
+  "title": "Content pack manifest",
+  "description": "Envelope for a body of importable game content.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Pack namespace prefix. Present in every content id this pack defines. i.e srd-5.2",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver. Campaigns pin this so an old campaign resolves the content it was built against.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "license": {
+      "type": "string"
+    },
+    "attribution": {
+      "type": "string",
+      "description": "Required for CC-BY content"
+    },
+    "providesEffectTypes": {
+      "type": "array",
+      "description": "Namespaced effect types this pack introduces",
+      "items": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/id"
+      },
+      "uniqueItems": true
+    },
+    "provides": {
+      "type": "array",
+      "description": "Content packs this pack ships. Each entry maps to <name>.json in the pack directory.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "classes",
+          "subclasses",
+          "spells",
+          "species",
+          "origins",
+          "feats",
+          "equipment",
+          "skills",
+          "conditions",
+          "tools"
+        ]
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "version",
+    "provides"
+  ],
+  "additionalProperties": false
+}

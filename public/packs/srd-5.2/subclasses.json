@@ -1,0 +1,309 @@
+[
+  {
+    "id": "srd-5.2:subclass/path-of-the-berserker",
+    "classId": "srd-5.2:class/barbarian",
+    "name": "Path of the Berserker"
+  },
+  {
+    "id": "srd-5.2:subclass/college-of-lore",
+    "classId": "srd-5.2:class/bard",
+    "name": "College of Lore"
+  },
+  {
+    "id": "srd-5.2:subclass/life-domain",
+    "classId": "srd-5.2:class/cleric",
+    "name": "Life Domain"
+  },
+  {
+    "id": "srd-5.2:subclass/circle-of-the-land",
+    "classId": "srd-5.2:class/druid",
+    "name": "Circle of the Land"
+  },
+  {
+    "id": "srd-5.2:subclass/champion",
+    "classId": "srd-5.2:class/fighter",
+    "name": "Champion"
+  },
+  {
+    "id": "srd-5.2:subclass/warrior-of-the-open-hand",
+    "classId": "srd-5.2:class/monk",
+    "name": "Warrior of the Open Hand"
+  },
+  {
+    "id": "srd-5.2:subclass/oath-of-devotion",
+    "classId": "srd-5.2:class/paladin",
+    "name": "Oath of Devotion"
+  },
+  {
+    "id": "srd-5.2:subclass/hunter",
+    "classId": "srd-5.2:class/ranger",
+    "name": "Hunter"
+  },
+  {
+    "id": "srd-5.2:subclass/thief",
+    "classId": "srd-5.2:class/rogue",
+    "name": "Thief"
+  },
+  {
+    "id": "srd-5.2:subclass/draconic-sorcery",
+    "classId": "srd-5.2:class/sorcerer",
+    "name": "Draconic Sorcery",
+    "description": "Your innate magic comes from the gift of a dragon. Perhaps an ancient dragon facing death bestowed some of its magical power on you or your ancestor. You might have absorbed magic from a site infused with dragons' power. Or perhaps you handled a treasure taken from a dragon's hoard that was steeped in draconic power.",
+    "flavor": "Draw on the power of dragons.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      14,
+      18
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-draconic-resilience",
+        "name": "Draconic Resilience",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "The magic in your body manifests physical traits of your draconic gift. Your Hit Point maximum increases by 3, and it increases by 1 whenever you gain another Sorcerer level.\n\nParts of you are also covered by dragon-like scales. While you aren't wearing armor, your base Armor Class equals 10 plus your Dexterity and Charisma modifiers.",
+        "shortDescription": "+3 HP (+1 per Sorcerer level after), and unarmored AC = 10 + DEX + CHA.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "scaling": [
+          {
+            "level": 3,
+            "value": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "hitPointMaximum",
+            "value": 3,
+            "scaling": [
+              {
+                "level": 3,
+                "value": 3
+              },
+              {
+                "level": 4,
+                "value": 4
+              },
+              {
+                "level": 5,
+                "value": 5
+              },
+              {
+                "level": 6,
+                "value": 6
+              },
+              {
+                "level": 7,
+                "value": 7
+              },
+              {
+                "level": 8,
+                "value": 8
+              },
+              {
+                "level": 9,
+                "value": 9
+              },
+              {
+                "level": 10,
+                "value": 10
+              },
+              {
+                "level": 11,
+                "value": 11
+              },
+              {
+                "level": 12,
+                "value": 12
+              },
+              {
+                "level": 13,
+                "value": 13
+              },
+              {
+                "level": 14,
+                "value": 14
+              },
+              {
+                "level": 15,
+                "value": 15
+              },
+              {
+                "level": 16,
+                "value": 16
+              },
+              {
+                "level": 17,
+                "value": 17
+              },
+              {
+                "level": 18,
+                "value": 18
+              },
+              {
+                "level": 19,
+                "value": 19
+              },
+              {
+                "level": 20,
+                "value": 20
+              }
+            ]
+          },
+          {
+            "type": "setBaseAc",
+            "value": {
+              "base": 10,
+              "abilities": [
+                "DEX",
+                "CHA"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "armor",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-elemental-affinity",
+        "name": "Elemental Affinity",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "Choose one of the following damage types: Acid, Cold, Fire, Lightning, or Poison. You have Resistance to that damage type, and when you cast a Sorcerer spell that deals damage of that type, you can add your Charisma modifier to one damage roll of that spell.",
+        "shortDescription": "Resistance to a chosen damage type, and add CHA to one damage roll of that type.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense",
+          "damage"
+        ],
+        "choices": [
+          {
+            "id": "elemental-affinity-damage-type",
+            "prompt": "Choose a damage type.",
+            "count": 1,
+            "from": [
+              "acid",
+              "cold",
+              "fire",
+              "lightning",
+              "poison"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$choice:elemental-affinity-damage-type"
+          },
+          {
+            "type": "modifier",
+            "target": "spellDamage",
+            "value": "$derived:CHA",
+            "qualifiers": [
+              {
+                "type": "spellSource",
+                "sourceId": "srd-5.2:class/sorcerer"
+              },
+              {
+                "type": "damageType",
+                "damageType": "$choice:elemental-affinity-damage-type"
+              }
+            ],
+            "appliesOnce": true
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-dragon-wings",
+        "name": "Dragon Wings",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "As a Bonus Action, you can cause draconic wings to appear on your back. The wings last for 1 hour or until you dismiss them (no action required). For the duration, you have a Fly Speed equal to your Speed.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you spend 3 Sorcery Points to use it again.",
+        "shortDescription": "Bonus Action: gain a Fly Speed equal to your Speed for 1 hour.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "concentration": false,
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": "$derived:walkingSpeed",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/draconic-sorcery-dragon-wings"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-dragon-companion",
+        "name": "Dragon Companion",
+        "level": 18,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "You can cast Summon Dragon without a Material component. You can also cast it once without a spell slot, and you regain the ability to cast it in this way when you finish a Long Rest.",
+        "shortDescription": "Cast Summon Dragon without materials, and once per Long Rest without a slot.",
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "spellcasting",
+          "summoning"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/summon-dragon",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/fiend-patron",
+    "classId": "srd-5.2:class/warlock",
+    "name": "Fiend Patron"
+  },
+  {
+    "id": "srd-5.2:subclass/evoker",
+    "classId": "srd-5.2:class/wizard",
+    "name": "Evoker"
+  }
+]

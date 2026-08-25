@@ -1,0 +1,1916 @@
+[
+  {
+    "id": "srd-5.2:species/dragonborn",
+    "name": "Dragonborn",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/dragonborn-draconic-ancestry",
+        "name": "Draconic Ancestry",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "Your lineage stems from a dragon progenitor. Choose the kind of dragon from the Draconic Ancestors table. Your choice affects your Breath Weapon and Damage Resistance traits as well as your appearance.",
+        "shortDescription": "Choose a dragon ancestor; it sets your damage type.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "draconic-ancestry",
+            "prompt": "Choose your draconic ancestor.",
+            "count": 1,
+            "from": [
+              {
+                "value": "acid",
+                "label": "Black"
+              },
+              {
+                "value": "lightning",
+                "label": "Blue"
+              },
+              {
+                "value": "fire",
+                "label": "Brass"
+              },
+              {
+                "value": "lightning",
+                "label": "Bronze"
+              },
+              {
+                "value": "acid",
+                "label": "Copper"
+              },
+              {
+                "value": "fire",
+                "label": "Gold"
+              },
+              {
+                "value": "poison",
+                "label": "Green"
+              },
+              {
+                "value": "fire",
+                "label": "Red"
+              },
+              {
+                "value": "cold",
+                "label": "Silver"
+              },
+              {
+                "value": "cold",
+                "label": "White"
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "origin"
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-breath-weapon",
+        "name": "Breath Weapon",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "When you take the Attack action on your turn, you can replace one of your attacks with an exhalation of magical energy in either a 15-foot Cone or a 30-foot Line that is 5 feet wide (choose the shape each time). Each creature in that area must make a Dexterity saving throw (DC 8 plus your Constitution modifier and Proficiency Bonus). On a failed save, a creature takes 1d10 damage of the type determined by your Draconic Ancestry trait. On a successful save, a creature takes half as much damage. This damage increases by 1d10 when you reach character levels 5 (2d10), 11 (3d10), and 17 (4d10).\n\nYou can use this Breath Weapon a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Replace an attack with a Cone or Line of damage; Dexterity save for half.",
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "damage",
+          "area"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "$choice:draconic-ancestry",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "affects": "others",
+            "area": [
+              {
+                "shape": "cone",
+                "size": 15
+              },
+              {
+                "shape": "line",
+                "size": 30,
+                "width": 5
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "base": 8,
+                "ability": "CON",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            },
+            "scaling": [
+              {
+                "level": 1,
+                "value": {
+                  "count": 1,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 5,
+                "value": {
+                  "count": 2,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 11,
+                "value": {
+                  "count": 3,
+                  "die": "d10"
+                }
+              },
+              {
+                "level": 17,
+                "value": {
+                  "count": 4,
+                  "die": "d10"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-damage-resistance",
+        "name": "Damage Resistance",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "You have Resistance to the damage type determined by your Draconic Ancestry trait.",
+        "shortDescription": "Resistance to your Draconic Ancestry damage type.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$choice:draconic-ancestry"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "You have Darkvision with a range of 60 feet.",
+        "shortDescription": "See in dim light and darkness within 60 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 60
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dragonborn-draconic-flight",
+        "name": "Draconic Flight",
+        "level": 5,
+        "sourceId": "srd-5.2:species/dragonborn",
+        "description": "When you reach character level 5, you can channel draconic magic to give yourself temporary flight. As a Bonus Action, you sprout spectral wings on your back that last for 10 minutes or until you retract the wings (no action required) or have the Incapacitated condition. During that time, you have a Fly Speed equal to your Speed. Your wings appear to be made of the same energy as your Breath Weapon. Once you use this trait, you can't use it again until you finish a Long Rest.",
+        "shortDescription": "Bonus Action: sprout wings and gain a Fly Speed equal to your Speed for 10 minutes.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": "$derived:walkingSpeed",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/dragonborn-draconic-flight"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/dwarf",
+    "name": "Dwarf",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/dwarven-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "You have Darkvision with a range of 120 feet.",
+        "shortDescription": "See in dim light and darkness within 120 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 120
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-resilience",
+        "name": "Dwarven Resilience",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "You have Resistance to Poison damage. You also have Advantage on saving throws you make to avoid or end the Poisoned condition.",
+        "shortDescription": "Resistance to Poison damage, and Advantage on saves against the Poisoned condition.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "poison"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "againstCondition",
+                "conditionId": "srd-5.2:condition/poisoned"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-toughness",
+        "name": "Dwarven Toughness",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "Your Hit Point maximum increases by 1, and it increases by 1 again whenever you gain a level.",
+        "shortDescription": "+1 Hit Point maximum per character level.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "hitPointMaximum",
+            "value": "$derived:characterLevel"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/dwarven-stonecunning",
+        "name": "Stonecunning",
+        "sourceId": "srd-5.2:species/dwarf",
+        "description": "As a Bonus Action, you gain Tremorsense with a range of 60 feet for 10 minutes. You must be on a stone surface or touching a stone surface to use this Tremorsense. The stone can be natural or worked.\n\nYou can use this Bonus Action a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: Tremorsense 60 feet for 10 minutes while on or touching stone.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "tremorsense",
+            "value": 60,
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/dwarven-stonecunning"
+              },
+              {
+                "type": "terrain",
+                "material": "stone"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/elf",
+    "name": "Elf",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/elven-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You have Darkvision with a range of 60 feet.",
+        "shortDescription": "See in dim light and darkness within 60 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 60
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elven-lineage",
+        "name": "Elven Lineage",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage.\n\nWhen you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.\n\nIntelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage).",
+        "shortDescription": "Choose Drow, High Elf, or Wood Elf; gain its benefits at levels 1, 3, and 5.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "choices": [
+          {
+            "id": "elven-lineage",
+            "count": 1,
+            "prompt": "Choose your elven lineage.",
+            "from": [
+              {
+                "value": "drow",
+                "label": "Drow",
+                "grants": [
+                  "srd-5.2:feature/elf-drow",
+                  "srd-5.2:feature/elf-drow-faerie-fire",
+                  "srd-5.2:feature/elf-drow-darkness"
+                ]
+              },
+              {
+                "value": "high-elf",
+                "label": "High Elf",
+                "grants": [
+                  "srd-5.2:feature/elf-high-elf",
+                  "srd-5.2:feature/elf-high-elf-detect-magic",
+                  "srd-5.2:feature/elf-high-elf-misty-step"
+                ]
+              },
+              {
+                "value": "wood-elf",
+                "label": "Wood Elf",
+                "grants": [
+                  "srd-5.2:feature/elf-wood-elf",
+                  "srd-5.2:feature/elf-wood-elf-longstrider",
+                  "srd-5.2:feature/elf-wood-elf-pass-without-trace"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "elven-lineage-ability",
+            "count": 1,
+            "from": [
+              "INT",
+              "WIS",
+              "CHA"
+            ],
+            "prompt": "Choose your spellcasting ability for the spells you cast with this trait."
+          }
+        ],
+        "effects": [
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:elven-lineage-ability"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elven-fey-ancestry",
+        "name": "Fey Ancestry",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You have Advantage on saving throws you make to avoid or end the Charmed condition.",
+        "shortDescription": "Advantage on saves against the Charmed condition.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "againstCondition",
+                "conditionId": "srd-5.2:condition/charmed"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elven-keen-senses",
+        "name": "Keen Senses",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You have proficiency in the Insight, Perception, or Survival skill.",
+        "shortDescription": "Proficiency in Insight, Perception, or Survival.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "proficiency"
+        ],
+        "choices": [
+          {
+            "id": "keen-senses",
+            "count": 1,
+            "prompt": "Choose a skill proficiency.",
+            "from": [
+              "srd-5.2:skill/insight",
+              "srd-5.2:skill/perception",
+              "srd-5.2:skill/survival"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:keen-senses"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elven-trance",
+        "name": "Trance",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation, during which you retain consciousness.",
+        "shortDescription": "No sleep needed; immune to magical sleep; Long Rest in 4 hours.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "rest"
+        ],
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "magicalSleep"
+          },
+          {
+            "type": "setRestDuration",
+            "target": "long",
+            "value": 4
+          }
+        ]
+      }
+    ],
+    "subFeatures": [
+      {
+        "id": "srd-5.2:feature/elf-drow",
+        "name": "Drow",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.",
+        "shortDescription": "Darkvision 120 feet, and the Dancing Lights cantrip.",
+        "level": 1,
+        "tags": [
+          "senses",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 120
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/dancing-lights"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-drow-faerie-fire",
+        "name": "Faerie Fire",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Faerie Fire, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/faerie-fire",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-drow-darkness",
+        "name": "Darkness",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Darkness, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/darkness",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-high-elf",
+        "name": "High Elf",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different cantrip from the Wizard spell list.",
+        "shortDescription": "The Prestidigitation cantrip, swappable on a Long Rest.",
+        "level": 1,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/prestidigitation"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-high-elf-detect-magic",
+        "name": "Detect Magic",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Detect Magic, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/detect-magic",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-high-elf-misty-step",
+        "name": "Misty Step",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Misty Step, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/misty-step",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-wood-elf",
+        "name": "Wood Elf",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "Your Speed increases to 35 feet. You also know the Druidcraft cantrip.",
+        "shortDescription": "Speed 35 feet, and the Druidcraft cantrip.",
+        "level": 1,
+        "tags": [
+          "movement",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "walk",
+            "value": 35
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/druidcraft"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-wood-elf-longstrider",
+        "name": "Longstrider",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Longstrider, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/longstrider",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/elf-wood-elf-pass-without-trace",
+        "name": "Pass without Trace",
+        "sourceId": "srd-5.2:species/elf",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Pass without Trace, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/pass-without-trace",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/gnome",
+    "name": "Gnome",
+    "creatureType": "humanoid",
+    "creatureSize": "small",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/gnome-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/gnome",
+        "description": "You have Darkvision with a range of 60 feet.",
+        "shortDescription": "See in dim light and darkness within 60 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 60
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/gnomish-cunning",
+        "name": "Gnomish Cunning",
+        "sourceId": "srd-5.2:species/gnome",
+        "description": "You have Advantage on Intelligence, Wisdom, and Charisma saving throws.",
+        "shortDescription": "Advantage on INT, WIS, and CHA saving throws.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "INT",
+                  "WIS",
+                  "CHA"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/gnomish-lineage",
+        "name": "Gnomish Lineage",
+        "sourceId": "srd-5.2:species/gnome",
+        "description": "You are part of a lineage that grants you supernatural abilities. Choose one of the following options; whichever one you choose, Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage).",
+        "shortDescription": "Choose Forest Gnome or Rock Gnome.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "choices": [
+          {
+            "id": "gnomish-lineage",
+            "count": 1,
+            "prompt": "Choose your gnomish lineage.",
+            "from": [
+              {
+                "value": "forest-gnome",
+                "label": "Forest Gnome",
+                "grants": [
+                  "srd-5.2:feature/gnome-forest-gnome"
+                ]
+              },
+              {
+                "value": "rock-gnome",
+                "label": "Rock Gnome",
+                "grants": [
+                  "srd-5.2:feature/gnome-rock-gnome"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "gnomish-lineage-ability",
+            "count": 1,
+            "from": [
+              "INT",
+              "WIS",
+              "CHA"
+            ],
+            "prompt": "Choose your spellcasting ability for the spells you cast with this trait."
+          }
+        ],
+        "effects": [
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:gnomish-lineage-ability"
+          }
+        ]
+      }
+    ],
+    "subFeatures": [
+      {
+        "id": "srd-5.2:feature/gnome-forest-gnome",
+        "name": "Forest Gnome",
+        "sourceId": "srd-5.2:species/gnome",
+        "description": "You know the Minor Illusion cantrip. You also always have the Speak with Animals spell prepared. You can cast it without a spell slot a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest. You can also use any spell slots you have to cast the spell.",
+        "shortDescription": "Minor Illusion, and Speak with Animals a Proficiency Bonus number of times per Long Rest.",
+        "level": 1,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/minor-illusion"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/speak-with-animals",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": "$derived:proficiencyBonus",
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/gnome-rock-gnome",
+        "name": "Rock Gnome",
+        "sourceId": "srd-5.2:species/gnome",
+        "description": "You know the Mending and Prestidigitation cantrips. In addition, you can spend 10 minutes casting Prestidigitation to create a Tiny clockwork device (AC 5, 1 HP), such as a toy, fire starter, or music box. When you create the device, you determine its function by choosing one effect from Prestidigitation; the device produces that effect whenever you or another creature takes a Bonus Action to activate it with a touch. If the chosen effect has options within it, you choose one of those options for the device when you create it.\n\nYou can have three such devices in existence at a time, and each falls apart 8 hours after its creation or when you dismantle it with a touch as a Utilize action.",
+        "shortDescription": "Mending and Prestidigitation, plus Tiny clockwork devices.",
+        "level": 1,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/mending"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/prestidigitation"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/goliath",
+    "name": "Goliath",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 35,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/goliath-giant-ancestry",
+        "name": "Giant Ancestry",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "You are descended from Giants. Choose one of the following benefits - a supernatural boon from your ancestry; you can use the chosen benefit a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Choose one Giant boon, usable a Proficiency Bonus number of times per Long Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "origin"
+        ],
+        "choices": [
+          {
+            "id": "giant-ancestry",
+            "count": 1,
+            "prompt": "Choose a supernatural boon from your Giant ancestry.",
+            "from": [
+              {
+                "value": "clouds-jaunt",
+                "label": "Cloud's Jaunt (Cloud Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-clouds-jaunt"
+                ]
+              },
+              {
+                "value": "fires-burn",
+                "label": "Fire's Burn (Fire Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-fires-burn"
+                ]
+              },
+              {
+                "value": "frosts-chill",
+                "label": "Frost's Chill (Frost Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-frosts-chill"
+                ]
+              },
+              {
+                "value": "hills-tumble",
+                "label": "Hill's Tumble (Hill Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-hills-tumble"
+                ]
+              },
+              {
+                "value": "stones-endurance",
+                "label": "Stone's Endurance (Stone Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-stones-endurance"
+                ]
+              },
+              {
+                "value": "storms-thunder",
+                "label": "Storm's Thunder (Storm Giant)",
+                "grants": [
+                  "srd-5.2:feature/goliath-storms-thunder"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-large-form",
+        "name": "Large Form",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "Starting at character level 5, you can change your size to Large as a Bonus Action if you're in a big enough space. This transformation lasts for 10 minutes or until you end it (no action required). For that duration, you have Advantage on Strength checks, and your Speed increases by 10 feet. Once you use this trait, you can't use it again until you finish a Long Rest.",
+        "shortDescription": "Bonus Action: become Large for 10 minutes, with Advantage on STR checks and +10 Speed.",
+        "level": 5,
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "movement",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "setSize",
+            "value": "large",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/goliath-large-form"
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/goliath-large-form"
+              }
+            ]
+          },
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": 10,
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/goliath-large-form"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-powerful-build",
+        "name": "Powerful Build",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "You have Advantage on any ability check you make to end the Grappled condition. You also count as one size larger when determining your carrying capacity.",
+        "shortDescription": "Advantage to escape a Grapple; carrying capacity as one size larger.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "againstCondition",
+                "conditionId": "srd-5.2:condition/grappled"
+              }
+            ]
+          },
+          {
+            "type": "countAsSize",
+            "target": "carryingCapacity",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "subFeatures": [
+      {
+        "id": "srd-5.2:feature/goliath-clouds-jaunt",
+        "name": "Cloud's Jaunt",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "As a Bonus Action, you magically teleport up to 30 feet to an unoccupied space you can see.",
+        "shortDescription": "Bonus Action: teleport up to 30 feet.",
+        "level": 1,
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "teleport",
+            "value": 30
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-fires-burn",
+        "name": "Fire's Burn",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "When you hit a target with an attack roll and deal damage to it, you can also deal 1d10 Fire damage to that target.",
+        "shortDescription": "On a damaging hit, deal an extra 1d10 Fire damage.",
+        "level": 1,
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "fire",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-frosts-chill",
+        "name": "Frost's Chill",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "When you hit a target with an attack roll and deal damage to it, you can also deal 1d6 Cold damage to that target and reduce its Speed by 10 feet until the start of your next turn.",
+        "shortDescription": "On a damaging hit, deal 1d6 Cold damage and reduce the target's Speed by 10 feet.",
+        "level": 1,
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "damage",
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "cold",
+            "value": {
+              "count": 1,
+              "die": "d6"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            }
+          },
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": -10,
+            "affects": "others",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-hills-tumble",
+        "name": "Hill's Tumble",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "When you hit a Large or smaller creature with an attack roll and deal damage to it, you can give that target the Prone condition.",
+        "shortDescription": "On a damaging hit against a Large or smaller creature, knock it Prone.",
+        "level": 1,
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "others",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-stones-endurance",
+        "name": "Stone's Endurance",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "When you take damage, you can take a Reaction to roll 1d12. Add your Constitution modifier to the number rolled and reduce the damage by that total.",
+        "shortDescription": "Reaction when damaged: reduce the damage by 1d12 plus your CON modifier.",
+        "level": 1,
+        "activation": {
+          "type": "reaction",
+          "trigger": "When you take damage."
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "reduceDamage",
+            "value": {
+              "count": 1,
+              "die": "d12",
+              "modifier": "$derived:CON"
+            },
+            "trigger": {
+              "event": "takeDamage",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/goliath-storms-thunder",
+        "name": "Storm's Thunder",
+        "sourceId": "srd-5.2:species/goliath",
+        "description": "When you take damage from a creature within 60 feet of you, you can take a Reaction to deal 1d8 Thunder damage to that creature.",
+        "shortDescription": "Reaction when damaged from within 60 feet: deal 1d8 Thunder damage back.",
+        "level": 1,
+        "activation": {
+          "type": "reaction",
+          "trigger": "When you take damage from a creature within 60 feet of you."
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "long"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "thunder",
+            "value": {
+              "count": 1,
+              "die": "d8"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "takeDamage",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/halfling",
+    "name": "Halfling",
+    "creatureType": "humanoid",
+    "creatureSize": "small",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/halfling-brave",
+        "name": "Brave",
+        "sourceId": "srd-5.2:species/halfling",
+        "description": "You have Advantage on saving throws you make to avoid or end the Frightened condition.",
+        "shortDescription": "Advantage on saves against the Frightened condition.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "againstCondition",
+                "conditionId": "srd-5.2:condition/frightened"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/halfling-nimbleness",
+        "name": "Halfling Nimbleness",
+        "sourceId": "srd-5.2:species/halfling",
+        "description": "You can move through the space of any creature that is a size larger than you, but you can't stop in the same space.",
+        "shortDescription": "Move through the space of any larger creature.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "relation": "larger",
+                "steps": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/halfling-luck",
+        "name": "Luck",
+        "sourceId": "srd-5.2:species/halfling",
+        "description": "When you roll a 1 on the d20 of a D20 Test, you can reroll the die, and you must use the new roll.",
+        "shortDescription": "Reroll a natural 1 on any D20 Test; the new roll stands.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "luck"
+        ],
+        "effects": [
+          {
+            "type": "rerollD20",
+            "target": "d20Test",
+            "reroll": {
+              "mode": "reroll",
+              "triggerValues": [
+                1
+              ],
+              "dice": 1,
+              "keep": "new"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/halfling-naturally-stealthy",
+        "name": "Naturally Stealthy",
+        "sourceId": "srd-5.2:species/halfling",
+        "description": "You can take the Hide action even when you are obscured only by a creature that is at least one size larger than you.",
+        "shortDescription": "Hide even when obscured only by a larger creature.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "stealth"
+        ],
+        "effects": [
+          {
+            "type": "grantAction",
+            "target": "hide",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "relation": "larger",
+                "steps": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/human",
+    "name": "Human",
+    "creatureType": "humanoid",
+    "creatureSize": "$choice:human-size",
+    "speed": 30,
+    "choices": [
+      {
+        "id": "human-size",
+        "count": 1,
+        "prompt": "Choose your size: Medium (about 4-7 feet tall) or Small (about 2-4 feet tall).",
+        "from": [
+          "small",
+          "medium"
+        ]
+      }
+    ],
+    "traits": [
+      {
+        "id": "srd-5.2:feature/human-resourceful",
+        "name": "Resourceful",
+        "sourceId": "srd-5.2:species/human",
+        "description": "You gain Heroic Inspiration whenever you finish a Long Rest.",
+        "shortDescription": "Heroic Inspiration after every Long Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "luck"
+        ],
+        "effects": [
+          {
+            "type": "grantInspiration",
+            "trigger": {
+              "event": "finishRest",
+              "rest": "long"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/human-skillful",
+        "name": "Skillful",
+        "sourceId": "srd-5.2:species/human",
+        "description": "You gain proficiency in one skill of your choice.",
+        "shortDescription": "Proficiency in one skill of your choice.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "proficiency"
+        ],
+        "choices": [
+          {
+            "id": "skillful-skill",
+            "count": 1,
+            "prompt": "Choose a skill proficiency.",
+            "fromTypes": [
+              "skill"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:skillful-skill"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/human-versatile",
+        "name": "Versatile",
+        "sourceId": "srd-5.2:species/human",
+        "description": "You gain an Origin feat of your choice. Skilled is recommended.",
+        "shortDescription": "An Origin feat of your choice.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "feat"
+        ],
+        "choices": [
+          {
+            "id": "versatile-feat",
+            "count": 1,
+            "prompt": "Choose an Origin feat.",
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategory": "origin"
+              }
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:versatile-feat"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/orc",
+    "name": "Orc",
+    "creatureType": "humanoid",
+    "creatureSize": "medium",
+    "speed": 30,
+    "traits": [
+      {
+        "id": "srd-5.2:feature/orc-adrenaline-rush",
+        "name": "Adrenaline Rush",
+        "sourceId": "srd-5.2:species/orc",
+        "description": "You can take the Dash action as a Bonus Action. When you do so, you gain a number of Temporary Hit Points equal to your Proficiency Bonus.\n\nYou can use this trait a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Short or Long Rest.",
+        "shortDescription": "Dash as a Bonus Action and gain Temporary Hit Points equal to your Proficiency Bonus.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:proficiencyBonus",
+          "recharge": "short"
+        },
+        "tags": [
+          "movement",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantActionAtCost",
+            "target": "dash",
+            "value": "bonusAction"
+          },
+          {
+            "type": "grantTemporaryHitPoints",
+            "value": "$derived:proficiencyBonus",
+            "trigger": {
+              "event": "takeAction",
+              "action": "dash"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/orc-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/orc",
+        "description": "You have Darkvision with a range of 120 feet.",
+        "shortDescription": "See in dim light and darkness within 120 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 120
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/orc-relentless-endurance",
+        "name": "Relentless Endurance",
+        "sourceId": "srd-5.2:species/orc",
+        "description": "When you are reduced to 0 Hit Points but not killed outright, you can drop to 1 Hit Point instead. Once you use this trait, you can't do so again until you finish a Long Rest.",
+        "shortDescription": "Drop to 1 Hit Point instead of 0, once per Long Rest.",
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "setHitPointFloor",
+            "value": 1,
+            "trigger": {
+              "event": "reducedToZeroHitPoints",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:species/tiefling",
+    "name": "Tiefling",
+    "creatureType": "humanoid",
+    "creatureSize": "$choice:tiefling-size",
+    "speed": 30,
+    "choices": [
+      {
+        "id": "tiefling-size",
+        "count": 1,
+        "prompt": "Choose your size: Medium (about 4-7 feet tall) or Small (about 3-4 feet tall).",
+        "from": [
+          "small",
+          "medium"
+        ]
+      }
+    ],
+    "traits": [
+      {
+        "id": "srd-5.2:feature/tiefling-darkvision",
+        "name": "Darkvision",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You have Darkvision with a range of 60 feet.",
+        "shortDescription": "See in dim light and darkness within 60 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "darkvision",
+            "value": 60
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-fiendish-legacy",
+        "name": "Fiendish Legacy",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You are the recipient of a legacy that grants you supernatural abilities. Choose a legacy from the Fiendish Legacies table. You gain the level 1 benefit of the chosen legacy.\n\nWhen you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.\n\nIntelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the legacy).",
+        "shortDescription": "Choose Abyssal, Chthonic, or Infernal; gain its benefits at levels 1, 3, and 5.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "choices": [
+          {
+            "id": "fiendish-legacy",
+            "count": 1,
+            "prompt": "Choose your fiendish legacy.",
+            "from": [
+              {
+                "value": "abyssal",
+                "label": "Abyssal",
+                "grants": [
+                  "srd-5.2:feature/tiefling-abyssal",
+                  "srd-5.2:feature/tiefling-abyssal-ray-of-sickness",
+                  "srd-5.2:feature/tiefling-abyssal-hold-person"
+                ]
+              },
+              {
+                "value": "chthonic",
+                "label": "Chthonic",
+                "grants": [
+                  "srd-5.2:feature/tiefling-chthonic",
+                  "srd-5.2:feature/tiefling-chthonic-false-life",
+                  "srd-5.2:feature/tiefling-chthonic-ray-of-enfeeblement"
+                ]
+              },
+              {
+                "value": "infernal",
+                "label": "Infernal",
+                "grants": [
+                  "srd-5.2:feature/tiefling-infernal",
+                  "srd-5.2:feature/tiefling-infernal-hellish-rebuke",
+                  "srd-5.2:feature/tiefling-infernal-darkness"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "fiendish-legacy-ability",
+            "count": 1,
+            "from": [
+              "INT",
+              "WIS",
+              "CHA"
+            ],
+            "prompt": "Choose your spellcasting ability for the spells you cast with this trait."
+          }
+        ],
+        "effects": [
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:fiendish-legacy-ability"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-otherworldly-presence",
+        "name": "Otherworldly Presence",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You know the Thaumaturgy cantrip. When you cast it with this trait, the spell uses the same spellcasting ability you use for your Fiendish Legacy trait.",
+        "shortDescription": "The Thaumaturgy cantrip, using your Fiendish Legacy spellcasting ability.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/thaumaturgy"
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:fiendish-legacy-ability"
+          }
+        ]
+      }
+    ],
+    "subFeatures": [
+      {
+        "id": "srd-5.2:feature/tiefling-abyssal",
+        "name": "Abyssal",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You have Resistance to Poison damage. You also know the Poison Spray cantrip.",
+        "shortDescription": "Resistance to Poison damage, and the Poison Spray cantrip.",
+        "level": 1,
+        "tags": [
+          "defense",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "poison"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/poison-spray"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-abyssal-ray-of-sickness",
+        "name": "Ray of Sickness",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Ray of Sickness, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/ray-of-sickness",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-abyssal-hold-person",
+        "name": "Hold Person",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Hold Person, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/hold-person",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-chthonic",
+        "name": "Chthonic",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You have Resistance to Necrotic damage. You also know the Chill Touch cantrip.",
+        "shortDescription": "Resistance to Necrotic damage, and the Chill Touch cantrip.",
+        "level": 1,
+        "tags": [
+          "defense",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "necrotic"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/chill-touch"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-chthonic-false-life",
+        "name": "False Life",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "False Life, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/false-life",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-chthonic-ray-of-enfeeblement",
+        "name": "Ray of Enfeeblement",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Ray of Enfeeblement, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/ray-of-enfeeblement",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-infernal",
+        "name": "Infernal",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You have Resistance to Fire damage. You also know the Fire Bolt cantrip.",
+        "shortDescription": "Resistance to Fire damage, and the Fire Bolt cantrip.",
+        "level": 1,
+        "tags": [
+          "defense",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "fire"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fire-bolt"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-infernal-hellish-rebuke",
+        "name": "Hellish Rebuke",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Hellish Rebuke, always prepared; one free cast per Long Rest.",
+        "level": 3,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/hellish-rebuke",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/tiefling-infernal-darkness",
+        "name": "Darkness",
+        "sourceId": "srd-5.2:species/tiefling",
+        "description": "You always have this spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level.",
+        "shortDescription": "Darkness, always prepared; one free cast per Long Rest.",
+        "level": 5,
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/darkness",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

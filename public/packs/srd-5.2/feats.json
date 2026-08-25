@@ -1,0 +1,579 @@
+[
+  {
+    "id": "srd-5.2:feat/alert",
+    "name": "Alert",
+    "category": "origin",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Initiative Proficiency",
+        "description": "When you roll Initiative, you can add your Proficiency Bonus to the roll",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "initiative",
+            "value": "$derived:proficiency"
+          }
+        ]
+      },
+      {
+        "name": "Initiative Swap",
+        "description": "Immediately after you roll Initiative, you can swap your Initiative with the Initiative of one willing ally in the same combat. You can’t make this swap if you or the ally has the Incapacitaed condition.",
+        "effects": [
+          {
+            "type": "initiativeSwap"
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "origin-feat"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/magic-initiate-cleric",
+    "name": "Magic Initiate (Cleric)",
+    "category": "origin",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Two Cantrips",
+        "description": "You learn two cantrips of your choice from the Cleric spell list. Intelligence, Wisdomm, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-cleric-cantrips"
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:magic-initiate-cleric-ability"
+          }
+        ]
+      },
+      {
+        "name": "Level 1 Spell",
+        "description": "Choose one level 1 spell from the Cleric spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-cleric-level-1-spell",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spell Change",
+        "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Cleric spell list."
+      }
+    ],
+    "choices": [
+      {
+        "id": "magic-initiate-cleric-ability",
+        "prompt": "Choose your spellcasting ability for this feat's spells.",
+        "count": 1,
+        "from": [
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      },
+      {
+        "id": "magic-initiate-cleric-cantrips",
+        "prompt": "Choose two cantrips from the Cleric spell list.",
+        "count": 2,
+        "from": "srd-5.2:class/cleric",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 0
+          }
+        ]
+      },
+      {
+        "id": "magic-initiate-cleric-level-1-spell",
+        "prompt": "Choose one level 1 spell from the Cleric spell list.",
+        "count": 1,
+        "from": "srd-5.2:class/cleric",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 1
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "spellcasting",
+      "origin-feat"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/magic-initiate-druid",
+    "name": "Magic Initiate (Druid)",
+    "category": "origin",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Two Cantrips",
+        "description": "You learn two cantrips of your choice from the Druid spell list. Intelligence, Wisdomm, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-druid-cantrips"
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:magic-initiate-druid-ability"
+          }
+        ]
+      },
+      {
+        "name": "Level 1 Spell",
+        "description": "Choose one level 1 spell from the Druid spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-druid-level-1-spell",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spell Change",
+        "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Druid spell list."
+      }
+    ],
+    "choices": [
+      {
+        "id": "magic-initiate-druid-ability",
+        "prompt": "Choose your spellcasting ability for this feat's spells.",
+        "count": 1,
+        "from": [
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      },
+      {
+        "id": "magic-initiate-druid-cantrips",
+        "prompt": "Choose two cantrips from the Druid spell list.",
+        "count": 2,
+        "from": "srd-5.2:class/druid",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 0
+          }
+        ]
+      },
+      {
+        "id": "magic-initiate-druid-level-1-spell",
+        "prompt": "Choose one level 1 spell from the Druid spell list.",
+        "count": 1,
+        "from": "srd-5.2:class/druid",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 1
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "spellcasting",
+      "origin-feat"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/magic-initiate-wizard",
+    "name": "Magic Initiate (Wizard)",
+    "category": "origin",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Two Cantrips",
+        "description": "You learn two cantrips of your choice from the Wizard spell list. Intelligence, Wisdomm, or Charisma is your spellcasting ability for this feat's spells (choose when you select this feat)",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-wizard-cantrips"
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "$choice:magic-initiate-wizard-ability"
+          }
+        ]
+      },
+      {
+        "name": "Level 1 Spell",
+        "description": "Choose one level 1 spell from the Wizard spell list. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have.",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magic-initiate-wizard-level-1-spell",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spell Change",
+        "description": "Whenever you gain a new level, you can replace one of the spells you chose for this feat with a different spell of the same level from the Wizard spell list."
+      }
+    ],
+    "choices": [
+      {
+        "id": "magic-initiate-wizard-ability",
+        "prompt": "Choose your spellcasting ability for this feat's spells.",
+        "count": 1,
+        "from": [
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      },
+      {
+        "id": "magic-initiate-wizard-cantrips",
+        "prompt": "Choose two cantrips from the Wizard spell list.",
+        "count": 2,
+        "from": "srd-5.2:class/wizard",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 0
+          }
+        ]
+      },
+      {
+        "id": "magic-initiate-wizard-level-1-spell",
+        "prompt": "Choose one level 1 spell from the Wizard spell list.",
+        "count": 1,
+        "from": "srd-5.2:class/wizard",
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevel": 1
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "spellcasting",
+      "origin-feat"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/savage-attacker",
+    "name": "Savage Attacker",
+    "category": "origin",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Savage Attacker",
+        "description": "You’ve trained to deal particularly damaging strikes. Once per turn when you hit a target with a weapon, you can roll the weapon’s damage dice twice and use either roll against the target.",
+        "effects": [
+          {
+            "type": "rerollDamage",
+            "reroll": {
+              "mode": "reroll",
+              "dice": "all",
+              "keep": "best",
+              "frequency": "perTurn"
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "damage",
+      "melee"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/skilled",
+    "name": "Skilled",
+    "category": "origin",
+    "repeatable": true,
+    "effectGroups": [
+      {
+        "name": "Skilled",
+        "description": "You gain proficiency in any combination of three skills or tools of your choice.",
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:skilled-proficiencies"
+          }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "id": "skilled-proficiencies",
+        "prompt": "Choose three proficiencies in any combination of skills or tools of your choice.",
+        "count": 3,
+        "fromTypes": [
+          "skill",
+          "tool"
+        ]
+      }
+    ],
+    "tags": [
+      "proficiency"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/ability-score-improvement",
+    "name": "Ability Score Improvement",
+    "category": "general",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 4
+      }
+    ],
+    "repeatable": true,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 2,
+      "maximum": "$derived:abilityScoreMax"
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 2, or increase two ability scores of your choice by 1 each.",
+        "effects": []
+      }
+    ],
+    "tags": [
+      "progression"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/grappler",
+    "name": "Grappler",
+    "category": "general",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 4
+      },
+      {
+        "type": "any",
+        "of": [
+          {
+            "type": "ability",
+            "ability": "STR",
+            "minimum": 13
+          },
+          {
+            "type": "ability",
+            "ability": "DEX",
+            "minimum": 13
+          }
+        ]
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX"
+      ],
+      "amount": 1,
+      "maximum": "$derived:abilityScoreMax"
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase your Strength or Dexterity score by 1, to a maximum of 20.",
+        "effects": []
+      },
+      {
+        "name": "Punch and Grab",
+        "description": "When you hit a creature with an Unarmed Strike as part of the Attack action on your turn, you can use both the Damage and the Grapple option. You can use this benefit only once per turn.",
+        "effects": []
+      },
+      {
+        "name": "Attack Advantage",
+        "description": "You have advantage on attack rolls against a creature Grappled by you",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "targetCondition",
+                "conditionId": "srd-5.2:condition/grappled",
+                "source": "self"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "martial",
+      "progression"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/archery",
+    "name": "Archery",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Archery",
+        "description": "You gain a +2 bonus to attack rolls you make with ranged weapons",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "attackRange",
+                "attackRange": "ranged"
+              },
+              {
+                "type": "attackSource",
+                "attackSource": "weapon"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/defense",
+    "name": "Defense",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Defense",
+        "description": "While you're wearing Light, Medium, or Heavy armor, you gain a +1 bonus to Armor Class",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "armor"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/great-weapon-fighting",
+    "name": "Great Weapon Fighting",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Great Weapon Fighting",
+        "description": "When you roll damage for an attack you make with a Melee weapon that you are holding with two hands, you can treat any 1 or 2 on a damage die as a 3. The weapon must have the Two-Handed or Versatile property to gain this benefit.",
+        "effects": [
+          {
+            "type": "rerollDamage",
+            "qualifiers": [
+              {
+                "type": "attackRange",
+                "attackRange": "melee"
+              },
+              {
+                "type": "attackSource",
+                "attackSource": "weapon"
+              },
+              {
+                "type": "weaponProperty",
+                "weaponProperties": [
+                  "twoHanded",
+                  "versatile"
+                ]
+              }
+            ],
+            "reroll": {
+              "mode": "minimum",
+              "triggerValues": [
+                1,
+                2
+              ],
+              "minimum": 3
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/two-weapon-fighting",
+    "name": "Two-Weapon Fighting",
+    "category": "fightingStyle",
+    "repeatable": false,
+    "effectGroups": [
+      {
+        "name": "Two-Weapon Fighting",
+        "description": "When you make an extra attack as a result of using a weapon that has the Light property, you can add your ability modifier to the damage of that attack if you aren’t already adding it to the damage.",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": "$derived:abilityModifier",
+            "qualifiers": [
+              {
+                "type": "weaponProperty",
+                "weaponProperties": [
+                  "light"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "fightingStyle"
+    ]
+  }
+]

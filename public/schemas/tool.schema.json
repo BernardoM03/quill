@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/tool.schema.json",
+  "title": "D&D 5.5e SRD Tools",
+  "description": "Top-level array of tools. Entities rather than free strings so that proficiency grants reference them by id, and so an open pool such as Skilled's 'any skill or tool' can resolve dynamically.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId" },
+      "name": { "type": "string" },
+      "category": {
+        "type": "string",
+        "description": "Artisan's tools, gaming sets, and musical instruments are named as groups by features that grant 'one of your choice'.",
+        "enum": ["artisan", "gaming", "instrument", "kit", "other"]
+      },
+      "ability": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability",
+        "description": "The ability a check using this tool is normally made against. Omitted where the rules say it varies."
+      },
+      "description": { "type": "string" }
+    },
+    "required": ["id", "name", "category"],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "srd-5.2",
+  "name": "System Reference Document 5.2",
+  "version": "1.0.0",
+  "license": "CC-BY-4.0",
+  "attribution": "This work includes material from the System Reference Document 5.2 (\"SRD 5.2\") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. Licensed under CC-BY-4.0.",
+  "provides": [
+    "classes",
+    "subclasses",
+    "spells",
+    "species",
+    "origins",
+    "feats",
+    "equipment",
+    "conditions",
+    "skills",
+    "tools"
+  ]
+}
