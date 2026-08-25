@@ -19,11 +19,14 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "license": {
-      "type": "string"
+      "type": "string",
+      "description": "SPDX identifier for the terms this pack's content is under. Every pack must declare one so the UI can surface the right notice.",
+      "minLength": 1
     },
     "attribution": {
       "type": "string",
-      "description": "Required for CC-BY content"
+      "description": "Verbatim attribution notice required by the pack's license. Rendered to end users on the Legal page. Required for CC-BY-4.0 packs.",
+      "minLength": 1
     },
     "providesEffectTypes": {
       "type": "array",
@@ -52,13 +55,39 @@
         ]
       },
       "uniqueItems": true
+    },
+    "modifications": {
+      "type": "string",
+      "description": "How this pack's source material was changed. CC-BY-4.0 s. 3(a)(1)(B) requires indicating modification, and every pack here reformats prose into JSON, so this is required alongside attribution.",
+      "minLength": 1
     }
   },
   "required": [
     "id",
     "name",
     "version",
+    "license",
     "provides"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "license": {
+            "pattern": "^CC-BY"
+          }
+        },
+        "required": [
+          "license"
+        ]
+      },
+      "then": {
+        "required": [
+          "attribution",
+          "modifications"
+        ]
+      }
+    }
   ],
   "additionalProperties": false
 }
