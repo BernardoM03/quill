@@ -92,6 +92,17 @@
         },
         "die": {
           "$ref": "#/$defs/rollType"
+        },
+        "modifier": {
+          "description": "A flat or derived amount added to the rolled total, as in Stone's Endurance's '1d12 plus your Constitution modifier'. Carried here rather than as a sibling effect because it is part of one quantity - splitting it would let a consumer apply the dice and drop the modifier.",
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
         }
       },
       "required": [
@@ -310,6 +321,70 @@
         "travel"
       ]
     },
+    "namedAction": {
+      "type": "string",
+      "description": "An action named by the rules, as opposed to `actionType` which is what such an action COSTS. Adrenaline Rush needs both at once - the Dash action (this) taken as a Bonus Action (that) - which is why they cannot be one enum.",
+      "enum": [
+        "attack",
+        "dash",
+        "disengage",
+        "dodge",
+        "help",
+        "hide",
+        "influence",
+        "magic",
+        "ready",
+        "search",
+        "study",
+        "utilize"
+      ]
+    },
+    "specialImmunity": {
+      "type": "string",
+      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively.",
+      "enum": [
+        "magicalSleep",
+        "disease"
+      ]
+    },
+    "triggerEvent": {
+      "type": "string",
+      "description": "Something that happens to or around the character, which an effect hangs off.",
+      "enum": [
+        "hitWithAttack",
+        "takeDamage",
+        "reducedToZeroHitPoints",
+        "finishRest",
+        "takeAction",
+        "startTurn",
+        "endTurn"
+      ]
+    },
+    "trigger": {
+      "type": "object",
+      "description": "The event that fires an effect. Three-way distinction worth holding onto: `activation` is what the character SPENDS to use a feature, `qualifiers` narrow when an already-live effect applies, and a trigger means the effect does not exist at all until the event happens. Fire's Burn is not a passive damage bonus narrowed to attacks - it is nothing until you hit.",
+      "properties": {
+        "event": {
+          "$ref": "#/$defs/triggerEvent"
+        },
+        "rest": {
+          "$ref": "#/$defs/rest",
+          "description": "Which rest, when event is finishRest."
+        },
+        "action": {
+          "$ref": "#/$defs/namedAction",
+          "description": "Which action, when event is takeAction."
+        },
+        "optional": {
+          "type": "boolean",
+          "description": "True where the SRD says 'you can' rather than 'you do', so the player decides whether to spend the trigger."
+        }
+      },
+      "required": [
+        "event"
+      ],
+      "additionalProperties": false
+    },
     "terrainMaterial": {
       "type": "string",
       "description": "A surface a creature can be in contact with. Deliberately NOT a biome: Circle of the Land's Arid, Polar, Temperate and Tropical describe where you are, not what you are touching, and a feature keyed to one of those wants its own qualifier rather than a widened member here. Keeping the two apart is what stops `stone` and `arctic` ending up in the same enum, where no consumer could tell a contact test from an environment test.",
@@ -382,8 +457,16 @@
           "description": "Casts allowed without expending a spell slot.",
           "properties": {
             "count": {
-              "type": "integer",
-              "minimum": 1
+              "description": "How many free casts. A derived quantity where the SRD ties it to the character, as Forest Gnome's Speak with Animals does to the Proficiency Bonus.",
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ]
             },
             "recharge": {
               "$ref": "#/$defs/rest"
@@ -541,6 +624,15 @@
                   "label": {
                     "type": "string",
                     "description": "What the player is shown."
+                  },
+                  "grants": {
+                    "type": "array",
+                    "description": "Features this option confers, by id, resolved against the grantor's `subFeatures`. This is how an option carries a BUNDLE rather than a scalar: Elven Lineage's Drow grants a level 1 feature, a level 3 spell and a level 5 spell. Features are reused wholesale instead of inlining effects here, so level gating, `uses`, `activation` and nested choices all keep working inside an option.",
+                    "items": {
+                      "$ref": "#/$defs/featureId"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
                   }
                 },
                 "required": [
@@ -649,7 +741,19 @@
         "setSpellcastingAbility",
         "loseComponent",
         "grantSense",
-        "dealDamage"
+        "dealDamage",
+        "grantTemporaryHitPoints",
+        "grantInspiration",
+        "reduceDamage",
+        "teleport",
+        "setSize",
+        "countAsSize",
+        "setHitPointFloor",
+        "grantActionAtCost",
+        "grantAction",
+        "moveThroughOccupiedSpace",
+        "setRestDuration",
+        "rerollD20"
       ]
     },
     "effect": {
@@ -720,6 +824,9 @@
         },
         "save": {
           "$ref": "#/$defs/savingThrow"
+        },
+        "trigger": {
+          "$ref": "#/$defs/trigger"
         }
       },
       "required": [
@@ -787,6 +894,9 @@
                   },
                   {
                     "$ref": "#/$defs/conditionId"
+                  },
+                  {
+                    "$ref": "#/$defs/specialImmunity"
                   }
                 ]
               }
@@ -1225,6 +1335,253 @@
                     "$ref": "#/$defs/deferredValue"
                   }
                 ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "grantTemporaryHitPoints",
+                  "reduceDamage"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "$ref": "#/$defs/diceExpression"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "teleport"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "description": "Distance in feet.",
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setSize"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/creatureSize"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "countAsSize"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "description": "What the larger size is counted for. Powerful Build counts as one size larger for carrying capacity ONLY, so the scope is named rather than the character actually being resized - that is `setSize`."
+              },
+              "value": {
+                "type": "integer",
+                "description": "Size categories to shift by."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setHitPointFloor"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantActionAtCost"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/namedAction"
+              },
+              "value": {
+                "$ref": "#/$defs/actionType",
+                "description": "The cost the action may instead be taken at."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantAction"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/namedAction"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setRestDuration"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rest"
+              },
+              "value": {
+                "type": "number",
+                "description": "Hours the rest instead takes.",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rerollD20"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "reroll"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
               }
             }
           }
@@ -1751,6 +2108,82 @@
           "required": [
             "type",
             "attackRange"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "creatureSize"
+            },
+            "maxSize": {
+              "$ref": "#/$defs/creatureSize",
+              "description": "Absolute ceiling - Hill's Tumble's 'a Large or smaller creature'."
+            },
+            "minSize": {
+              "$ref": "#/$defs/creatureSize",
+              "description": "Absolute floor."
+            },
+            "relation": {
+              "type": "string",
+              "description": "Compared against your OWN size rather than an absolute - Halfling Nimbleness's 'a creature that is a size larger than you'. Both forms live here because the SRD writes both, and a rule comparing to you cannot be flattened to a fixed size without knowing who you are.",
+              "enum": [
+                "larger",
+                "smaller"
+              ]
+            },
+            "steps": {
+              "type": "integer",
+              "description": "How many size categories `relation` spans. Defaults to 1.",
+              "minimum": 1
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "maxSize"
+              ]
+            },
+            {
+              "required": [
+                "minSize"
+              ]
+            },
+            {
+              "required": [
+                "relation"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "featCategory"
+            },
+            "featCategory": {
+              "type": "string",
+              "description": "Narrows a feat pool to one category, as Human's Versatile does to Origin feats.",
+              "enum": [
+                "origin",
+                "general",
+                "fightingStyle"
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "featCategory"
           ],
           "additionalProperties": false
         },

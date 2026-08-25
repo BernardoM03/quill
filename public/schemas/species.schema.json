@@ -37,6 +37,20 @@
         "items": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
         }
+      },
+      "subFeatures": {
+        "type": "array",
+        "description": "Features a species grants only when a choice selects them, referenced by a choice option's `grants`. Kept apart from `traits` because a trait is something every member of the species has, while these belong to one lineage or ancestry - a Drow feature is not an Elf feature.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
+        }
+      },
+      "choices": {
+        "type": "array",
+        "description": "Decisions belonging to the species itself rather than to any one of its traits. Human's Small-or-Medium size is the case: it is picked when you select the species and feeds `creatureSize`, with no trait to hang it on.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+        }
       }
     },
     "required": [
