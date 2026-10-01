@@ -1034,7 +1034,8 @@
         "stabilize",
         "suppressCondition",
         "detect",
-        "createZone"
+        "createZone",
+        "waterBreathing"
       ]
     },
     "effect": {
@@ -1457,7 +1458,14 @@
             ],
             "properties": {
               "target": {
-                "$ref": "#/$defs/conditionId"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/conditionId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               }
             }
           }
@@ -1783,6 +1791,21 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "steps": {
+                        "type": "integer",
+                        "minimum": -5,
+                        "maximum": 5
+                      }
+                    },
+                    "required": [
+                      "steps"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Size categories up or down from the current size, as Enlarge's +1."
                   }
                 ]
               }
@@ -2335,7 +2358,15 @@
             ],
             "properties": {
               "target": {
-                "$ref": "#/$defs/rollTarget"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/rollTarget"
+                  },
+                  {
+                    "const": "armorClass"
+                  }
+                ],
+                "description": "A roll, or Armor Class, as Barkskin's 'an Armor Class of 17 if its AC is lower than that'."
               },
               "value": {
                 "description": "The lowest total the roll can produce.",

@@ -1,5 +1,99 @@
 [
   {
+    "id": "srd-5.2:spell/acid-arrow",
+    "name": "Acid Arrow",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 90,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "powdered rhubarb leaf",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A shimmering green arrow streaks toward a target within range and bursts in a spray of acid. Make a ranged spell attack against the target. On a hit, the target takes 4d4 Acid damage and 2d4 Acid damage at the end of its next turn. On a miss, the arrow splashes the target with acid for half as much of the initial damage only.",
+    "higherLevels": "The damage (both initial and later) increases by 1d4 for each spell slot level above 2.",
+    "shortDescription": "Ranged spell attack: 4d4 Acid damage now and 2d4 later; half on a miss.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": {
+          "count": 4,
+          "die": "d4"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d4"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": {
+          "count": 2,
+          "die": "d4"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "endTurn"
+        },
+        "appliesOnce": true,
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d4"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": {
+          "count": 4,
+          "die": "d4"
+        },
+        "multiplier": 0.5,
+        "trigger": {
+          "event": "failRoll",
+          "roll": "attackRoll"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d4"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/acid-splash",
     "name": "Acid Splash",
     "level": 0,
@@ -83,6 +177,65 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/aid",
+    "name": "Aid",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a strip of white cloth",
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Choose up to three creatures within range. Each target’s Hit Point maximum and current Hit Points increase by 5 for the duration.",
+    "higherLevels": "Each target’s Hit Points increase by 5 for each spell slot level above 2.",
+    "shortDescription": "Up to three creatures gain +5 Hit Point maximum and current Hit Points.",
+    "targets": {
+      "count": 3,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "hitPointMaximum",
+        "value": 5,
+        "affects": "target",
+        "upcast": {
+          "perSlot": 5
+        }
+      },
+      {
+        "type": "heal",
+        "value": 5,
+        "affects": "target",
+        "upcast": {
+          "perSlot": 5
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/alarm",
     "name": "Alarm",
     "level": 1,
@@ -118,6 +271,115 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/alter-self",
+    "name": "Alter Self",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You alter your physical form. Choose one of the following options. Its effects last for the duration, during which you can take a Magic action to replace the option you chose with a different one. Aquatic Adaptation. You sprout gills and grow webs between your fingers. You can breathe underwater and gain a Swim Speed equal to your Speed. Change Appearance. You alter your appearance. You decide what you look like, including your height, weight, facial features, sound of your voice, hair length, coloration, and other distinguishing characteristics. You can make yourself appear as a member of another species, though none of your statistics change. You can’t appear as a creature of a different size, and your basic shape stays the same; if you’re bipedal, you can’t use this spell to become quadrupedal, for instance. For the duration, you can take a Magic action to change your appearance in this way again. Natural Weapons. You grow claws (Slashing), fangs (Piercing), horns (Piercing), or hooves (Bludgeoning). When you use your Unarmed Strike to deal damage with that new growth, it deals 1d6 damage of the type in parentheses instead of dealing the normal damage for your Unarmed Strike, and you use your spellcasting ability modifier for the attack and damage rolls rather than using Strength.",
+    "shortDescription": "Change your form: breathe water and swim, change appearance, or grow natural weapons.",
+    "options": {
+      "list": "srd-5.2:list/alter-self",
+      "items": [
+        {
+          "id": "aquatic-adaptation",
+          "name": "Aquatic Adaptation",
+          "description": "You can breathe underwater and gain a Swim Speed equal to your Speed.",
+          "effects": [
+            {
+              "type": "waterBreathing"
+            },
+            {
+              "type": "grantSpeed",
+              "target": "swim",
+              "value": "$derived:walkingSpeed"
+            }
+          ]
+        },
+        {
+          "id": "change-appearance",
+          "name": "Change Appearance",
+          "description": "You alter your appearance, though none of your statistics change.",
+          "effects": []
+        },
+        {
+          "id": "natural-weapons",
+          "name": "Natural Weapons",
+          "description": "Your Unarmed Strikes deal 1d6 Slashing, Piercing, or Bludgeoning damage and use your spellcasting ability.",
+          "effects": [
+            {
+              "type": "replaceDamageDice",
+              "value": {
+                "count": 1,
+                "die": "d6"
+              },
+              "qualifiers": [
+                {
+                  "type": "attackSource",
+                  "attackSources": [
+                    "unarmed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "substituteAbility",
+              "target": "attackRoll",
+              "value": "$derived:spellcastingAbility",
+              "qualifiers": [
+                {
+                  "type": "attackSource",
+                  "attackSources": [
+                    "unarmed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "substituteAbility",
+              "target": "damageRoll",
+              "value": "$derived:spellcastingAbility",
+              "qualifiers": [
+                {
+                  "type": "attackSource",
+                  "attackSources": [
+                    "unarmed"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/alter-self",
+        "value": 1
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/animal-friendship",
@@ -188,6 +450,160 @@
         ]
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/animal-messenger",
+    "name": "Animal Messenger",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a morsel of food",
+    "duration": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "A Tiny Beast of your choice that you can see within range must succeed on a Charisma saving throw, or it attempts to deliver a message for you (if the target’s Challenge Rating isn’t 0, it automatically succeeds). You specify a location you have visited and a recipient who matches a general description, such as “a person dressed in the uniform of the town guard” or “a red-haired dwarf wearing a pointed hat.” You also communicate a message of up to twenty-five words. The Beast travels for the duration toward the specified location, covering about 25 miles per 24 hours or 50 miles if the Beast can fly. When the Beast arrives, it delivers your message to the creature that you described, mimicking your communication. If the Beast doesn’t reach its destination before the spell ends, the message is lost, and the Beast returns to where you cast the spell.",
+    "higherLevels": "The spell’s duration increases by 48 hours for each spell slot level above 2.",
+    "shortDescription": "A Tiny Beast carries a 25-word message to a place and recipient you describe.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/arcane-lock",
+    "name": "Arcane Lock",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "gold dust worth 25+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 25,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "untilDispelled"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a closed door, window, gate, container, or hatch and magically lock it for the duration. This lock can’t be unlocked by any nonmagical means. You and any creatures you designate when you cast the spell can open and close the object despite the lock. You can also set a password that, when spoken within 5 feet of the object, unlocks it for 1 minute.",
+    "shortDescription": "Magically lock a door or container; you and chosen creatures can open it.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/arcanists-magic-aura",
+    "name": "Arcanist’s Magic Aura",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a small square of silk",
+    "duration": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "With a touch, you place an illusion on a willing creature or an object that isn’t being worn or carried. A creature gains the Mask effect below, and an object gains the False Aura effect below. The effect lasts for the duration. If you cast the spell on the same target every day for 30 days, the illusion lasts until dispelled. Mask (Creature). Choose a creature type other than the target’s actual type. Spells and other magical effects treat the target as if it were a creature of the chosen type. False Aura (Object). You change the way the target appears to spells and magical effects that detect magical auras, such as Detect Magic. You can make a nonmagical object appear magical, make a magic item appear nonmagical, or change the object’s aura so that it appears to belong to a school of magic you choose.",
+    "shortDescription": "Mask a creature's type or an object's magical aura from divination.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/augury",
+    "name": "Augury",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "specially marked sticks, bones, cards, or other divinatory tokens worth 25+ GP",
+    "materialCost": {
+      "cost": {
+        "amount": 25,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You receive an omen from an otherworldly entity about the results of a course of action that you plan to take within the next 30 minutes. The GM chooses the omen from the Omens table.\n\nOmens Omen For Results That Will Be … Weal Good Woe Bad Weal and woe Good and bad Indifference Neither good nor bad The spell doesn’t account for circumstances, such as other spells, that might change the results. If you cast the spell more than once before finishing a Long Rest, there is a cumulative 25 percent chance for each casting after the first that you get no answer.",
+    "shortDescription": "Receive an omen about a course of action within the next 30 minutes.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/bane",
@@ -271,6 +687,48 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/barkskin",
+    "name": "Barkskin",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a handful of bark",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a willing creature. Until the spell ends, the target’s skin assumes a bark-like appearance, and the target has an Armor Class of 17 if its AC is lower than that.",
+    "shortDescription": "A willing creature's AC can't be lower than 17.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "rollFloor",
+        "target": "armorClass",
+        "value": 17,
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/bless",
     "name": "Bless",
     "level": 1,
@@ -338,6 +796,115 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/blindness-deafness",
+    "name": "Blindness/Deafness",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "One creature that you can see within range must succeed on a Constitution saving throw, or it has the Blinded or Deafened condition (your choice) for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 2.",
+    "shortDescription": "Constitution save or Blinded or Deafened.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "choices": [
+      {
+        "id": "blindness-deafness-condition",
+        "prompt": "Blinded or Deafened.",
+        "count": 1,
+        "from": [
+          "srd-5.2:condition/blinded",
+          "srd-5.2:condition/deafened"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "$choice:blindness-deafness-condition",
+        "affects": "target",
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/blur",
+    "name": "Blur",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Your body becomes blurred. For the duration, any creature has Disadvantage on attack rolls against you. An attacker is immune to this effect if it perceives you with Blindsight or Truesight.",
+    "shortDescription": "Attack rolls against you have Disadvantage.",
+    "effects": [
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "others",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/burning-hands",
     "name": "Burning Hands",
     "level": 1,
@@ -393,6 +960,94 @@
             "count": 1,
             "die": "d6"
           }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/calm-emotions",
+    "name": "Calm Emotions",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Each Humanoid in a 20-foot-radius Sphere centered on a point you choose within range must succeed on a Charisma saving throw or be affected by one of the following effects (choose for each creature):\n\n• The creature has Immunity to the Charmed and Frightened conditions until the spell ends. If the creature was already Charmed or Frightened, those conditions are suppressed for the duration. • The creature becomes Indifferent about creatures of your choice that it’s Hostile toward. This indifference ends if the target takes damage or witnesses its allies taking damage. When the spell ends, the creature’s attitude returns to normal.",
+    "shortDescription": "Humanoids in a 20-foot Sphere: Charisma save or calmed.",
+    "options": {
+      "list": "srd-5.2:list/calm-emotions",
+      "items": [
+        {
+          "id": "suppress",
+          "name": "Suppress",
+          "description": "The creature has Immunity to the Charmed and Frightened conditions until the spell ends.",
+          "effects": [
+            {
+              "type": "grantImmunity",
+              "target": "srd-5.2:condition/charmed",
+              "affects": "target"
+            },
+            {
+              "type": "grantImmunity",
+              "target": "srd-5.2:condition/frightened",
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "indifference",
+          "name": "Indifference",
+          "description": "The creature becomes Indifferent about creatures of your choice that it's Hostile toward.",
+          "effects": []
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/calm-emotions",
+        "value": 1,
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "humanoid"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "CHA",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
         }
       }
     ]
@@ -873,6 +1528,57 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/continual-flame",
+    "name": "Continual Flame",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "ruby dust worth 50+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 50,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "untilDispelled"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A flame springs from an object that you touch. The effect casts Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. It looks like a regular flame, but it creates no heat and consumes no fuel. The flame can be covered or hidden but not smothered or quenched.",
+    "shortDescription": "A heatless flame sheds Bright Light 20 feet and Dim Light 20 more.",
+    "targets": {
+      "count": 1,
+      "kind": "object"
+    },
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/counterspell",
     "name": "Counterspell",
     "level": 3,
@@ -1055,6 +1761,96 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/darkness",
+    "name": "Darkness",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "material"
+    ],
+    "materialComponent": "bat fur and a piece of coal",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "For the duration, magical Darkness spreads from a point within range and fills a 15-foot-radius Sphere. Darkvision can’t see through it, and nonmagical light can’t illuminate it. Alternatively, you cast the spell on an object that isn’t being worn or carried, causing the Darkness to fill a 15-foot Emanation originating from that object. Covering that object with something opaque, such as a bowl or helm, blocks the Darkness. If any of this spell’s area overlaps with an area of Bright Light or Dim Light created by a spell of level 2 or lower, that other spell is dispelled.",
+    "shortDescription": "15-foot-radius Sphere of magical Darkness.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "darkness": "magical"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/darkvision",
+    "name": "Darkvision",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a dried carrot",
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "For the duration, a willing creature you touch has Darkvision with a range of 150 feet.",
+    "shortDescription": "A willing creature gains Darkvision 150 feet.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "grantSense",
+        "target": "darkvision",
+        "value": 150,
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/detect-evil-and-good",
     "name": "Detect Evil and Good",
     "level": 1,
@@ -1181,6 +1977,48 @@
           "within": 30,
           "things": [
             "poisonAndDisease"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/detect-thoughts",
+    "name": "Detect Thoughts",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "1 Copper Piece",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You activate one of the effects below. Until the spell ends, you can activate either effect as a Magic action on your later turns. Sense Thoughts. You sense the presence of thoughts within 30 feet of yourself that belong to creatures that know languages or are telepathic. You don’t read the thoughts, but you know that a thinking creature is present. The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead. Read Thoughts. Target one creature you can see within 30 feet of yourself or one creature within 30 feet of yourself that you detected with the Sense Thoughts option. You learn what is most on the target’s mind right now. If the target doesn’t know any languages and isn’t telepathic, you learn nothing. As a Magic action on your next turn, you can try to probe deeper into the target’s mind. If you probe deeper, the target makes a Wisdom saving throw. On a failed save, you discern the target’s reasoning, emotions, and something that looms large in its mind (such as a worry, love, or hate). On a successful save, the spell ends. Either way, the target knows that you are probing into its mind, and until you shift your attention away from the target’s mind, the target can take an action on its turn to make an Intelligence (Arcana) check against your spell save DC, ending the spell on a success.",
+    "shortDescription": "Sense thoughts within 30 feet, or read a creature's surface thoughts.",
+    "effects": [
+      {
+        "type": "detect",
+        "value": {
+          "within": 30,
+          "things": [
+            "thoughts"
           ]
         }
       }
@@ -1401,6 +2239,90 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/dragons-breath",
+    "name": "Dragon’s Breath",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a hot pepper",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch one willing creature, and choose Acid, Cold, Fire, Lightning, or Poison. Until the spell ends, the target can take a Magic action to exhale a 15-foot Cone. Each creature in that area makes a Dexterity saving throw, taking 3d6 damage of the chosen type on a failed save or half as much damage on a successful one.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 2.",
+    "shortDescription": "A willing creature can exhale a 15-foot Cone for 3d6 damage of a chosen type.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "dragons-breath-damage",
+        "prompt": "Choose a damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
+          "poison"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "$choice:dragons-breath-damage",
+        "value": {
+          "count": 3,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cone",
+            "size": 15
+          }
+        ],
+        "trigger": {
+          "event": "takeAction",
+          "action": "magic"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/druidcraft",
     "name": "Druidcraft",
     "level": 0,
@@ -1537,6 +2459,254 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/enhance-ability",
+    "name": "Enhance Ability",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "fur or a feather",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch a creature and choose Strength, Dexterity, Intelligence, Wisdom, or Charisma. For the duration, the target has Advantage on ability checks using the chosen ability.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 2. You can choose a different ability for each target.",
+    "shortDescription": "A creature has Advantage on checks with a chosen ability.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "choices": [
+      {
+        "id": "enhance-ability-ability",
+        "prompt": "Choose an ability.",
+        "count": 1,
+        "from": [
+          "STR",
+          "DEX",
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "$choice:enhance-ability-ability"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/enlarge-reduce",
+    "name": "Enlarge/Reduce",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of powdered iron",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "For the duration, the spell enlarges or reduces a creature or an object you can see within range (see the chosen effect below). A targeted object must be neither worn nor carried. If the target is an unwilling creature, it can make a Constitution saving throw. On a successful save, the spell has no effect. Everything that a targeted creature is wearing and carrying changes size with it. Any item it drops returns to normal size at once. A thrown weapon or piece of ammunition returns to normal size immediately after it hits or misses a target. Enlarge. The target’s size increases by one category—from Medium to Large, for example. The target also has Advantage on Strength checks and Strength saving throws. The target’s attacks with its enlarged weapons or Unarmed Strikes deal an extra 1d4 damage on a hit. Reduce. The target’s size decreases by one category—from Medium to Small, for example. The target also has Disadvantage on Strength checks and Strength saving throws. The target’s attacks with its reduced weapons or Unarmed Strikes deal 1d4 less damage on a hit (this can’t reduce the damage below 1).",
+    "shortDescription": "Grow or shrink a creature or object by one size.",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "options": {
+      "list": "srd-5.2:list/enlarge-reduce",
+      "items": [
+        {
+          "id": "enlarge",
+          "name": "Enlarge",
+          "description": "Size increases by one category, Advantage on Strength checks and saves, and +1d4 weapon damage.",
+          "effects": [
+            {
+              "type": "setSize",
+              "value": {
+                "steps": 1
+              },
+              "affects": "target"
+            },
+            {
+              "type": "grantAdvantage",
+              "target": "abilityCheck",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "STR"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grantAdvantage",
+              "target": "savingThrow",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "STR"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rollBonus",
+              "target": "damageRoll",
+              "value": {
+                "count": 1,
+                "die": "d4"
+              },
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "attackSource",
+                  "attackSources": [
+                    "weapon",
+                    "unarmed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reduce",
+          "name": "Reduce",
+          "description": "Size decreases by one category, Disadvantage on Strength checks and saves, and -1d4 weapon damage (minimum 1).",
+          "effects": [
+            {
+              "type": "setSize",
+              "value": {
+                "steps": -1
+              },
+              "affects": "target"
+            },
+            {
+              "type": "grantDisadvantage",
+              "target": "abilityCheck",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "STR"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grantDisadvantage",
+              "target": "savingThrow",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "STR"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rollBonus",
+              "target": "damageRoll",
+              "value": {
+                "count": 1,
+                "die": "d4",
+                "minimum": 1
+              },
+              "multiplier": -1,
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "attackSource",
+                  "attackSources": [
+                    "weapon",
+                    "unarmed"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/enlarge-reduce",
+        "value": 1,
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/ensnaring-strike",
@@ -1693,6 +2863,73 @@
           {
             "shape": "cube",
             "size": 20
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/enthrall",
+    "name": "Enthrall",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/warlock"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You weave a distracting string of words, causing creatures of your choice that you can see within range to make a Wisdom saving throw. Any creature you or your companions are fighting automatically succeeds on this save. On a failed save, a target has a −10 penalty to Wisdom (Perception) checks and Passive Perception until the spell ends.",
+    "shortDescription": "Wisdom save or -10 to Perception checks and Passive Perception.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": -10,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "modifier",
+        "target": "passivePerception",
+        "value": -10,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
           }
         ]
       }
@@ -1979,6 +3216,93 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/find-steed",
+    "name": "Find Steed",
+    "level": 2,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You summon an otherworldly being that appears as a loyal steed in an unoccupied space of your choice within range. This creature uses the Otherworldly Steed stat block. If you already have a steed from this spell, the steed is replaced by the new one. The steed resembles a Large, rideable animal of your choice, such as a horse, a camel, a dire wolf, or an elk. Whenever you cast the spell, choose the steed’s creature type—Celestial, Fey, or Fiend— which determines certain traits in the stat block. Combat. The steed is an ally to you and your allies. In combat, it shares your Initiative count, and it functions as a controlled mount while you ride it (as defined in the rules on mounted combat). If you have the Incapacitated condition, the steed takes its turn immediately after yours and acts independently, focusing on protecting you. Disappearance of the Steed. The steed disappears if it drops to 0 Hit Points or if you die. When it disappears, it leaves behind anything it was wearing or carrying. If you cast this spell again, you decide whether you summon the steed that disappeared or a different one.",
+    "higherLevels": "Use the spell slot’s level for the spell’s level in the stat block. \n\nOtherworldly Steed Large Celestial, Fey, or Fiend (Your Choice), Neutral AC 10 + 1 per spell level HP 5 + 10 per spell level (the steed has a number of Hit Dice [d10s] equal to the spell’s level) Speed 60 ft., Fly 60 ft. (requires level 4+ spell) MOD SAVE MOD SAVE MOD SAVE Str 18 +4 +4 Int 6 −2 −2 Dex 12 +1 +1 Wis 12 +1 +1 Con 14 +2 +2 Cha 8 −1 −1 Senses Passive Perception 11 Languages Telepathy 1 mile (works only with you) CR None (XP 0; PB equals your Proficiency Bonus) \n\nTraits Life Bond. When you regain Hit Points from a level 1+ spell, the steed regains the same number of Hit Points if you’re within 5 feet of it. \n\nActions Otherworldly Slam. Melee Attack Roll: Bonus equals your spell attack modifier, reach 5 ft. Hit: 1d8 plus the spell’s level of Radiant (Celestial), Psychic (Fey), or Necrotic (Fiend) damage. \n\nBonus Actions Fell Glare (Fiend Only; Recharges after a Long Rest). Wisdom Saving Throw: DC equals your spell save DC, one creature within 60 feet the steed can see. Failure: The target has the Frightened condition until the end of your next turn. Fey Step (Fey Only; Recharges after a Long Rest). The steed teleports, along with its rider, to an unoccupied space of your choice up to 60 feet away from itself. Healing Touch (Celestial Only; Recharges after a Long Rest). One creature within 5 feet of the steed regains a number of Hit Points equal to 2d8 plus the spell’s level.",
+    "shortDescription": "Summon an otherworldly steed.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Otherworldly Steed"
+          ],
+          "creatureTypes": [
+            "celestial",
+            "fey",
+            "fiend"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/find-traps",
+    "name": "Find Traps",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You sense any trap within range that is within line of sight. A trap, for the purpose of this spell, includes any object or mechanism that was created to cause damage or other danger. Thus, the spell would sense the Alarm or Glyph of Warding spell or a mechanical pit trap, but it wouldn’t reveal a natural weakness in the floor, an unstable ceiling, or a hidden sinkhole. This spell reveals that a trap is present but not its location. You do learn the general nature of the danger posed by a trap you sense.",
+    "shortDescription": "Sense traps within 120 feet and line of sight.",
+    "effects": [
+      {
+        "type": "detect",
+        "value": {
+          "within": 120,
+          "things": [
+            "traps"
+          ]
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/fireball",
     "name": "Fireball",
     "level": 3,
@@ -2119,6 +3443,179 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/flame-blade",
+    "name": "Flame Blade",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a sumac leaf",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You evoke a fiery blade in your free hand. The blade is similar in size and shape to a scimitar, and it lasts for the duration. If you let go of the blade, it disappears, but you can evoke it again as a Bonus Action. As a Magic action, you can make a melee spell attack with the fiery blade. On a hit, the target takes Fire damage equal to 3d6 plus your spellcasting ability modifier. The flaming blade sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 2.",
+    "shortDescription": "A fiery blade: melee spell attack for 3d6 + spellcasting modifier Fire damage.",
+    "attack": "melee",
+    "effects": [
+      {
+        "type": "grantAttack",
+        "value": {
+          "count": 1,
+          "actionType": "action"
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 3,
+          "die": "d6",
+          "modifier": "$derived:spellcastingModifier"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 10,
+          "dim": 10
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/flaming-sphere",
+    "name": "Flaming Sphere",
+    "level": 2,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a ball of wax",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a 5-foot-diameter sphere of fire in an unoccupied space on the ground within range. It lasts for the duration. Any creature that ends its turn within 5 feet of the sphere makes a Dexterity saving throw, taking 2d6 Fire damage on a failed save or half as much damage on a successful one. As a Bonus Action, you can move the sphere up to 30 feet, rolling it along the ground. If you move the sphere into a creature’s space, that creature makes the save against the sphere, and the sphere stops moving for the turn. When you move the sphere, you can direct it over barriers up to 5 feet tall and jump it across pits up to 10 feet wide. Flammable objects that aren’t being worn or carried start burning if touched by the sphere, and it sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 2.",
+    "shortDescription": "A rolling sphere of fire deals 2d6 Fire damage nearby, Dexterity save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 5
+          }
+        ],
+        "trigger": {
+          "event": "endTurnInArea"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 5
+          }
+        ],
+        "trigger": {
+          "event": "enterArea"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/floating-disk",
     "name": "Floating Disk",
     "level": 1,
@@ -2202,6 +3699,41 @@
         }
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/gentle-repose",
+    "name": "Gentle Repose",
+    "level": 2,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "2 Copper Pieces, which the spell consumes",
+    "duration": {
+      "value": 10,
+      "unit": "day"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You touch a corpse or other remains. For the duration, the target is protected from decay and can’t become Undead. The spell also effectively extends the time limit on raising the target from the dead, since days spent under the influence of this spell don’t count against the time limit of spells such as Raise Dead.",
+    "shortDescription": "Protect remains from decay and from becoming Undead.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/goodberry",
@@ -2487,6 +4019,104 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/gust-of-wind",
+    "name": "Gust of Wind",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a legume seed",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A Line of strong wind 60 feet long and 10 feet wide blasts from you in a direction you choose for the duration. Each creature in the Line must succeed on a Strength saving throw or be pushed 15 feet away from you in a direction following the Line. A creature that ends its turn in the Line must make the same save. Any creature in the Line must spend 2 feet of movement for every 1 foot it moves when moving closer to you. The gust disperses gas or vapor, and it extinguishes candles and similar unprotected flames in the area. It causes protected flames, such as those of lanterns, to dance wildly and has a 50 percent chance to extinguish them. As a Bonus Action on your later turns, you can change the direction in which the Line blasts from you.",
+    "shortDescription": "60-foot Line of wind: Strength save or pushed 15 feet.",
+    "effects": [
+      {
+        "type": "forcedMovement",
+        "value": {
+          "feet": 15,
+          "direction": "away"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "line",
+            "size": 60,
+            "width": 10
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "forcedMovement",
+        "value": {
+          "feet": 15,
+          "direction": "away"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "line",
+            "size": 60,
+            "width": 10
+          }
+        ],
+        "trigger": {
+          "event": "endTurnInArea"
+        },
+        "save": {
+          "ability": "STR",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true
+        },
+        "area": [
+          {
+            "shape": "line",
+            "size": 60,
+            "width": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/healing-word",
     "name": "Healing Word",
     "level": 1,
@@ -2535,6 +4165,121 @@
             "die": "d4"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/heat-metal",
+    "name": "Heat Metal",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a piece of iron and a flame",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Choose a manufactured metal object, such as a metal weapon or a suit of Heavy or Medium metal armor, that you can see within range. You cause the object to glow red-hot. Any creature in physical contact with the object takes 2d8 Fire damage when you cast the spell. Until the spell ends, you can take a Bonus Action on each of your later turns to deal this damage again if the object is within range. If a creature is holding or wearing the object and takes the damage from it, the creature must succeed on a Constitution saving throw or drop the object if it can. If it doesn’t drop the object, it has Disadvantage on attack rolls and ability checks until the start of your next turn.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 2.",
+    "shortDescription": "A metal object deals 2d8 Fire damage to whoever holds or wears it.",
+    "targets": {
+      "count": 1,
+      "kind": "object"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "trigger": {
+          "event": "takeAction",
+          "actionType": "bonusAction",
+          "optional": true
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dropHeldItem",
+        "affects": "target",
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "success"
+          }
+        ]
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "abilityCheck",
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "success"
+          }
+        ]
       }
     ]
   },
@@ -3266,6 +5011,65 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/invisibility",
+    "name": "Invisibility",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "an eyelash in gum arabic",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A creature you touch has the Invisible condition until the spell ends. The spell ends early immediately after the target makes an attack roll, deals damage, or casts a spell.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 2.",
+    "shortDescription": "A creature has the Invisible condition until it attacks, deals damage, or casts.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "endsOn": [
+      {
+        "event": "makeAttackRoll"
+      },
+      {
+        "event": "hitWithAttack"
+      },
+      {
+        "event": "takeAction",
+        "action": "magic"
+      }
+    ],
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/jump",
     "name": "Jump",
     "level": 1,
@@ -3312,6 +5116,40 @@
         "affects": "target"
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/knock",
+    "name": "Knock",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Choose an object that you can see within range. The object can be a door, a box, a chest, a set of manacles, a padlock, or another object that contains a mundane or magical means that prevents access. A target that is held shut by a mundane lock or that is stuck or barred becomes unlocked, unstuck, or unbarred. If the object has multiple locks, only one of them is unlocked. If the target is held shut by Arcane Lock, that spell is suppressed for 10 minutes, during which time the target can be opened and closed. When you cast the spell, a loud knock, audible up to 300 feet away, emanates from the target.",
+    "shortDescription": "Unlock one lock or bar on an object; a loud knock sounds.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/light",
