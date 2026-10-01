@@ -490,6 +490,55 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/animate-dead",
+    "name": "Animate Dead",
+    "level": 3,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a drop of blood, a piece of flesh, and a pinch of bone dust",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Choose a pile of bones or a corpse of a Medium or Small Humanoid within range. The target becomes an Undead creature: a Skeleton if you chose bones or a Zombie if you chose a corpse (see “Monsters” for the stat blocks). On each of your turns, you can take a Bonus Action to mentally command any creature you made with this spell if the creature is within 60 feet of you (if you control multiple creatures, you can command any of them at the same time, issuing the same command to each one). You decide what action the creature will take and where it will move on its next turn, or you can issue a general command, such as to guard a chamber or corridor. If you issue no commands, the creature takes the Dodge action and moves only to avoid harm. Once given an order, the creature continues to follow it until its task is complete. The creature is under your control for 24 hours, after which it stops obeying any command you’ve given it. To maintain control of the creature for another 24 hours, you must cast this spell on the creature again before the current 24-hour period ends. This use of the spell reasserts your control over up to four creatures you have animated with this spell rather than animating a new creature.",
+    "higherLevels": "You animate or reassert control over two additional Undead creatures for each spell slot level above 3. Each of the creatures must come from a different corpse or pile of bones.",
+    "shortDescription": "Raise a Skeleton or Zombie under your command for 24 hours.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Skeleton",
+            "Zombie"
+          ],
+          "count": 1
+        },
+        "upcast": {
+          "perSlot": 2
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/arcane-lock",
     "name": "Arcane Lock",
     "level": 2,
@@ -729,6 +778,273 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/beacon-of-hope",
+    "name": "Beacon of Hope",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Choose any number of creatures within range. For the duration, each target has Advantage on Wisdom saving throws and Death Saving Throws and regains the maximum number of Hit Points possible from any healing.",
+    "shortDescription": "Creatures gain Advantage on Wisdom and Death Saving Throws and maximum healing.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "WIS"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "deathSave",
+        "affects": "target"
+      },
+      {
+        "type": "maximizeDice",
+        "target": "healing",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/bestow-curse",
+    "name": "Bestow Curse",
+    "level": 3,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch a creature, which must succeed on a Wisdom saving throw or become cursed for the duration. Until the curse ends, the target suffers one of the following effects of your choice:\n\n• Choose one ability. The target has Disadvantage on ability checks and saving throws made with that ability. • The target has Disadvantage on attack rolls against you. • In combat, the target must succeed on a Wisdom saving throw at the start of each of its turns or be forced to take the Dodge action on that turn.\n\n• If you deal damage to the target with an attack roll or a spell, the target takes an extra 1d8 Necrotic damage.",
+    "higherLevels": "If you cast this spell using a level 4 spell slot, you can maintain Concentration on it for up to 10 minutes. If you use a level 5+ spell slot, the spell doesn’t require Concentration, and the duration becomes 8 hours (level 5–6 slot) or 24 hours (level 7–8 slot). If you use a level 9 spell slot, the spell lasts until dispelled.",
+    "shortDescription": "Wisdom save or cursed with one of four effects.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "duration": [
+        {
+          "minSlot": 4,
+          "duration": {
+            "value": 10,
+            "unit": "minute"
+          }
+        },
+        {
+          "minSlot": 5,
+          "duration": {
+            "value": 8,
+            "unit": "hour"
+          }
+        },
+        {
+          "minSlot": 7,
+          "duration": {
+            "value": 24,
+            "unit": "hour"
+          }
+        },
+        {
+          "minSlot": 9,
+          "duration": {
+            "value": 0,
+            "unit": "untilDispelled"
+          }
+        }
+      ]
+    },
+    "choices": [
+      {
+        "id": "bestow-curse-ability",
+        "prompt": "Choose an ability.",
+        "count": 1,
+        "from": [
+          "STR",
+          "DEX",
+          "CON",
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      }
+    ],
+    "options": {
+      "list": "srd-5.2:list/bestow-curse",
+      "items": [
+        {
+          "id": "ability",
+          "name": "Weakened Ability",
+          "description": "Disadvantage on ability checks and saving throws made with the chosen ability.",
+          "effects": [
+            {
+              "type": "grantDisadvantage",
+              "target": "abilityCheck",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "$choice:bestow-curse-ability"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grantDisadvantage",
+              "target": "savingThrow",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "$choice:bestow-curse-ability"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "attacks",
+          "name": "Hindered Attacks",
+          "description": "Disadvantage on attack rolls against you.",
+          "effects": [
+            {
+              "type": "grantDisadvantage",
+              "target": "attackRoll",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "targetRelation",
+                  "relation": "self"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dodge",
+          "name": "Wasted Turns",
+          "description": "In combat, a Wisdom save at the start of each turn or take the Dodge action.",
+          "effects": [
+            {
+              "type": "limitActions",
+              "value": {
+                "count": 1,
+                "from": [
+                  "move",
+                  "action"
+                ]
+              },
+              "affects": "target",
+              "trigger": {
+                "event": "startTurn"
+              },
+              "qualifiers": [
+                {
+                  "type": "situationType",
+                  "situationType": "combat"
+                }
+              ],
+              "save": {
+                "ability": "WIS",
+                "dc": {
+                  "base": 8,
+                  "ability": "$derived:spellcastingAbility",
+                  "proficiency": true
+                },
+                "onSuccess": "negate"
+              }
+            }
+          ]
+        },
+        {
+          "id": "necrotic",
+          "name": "Withering",
+          "description": "Your attacks and spells that damage it deal an extra 1d8 Necrotic damage.",
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": 1,
+                "die": "d8"
+              },
+              "trigger": {
+                "event": "hitWithAttack"
+              },
+              "qualifiers": [
+                {
+                  "type": "targetRelation",
+                  "relation": "target"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/bestow-curse",
+        "value": 1,
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/bless",
     "name": "Bless",
     "level": 1,
@@ -865,6 +1181,38 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/blink",
+    "name": "Blink",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Roll 1d6 at the end of each of your turns for the duration. On a roll of 4–6, you vanish from your current plane of existence and appear in the Ethereal Plane (the spell ends instantly if you are already on that plane). While on the Ethereal Plane, you can perceive the plane you left, which is cast in shades of gray, but you can’t see anything there more than 60 feet away. You can affect and be affected only by other creatures on the Ethereal Plane, and creatures on the other plane can’t perceive you unless they have a special ability that lets them perceive things on the Ethereal Plane. You return to the other plane at the start of your next turn and when the spell ends if you are on the Ethereal Plane. You return to an unoccupied space of your choice that you can see within 10 feet of the space you left. If no unoccupied space is available within that range, you appear in the nearest unoccupied space.",
+    "shortDescription": "Each turn, a 4-6 on a d6 shifts you to the Ethereal Plane until your next turn.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/blur",
     "name": "Blur",
     "level": 2,
@@ -959,6 +1307,101 @@
           "perSlot": {
             "count": 1,
             "die": "d6"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/call-lightning",
+    "name": "Call Lightning",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A storm cloud appears at a point within range that you can see above yourself. It takes the shape of a Cylinder that is 10 feet tall with a 60-foot radius. When you cast the spell, choose a point you can see under the cloud. A lightning bolt shoots from the cloud to that point. Each creature within 5 feet of that point makes a Dexterity saving throw, taking 3d10 Lightning damage on a failed save or half as much damage on a successful one.\n\nUntil the spell ends, you can take a Magic action to call down lightning in that way again, targeting the same point or a different one. If you’re outdoors in a storm when you cast this spell, the spell gives you control over that storm instead of creating a new one. Under such conditions, the spell’s damage increases by 1d10.",
+    "higherLevels": "The damage increases by 1d10 for each spell slot level above 3.",
+    "shortDescription": "A storm cloud calls 3d10 Lightning bolts, Dexterity save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "lightning",
+        "value": {
+          "count": 3,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 5
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "lightning",
+        "value": {
+          "count": 3,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 5
+          }
+        ],
+        "trigger": {
+          "event": "takeAction",
+          "action": "magic",
+          "optional": true
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
           }
         }
       }
@@ -1299,6 +1742,52 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/clairvoyance",
+    "name": "Clairvoyance",
+    "level": 3,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 1,
+      "unit": "miles"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a focus worth 100+ GP, either a jeweled horn for hearing or a glass eye for seeing",
+    "materialCost": {
+      "cost": {
+        "amount": 100,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create an Invisible sensor within range in a location familiar to you (a place you have visited or seen before) or in an obvious location that is unfamiliar to you (such as behind a door, around a corner, or in a grove of trees). The intangible, invulnerable sensor remains in place for the duration. When you cast the spell, choose seeing or hearing. You can use the chosen sense through the sensor as if you were in its space. As a Bonus Action, you can switch between seeing and hearing. A creature that sees the sensor (such as a creature benefiting from See Invisibility or Truesight) sees a luminous orb about the size of your fist.",
+    "shortDescription": "An invisible sensor lets you see or hear a familiar place within 1 mile.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/color-spray",
     "name": "Color Spray",
     "level": 1,
@@ -1528,6 +2017,91 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/conjure-animals",
+    "name": "Conjure Animals",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You conjure nature spirits that appear as a Large pack of spectral, intangible animals in an unoccupied space you can see within range. The pack lasts for the duration, and you choose the spirits’ animal form, such as wolves, serpents, or birds. You have Advantage on Strength saving throws while you’re within 5 feet of the pack, and when you move on your turn, you can also move the pack up to 30 feet to an unoccupied space you can see. Whenever the pack moves within 10 feet of a creature you can see and whenever a creature you can see enters a space within 10 feet of the pack or ends its turn there, you can force that creature to make a Dexterity saving throw. On a failed save, the creature takes 3d10 Slashing damage. A creature makes this save only once per turn.",
+    "higherLevels": "The damage increases by 1d10 for each spell slot level above 3.",
+    "shortDescription": "A spectral pack deals 3d10 Slashing damage to nearby creatures, Dexterity save negates.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "slashing",
+        "value": {
+          "count": 3,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 10
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": [
+          {
+            "event": "enterArea",
+            "optional": true
+          },
+          {
+            "event": "endTurnInArea",
+            "optional": true
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        }
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/continual-flame",
     "name": "Continual Flame",
     "level": 2,
@@ -1627,6 +2201,40 @@
         }
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/create-food-and-water",
+    "name": "Create Food and Water",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create 45 pounds of food and 30 gallons of fresh water on the ground or in containers within range—both useful in fending off the hazards of malnutrition and dehydration. The food is bland but nourishing and looks like a food of your choice, and the water is clean. The food spoils after 24 hours if uneaten.",
+    "shortDescription": "Create 45 pounds of food and 30 gallons of water.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/create-or-destroy-water",
@@ -1851,6 +2459,48 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/daylight",
+    "name": "Daylight",
+    "level": 3,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "For the duration, sunlight spreads from a point within range and fills a 60-foot-radius Sphere. The sunlight’s area is Bright Light and sheds Dim Light for an additional 60 feet. Alternatively, you cast the spell on an object that isn’t being worn or carried, causing the sunlight to fill a 60-foot Emanation originating from that object. Covering that object with something opaque, such as a bowl or helm, blocks the sunlight. If any of this spell’s area overlaps with an area of Darkness created by a spell of level 3 or lower, that other spell is dispelled.",
+    "shortDescription": "60-foot-radius Sphere of sunlight; dispels Darkness of level 3 or lower.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 60,
+          "dim": 60
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/detect-evil-and-good",
     "name": "Detect Evil and Good",
     "level": 1,
@@ -2056,6 +2706,56 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/dispel-magic",
+    "name": "Dispel Magic",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Choose one creature, object, or magical effect within range. Any ongoing spell of level 3 or lower on the target ends. For each ongoing spell of level 4 or higher on the target, make an ability check using your spellcasting ability (DC 10 plus that spell’s level). On a successful check, the spell ends.",
+    "higherLevels": "You automatically end a spell on the target if the spell’s level is equal to or less than the level of the spell slot you use.",
+    "shortDescription": "End spells of level 3 or lower on a target; check to end higher ones.",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "effects": [
+      {
+        "type": "dispel",
+        "value": {
+          "upToLevel": "$derived:slotLevel",
+          "checkAbility": "$derived:spellcastingAbility"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/dissonant-whispers",
@@ -3102,6 +3802,82 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/fear",
+    "name": "Fear",
+    "level": 3,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a white feather",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Each creature in a 30-foot Cone must succeed on a Wisdom saving throw or drop whatever it is holding and have the Frightened condition for the duration. A Frightened creature takes the Dash action and moves away from you by the safest route on each of its turns unless there is nowhere to move. If the creature ends its turn in a space where it doesn’t have line of sight to you, the creature makes a Wisdom saving throw. On a successful save, the spell ends on that creature.",
+    "shortDescription": "30-foot Cone: Wisdom save or drop what it holds and be Frightened.",
+    "effects": [
+      {
+        "type": "dropHeldItem",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cone",
+            "size": 30
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/frightened",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        },
+        "area": [
+          {
+            "shape": "cone",
+            "size": 30
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/feather-fall",
     "name": "Feather Fall",
     "level": 1,
@@ -3624,6 +4400,53 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/fly",
+    "name": "Fly",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a feather",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch a willing creature. For the duration, the target gains a Fly Speed of 60 feet and can hover. When the spell ends, the target falls if it is still aloft unless it can stop the fall.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 3.",
+    "shortDescription": "A willing creature gains a 60-foot Fly Speed.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "fly",
+        "value": 60,
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/fog-cloud",
     "name": "Fog Cloud",
     "level": 1,
@@ -3674,6 +4497,102 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/gaseous-form",
+    "name": "Gaseous Form",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of gauze",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A willing creature you touch shape-shifts, along with everything it’s wearing and carrying, into a misty cloud for the duration. The spell ends on the target if it drops to 0 Hit Points or if it takes a Magic action to end the spell on itself.\n\nWhile in this form, the target’s only method of movement is a Fly Speed of 10 feet, and it can hover. The target can enter and occupy the space of another creature. The target has Resistance to Bludgeoning, Piercing, and Slashing damage; it has Immunity to the Prone condition; and it has Advantage on Strength, Dexterity, and Constitution saving throws. The target can pass through narrow openings, but it treats liquids as though they were solid surfaces. The target can’t talk or manipulate objects, and any objects it was carrying or holding can’t be dropped, used, or otherwise interacted with. Finally, the target can’t attack or cast spells.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 3.",
+    "shortDescription": "A willing creature becomes mist: 10-foot Fly Speed, resistant, unable to attack or cast.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "fly",
+        "value": 10,
+        "affects": "target"
+      },
+      {
+        "type": "grantSpeed",
+        "target": "walk",
+        "value": 0,
+        "affects": "target"
+      },
+      {
+        "type": "grantResistance",
+        "target": "bludgeoning",
+        "affects": "target"
+      },
+      {
+        "type": "grantResistance",
+        "target": "piercing",
+        "affects": "target"
+      },
+      {
+        "type": "grantResistance",
+        "target": "slashing",
+        "affects": "target"
+      },
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:condition/prone",
+        "affects": "target"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR",
+              "DEX",
+              "CON"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "moveThroughOccupiedSpace",
+        "affects": "target"
+      },
+      {
+        "type": "preventSpellcasting",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/gentle-repose",
     "name": "Gentle Repose",
     "level": 2,
@@ -3707,6 +4626,91 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/glyph-of-warding",
+    "name": "Glyph of Warding",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "powdered diamond worth 200+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 200,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "untilDispelled"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You inscribe a glyph that later unleashes a magical effect. You inscribe it either on a surface (such as a table or a section of floor) or within an object that can be closed (such as a book or chest) to conceal the glyph. The glyph can cover an area no larger than 10 feet in diameter. If the surface or object is moved more than 10 feet from where you cast this spell, the glyph is broken, and the spell ends without being triggered. The glyph is nearly imperceptible and requires a successful Wisdom (Perception) check against your spell save DC to notice. When you inscribe the glyph, you set its trigger and choose whether it’s an explosive rune or a spell glyph, as explained below. Set the Trigger. You decide what triggers the glyph when you cast the spell. For glyphs inscribed on a surface, common triggers include touching or stepping on the glyph, removing another object covering it, or approaching within a certain distance of it. For glyphs inscribed within an object, common triggers include opening that object or seeing the glyph. Once a glyph is triggered, this spell ends. You can refine the trigger so that only creatures of certain types activate it (for example, the glyph could be set to affect Aberrations). You can also set conditions for creatures that don’t trigger the glyph, such as those who say a certain password. Explosive Rune. When triggered, the glyph erupts with magical energy in a 20-foot-radius Sphere centered on the glyph. Each creature in the area makes a Dexterity saving throw. A creature takes 5d8 Acid, Cold, Fire, Lightning, or Thunder damage (your choice when you create the glyph) on a failed save or half as much damage on a successful one. Spell Glyph. You can store a prepared spell of level 3 or lower in the glyph by casting it as part of creating the glyph. The spell must target a single creature or an area. The spell being stored has no immediate effect when cast in this way. When the glyph is triggered, the stored spell takes effect. If the spell has a target, it targets the creature that triggered the glyph. If the spell affects an area, the area is centered on that creature. If the spell summons Hostile creatures or creates harmful objects or traps, they appear as close as possible to the intruder and attack it. If the spell requires Concentration, it lasts until the end of its full duration.",
+    "higherLevels": "The damage of an explosive rune increases by 1d8 for each spell slot level above 3. If you create a spell glyph, you can store any spell of up to the same level as the spell slot you use for the Glyph of Warding.",
+    "shortDescription": "A hidden glyph explodes for 5d8 damage or releases a stored spell when triggered.",
+    "choices": [
+      {
+        "id": "glyph-damage",
+        "prompt": "Choose the explosive rune's damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
+          "thunder"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "$choice:glyph-damage",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/goodberry",
@@ -4068,6 +5072,111 @@
             "width": 10
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/haste",
+    "name": "Haste",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a shaving of licorice root",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Choose a willing creature that you can see within range. Until the spell ends, the target’s Speed is doubled, it gains a +2 bonus to Armor Class, it has Advantage on Dexterity saving throws, and it gains an additional action on each of its turns. That action can be used to take only the Attack (one attack only), Dash, Disengage, Hide, or Utilize action. When the spell ends, the target is Incapacitated and has a Speed of 0 until the end of its next turn, as a wave of lethargy washes over it.",
+    "shortDescription": "A willing creature gets doubled Speed, +2 AC, Advantage on Dexterity saves, and an extra limited action.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "baseSpeed",
+        "value": "$derived:walkingSpeed",
+        "affects": "target"
+      },
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 2,
+        "affects": "target"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "DEX"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "extraAction",
+        "value": "action",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "namedAction",
+            "actions": [
+              "attack",
+              "dash",
+              "disengage",
+              "hide",
+              "utilize"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/incapacitated",
+        "affects": "target",
+        "trigger": {
+          "event": "effectEnds"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      },
+      {
+        "type": "grantSpeed",
+        "target": "base",
+        "value": 0,
+        "affects": "target",
+        "trigger": {
+          "event": "effectEnds"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
       }
     ]
   },
@@ -4745,6 +5854,89 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/hypnotic-pattern",
+    "name": "Hypnotic Pattern",
+    "level": 3,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of confetti",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a twisting pattern of colors in a 30-foot Cube within range. The pattern appears for a moment and vanishes. Each creature in the area who can see the pattern must succeed on a Wisdom saving throw or have the Charmed condition for the duration. While Charmed, the creature has the Incapacitated condition and a Speed of 0. The spell ends for an affected creature if it takes any damage or if someone else uses an action to shake the creature out of its stupor.",
+    "shortDescription": "30-foot Cube: Wisdom save or Charmed, Incapacitated, and Speed 0.",
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "endsOn": [
+            {
+              "event": "takeDamage"
+            }
+          ]
+        },
+        "area": [
+          {
+            "shape": "cube",
+            "size": 30
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/incapacitated",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "grantSpeed",
+        "target": "base",
+        "value": 0,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/ice-knife",
     "name": "Ice Knife",
     "level": 1,
@@ -5246,6 +6438,69 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/lightning-bolt",
+    "name": "Lightning Bolt",
+    "level": 3,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of fur and a crystal rod",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A stroke of lightning forming a 100-foot-long, 5-foot-wide Line blasts out from you in a direction you choose. Each creature in the Line makes a Dexterity saving throw, taking 8d6 Lightning damage on a failed save or half as much damage on a successful one.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 3.",
+    "shortDescription": "100-foot Line: 8d6 Lightning damage, Dexterity save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "lightning",
+        "value": {
+          "count": 8,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "line",
+            "size": 100,
+            "width": 5
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/locate-animals-or-plants",
     "name": "Locate Animals or Plants",
     "level": 2,
@@ -5470,6 +6725,104 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/magic-circle",
+    "name": "Magic Circle",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "salt and powdered silver worth 100+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 100,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create a 10-foot-radius, 20-foot-tall Cylinder of magical energy centered on a point on the ground that you can see within range. Glowing runes appear wherever the Cylinder intersects with the floor or other surface. Choose one or more of the following types of creatures: Celestials, Elementals, Fey, Fiends, or Undead. The circle affects a creature of the chosen type in the following ways: • The creature can’t willingly enter the Cylinder by nonmagical means. If the creature tries to use teleportation or interplanar travel to do so, it must first succeed on a Charisma saving throw. • The creature has Disadvantage on attack rolls against targets within the Cylinder.\n\n• Targets within the Cylinder can’t be possessed by or gain the Charmed or Frightened condition from the creature.\n\nEach time you cast this spell, you can cause its magic to operate in the reverse direction, preventing a creature of the specified type from leaving the Cylinder and protecting targets outside it.",
+    "higherLevels": "The duration increases by 1 hour for each spell slot level above 3.",
+    "shortDescription": "A 10-foot-radius Cylinder wards against Celestials, Elementals, Fey, Fiends, or Undead.",
+    "choices": [
+      {
+        "id": "magic-circle-types",
+        "prompt": "Choose creature types the circle affects.",
+        "count": 1,
+        "from": [
+          "celestial",
+          "elemental",
+          "fey",
+          "fiend",
+          "undead"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "others",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 10,
+            "height": 20
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "$choice:magic-circle-types"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "cannotApproach",
+        "affects": "others",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 10,
+            "height": 20
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "$choice:magic-circle-types"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/magic-missile",
     "name": "Magic Missile",
     "level": 1,
@@ -5645,6 +6998,96 @@
               "value": 3
             }
           ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/major-image",
+    "name": "Major Image",
+    "level": 3,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of fleece",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create the image of an object, a creature, or some other visible phenomenon that is no larger than a 20-foot Cube. The image appears at a spot that you can see within range and lasts for the duration. It seems real, including sounds, smells, and temperature appropriate to the thing depicted, but it can’t deal damage or cause conditions. If you are within range of the illusion, you can take a Magic action to cause the image to move to any other spot within range. As the image changes location, you can alter its appearance so that its movements appear natural for the image. For example, if you create an image of a creature and move it, you can alter the image so that it appears to be walking. Similarly, you can cause the illusion to make different sounds at different times, even making it carry on a conversation, for example. Physical interaction with the image reveals it to be an illusion, for things can pass through it. A creature that takes a Study action to examine the image can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the creature can see through the image, and its other sensory qualities become faint to the creature.",
+    "higherLevels": "The spell lasts until dispelled, without requiring Concentration, if cast with a level 4+ spell slot.",
+    "shortDescription": "Create a moving illusion up to a 20-foot Cube with sound, smell, and temperature.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/mass-healing-word",
+    "name": "Mass Healing Word",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Up to six creatures of your choice that you can see within range regain Hit Points equal to 2d4 plus your spellcasting ability modifier.",
+    "higherLevels": "The healing increases by 1d4 for each spell slot level above 3.",
+    "shortDescription": "Bonus Action: up to six creatures regain 2d4 + spellcasting modifier.",
+    "targets": {
+      "count": 6,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 2,
+          "die": "d4",
+          "modifier": "$derived:spellcastingModifier"
+        },
+        "affects": "target",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d4"
+          }
         }
       }
     ]
