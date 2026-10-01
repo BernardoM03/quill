@@ -7093,6 +7093,39 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/meld-into-stone",
+    "name": "Meld into Stone",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You step into a stone object or surface large enough to fully contain your body, merging yourself and your equipment with the stone for the duration. You must touch the stone to do so. Nothing of your presence remains visible or otherwise detectable by nonmagical senses. While merged with the stone, you can’t see what occurs outside it, and any Wisdom (Perception) checks you make to hear sounds outside it are made with Disadvantage. You remain aware of the passage of time and can cast spells on yourself while merged in the stone. You can use 5 feet of movement to leave the stone where you entered it, which ends the spell. You otherwise can’t move. Minor physical damage to the stone doesn’t harm you, but its partial destruction or a change in its shape (to the extent that you no longer fit within it) expels you and deals 6d6 Force damage to you. The stone’s complete destruction (or transmutation into a different substance) expels you and deals 50 Force damage to you. If expelled, you move into an unoccupied space closest to where you first entered and have the Prone condition.",
+    "shortDescription": "Merge with a stone surface; damage to the stone can expel you.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/mending",
     "name": "Mending",
     "level": 0,
@@ -7459,6 +7492,48 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/nondetection",
+    "name": "Nondetection",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of diamond dust worth 25+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 25,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "For the duration, you hide a target that you touch from Divination spells. The target can be a willing creature, or it can be a place or an object no larger than 10 feet in any dimension. The target can’t be targeted by any Divination spell or perceived through magical scrying sensors.",
+    "shortDescription": "Hide a creature, place, or object from Divination spells and scrying.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/pass-without-trace",
     "name": "Pass without Trace",
     "level": 2,
@@ -7568,6 +7643,92 @@
           },
           "onSuccess": "negate"
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/phantom-steed",
+    "name": "Phantom Steed",
+    "level": 3,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "A Large, quasi-real, horselike creature appears on the ground in an unoccupied space of your choice within range. You decide the creature’s appearance, and it is equipped with a saddle, bit, and bridle. Any of the equipment created by the spell vanishes in a puff of smoke if it is carried more than 10 feet away from the steed. For the duration, you or a creature you choose can ride the steed. The steed uses the Riding Horse stat block (see “Monsters”), except it has a Speed of 100 feet and can travel 13 miles in an hour. When the spell ends, the steed gradually fades, giving the rider 1 minute to dismount. The spell ends early if the steed takes any damage.",
+    "shortDescription": "A quasi-real horse with a 100-foot Speed carries a rider.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Riding Horse"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/plant-growth",
+    "name": "Plant Growth",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "special",
+      "trigger": "Action (Overgrowth) or 8 hours (Enrichment)"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 150,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "This spell channels vitality into plants. The casting time you use determines whether the spell has the Overgrowth or the Enrichment effect below. Overgrowth. Choose a point within range. All normal plants in a 100-foot-radius Sphere centered on that point become thick and overgrown. A creature moving through that area must spend 4 feet of movement for every 1 foot it moves. You can exclude one or more areas of any size within the spell’s area from being affected. Enrichment. All plants in a half-mile radius centered on a point within range become enriched for 365 days. The plants yield twice the normal amount of food when harvested. They can benefit from only one Plant Growth per year.",
+    "shortDescription": "Overgrow plants in a 100-foot Sphere (4 feet of movement per foot), or enrich crops.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 100
+          }
+        ]
       }
     ]
   },
@@ -7884,6 +8045,62 @@
         "trigger": {
           "event": "hitWithAttack"
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/protection-from-energy",
+    "name": "Protection from Energy",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "For the duration, the willing creature you touch has Resistance to one damage type of your choice: Acid, Cold, Fire, Lightning, or Thunder.",
+    "shortDescription": "A willing creature gains Resistance to a chosen damage type.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "protection-from-energy-type",
+        "prompt": "Choose a damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
+          "thunder"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "$choice:protection-from-energy-type",
+        "affects": "target"
       }
     ]
   },
@@ -8333,6 +8550,46 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/remove-curse",
+    "name": "Remove Curse",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "At your touch, all curses affecting one creature or object end. If the object is a cursed magic item, its curse remains, but the spell breaks its owner’s Attunement to the object so it can be removed or discarded.",
+    "shortDescription": "End all curses on a creature or object.",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "effects": [
+      {
+        "type": "removeCurse",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/resistance",
     "name": "Resistance",
     "level": 0,
@@ -8403,6 +8660,62 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/revivify",
+    "name": "Revivify",
+    "level": 3,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a diamond worth 300+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 300,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a creature that has died within the last minute. That creature revives with 1 Hit Point. This spell can’t revive a creature that has died of old age, nor does it restore any missing body parts.",
+    "shortDescription": "Revive a creature that died within the last minute with 1 Hit Point.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "revive",
+        "value": {
+          "hitPoints": 1,
+          "within": {
+            "value": 1,
+            "unit": "minute"
+          }
+        },
+        "affects": "target"
       }
     ]
   },
@@ -8765,6 +9078,41 @@
         ]
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/sending",
+    "name": "Sending",
+    "level": 3,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "unlimited"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a copper wire",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You send a short message of 25 words or fewer to a creature you have met or a creature described to you by someone who has met it. The target hears the message in its mind, recognizes you as the sender if it knows you, and can answer in a like manner immediately. The spell enables targets to understand the meaning of your message. You can send the message across any distance and even to other planes of existence, but if the target is on a different plane than you, there is a 5 percent chance that the message doesn’t arrive. You know if the delivery fails. Upon receiving your message, a creature can block your ability to reach it again with this spell for 8 hours. If you try to send another message during that time, you learn that you are blocked, and the spell fails.",
+    "shortDescription": "Send a 25-word message to a creature anywhere, which can reply.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/shatter",
@@ -9425,6 +9773,213 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/sleet-storm",
+    "name": "Sleet Storm",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 150,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a miniature umbrella",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Until the spell ends, sleet falls in a 40-foot-tall, 20-foot-radius Cylinder centered on a point you choose within range. The area is Heavily Obscured, and exposed flames in the area are doused. Ground in the Cylinder is Difficult Terrain. When a creature enters the Cylinder for the first time on a turn or starts its turn there, it must succeed on a Dexterity saving throw or have the Prone condition and lose Concentration.",
+    "shortDescription": "20-foot-radius Cylinder: Heavily Obscured Difficult Terrain; Dexterity save or Prone.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true,
+          "obscured": "heavy"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 20,
+            "height": 40
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/prone",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 20,
+            "height": 40
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "startTurn"
+          }
+        ]
+      },
+      {
+        "type": "loseConcentration",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/slow",
+    "name": "Slow",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a drop of molasses",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You alter time around up to six creatures of your choice in a 40-foot Cube within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration. An affected target’s Speed is halved, it takes a −2 penalty to AC and Dexterity saving throws, and it can’t take Reactions. On its turns, it can take either an action or a Bonus Action, not both, and it can make only one attack if it takes the Attack action. If it casts a spell with a Somatic component, there is a 25 percent chance the spell fails as a result of the target making the spell’s gestures too slowly. An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success.",
+    "shortDescription": "Up to six creatures: Wisdom save or halved Speed, -2 AC and Dexterity saves, no Reactions, limited actions.",
+    "targets": {
+      "count": 6,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "baseSpeed",
+        "value": "$derived:walkingSpeed",
+        "multiplier": -0.5,
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      },
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": -2,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": -2,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          },
+          {
+            "type": "ability",
+            "abilities": [
+              "DEX"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "loseAction",
+        "target": [
+          "reaction"
+        ],
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "limitActions",
+        "value": {
+          "count": 1,
+          "from": [
+            "action",
+            "bonusAction"
+          ]
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/sorcerous-burst",
     "name": "Sorcerous Burst",
     "level": 0,
@@ -9595,6 +10150,76 @@
     "ritual": true,
     "description": "For the duration, you can comprehend and verbally communicate with Beasts, and you can use any of the Influence action’s skill options with them. Most Beasts have little to say about topics that don’t pertain to survival or companionship, but at minimum, a Beast can give you information about nearby locations and monsters, including whatever it has perceived within the past day.",
     "shortDescription": "Comprehend and talk with Beasts.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/speak-with-dead",
+    "name": "Speak with Dead",
+    "level": 3,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "burning incense",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You grant the semblance of life to a corpse of your choice within range, allowing it to answer questions you pose. The corpse must have a mouth, and this spell fails if the deceased creature was Undead when it died. The spell also fails if the corpse was the target of this spell within the past 10 days. Until the spell ends, you can ask the corpse up to five questions. The corpse knows only what it knew in life, including the languages it knew. Answers are usually brief, cryptic, or repetitive, and the corpse is under no compulsion to offer a truthful answer if you are antagonistic toward it or it recognizes you as an enemy. This spell doesn’t return the creature’s soul to its body, only its animating spirit. Thus, the corpse can’t learn new information, doesn’t comprehend anything that has happened since it died, and can’t speculate about future events.",
+    "shortDescription": "A corpse answers up to five questions.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/speak-with-plants",
+    "name": "Speak with Plants",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You imbue plants in an immobile 30-foot Emanation with limited sentience and animation, giving them the ability to communicate with you and follow your simple commands. You can question plants about events in the spell’s area within the past day, gaining information about creatures that have passed, weather, and other circumstances. You can also turn Difficult Terrain caused by plant growth (such as thickets and undergrowth) into ordinary terrain that lasts for the duration. Or you can turn ordinary terrain where plants are present into Difficult Terrain that lasts for the duration. The spell doesn’t enable plants to uproot themselves and move about, but they can move their branches, tendrils, and stalks for you. If a Plant creature is in the area, you can communicate with it as if you shared a common language.",
+    "shortDescription": "Plants in a 30-foot Emanation communicate with you and can change Difficult Terrain.",
     "tags": [
       "narrative"
     ],
@@ -9977,6 +10602,98 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/stinking-cloud",
+    "name": "Stinking Cloud",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 90,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a rotten egg",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a 20-foot-radius Sphere of yellow, nauseating gas centered on a point within range. The cloud is Heavily Obscured. The cloud lingers in the air for the duration or until a strong wind (such as the one created by Gust of Wind) disperses it.\n\nEach creature that starts its turn in the Sphere must succeed on a Constitution saving throw or have the Poisoned condition until the end of the current turn. While Poisoned in this way, the creature can’t take an action or a Bonus Action.",
+    "shortDescription": "20-foot-radius Sphere: Heavily Obscured; Constitution save or Poisoned and unable to act.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "obscured": "heavy"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/poisoned",
+        "affects": "target",
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "trigger": {
+          "event": "startTurn"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      },
+      {
+        "type": "loseAction",
+        "target": [
+          "action",
+          "bonusAction"
+        ],
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/suggestion",
     "name": "Suggestion",
     "level": 2,
@@ -10160,6 +10877,91 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/tiny-hut",
+    "name": "Tiny Hut",
+    "level": 3,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a crystal bead",
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "A 10-foot Emanation springs into existence around you and remains stationary for the duration. The spell fails when you cast it if the Emanation isn’t big enough to fully encapsulate all creatures in its area. Creatures and objects within the Emanation when you cast the spell can move through it freely. All other creatures and objects are barred from passing through it. Spells of level 3 or lower can’t be cast through it, and the effects of such spells can’t extend into it. The atmosphere inside the Emanation is comfortable and dry, regardless of the weather outside. Until the spell ends, you can command the interior to have Dim Light or Darkness (no action required). The Emanation is opaque from the outside and of any color you choose, but it’s transparent from the inside. The spell ends early if you leave the Emanation or if you cast it again.",
+    "shortDescription": "A 10-foot Emanation dome bars outsiders and spells of level 3 or lower.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/tongues",
+    "name": "Tongues",
+    "level": 3,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "material"
+    ],
+    "materialComponent": "a miniature ziggurat",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "This spell grants the creature you touch the ability to understand any spoken or signed language that it hears or sees. Moreover, when the target communicates by speaking or signing, any creature that knows at least one language can understand it if that creature can hear the speech or see the signing.",
+    "shortDescription": "A creature understands any language and is understood by all.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "grantLanguage",
+        "target": "all",
+        "value": "understand",
+        "affects": "target"
+      },
+      {
+        "type": "grantLanguage",
+        "target": "all",
+        "value": "speak",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/true-strike",
     "name": "True Strike",
     "level": 0,
@@ -10286,6 +11088,75 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/vampiric-touch",
+    "name": "Vampiric Touch",
+    "level": 3,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "The touch of your shadow-wreathed hand can siphon life force from others to heal your wounds. Make a melee spell attack against one creature within reach. On a hit, the target takes 3d6 Necrotic damage, and you regain Hit Points equal to half the amount of Necrotic damage dealt. Until the spell ends, you can make the attack again on each of your turns as a Magic action, targeting the same creature or a different one.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 3.",
+    "shortDescription": "Melee spell attack: 3d6 Necrotic damage and heal half of it.",
+    "attack": "melee",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": {
+          "count": 3,
+          "die": "d6"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "heal",
+        "value": "$derived:damageDealt",
+        "multiplier": 0.5,
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "grantAttack",
+        "value": {
+          "count": 1,
+          "actionType": "action"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/vicious-mockery",
@@ -10547,6 +11418,97 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/water-breathing",
+    "name": "Water Breathing",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a short reed",
+    "duration": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "This spell grants up to ten willing creatures of your choice within range the ability to breathe underwater until the spell ends. Affected creatures also retain their normal mode of respiration.",
+    "shortDescription": "Up to ten creatures can breathe underwater.",
+    "targets": {
+      "count": 10,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "waterBreathing",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/water-walk",
+    "name": "Water Walk",
+    "level": 3,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a piece of cork",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "This spell grants the ability to move across any liquid surface—such as water, acid, mud, snow, quicksand, or lava—as if it were harmless solid ground (creatures crossing molten lava can still take damage from the heat). Up to ten willing creatures of your choice within range gain this ability for the duration. An affected target must take a Bonus Action to pass from the liquid’s surface into the liquid itself and vice versa, but if the target falls into the liquid, the target passes through the surface into the liquid below.",
+    "shortDescription": "Up to ten creatures can walk across liquids.",
+    "targets": {
+      "count": 10,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "traverseTerrain",
+        "target": [
+          "liquids"
+        ],
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/web",
     "name": "Web",
     "level": 2,
@@ -10649,6 +11611,65 @@
         "trigger": {
           "event": "startTurn"
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/wind-wall",
+    "name": "Wind Wall",
+    "level": 3,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a fan and a feather",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A wall of strong wind rises from the ground at a point you choose within range. You can make the wall up to 50 feet long, 15 feet high, and 1 foot thick. You can shape the wall in any way you choose so long as it makes one continuous path along the ground. The wall lasts for the duration. When the wall appears, each creature in its area makes a Strength saving throw, taking 4d8 Bludgeoning damage on a failed save or half as much damage on a successful one. The strong wind keeps fog, smoke, and other gases at bay. Small or smaller flying creatures or objects can’t pass through the wall. Loose, lightweight materials brought into the wall fly upward. Arrows, bolts, and other ordinary projectiles launched at targets behind the wall are deflected upward and miss automatically. Boulders hurled by Giants or siege engines, and similar projectiles, are unaffected. Creatures in gaseous form can’t pass through it.",
+    "shortDescription": "A wall of wind: 4d8 Bludgeoning damage when it appears; deflects projectiles.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "bludgeoning",
+        "value": {
+          "count": 4,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "STR",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "wall",
+            "size": 50,
+            "height": 15,
+            "width": 1
+          }
+        ]
       }
     ]
   },

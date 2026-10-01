@@ -1039,7 +1039,9 @@
         "createZone",
         "waterBreathing",
         "maximizeDice",
-        "dispel"
+        "dispel",
+        "revive",
+        "removeCurse"
       ]
     },
     "effect": {
@@ -3349,6 +3351,49 @@
                 },
                 "required": [
                   "upToLevel"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "revive"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Return a dead creature to life with `hitPoints`, if it died no more than `within` ago.",
+                "properties": {
+                  "hitPoints": {
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      {
+                        "const": "max"
+                      }
+                    ]
+                  },
+                  "within": {
+                    "$ref": "#/$defs/duration"
+                  }
+                },
+                "required": [
+                  "hitPoints"
                 ],
                 "additionalProperties": false
               }
