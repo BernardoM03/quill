@@ -224,8 +224,16 @@
           ]
         },
         "size": {
-          "type": "number",
-          "minimum": 0
+          "oneOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "The defining dimension in feet. `$scaling` where it grows, as Aura of Protection's 10 feet becoming 30."
         },
         "width": {
           "type": "number",
@@ -485,7 +493,8 @@
         "enterArea",
         "endTurnInArea",
         "moveInArea",
-        "effectEnds"
+        "effectEnds",
+        "castSpell"
       ]
     },
     "trigger": {
@@ -530,6 +539,14 @@
             }
           ],
           "description": "Which action type, when event is takeAction and the rule names a cost rather than an action, as Rage's 'take a Bonus Action to extend your Rage'."
+        },
+        "spellId": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/spellId"
+            }
+          ],
+          "description": "Which spell, when event is castSpell, as Smite of Protection on casting Divine Smite."
         }
       },
       "required": [
@@ -553,7 +570,7 @@
     },
     "relation": {
       "type": "string",
-      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry.",
+      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry. `selfOrAlly` is you or any ally, as an aura's 'you and your allies'.",
       "enum": [
         "self",
         "others",
@@ -561,7 +578,8 @@
         "ally",
         "enemy",
         "triggerCreature",
-        "target"
+        "target",
+        "selfOrAlly"
       ]
     },
     "acFormula": {
@@ -768,6 +786,15 @@
           "type": "integer",
           "minimum": 0,
           "description": "Floor on a deferred `max`, as Wholeness of Body's 'minimum of once'."
+        },
+        "multiplier": {
+          "type": "integer",
+          "minimum": 2,
+          "description": "Scales a deferred `max`, as Lay On Hands' pool of five times your Paladin level."
+        },
+        "pool": {
+          "type": "boolean",
+          "description": "The uses are points spent in any amount rather than one at a time, as Lay On Hands' pool of healing."
         }
       },
       "required": [
@@ -1390,6 +1417,9 @@
                   },
                   {
                     "$ref": "#/$defs/diceExpression"
+                  },
+                  {
+                    "$ref": "#/$defs/flatExpression"
                   }
                 ]
               }
@@ -1729,6 +1759,9 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "$ref": "#/$defs/flatExpression"
                   }
                 ]
               }
@@ -3514,6 +3547,9 @@
         },
         "options": {
           "$ref": "#/$defs/optionList"
+        },
+        "targets": {
+          "$ref": "#/$defs/targets"
         }
       },
       "required": [
@@ -4512,6 +4548,25 @@
           ],
           "additionalProperties": false,
           "description": "The roll is against ANY of these environmental hazards, as a Blanket's saves against extreme cold."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "inArea"
+            },
+            "featureId": {
+              "$ref": "#/$defs/featureId"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "featureId"
+          ],
+          "additionalProperties": false,
+          "description": "The creature is inside that feature's area, as Aura of Courage applying within Aura of Protection."
         }
       ]
     },
@@ -4921,7 +4976,8 @@
           "$ref": "#/$defs/featureId"
         },
         "resource": {
-          "type": "string"
+          "type": "string",
+          "description": "A class resource id, or `spellSlot` for an expended spell slot."
         },
         "amount": {
           "oneOf": [
@@ -4945,6 +5001,12 @@
             "dice"
           ],
           "description": "`uses` (the default) spends the feature's uses or the resource's points. `dice` forgoes that many of the feature's damage dice, as a Cunning Strike option forgoing Sneak Attack d6s."
+        },
+        "slotLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "description": "The slot level spent, when `resource` is spellSlot, as Holy Nimbus restored by a level 5 slot."
         }
       },
       "required": [
@@ -4992,6 +5054,10 @@
               "description": "Summed, as Deflect Attacks' Dexterity modifier plus Monk level."
             }
           ]
+        },
+        "minimum": {
+          "type": "integer",
+          "description": "Lowest total, as Aura of Protection's 'minimum bonus of +1'."
         }
       },
       "required": [
@@ -5119,6 +5185,42 @@
       "required": [
         "list",
         "items"
+      ],
+      "additionalProperties": false
+    },
+    "targets": {
+      "type": "object",
+      "description": "How many targets a spell or feature picks, and what kind.",
+      "properties": {
+        "count": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Floor on a deferred count, as Abjure Foes' 'minimum of one creature'."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "creature",
+            "object",
+            "creatureOrObject",
+            "point"
+          ]
+        }
+      },
+      "required": [
+        "count",
+        "kind"
       ],
       "additionalProperties": false
     }

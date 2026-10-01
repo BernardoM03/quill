@@ -150,35 +150,7 @@
         "description": "The spell makes a spell attack of this kind. Effects that need the hit use a hitWithAttack trigger."
       },
       "targets": {
-        "type": "object",
-        "description": "How many targets the spell picks, and what kind. Area spells omit it; the effect's `area` says who is caught.",
-        "properties": {
-          "count": {
-            "oneOf": [
-              {
-                "type": "integer",
-                "minimum": 1
-              },
-              {
-                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/deferredValue"
-              }
-            ]
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "creature",
-              "object",
-              "creatureOrObject",
-              "point"
-            ]
-          }
-        },
-        "required": [
-          "count",
-          "kind"
-        ],
-        "additionalProperties": false
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/targets"
       },
       "upcast": {
         "type": "object",

@@ -306,6 +306,10 @@
         "swapOnLevelUp": {
           "type": "integer",
           "description": "How many prepared/known spells may be exchanged when gaining a level."
+        },
+        "swapOnLongRest": {
+          "type": "integer",
+          "description": "How many prepared spells may be exchanged when finishing a Long Rest, as the Paladin's one."
         }
       },
       "required": [
