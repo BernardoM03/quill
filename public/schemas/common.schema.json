@@ -208,7 +208,7 @@
     },
     "areaOfEffect": {
       "type": "object",
-      "description": "A templated region an effect fills. `size` is the defining dimension in feet - a Cone's or Line's length, a Sphere's, Cylinder's or Emanation's radius, a Cube's edge - so one field covers every shape rather than a differently named dimension per shape.",
+      "description": "A templated region an effect fills. `size` is the defining dimension in feet - a Cone's or Line's length, a Sphere's, Cylinder's or Emanation's radius, a Cube's edge - so one field covers every shape rather than a differently named dimension per shape. A `wall`'s size is its length and a `ringWall`'s its diameter; both take `height` and `width` (thickness).",
       "properties": {
         "shape": {
           "type": "string",
@@ -218,7 +218,9 @@
             "sphere",
             "cube",
             "cylinder",
-            "emanation"
+            "emanation",
+            "wall",
+            "ringWall"
           ]
         },
         "size": {
@@ -424,7 +426,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -441,7 +443,9 @@
         "forceSave",
         "rollInitiative",
         "hitByAttack",
-        "fall"
+        "fall",
+        "enterArea",
+        "endTurnInArea"
       ]
     },
     "trigger": {
@@ -509,14 +513,15 @@
     },
     "relation": {
       "type": "string",
-      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks.",
+      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry.",
       "enum": [
         "self",
         "others",
         "conditionSource",
         "ally",
         "enemy",
-        "triggerCreature"
+        "triggerCreature",
+        "target"
       ]
     },
     "acFormula": {
@@ -753,7 +758,8 @@
             "hour",
             "day",
             "instantaneous",
-            "untilDispelled"
+            "untilDispelled",
+            "special"
           ]
         }
       },
@@ -983,7 +989,11 @@
         "replaceDamageDice",
         "changeDamageType",
         "traverseTerrain",
-        "triggerFeature"
+        "triggerFeature",
+        "interruptSpell",
+        "summon",
+        "transform",
+        "retarget"
       ]
     },
     "effect": {
@@ -1013,11 +1023,12 @@
         },
         "affects": {
           "type": "string",
-          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'.",
+          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'. `target` is whoever the spell or feature targets, as Bless's targets adding 1d4 to their own rolls.",
           "enum": [
             "self",
             "affector",
-            "others"
+            "others",
+            "target"
           ]
         },
         "qualifiers": {
@@ -1074,6 +1085,27 @@
             }
           ],
           "description": "What applying this one effect spends, when the rest of the feature is free. Disciplined Survivor's proficiency costs nothing; its reroll costs 1 Focus Point."
+        },
+        "upcast": {
+          "type": "object",
+          "description": "How the effect grows when its spell is cast with a higher-level slot. `perSlot` is added to `value` for each slot level above the spell's, as Fireball's 1d6.",
+          "properties": {
+            "perSlot": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/diceExpression"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              ]
+            }
+          },
+          "required": [
+            "perSlot"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1144,6 +1176,9 @@
                   },
                   {
                     "$ref": "#/$defs/specialImmunity"
+                  },
+                  {
+                    "$ref": "#/$defs/spellId"
                   }
                 ]
               }
@@ -2802,6 +2837,116 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "summon"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Placeholder until creature stat blocks exist (Period 6): the forms are named, not linked.",
+                "properties": {
+                  "forms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1
+                  },
+                  "creatureTypes": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/creatureType"
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "forms"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "transform"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Placeholder until creature stat blocks exist (Period 6): the form is described by type and a Challenge Rating cap.",
+                "properties": {
+                  "creatureType": {
+                    "$ref": "#/$defs/creatureType"
+                  },
+                  "maxChallengeRating": {
+                    "oneOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "$ref": "#/$defs/deferredValue"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "creatureType"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "retarget"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/actionType"
+                  }
+                ],
+                "description": "What moving the effect to a new target costs."
+              }
+            }
+          }
         }
       ]
     },
@@ -3238,19 +3383,24 @@
             "type": {
               "const": "spellLevel"
             },
-            "spellLevel": {
-              "type": "integer",
-              "description": "0 means cantrip.",
-              "minimum": 0,
-              "maximum": 9
-            },
             "negate": {
               "type": "boolean"
+            },
+            "spellLevels": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9
+              },
+              "minItems": 1,
+              "uniqueItems": true,
+              "description": "Matches a spell of ANY listed level. 0 means cantrip."
             }
           },
           "required": [
             "type",
-            "spellLevel"
+            "spellLevels"
           ],
           "additionalProperties": false
         },

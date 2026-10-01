@@ -7,8 +7,12 @@
   "items": {
     "type": "object",
     "properties": {
-      "id": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellId" },
-      "name": { "type": "string" },
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellId"
+      },
+      "name": {
+        "type": "string"
+      },
       "level": {
         "type": "integer",
         "description": "0 means cantrip.",
@@ -36,39 +40,202 @@
         },
         "uniqueItems": true
       },
-      "castingTime": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation" },
+      "castingTime": {
+        "description": "An action type, or a length of time for spells that take a minute or more. `ritual` is a separate flag.",
+        "oneOf": [
+          {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation"
+          },
+          {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+          }
+        ]
+      },
       "range": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["self", "touch", "ranged", "sight", "unlimited"] },
-          "distance": { "type": "number", "minimum": 0 },
-          "unit": { "type": "string", "enum": ["feet", "miles"] }
+          "type": {
+            "type": "string",
+            "enum": [
+              "self",
+              "touch",
+              "ranged",
+              "sight",
+              "unlimited",
+              "special"
+            ]
+          },
+          "distance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "feet",
+              "miles"
+            ]
+          }
         },
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "additionalProperties": false
       },
       "components": {
         "type": "array",
-        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/component" },
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/component"
+        },
         "uniqueItems": true
       },
-      "materialComponent": { "type": "string" },
-      "duration": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration" },
-      "concentration": { "type": "boolean" },
-      "ritual": { "type": "boolean" },
-      "description": { "type": "string", "description": "Markdown prose rendered by the UI." },
-      "shortDescription": { "type": "string" },
+      "materialComponent": {
+        "type": "string"
+      },
+      "duration": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+      },
+      "concentration": {
+        "type": "boolean"
+      },
+      "ritual": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string",
+        "description": "Markdown prose rendered by the UI."
+      },
+      "shortDescription": {
+        "type": "string"
+      },
       "higherLevels": {
         "type": "string",
         "description": "The 'Using a Higher-Level Spell Slot' clause."
       },
-      "tags": { "type": "array", "items": { "type": "string" } },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
       "effects": {
         "type": "array",
-        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect" }
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+        }
+      },
+      "materialCost": {
+        "type": "object",
+        "description": "A material component with a price, and whether casting uses it up. Find Familiar's incense worth 10+ GP is consumed.",
+        "properties": {
+          "cost": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost"
+          },
+          "consumed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "cost",
+          "consumed"
+        ],
+        "additionalProperties": false
+      },
+      "attack": {
+        "type": "string",
+        "enum": [
+          "melee",
+          "ranged"
+        ],
+        "description": "The spell makes a spell attack of this kind. Effects that need the hit use a hitWithAttack trigger."
+      },
+      "targets": {
+        "type": "object",
+        "description": "How many targets the spell picks, and what kind. Area spells omit it; the effect's `area` says who is caught.",
+        "properties": {
+          "count": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/deferredValue"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "creature",
+              "object",
+              "creatureOrObject",
+              "point"
+            ]
+          }
+        },
+        "required": [
+          "count",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "upcast": {
+        "type": "object",
+        "description": "What a higher-level slot changes on the spell itself. Effect-level growth, such as more damage, sits on the effect's `upcast`.",
+        "properties": {
+          "targetsPerSlot": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "More targets for each slot level above the spell's, as Hold Person."
+          },
+          "duration": {
+            "type": "array",
+            "description": "Longer durations from a slot level up, as Hunter's Mark's 8 hours from level 3 and 24 hours from level 5.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "minSlot": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 9
+                },
+                "duration": {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+                }
+              },
+              "required": [
+                "minSlot",
+                "duration"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "minProperties": 1,
+        "additionalProperties": false
+      },
+      "cantripUpgrade": {
+        "type": "string",
+        "description": "The 'Cantrip Upgrade' clause, for display. The numbers sit in the effect's scaling rows, keyed on character level."
+      },
+      "choices": {
+        "type": "array",
+        "description": "Decisions made when casting, as Spirit Guardians' Radiant or Necrotic.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+        }
       }
     },
-    "required": ["id", "name", "level", "school", "sourceIds", "description"],
+    "required": [
+      "id",
+      "name",
+      "level",
+      "school",
+      "sourceIds",
+      "description"
+    ],
     "additionalProperties": false
   }
 }
