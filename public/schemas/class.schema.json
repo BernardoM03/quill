@@ -300,8 +300,15 @@
           "type": "boolean"
         },
         "focus": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId",
-          "description": "The spellcasting focus item this class can use, such as an Arcane Focus."
+          "oneOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+            },
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+            }
+          ],
+          "description": "The spellcasting focus this class can use: an item, or a tool for the Bard's Musical Instrument."
         },
         "swapOnLevelUp": {
           "type": "integer",

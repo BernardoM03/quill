@@ -1073,7 +1073,8 @@
         "dispel",
         "revive",
         "removeCurse",
-        "autoSucceed"
+        "autoSucceed",
+        "addTargets"
       ]
     },
     "effect": {
@@ -2330,7 +2331,7 @@
               },
               "value": {
                 "type": "object",
-                "description": "Fields of the target feature replaced while this feature is held. `null` removes a field, as Persistent Rage removing Rage's need to be sustained.",
+                "description": "Fields of the target feature replaced while this feature is held. `null` removes a field, as Persistent Rage removing Rage's need to be sustained. `uses` replaces the pool, as Font of Inspiration's Short Rest recharge for Bardic Inspiration.",
                 "properties": {
                   "sustain": {
                     "oneOf": [
@@ -2350,6 +2351,9 @@
                   },
                   "duration": {
                     "$ref": "#/$defs/duration"
+                  },
+                  "uses": {
+                    "$ref": "#/$defs/uses"
                   }
                 },
                 "minProperties": 1,
@@ -3443,6 +3447,30 @@
                   "hitPoints"
                 ],
                 "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "addTargets"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Extra targets a spell can take. Narrow which spells with a `spell` qualifier and how far the new target may be with `range`, as Words of Creation's second creature within 10 feet."
               }
             }
           }
