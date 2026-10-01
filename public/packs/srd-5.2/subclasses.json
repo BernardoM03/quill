@@ -210,7 +210,337 @@
   {
     "id": "srd-5.2:subclass/life-domain",
     "classId": "srd-5.2:class/cleric",
-    "name": "Life Domain"
+    "name": "Life Domain",
+    "flavor": "Soothe the Hurts of the World",
+    "description": "The Life Domain focuses on the positive energy that helps sustain all life in the multiverse. Clerics who tap into this domain are masters of healing, using that life force to cure many hurts.\n\nExistence itself relies on the positive energy associated with this domain, so a Cleric of almost any religious tradition might choose it. This domain is particularly associated with agricultural deities, gods of healing or endurance, and gods of home and community. Religious orders of healing also seek the magic of this domain.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/life-disciple-of-life",
+        "name": "Disciple of Life",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "When a spell you cast with a spell slot restores Hit Points to a creature, that creature regains additional Hit Points on the turn you cast the spell. The additional Hit Points equal 2 plus the spell slot's level.",
+        "shortDescription": "Healing spells cast with a slot restore 2 + slot level more.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "base": 2,
+              "modifier": "$derived:slotLevel"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "restoreHitPoints"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-life-domain-spells",
+        "name": "Life Domain Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "Your connection to this divine domain ensures you always have certain spells ready. When you reach a Cleric level specified in the Life Domain Spells table, you thereafter always have the listed spells prepared.\n\n| Cleric Level | Prepared Spells |\n|---|---|\n| 3 | Aid, Bless, Cure Wounds, Lesser Restoration |\n| 5 | Mass Healing Word, Revivify |\n| 7 | Aura of Life, Death Ward |\n| 9 | Greater Restoration, Mass Cure Wounds |",
+        "shortDescription": "Always have Life Domain spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/aid",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/bless",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/cure-wounds",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/lesser-restoration",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/mass-healing-word",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/revivify",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/aura-of-life",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/death-ward",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/greater-restoration",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/mass-cure-wounds",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-preserve-life",
+        "name": "Preserve Life",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "As a Magic action, you present your Holy Symbol and expend a use of your Channel Divinity to evoke healing energy that can restore a number of Hit Points equal to five times your Cleric level. Choose Bloodied creatures within 30 feet of yourself (which can include you), and divide those Hit Points among them. This feature can restore a creature to no more than half its Hit Point maximum.",
+        "shortDescription": "Channel Divinity: divide five times your Cleric level in healing among Bloodied creatures.",
+        "activation": {
+          "type": "action",
+          "cost": {
+            "featureId": "srd-5.2:feature/cleric-channel-divinity",
+            "amount": 1
+          }
+        },
+        "tags": [
+          "channelDivinity",
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": "$derived:classLevel",
+            "multiplier": 5,
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "subject": "target",
+                "bloodied": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-blessed-healer",
+        "name": "Blessed Healer",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "The healing spells you cast on others heal you as well. Immediately after you cast a spell with a spell slot that restores Hit Points to one or more creatures other than yourself, you regain Hit Points equal to 2 plus the spell slot's level.",
+        "shortDescription": "Healing others with a slot spell heals you 2 + slot level.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "base": 2,
+              "modifier": "$derived:slotLevel"
+            },
+            "trigger": {
+              "event": "restoreHitPoints"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "others"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-supreme-healing",
+        "name": "Supreme Healing",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "When you would normally roll one or more dice to restore Hit Points to a creature with a spell or Channel Divinity, don't roll those dice for the healing; instead use the highest number possible for each die. For example, instead of restoring 2d6 Hit Points to a creature with a spell, you restore 12.",
+        "shortDescription": "Healing dice from your spells and Channel Divinity are maximized.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "maximizeDice",
+            "target": "healing",
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "spellLevel",
+                    "spellLevels": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9
+                    ]
+                  },
+                  {
+                    "type": "sourceFeature",
+                    "featureId": "srd-5.2:feature/cleric-channel-divinity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/circle-of-the-land",
