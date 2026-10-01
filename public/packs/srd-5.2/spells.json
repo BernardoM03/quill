@@ -1,5 +1,88 @@
 [
   {
+    "id": "srd-5.2:spell/acid-splash",
+    "name": "Acid Splash",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create an acidic bubble at a point within range, where it explodes in a 5-foot-radius Sphere. Each creature in that Sphere must succeed on a Dexterity saving throw or take 1d6 Acid damage.",
+    "cantripUpgrade": "The damage increases by 1d6 when you reach levels 5 (2d6), 11 (3d6), and 17 (4d6).",
+    "shortDescription": "5-foot Sphere: Dexterity save or 1d6 Acid damage.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d6"
+            }
+          }
+        ],
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 5
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/bless",
     "name": "Bless",
     "level": 1,
@@ -63,6 +146,92 @@
           "die": "d4"
         },
         "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/chill-touch",
+    "name": "Chill Touch",
+    "level": 0,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Channeling the chill of the grave, make a melee spell attack against a target within reach. On a hit, the target takes 1d10 Necrotic damage, and it can’t regain Hit Points until the end of your next turn.",
+    "cantripUpgrade": "The damage increases by 1d10 when you reach levels 5 (2d10), 11 (3d10), and 17 (4d10).",
+    "shortDescription": "Melee spell attack: 1d10 Necrotic damage; the target can't regain Hit Points.",
+    "attack": "melee",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d10"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "preventHealing",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
       }
     ]
   },
@@ -170,6 +339,48 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/dancing-lights",
+    "name": "Dancing Lights",
+    "level": 0,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of phosphorus",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create up to four torch-size lights within range, making them appear as torches, lanterns, or glowing orbs that hover for the duration. Alternatively, you combine the four lights into one glowing Medium form that is vaguely humanlike. Whichever form you choose, each light sheds Dim Light in a 10foot radius. As a Bonus Action, you can move the lights up to 60 feet to a space within range. A light must be within 20 feet of another light created by this spell, and a light vanishes if it exceeds the spell’s range.",
+    "shortDescription": "Up to four hovering lights, each shedding Dim Light in a 10-foot radius.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 0,
+          "dim": 10
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/divine-smite",
     "name": "Divine Smite",
     "level": 1,
@@ -229,6 +440,144 @@
         ]
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/druidcraft",
+    "name": "Druidcraft",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Whispering to the spirits of nature, you create one of the following effects within range. Weather Sensor. You create a Tiny, harmless sensory effect that predicts what the weather will be at your location for the next 24 hours. The effect might manifest as a golden orb for clear skies, a cloud for rain, falling snowflakes for snow, and so on. This effect persists for 1 round. Bloom. You instantly make a flower blossom, a seed pod open, or a leaf bud bloom. Sensory Effect. You create a harmless sensory effect, such as falling leaves, spectral dancing fairies, a gentle breeze, the sound of an animal, or the faint odor of skunk. The effect must fit in a 5-foot Cube. Fire Play. You light or snuff out a candle, a torch, or a campfire.",
+    "shortDescription": "A minor nature effect: predict weather, bloom a flower, a sensory effect, or light a flame.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/eldritch-blast",
+    "name": "Eldritch Blast",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/warlock"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You hurl a beam of crackling energy. Make a ranged spell attack against one creature or object in range. On a hit, the target takes 1d10 Force damage.",
+    "cantripUpgrade": "The spell creates two beams at level 5, three beams at level 11, and four beams at level 17. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.",
+    "shortDescription": "Ranged spell attack beams of 1d10 Force damage; more beams at higher levels.",
+    "attack": "ranged",
+    "targets": {
+      "count": "$scaling",
+      "kind": "creatureOrObject"
+    },
+    "effects": [
+      {
+        "type": "grantAttack",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": 1
+          },
+          {
+            "level": 5,
+            "value": 2
+          },
+          {
+            "level": 11,
+            "value": 3
+          },
+          {
+            "level": 17,
+            "value": 4
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "force",
+        "value": {
+          "count": 1,
+          "die": "d10"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/elementalism",
+    "name": "Elementalism",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You exert control over the elements, creating one of the following effects within range. Beckon Air. You create a breeze strong enough to ripple cloth, stir dust, rustle leaves, and close open doors and shutters, all in a 5-foot Cube. Doors and shutters being held open by someone or something aren’t affected. Beckon Earth. You create a thin shroud of dust or sand that covers surfaces in a 5-foot-square area, or you cause a single word to appear in your handwriting in a patch of dirt or sand. Beckon Fire. You create a thin cloud of harmless embers and colored, scented smoke in a 5-foot Cube. You choose the color and scent, and the embers can light candles, torches, or lamps in that area. The smoke’s scent lingers for 1 minute. Beckon Water. You create a spray of cool mist that lightly dampens creatures and objects in a 5-foot Cube. Alternatively, you create 1 cup of clean water either in an open container or on a surface, and the water evaporates in 1 minute. Sculpt Element. You cause dirt, sand, fire, smoke, mist, or water that can fit in a 1-foot Cube to assume a crude shape (such as that of a creature) for 1 hour.",
+    "shortDescription": "A minor elemental effect: breeze, dust, embers, mist, or a sculpted shape.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/find-familiar",
@@ -430,6 +779,67 @@
               "count": 4,
               "die": "d10"
             }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/guidance",
+    "name": "Guidance",
+    "level": 0,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch a willing creature and choose a skill. Until the spell ends, the creature adds 1d4 to any ability check using the chosen skill.",
+    "shortDescription": "A willing creature adds 1d4 to ability checks using a chosen skill.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "guidance-skill",
+        "prompt": "Choose a skill.",
+        "count": 1,
+        "fromTypes": [
+          "skill"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "$choice:guidance-skill"
+            ]
           }
         ]
       }
@@ -660,6 +1070,198 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/light",
+    "name": "Light",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "material"
+    ],
+    "materialComponent": "a firefly or phosphorescent moss",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch one Large or smaller object that isn’t being worn or carried by someone else. Until the spell ends, the object sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. The light can be colored as you like. Covering the object with something opaque blocks the light. The spell ends if you cast it again.",
+    "shortDescription": "An object sheds Bright Light 20 feet and Dim Light 20 more.",
+    "targets": {
+      "count": 1,
+      "kind": "object"
+    },
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/mage-hand",
+    "name": "Mage Hand",
+    "level": 0,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again. When you cast the spell, you can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial. As a Magic action on your later turns, you can control the hand thus again. As part of that action, you can move the hand up to 30 feet. The hand can’t attack, activate magic items, or carry more than 10 pounds.",
+    "shortDescription": "A spectral hand manipulates objects up to 10 pounds within 30 feet.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/mending",
+    "name": "Mending",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "two lodestones",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "This spell repairs a single break or tear in an object you touch, such as a broken chain link, two halves of a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no larger than 1 foot in any dimension, you mend it, leaving no trace of the former damage. This spell can physically repair a magic item, but it can’t restore magic to such an object.",
+    "shortDescription": "Repair a single break or tear up to 1 foot in an object.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/message",
+    "name": "Message",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a copper wire",
+    "duration": {
+      "value": 1,
+      "unit": "round"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You point toward a creature within range and whisper a message. The target (and only the target) hears the message and can reply in a whisper that only you can hear. You can cast this spell through solid objects if you are familiar with the target and know it is beyond the barrier. Magical silence; 1 foot of stone, metal, or wood; or a thin sheet of lead blocks the spell.",
+    "shortDescription": "Whisper a message to a creature within 120 feet, which can whisper back.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/minor-illusion",
+    "name": "Minor Illusion",
+    "level": 0,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of fleece",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create a sound or an image of an object within range that lasts for the duration. See the descriptions below for the effects of each. The illusion ends if you cast this spell again. If a creature takes a Study action to examine the sound or image, the creature can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the illusion becomes faint to the creature. Sound. If you create a sound, its volume can range from a whisper to a scream. It can be your voice, someone else’s voice, a lion’s roar, a beating of drums, or any other sound you choose. The sound continues unabated throughout the duration, or you can make discrete sounds at different times before the spell ends. Image. If you create an image of an object—such as a chair, muddy footprints, or a small chest—it must be no larger than a 5-foot Cube. The image can’t create sound, light, smell, or any other sensory effect. Physical interaction with the image reveals it to be an illusion, since things can pass through it.",
+    "shortDescription": "Create a sound or an image of an object up to a 5-foot Cube.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/misty-step",
     "name": "Misty Step",
     "level": 2,
@@ -690,6 +1292,84 @@
       {
         "type": "teleport",
         "value": 30
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/poison-spray",
+    "name": "Poison Spray",
+    "level": 0,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You spray toxic mist at a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d12 Poison damage.",
+    "cantripUpgrade": "The damage increases by 1d12 when you reach levels 5 (2d12), 11 (3d12), and 17 (4d12).",
+    "shortDescription": "Ranged spell attack: 1d12 Poison damage.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "poison",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d12"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d12"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d12"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d12"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
       }
     ]
   },
@@ -755,6 +1435,376 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/prestidigitation",
+    "name": "Prestidigitation",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create a magical effect within range. Choose the effect from the options below. If you cast this spell multiple times, you can have up to three of its non-instantaneous effects active at a time. Sensory Effect. You create an instantaneous, harmless sensory effect, such as a shower of sparks, a puff of wind, faint musical notes, or an odd odor. Fire Play. You instantaneously light or snuff out a candle, a torch, or a small campfire. Clean or Soil. You instantaneously clean or soil an object no larger than 1 cubic foot. Minor Sensation. You chill, warm, or flavor up to 1 cubic foot of nonliving material for 1 hour. Magic Mark. You make a color, a small mark, or a symbol appear on an object or a surface for 1 hour. Minor Creation. You create a nonmagical trinket or an illusory image that can fit in your hand. It lasts until the end of your next turn. A trinket can deal no damage and has no monetary worth.",
+    "shortDescription": "A minor trick: sparks, light a candle, clean or soil, flavor, mark, or a trinket.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/produce-flame",
+    "name": "Produce Flame",
+    "level": 0,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A flickering flame appears in your hand and remains there for the duration. While there, the flame emits no heat and ignites nothing, and it sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. The spell ends if you cast it again. Until the spell ends, you can take a Magic action to hurl fire at a creature or an object within 60 feet of you. Make a ranged spell attack. On a hit, the target takes 1d8 Fire damage.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "A flame in your hand gives light; hurl it for 1d8 Fire damage as a Magic action.",
+    "attack": "ranged",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      },
+      {
+        "type": "grantAttack",
+        "value": {
+          "count": 1,
+          "actionType": "action"
+        },
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 60,
+            "unit": "feet"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/ray-of-frost",
+    "name": "Ray of Frost",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 Cold damage, and its Speed is reduced by 10 feet until the start of your next turn.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "Ranged spell attack: 1d8 Cold damage and -10 feet Speed.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "cold",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "modifier",
+        "target": "baseSpeed",
+        "value": -10,
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/resistance",
+    "name": "Resistance",
+    "level": 0,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You touch a willing creature and choose a damage type: Acid, Bludgeoning, Cold, Fire, Lightning, Necrotic, Piercing, Poison, Radiant, Slashing, or Thunder. When the creature takes damage of the chosen type before the spell ends, the creature reduces the total damage taken by 1d4. A creature can benefit from this spell only once per turn.",
+    "shortDescription": "A willing creature reduces damage of a chosen type by 1d4 once per turn.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "resistance-damage-type",
+        "prompt": "Choose a damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "bludgeoning",
+          "cold",
+          "fire",
+          "lightning",
+          "necrotic",
+          "piercing",
+          "poison",
+          "radiant",
+          "slashing",
+          "thunder"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "reduceDamage",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target",
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "takeDamage"
+        },
+        "qualifiers": [
+          {
+            "type": "damageType",
+            "damageTypes": [
+              "$choice:resistance-damage-type"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/sacred-flame",
+    "name": "Sacred Flame",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Flame-like radiance descends on a creature that you can see within range. The target must succeed on a Dexterity saving throw or take 1d8 Radiant damage. The target gains no benefit from Half Cover or Three-Quarters Cover for this save.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "Dexterity save (no cover bonus) or 1d8 Radiant damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "ignoresCover": true
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/shield",
     "name": "Shield",
     "level": 1,
@@ -791,6 +1841,368 @@
       {
         "type": "grantImmunity",
         "target": "srd-5.2:spell/magic-missile"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/shillelagh",
+    "name": "Shillelagh",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "mistletoe",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A Club or Quarterstaff you are holding is imbued with nature’s power. For the duration, you can use your spellcasting ability instead of Strength for the attack and damage rolls of melee attacks using that weapon, and the weapon’s damage die becomes a d8. If the attack deals damage, it can be Force damage or the weapon’s normal damage type (your choice). The spell ends early if you cast it again or if you let go of the weapon.",
+    "cantripUpgrade": "The damage die changes when you reach levels 5 (d10), 11 (d12), and 17 (2d6).",
+    "shortDescription": "Your Club or Quarterstaff uses your spellcasting ability and a d8 damage die.",
+    "effects": [
+      {
+        "type": "substituteAbility",
+        "target": "attackRoll",
+        "value": "$derived:spellcastingAbility",
+        "qualifiers": [
+          {
+            "type": "weaponKind",
+            "itemIds": [
+              "srd-5.2:equipment/club",
+              "srd-5.2:equipment/quarterstaff"
+            ]
+          },
+          {
+            "type": "attackRange",
+            "attackRange": "melee"
+          }
+        ]
+      },
+      {
+        "type": "substituteAbility",
+        "target": "damageRoll",
+        "value": "$derived:spellcastingAbility",
+        "qualifiers": [
+          {
+            "type": "weaponKind",
+            "itemIds": [
+              "srd-5.2:equipment/club",
+              "srd-5.2:equipment/quarterstaff"
+            ]
+          },
+          {
+            "type": "attackRange",
+            "attackRange": "melee"
+          }
+        ]
+      },
+      {
+        "type": "replaceDamageDice",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 1,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 1,
+              "die": "d12"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 2,
+              "die": "d6"
+            }
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "weaponKind",
+            "itemIds": [
+              "srd-5.2:equipment/club",
+              "srd-5.2:equipment/quarterstaff"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "changeDamageType",
+        "value": "force",
+        "qualifiers": [
+          {
+            "type": "weaponKind",
+            "itemIds": [
+              "srd-5.2:equipment/club",
+              "srd-5.2:equipment/quarterstaff"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/shocking-grasp",
+    "name": "Shocking Grasp",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Lightning springs from you to a creature that you try to touch. Make a melee spell attack against the target. On a hit, the target takes 1d8 Lightning damage, and it can’t make Opportunity Attacks until the start of its next turn.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "Melee spell attack: 1d8 Lightning damage; the target can't make Opportunity Attacks.",
+    "attack": "melee",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "lightning",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "loseAction",
+        "target": [
+          "reaction"
+        ],
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "namedAction",
+            "actions": [
+              "attack"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/sorcerous-burst",
+    "name": "Sorcerous Burst",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You cast sorcerous energy at one creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d8 damage of a type you choose: Acid, Cold, Fire, Lightning, Poison, Psychic, or Thunder. If you roll an 8 on a d8 for this spell, you can roll another d8, and add it to the damage. When you cast this spell, the maximum number of these d8s you can add to the spell’s damage equals your spellcasting ability modifier.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "Ranged spell attack: 1d8 damage of a chosen type; 8s explode.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "choices": [
+      {
+        "id": "sorcerous-burst-damage",
+        "prompt": "Choose a damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
+          "poison",
+          "psychic",
+          "thunder"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "$choice:sorcerous-burst-damage",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "rerollDamage",
+        "reroll": {
+          "mode": "explode",
+          "triggerValues": [
+            8
+          ],
+          "dice": "$derived:spellcastingModifier"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/spare-the-dying",
+    "name": "Spare the Dying",
+    "level": 0,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 15,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Choose a creature within range that has 0 Hit Points and isn’t dead. The creature becomes Stable.",
+    "cantripUpgrade": "The range doubles when you reach levels 5 (30 feet), 11 (60 feet), and 17 (120 feet).",
+    "shortDescription": "A creature at 0 Hit Points becomes Stable.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "stabilize",
+        "affects": "target"
       }
     ]
   },
@@ -913,6 +2325,344 @@
             "die": "d8"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/starry-wisp",
+    "name": "Starry Wisp",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You launch a mote of light at one creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d8 Radiant damage, and until the end of your next turn, it emits Dim Light in a 10-foot radius and can’t benefit from the Invisible condition.",
+    "cantripUpgrade": "The damage increases by 1d8 when you reach levels 5 (2d8), 11 (3d8), and 17 (4d8).",
+    "shortDescription": "Ranged spell attack: 1d8 Radiant damage; the target glows and can't benefit from Invisible.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d8"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d8"
+            }
+          }
+        ],
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 0,
+          "dim": 10
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      },
+      {
+        "type": "suppressCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/thaumaturgy",
+    "name": "Thaumaturgy",
+    "level": 0,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You manifest a minor wonder within range. You create one of the effects below within range. If you cast this spell multiple times, you can have up to three of its 1-minute effects active at a time. Altered Eyes. You alter the appearance of your eyes for 1 minute. Booming Voice. Your voice booms up to three times as loud as normal for 1 minute. For the duration, you have Advantage on Charisma (Intimidation) checks. Fire Play. You cause flames to flicker, brighten, dim, or change color for 1 minute. Invisible Hand. You instantaneously cause an unlocked door or window to fly open or slam shut. Phantom Sound. You create an instantaneous sound that originates from a point of your choice within range, such as a rumble of thunder, the cry of a raven, or ominous whispers. Tremors. You cause harmless tremors in the ground for 1 minute.",
+    "shortDescription": "A minor wonder; Booming Voice gives Advantage on Intimidation.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/intimidation"
+            ]
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/true-strike",
+    "name": "True Strike",
+    "level": 0,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a weapon with which you have proficiency and that is worth 1+ CP",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Guided by a flash of magical insight, you make one attack with the weapon used in the spell’s casting. The attack uses your spellcasting ability for the attack and damage rolls instead of using Strength or Dexterity. If the attack deals damage, it can be Radiant damage or the weapon’s normal damage type (your choice).",
+    "cantripUpgrade": "Whether you deal Radiant damage or the weapon’s normal damage type, the attack deals extra Radiant damage when you reach levels 5 (1d6), 11 (2d6), and 17 (3d6).",
+    "shortDescription": "Attack with your weapon using your spellcasting ability; can deal Radiant damage.",
+    "effects": [
+      {
+        "type": "grantAttack",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "weapon"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "substituteAbility",
+        "target": "attackRoll",
+        "value": "$derived:spellcastingAbility"
+      },
+      {
+        "type": "substituteAbility",
+        "target": "damageRoll",
+        "value": "$derived:spellcastingAbility"
+      },
+      {
+        "type": "changeDamageType",
+        "value": "radiant"
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": "$scaling",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "scaling": [
+          {
+            "level": 5,
+            "value": {
+              "count": 1,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 2,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 3,
+              "die": "d6"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/vicious-mockery",
+    "name": "Vicious Mockery",
+    "level": 0,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You unleash a string of insults laced with subtle enchantments at one creature you can see or hear within range. The target must succeed on a Wisdom saving throw or take 1d6 Psychic damage and have Disadvantage on the next attack roll it makes before the end of its next turn.",
+    "cantripUpgrade": "The damage increases by 1d6 when you reach levels 5 (2d6), 11 (3d6), and 17 (4d6).",
+    "shortDescription": "Wisdom save or 1d6 Psychic damage and Disadvantage on its next attack.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": "$scaling",
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d6"
+            }
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "target",
+        "appliesOnce": true,
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
       }
     ]
   },
