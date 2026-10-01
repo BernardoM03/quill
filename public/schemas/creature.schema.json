@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/creature.schema.json",
+  "title": "D&D 5.5e SRD Creatures",
+  "description": "Top-level array of creature stat blocks: beasts for Wild Shape and summons, and the forms spells and features summon. Mirrors the SRD stat block line for line.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/creature"
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "description": "One trait or action as the stat block prints it. `attack`, `damage`, and `save` pull out the numbers a sheet or VTT rolls; the rest stays in `description`.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attack": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "melee",
+                "ranged",
+                "meleeOrRanged"
+              ]
+            },
+            "toHit": {
+              "type": "integer"
+            },
+            "reach": {
+              "type": "integer"
+            },
+            "range": {
+              "type": "object",
+              "properties": {
+                "normal": {
+                  "type": "integer"
+                },
+                "long": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "normal",
+                "long"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kind",
+            "toHit"
+          ],
+          "additionalProperties": false
+        },
+        "damage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "average": {
+                "type": "integer"
+              },
+              "dice": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+              },
+              "damageType": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/damageType"
+              }
+            },
+            "required": [
+              "average",
+              "dice",
+              "damageType"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "save": {
+          "type": "object",
+          "properties": {
+            "ability": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+            },
+            "dc": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "ability",
+            "dc"
+          ],
+          "additionalProperties": false
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "creature": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "oneOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureSize"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureSize"
+              },
+              "minItems": 2
+            }
+          ],
+          "description": "A list where the creature can be either, as 'Medium or Small'."
+        },
+        "creatureType": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/creatureType"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The parenthetical after the type, as Dinosaur or Devil."
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "armorClass": {
+          "type": "integer"
+        },
+        "hitPoints": {
+          "type": "object",
+          "properties": {
+            "average": {
+              "type": "integer"
+            },
+            "dice": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+            }
+          },
+          "required": [
+            "average",
+            "dice"
+          ],
+          "additionalProperties": false
+        },
+        "speed": {
+          "type": "object",
+          "properties": {
+            "walk": {
+              "type": "integer"
+            },
+            "fly": {
+              "type": "integer"
+            },
+            "swim": {
+              "type": "integer"
+            },
+            "climb": {
+              "type": "integer"
+            },
+            "burrow": {
+              "type": "integer"
+            },
+            "hover": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "initiative": {
+          "type": "object",
+          "properties": {
+            "modifier": {
+              "type": "integer"
+            },
+            "score": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "modifier",
+            "score"
+          ],
+          "additionalProperties": false
+        },
+        "abilities": {
+          "type": "object",
+          "properties": {
+            "STR": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            },
+            "DEX": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            },
+            "CON": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            },
+            "INT": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            },
+            "WIS": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            },
+            "CHA": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 30
+                },
+                "modifier": {
+                  "type": "integer"
+                },
+                "save": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score",
+                "modifier",
+                "save"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "STR",
+            "DEX",
+            "CON",
+            "INT",
+            "WIS",
+            "CHA"
+          ],
+          "additionalProperties": false
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skillId": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/skillId"
+              },
+              "bonus": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "skillId",
+              "bonus"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "resistances": {
+          "type": "object",
+          "properties": {
+            "damage": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/damageType"
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/conditionId"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "vulnerabilities": {
+          "type": "object",
+          "properties": {
+            "damage": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/damageType"
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/conditionId"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "immunities": {
+          "type": "object",
+          "properties": {
+            "damage": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/damageType"
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/conditionId"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "senses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sense": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/specialSense"
+              },
+              "range": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "sense",
+              "range"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "passivePerception": {
+          "type": "integer"
+        },
+        "languages": {
+          "type": "string"
+        },
+        "challengeRating": {
+          "type": "number",
+          "minimum": 0
+        },
+        "xp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proficiencyBonus": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "bonusActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "legendaryActions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "size",
+        "creatureType",
+        "armorClass",
+        "hitPoints",
+        "speed",
+        "abilities",
+        "challengeRating"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

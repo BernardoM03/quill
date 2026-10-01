@@ -19,6 +19,7 @@ PAIRS=(
   "spell:spells"
   "equipment:equipment"
   "language:languages"
+  "creature:creatures"
   "conditions:conditions"
   "pack:pack"
 )

@@ -3099,14 +3099,47 @@
             "properties": {
               "value": {
                 "type": "object",
-                "description": "Placeholder until creature stat blocks exist (Period 6): the forms are named, not linked.",
+                "description": "WHAT can be summoned, in up to three ways. `forms` links stat blocks in the creature catalog. `statBlock` names a stat block printed inside this spell or feature's own text (Animated Object, Otherworldly Steed), which has no catalog entry because its numbers scale with the caster. `pool` is an open set: any creature of the listed types at or under the challenge rating, as Find Familiar's 'a Beast of Challenge Rating 0'. `creatureTypes` is different: it is the creature type the summon TAKES, chosen from the list, not a filter on which stat block.",
                 "properties": {
                   "forms": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "$ref": "#/$defs/creatureId"
                     },
-                    "minItems": 1
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "statBlock": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "pool": {
+                    "type": "object",
+                    "properties": {
+                      "creatureTypes": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/creatureType"
+                        },
+                        "minItems": 1
+                      },
+                      "maxChallengeRating": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "chosenBy": {
+                        "type": "string",
+                        "enum": [
+                          "self",
+                          "gm"
+                        ],
+                        "description": "Who picks the creature. Defaults to `self`; Planar Ally's GM-chosen ally is `gm`."
+                      }
+                    },
+                    "required": [
+                      "creatureTypes"
+                    ],
+                    "additionalProperties": false
                   },
                   "creatureTypes": {
                     "type": "array",
@@ -3127,8 +3160,22 @@
                     ]
                   }
                 },
-                "required": [
-                  "forms"
+                "anyOf": [
+                  {
+                    "required": [
+                      "forms"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "statBlock"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "pool"
+                    ]
+                  }
                 ],
                 "additionalProperties": false
               }
@@ -5068,6 +5115,11 @@
       "description": "Namespaced content id for Languages: <packId>:language/<slug>",
       "pattern": "^[a-z0-9][a-z0-9.-]*:language/[a-z0-9-]+$"
     },
+    "creatureId": {
+      "type": "string",
+      "description": "Namespaced content id for Creatures: <packId>:creature/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:creature/[a-z0-9-]+$"
+    },
     "entityKind": {
       "type": "string",
       "description": "An entity type segment, matching the middle part of an id. Naming a kind rather than listing members keeps an open pool open: a skill added by a later pack becomes selectable without editing the feature that offers the choice.",
@@ -5082,7 +5134,8 @@
         "origin",
         "condition",
         "language",
-        "equipment"
+        "equipment",
+        "creature"
       ]
     },
     "weaponProperty": {
