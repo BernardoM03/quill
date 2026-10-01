@@ -91,7 +91,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 0
+            "spellLevels": [
+              0
+            ]
           }
         ]
       },
@@ -103,7 +105,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 1
+            "spellLevels": [
+              1
+            ]
           }
         ]
       }
@@ -174,7 +178,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 0
+            "spellLevels": [
+              0
+            ]
           }
         ]
       },
@@ -186,7 +192,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 1
+            "spellLevels": [
+              1
+            ]
           }
         ]
       }
@@ -257,7 +265,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 0
+            "spellLevels": [
+              0
+            ]
           }
         ]
       },
@@ -269,7 +279,9 @@
         "qualifiers": [
           {
             "type": "spellLevel",
-            "spellLevel": 1
+            "spellLevels": [
+              1
+            ]
           }
         ]
       }

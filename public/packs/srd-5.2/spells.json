@@ -1,1 +1,1090 @@
-[]
+[
+  {
+    "id": "srd-5.2:spell/bless",
+    "name": "Bless",
+    "level": 1,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a Holy Symbol worth 5+ GP",
+    "materialCost": {
+      "cost": {
+        "amount": 5,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You bless up to three creatures within range. Whenever a target makes an attack roll or a saving throw before the spell ends, the target adds 1d4 to the attack roll or save.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 1.",
+    "shortDescription": "Up to three creatures add 1d4 to attack rolls and saves.",
+    "targets": {
+      "count": 3,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target"
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/counterspell",
+    "name": "Counterspell",
+    "level": 3,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "reaction",
+      "trigger": "When you see a creature within 60 feet of yourself casting a spell with Verbal, Somatic, or Material components"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You attempt to interrupt a creature in the process of casting a spell. The creature makes a Constitution saving throw. On a failed save, the spell dissipates with no effect, and the action, Bonus Action, or Reaction used to cast it is wasted. If that spell was cast with a spell slot, the slot isn’t expended.",
+    "shortDescription": "Reaction: the caster makes a Constitution save or the spell fails.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "interruptSpell",
+        "affects": "target",
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/cure-wounds",
+    "name": "Cure Wounds",
+    "level": 1,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A creature you touch regains a number of Hit Points equal to 2d8 plus your spellcasting ability modifier.",
+    "higherLevels": "The healing increases by 2d8 for each spell slot level above 1.",
+    "shortDescription": "Touch: heal 2d8 + spellcasting modifier.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 2,
+          "die": "d8",
+          "modifier": "$derived:spellcastingModifier"
+        },
+        "affects": "target",
+        "upcast": {
+          "perSlot": {
+            "count": 2,
+            "die": "d8"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/divine-smite",
+    "name": "Divine Smite",
+    "level": 1,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "bonusAction",
+      "trigger": "Immediately after hitting a target with a Melee weapon or an Unarmed Strike"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "The target takes an extra 2d8 Radiant damage from the attack. The damage increases by 1d8 if the target is a Fiend or an Undead.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 1.",
+    "shortDescription": "After a melee hit: +2d8 Radiant damage, +1d8 against Fiends and Undead.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 1,
+          "die": "d8"
+        },
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "fiend",
+              "undead"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/find-familiar",
+    "name": "Find Familiar",
+    "level": 1,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "burning incense worth 10+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 10,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You gain the service of a familiar, a spirit that takes an animal form you choose: Bat, Cat, Frog, Hawk, Lizard, Octopus, Owl, Rat, Raven, Spider, Weasel, or another Beast that has a Challenge Rating of 0. Appearing in an unoccupied space within range, the familiar has the statistics of the chosen form (see “Monsters”), though it is a Celestial, Fey, or Fiend (your choice) instead of a Beast. Your familiar acts independently of you, but it obeys your commands. Telepathic Connection. While your familiar is within 100 feet of you, you can communicate with it telepathically. Additionally, as a Bonus Action, you can see through the familiar’s eyes and hear what it hears until the start of your next turn, gaining the benefits of any special senses it has. Finally, when you cast a spell with a range of touch, your familiar can deliver the touch. Your familiar must be within 100 feet of you, and it must take a Reaction to deliver the touch when you cast the spell. Combat. The familiar is an ally to you and your allies. It rolls its own Initiative and acts on its own turn. A familiar can’t attack, but it can take other actions as normal. Disappearance of the Familiar. When the familiar drops to 0 Hit Points, it disappears. It reappears after you cast this spell again. As a Magic action, you can temporarily dismiss the familiar to a pocket dimension. Alternatively, you can dismiss it forever. As a Magic action while it is temporarily dismissed, you can cause it to reappear in an unoccupied space within 30 feet of you. Whenever the familiar drops to 0 Hit Points or disappears into the pocket dimension, it leaves behind in its space anything it was wearing or carrying. One Familiar Only. You can’t have more than one familiar at a time. If you cast this spell while you have a familiar, you instead cause it to adopt a new eligible form.",
+    "shortDescription": "Gain a familiar spirit in the form of a small Beast.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Bat",
+            "Cat",
+            "Frog",
+            "Hawk",
+            "Lizard",
+            "Octopus",
+            "Owl",
+            "Rat",
+            "Raven",
+            "Spider",
+            "Weasel",
+            "Beast of Challenge Rating 0"
+          ],
+          "creatureTypes": [
+            "celestial",
+            "fey",
+            "fiend"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/fireball",
+    "name": "Fireball",
+    "level": 3,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 150,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a ball of bat guano and sulfur",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A bright streak flashes from you to a point you choose within range and then blossoms with a low roar into a fiery explosion. Each creature in a 20-foot-radius Sphere centered on that point makes a Dexterity saving throw, taking 8d6 Fire damage on a failed save or half as much damage on a successful one. Flammable objects in the area that aren’t being worn or carried start burning.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 3.",
+    "shortDescription": "20-foot Sphere: 8d6 Fire damage, Dexterity save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 8,
+          "die": "d6"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/fire-bolt",
+    "name": "Fire Bolt",
+    "level": 0,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You hurl a mote of fire at a creature or an object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 Fire damage. A flammable object hit by this spell starts burning if it isn’t being worn or carried.",
+    "cantripUpgrade": "The damage increases by 1d10 when you reach levels 5 (2d10), 11 (3d10), and 17 (4d10).",
+    "shortDescription": "Ranged spell attack: 1d10 Fire damage.",
+    "attack": "ranged",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": "$scaling",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "scaling": [
+          {
+            "level": 1,
+            "value": {
+              "count": 1,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 5,
+            "value": {
+              "count": 2,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 11,
+            "value": {
+              "count": 3,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 17,
+            "value": {
+              "count": 4,
+              "die": "d10"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/healing-word",
+    "name": "Healing Word",
+    "level": 1,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A creature of your choice that you can see within range regains Hit Points equal to 2d4 plus your spellcasting ability modifier.",
+    "higherLevels": "The healing increases by 2d4 for each spell slot level above 1.",
+    "shortDescription": "Bonus Action: heal a creature within 60 feet for 2d4 + spellcasting modifier.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 2,
+          "die": "d4",
+          "modifier": "$derived:spellcastingModifier"
+        },
+        "affects": "target",
+        "upcast": {
+          "perSlot": {
+            "count": 2,
+            "die": "d4"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/hold-person",
+    "name": "Hold Person",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a straight piece of iron",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Choose a Humanoid that you can see within range. The target must succeed on a Wisdom saving throw or have the Paralyzed condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success.",
+    "higherLevels": "You can target one additional Humanoid for each spell slot level above 2.",
+    "shortDescription": "A Humanoid makes a Wisdom save or is Paralyzed.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/paralyzed",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "humanoid"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/hunters-mark",
+    "name": "Hunter’s Mark",
+    "level": 1,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 90,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You magically mark one creature you can see within range as your quarry. Until the spell ends, you deal an extra 1d6 Force damage to the target whenever you hit it with an attack roll. You also have Advantage on any Wisdom (Perception or Survival) check you make to find it.\n\nIf the target drops to 0 Hit Points before this spell ends, you can take a Bonus Action to move the mark to a new creature you can see within range.",
+    "higherLevels": "Your Concentration can last longer with a spell slot of level 3–4 (up to 8 hours) or 5+ (up to 24 hours).",
+    "shortDescription": "Mark a creature: +1d6 Force damage on hits, Advantage to find it.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "duration": [
+        {
+          "minSlot": 3,
+          "duration": {
+            "value": 8,
+            "unit": "hour"
+          }
+        },
+        {
+          "minSlot": 5,
+          "duration": {
+            "value": 24,
+            "unit": "hour"
+          }
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "force",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception",
+              "srd-5.2:skill/survival"
+            ]
+          },
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      },
+      {
+        "type": "retarget",
+        "value": "bonusAction",
+        "trigger": {
+          "event": "reducedToZeroHitPoints",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/misty-step",
+    "name": "Misty Step",
+    "level": 2,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see.",
+    "shortDescription": "Bonus Action: teleport up to 30 feet.",
+    "effects": [
+      {
+        "type": "teleport",
+        "value": 30
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/polymorph",
+    "name": "Polymorph",
+    "level": 4,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a caterpillar cocoon",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You attempt to transform a creature that you can see within range into a Beast. The target must succeed on a Wisdom saving throw or shape-shift into a Beast form for the duration. That form can be any Beast you choose that has a Challenge Rating equal to or less than the target’s (or the target’s level if it doesn’t have a Challenge Rating). The target’s game statistics are replaced by the stat block of the chosen Beast, but the target retains its alignment, personality, creature type, Hit Points, and Hit Point Dice. See the “Animals” section of “Monsters” for a sample of Beast stat blocks. The target gains a number of Temporary Hit Points equal to the Hit Points of the Beast form. These Temporary Hit Points vanish if any remain when the spell ends. The spell ends early on the target if it has no Temporary Hit Points left. The target is limited in the actions it can perform by the anatomy of its new form, and it can’t speak or cast spells.\n\nThe target’s gear melds into the new form. The creature can’t use or otherwise benefit from any of that equipment.",
+    "shortDescription": "A creature makes a Wisdom save or turns into a Beast.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "transform",
+        "value": {
+          "creatureType": "beast",
+          "maxChallengeRating": "$derived:targetChallengeRating"
+        },
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "preventSpellcasting",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/shield",
+    "name": "Shield",
+    "level": 1,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "reaction",
+      "trigger": "When you are hit by an attack roll or targeted by the Magic Missile spell"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "round"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "An imperceptible barrier of magical force protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack, and you take no damage from Magic Missile.",
+    "shortDescription": "Reaction: +5 AC until your next turn; no damage from Magic Missile.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 5
+      },
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:spell/magic-missile"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/spirit-guardians",
+    "name": "Spirit Guardians",
+    "level": 3,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a prayer scroll",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Protective spirits flit around you in a 15-foot Emanation for the duration. If you are good or neutral, their spectral form appears angelic or fey (your choice). If you are evil, they appear fiendish. When you cast this spell, you can designate creatures to be unaffected by it. Any other creature’s Speed is halved in the Emanation, and whenever the Emanation enters a creature’s space and whenever a creature enters the Emanation or ends its turn there, the creature must make a Wisdom saving throw. On a failed save, the creature takes 3d8 Radiant damage (if you are good or neutral) or 3d8 Necrotic damage (if you are evil). On a successful save, the creature takes half as much damage. A creature makes this save only once per turn.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 3.",
+    "shortDescription": "15-foot Emanation: halves enemies' Speed and deals 3d8 Radiant or Necrotic damage.",
+    "choices": [
+      {
+        "id": "spirit-guardians-damage",
+        "prompt": "Radiant (good or neutral) or Necrotic (evil).",
+        "count": 1,
+        "from": [
+          "radiant",
+          "necrotic"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "baseSpeed",
+        "value": "$derived:walkingSpeed",
+        "multiplier": -0.5,
+        "affects": "target",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 15
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "$choice:spirit-guardians-damage",
+        "value": {
+          "count": 3,
+          "die": "d8"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 15
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "enterArea"
+        },
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "$choice:spirit-guardians-damage",
+        "value": {
+          "count": 3,
+          "die": "d8"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 15
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "endTurnInArea"
+        },
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/wall-of-fire",
+    "name": "Wall of Fire",
+    "level": 4,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a piece of charcoal",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a wall of fire on a solid surface within range. You can make the wall up to 60 feet long, 20 feet high, and 1 foot thick, or a ringed wall up to 20 feet in diameter, 20 feet high, and 1 foot thick. The wall is opaque and lasts for the duration. When the wall appears, each creature in its area makes a Dexterity saving throw, taking 5d8 Fire damage on a failed save or half as much damage on a successful one. One side of the wall, selected by you when you cast this spell, deals 5d8 Fire damage to each creature that ends its turn within 10 feet of that side or inside the wall. A creature takes the same damage when it enters the wall for the first time on a turn or ends its turn there. The other side of the wall deals no damage.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 4.",
+    "shortDescription": "Wall of fire: 5d8 Fire damage when it appears and to those near its burning side.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "area": [
+          {
+            "shape": "wall",
+            "size": 60,
+            "height": 20,
+            "width": 1
+          },
+          {
+            "shape": "ringWall",
+            "size": 20,
+            "height": 20,
+            "width": 1
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "endTurnInArea"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "enterArea"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/wish",
+    "name": "Wish",
+    "level": 9,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Wish is the mightiest spell a mortal can cast. By simply speaking aloud, you can alter reality itself. The basic use of this spell is to duplicate any other spell of level 8 or lower. If you use it this way, you don’t need to meet any requirements to cast that spell, including costly components. The spell simply takes effect. Alternatively, you can create one of the following effects of your choice:\n\nObject Creation. You create one object of up to 25,000 GP in value that isn’t a magic item. The object can be no more than 300 feet in any dimension, and it appears in an unoccupied space that you can see on the ground. Instant Health. You allow yourself and up to twenty creatures that you can see to regain all Hit Points, and you end all effects on them listed in the Greater Restoration spell. Resistance. You grant up to ten creatures that you can see Resistance to one damage type that you choose. This Resistance is permanent. Spell Immunity. You grant up to ten creatures you can see immunity to a single spell or other magical effect for 8 hours. Sudden Learning. You replace one of your feats with another feat for which you are eligible. You lose all the benefits of the old feat and gain the benefits of the new one. You can’t replace a feat that is a prerequisite for any of your other feats or features. Roll Redo. You undo a single recent event by forcing a reroll of any die roll made within the last round (including your last turn). Reality reshapes itself to accommodate the new result. For example, a Wish spell could undo an ally’s failed saving throw or a foe’s Critical Hit. You can force the reroll to be made with Advantage or Disadvantage, and you choose whether to use the reroll or the original roll. Reshape Reality. You may wish for something not included in any of the other effects. To do so, state your wish to the GM as precisely as possible. The GM has great latitude in ruling what occurs in such an instance; the greater the wish, the greater the likelihood that something goes wrong. This spell might simply fail, the effect you desire might be achieved only in part, or you might suffer an unforeseen consequence as a result of how you worded the wish. For example, wishing that a villain were dead might propel you forward in time to a period when that villain is no longer alive, effectively removing you from the game.\n\nSimilarly, wishing for a Legendary magic item or an Artifact might instantly transport you to the presence of the item’s current owner. If your wish is granted and its effects have consequences for a whole community, region, or world, you are likely to attract powerful foes. If your wish would affect a god, the god’s divine servants might instantly intervene to prevent it or to encourage you to craft the wish in a particular way. If your wish would undo the multiverse itself, your wish fails.\n\nThe stress of casting Wish to produce any effect other than duplicating another spell weakens you. After enduring that stress, each time you cast a spell until you finish a Long Rest, you take 1d10 Necrotic damage per level of that spell. This damage can’t be reduced or prevented in any way. In addition, your Strength score becomes 3 for 2d4 days. For each of those days that you spend resting and doing nothing more than light activity, your remaining recovery time decreases by 2 days. Finally, there is a 33 percent chance that you are unable to cast Wish ever again if you suffer this stress.",
+    "shortDescription": "Duplicate any spell of level 8 or lower, or alter reality.",
+    "choices": [
+      {
+        "id": "wish-spell",
+        "prompt": "Choose a spell of level 8 or lower to duplicate.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ],
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          }
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "$choice:wish-spell",
+        "castingOverrides": {
+          "ignoreMaterialComponent": true
+        }
+      }
+    ]
+  }
+]
