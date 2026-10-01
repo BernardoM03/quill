@@ -76,10 +76,20 @@
         {
           "label": "A",
           "items": [
-            "Spear",
-            "2 Daggers",
-            "Arcane Focus (crystal)",
-            "Dungeoneer's Pack"
+            {
+              "id": "srd-5.2:equipment/spear"
+            },
+            {
+              "id": "srd-5.2:equipment/dagger",
+              "quantity": 2
+            },
+            {
+              "id": "srd-5.2:equipment/arcane-focus",
+              "variant": "crystal"
+            },
+            {
+              "id": "srd-5.2:equipment/dungeoneers-pack"
+            }
           ],
           "gold": 28
         },
@@ -124,7 +134,7 @@
       "progression": "full",
       "preparationType": "prepared",
       "ritualCasting": false,
-      "focus": "Arcane Focus",
+      "focus": "srd-5.2:equipment/arcane-focus",
       "swapOnLevelUp": 1
     },
     "resources": [

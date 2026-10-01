@@ -25,11 +25,23 @@
         {
           "label": "A",
           "items": [
-            "Calligrapher's Supplies",
-            "Book (prayers)",
-            "Holy Symbol",
-            "Parchment (10 sheets)",
-            "Robe"
+            {
+              "id": "srd-5.2:tool/calligraphers-supplies"
+            },
+            {
+              "id": "srd-5.2:equipment/book",
+              "note": "prayers"
+            },
+            {
+              "id": "srd-5.2:equipment/holy-symbol"
+            },
+            {
+              "id": "srd-5.2:equipment/parchment",
+              "quantity": 10
+            },
+            {
+              "id": "srd-5.2:equipment/robe"
+            }
           ],
           "gold": 8
         },
