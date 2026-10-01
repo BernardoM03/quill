@@ -1102,7 +1102,7 @@
         },
         "affects": {
           "type": "string",
-          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'. `target` is whoever the spell or feature targets, as Bless's targets adding 1d4 to their own rolls.",
+          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'. `target` is whoever the spell or feature targets, as Bless's targets adding 1d4 to their own rolls. `affector` is the creature that caused the effect: the source of a condition, or the creature whose action fired a trigger, as Multiattack Defense's attacker.",
           "enum": [
             "self",
             "affector",
@@ -3257,7 +3257,8 @@
                         "thoughts",
                         "traps",
                         "object",
-                        "creature"
+                        "creature",
+                        "damageDefenses"
                       ]
                     },
                     "minItems": 1
@@ -4203,6 +4204,17 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "subject": {
+              "enum": [
+                "self",
+                "target"
+              ],
+              "description": "Whose Hit Points. Defaults to you."
+            },
+            "atMaximum": {
+              "type": "boolean",
+              "description": "At the Hit Point maximum. False is Colossus Slayer's 'missing any of its Hit Points'."
             }
           },
           "required": [
@@ -4567,6 +4579,69 @@
           ],
           "additionalProperties": false,
           "description": "The creature is inside that feature's area, as Aura of Courage applying within Aura of Protection."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spell"
+            },
+            "spellIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/spellId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "spellIds"
+          ],
+          "additionalProperties": false,
+          "description": "The roll or effect belongs to ANY of these spells, as Foe Slayer's larger die for Hunter's Mark damage and Relentless Hunter's Concentration on it."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "affectedBy"
+            },
+            "spellIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/spellId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "spellIds"
+          ],
+          "additionalProperties": false,
+          "description": "The target is under ANY of these spells of yours, as Precise Hunter's Advantage against the creature your Hunter's Mark marks."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "opportunityAttack"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The attack is an Opportunity Attack, as Escape the Horde."
         }
       ]
     },
