@@ -1,7 +1,1332 @@
 [
   {
     "id": "srd-5.2:class/barbarian",
-    "name": "Barbarian"
+    "name": "Barbarian",
+    "primaryAbility": [
+      "STR"
+    ],
+    "hitDie": 12,
+    "savingThrowProficiencies": [
+      "STR",
+      "CON"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "srd-5.2:skill/animal-handling",
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/intimidation",
+        "srd-5.2:skill/nature",
+        "srd-5.2:skill/perception",
+        "srd-5.2:skill/survival"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons",
+        "Martial weapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "Light armor",
+        "Medium armor",
+        "Shields"
+      ]
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": 2,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/greataxe"
+            },
+            {
+              "id": "srd-5.2:equipment/handaxe",
+              "quantity": 4
+            },
+            {
+              "id": "srd-5.2:equipment/explorers-pack"
+            }
+          ],
+          "gold": 15
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 75
+        }
+      ]
+    },
+    "startingGold": 75,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "STR"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [
+          "Martial weapons"
+        ],
+        "armor": [
+          "Shields"
+        ],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": null,
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-rage",
+          "srd-5.2:feature/barbarian-unarmored-defense",
+          "srd-5.2:feature/barbarian-weapon-mastery"
+        ],
+        "resources": {
+          "rages": 2,
+          "rageDamage": 2,
+          "weaponMastery": 2
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-danger-sense",
+          "srd-5.2:feature/barbarian-reckless-attack"
+        ],
+        "resources": {
+          "rages": 2,
+          "rageDamage": 2,
+          "weaponMastery": 2
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-subclass",
+          "srd-5.2:feature/barbarian-primal-knowledge"
+        ],
+        "resources": {
+          "rages": 3,
+          "rageDamage": 2,
+          "weaponMastery": 2
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-ability-score-improvement"
+        ],
+        "resources": {
+          "rages": 3,
+          "rageDamage": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-extra-attack",
+          "srd-5.2:feature/barbarian-fast-movement"
+        ],
+        "resources": {
+          "rages": 3,
+          "rageDamage": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-feral-instinct",
+          "srd-5.2:feature/barbarian-instinctive-pounce"
+        ],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-ability-score-improvement"
+        ],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-brutal-strike"
+        ],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 3,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-relentless-rage"
+        ],
+        "resources": {
+          "rages": 4,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-ability-score-improvement"
+        ],
+        "resources": {
+          "rages": 5,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-improved-brutal-strike-13"
+        ],
+        "resources": {
+          "rages": 5,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "resources": {
+          "rages": 5,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-persistent-rage"
+        ],
+        "resources": {
+          "rages": 5,
+          "rageDamage": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-ability-score-improvement"
+        ],
+        "resources": {
+          "rages": 5,
+          "rageDamage": 4,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-improved-brutal-strike-17"
+        ],
+        "resources": {
+          "rages": 6,
+          "rageDamage": 4,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-indomitable-might"
+        ],
+        "resources": {
+          "rages": 6,
+          "rageDamage": 4,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-epic-boon"
+        ],
+        "resources": {
+          "rages": 6,
+          "rageDamage": 4,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/barbarian-primal-champion"
+        ],
+        "resources": {
+          "rages": 6,
+          "rageDamage": 4,
+          "weaponMastery": 4
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/barbarian-rage",
+        "name": "Rage",
+        "level": 1,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You can imbue yourself with a primal power called Rage, a force that grants you extraordinary might and resilience. You can enter it as a Bonus Action if you aren't wearing Heavy armor.\n\nYou can enter your Rage the number of times shown for your Barbarian level in the Rages column of the Barbarian Features table. You regain one expended use when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest.\n\nWhile active, your Rage follows the rules below.\n\n**Damage Resistance.** You have Resistance to Bludgeoning, Piercing, and Slashing damage.\n\n**Rage Damage.** When you make an attack using Strength—with either a weapon or an Unarmed Strike—and deal damage to the target, you gain a bonus to the damage that increases as you gain levels as a Barbarian, as shown in the Rage Damage column of the Barbarian Features table.\n\n**Strength Advantage.** You have Advantage on Strength checks and Strength saving throws.\n\n**No Concentration or Spells.** You can't maintain Concentration, and you can't cast spells.\n\n**Duration.** The Rage lasts until the end of your next turn, and it ends early if you don Heavy armor or have the Incapacitated condition. If your Rage is still active on your next turn, you can extend the Rage for another round by doing one of the following:\n\n- Make an attack roll against an enemy.\n- Force an enemy to make a saving throw.\n- Take a Bonus Action to extend your Rage.\n\nEach time the Rage is extended, it lasts until the end of your next turn. You can maintain a Rage for up to 10 minutes.",
+        "shortDescription": "Bonus Action: resist physical damage, bonus Strength damage, Advantage on Strength checks and saves.",
+        "activation": {
+          "type": "bonusAction",
+          "requires": [
+            {
+              "type": "equipment",
+              "equipment": "heavyArmor",
+              "negate": true
+            }
+          ]
+        },
+        "uses": {
+          "max": "$column:rages",
+          "recharge": "long",
+          "recover": {
+            "rest": "short",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "sustain": {
+          "maximum": {
+            "value": 10,
+            "unit": "minute"
+          },
+          "extendedBy": [
+            {
+              "event": "makeAttackRoll",
+              "optional": true
+            },
+            {
+              "event": "forceSave",
+              "optional": true
+            },
+            {
+              "event": "takeAction",
+              "actionType": "bonusAction",
+              "optional": true
+            }
+          ]
+        },
+        "endConditions": [
+          {
+            "type": "equipment",
+            "equipment": "heavyArmor"
+          },
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/incapacitated"
+          }
+        ],
+        "tags": [
+          "buff",
+          "resource"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "bludgeoning",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "grantResistance",
+            "target": "piercing",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "grantResistance",
+            "target": "slashing",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": "$column:rageDamage",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              },
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "loseConcentration",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "preventSpellcasting",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-unarmored-defense",
+        "name": "Unarmored Defense",
+        "level": 1,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "While you aren't wearing any armor, your base Armor Class equals 10 plus your Dexterity and Constitution modifiers. You can use a Shield and still gain this benefit.",
+        "shortDescription": "Unarmored AC = 10 + DEX + CON (Shield allowed).",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "setBaseAc",
+            "value": {
+              "base": 10,
+              "abilities": [
+                "DEX",
+                "CON"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "armor",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-weapon-mastery",
+        "name": "Weapon Mastery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "Your training with weapons allows you to use the mastery properties of two kinds of Simple or Martial Melee weapons of your choice, such as Greataxes and Handaxes. Whenever you finish a Long Rest, you can practice weapon drills and change one of those weapon choices.\n\nWhen you reach certain Barbarian levels, you gain the ability to use the mastery properties of more kinds of weapons, as shown in the Weapon Mastery column of the Barbarian Features table.",
+        "shortDescription": "Use the mastery properties of 2 kinds of melee weapons (more at higher levels).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "barbarian-weapon-mastery",
+            "prompt": "Choose kinds of melee weapons whose mastery properties you can use.",
+            "count": "$column:weaponMastery",
+            "fromTypes": [
+              "equipment"
+            ],
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "weapon"
+              },
+              {
+                "type": "attackRange",
+                "attackRange": "melee"
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "grantMastery",
+            "target": "$choice:barbarian-weapon-mastery"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-danger-sense",
+        "name": "Danger Sense",
+        "level": 2,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You gain an uncanny sense of when things aren't as they should be, giving you an edge when you dodge perils. You have Advantage on Dexterity saving throws unless you have the Incapacitated condition.",
+        "shortDescription": "Advantage on Dexterity saves unless Incapacitated.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-reckless-attack",
+        "name": "Reckless Attack",
+        "level": 2,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You can throw aside all concern for defense to attack with increased ferocity. When you make your first attack roll on your turn, you can decide to attack recklessly. Doing so gives you Advantage on attack rolls using Strength until the start of your next turn, but attack rolls against you have Advantage during that time.",
+        "shortDescription": "Advantage on your Strength attacks; attacks against you have Advantage.",
+        "activation": {
+          "type": "free"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-reckless-attack"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-reckless-attack"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-subclass",
+        "name": "Barbarian Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You gain a Barbarian subclass of your choice. The Path of the Berserker subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Barbarian levels. For the rest of your career, you gain each of your subclass's features that are of your Barbarian level or lower.",
+        "shortDescription": "Choose a Barbarian subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-primal-knowledge",
+        "name": "Primal Knowledge",
+        "level": 3,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You gain proficiency in another skill of your choice from the skill list available to Barbarians at level 1.\n\nIn addition, while your Rage is active, you can channel primal power when you attempt certain tasks; whenever you make an ability check using one of the following skills, you can make it as a Strength check even if it normally uses a different ability: Acrobatics, Intimidation, Perception, Stealth, or Survival. When you use this ability, your Strength represents primal power coursing through you, honing your agility, bearing, and senses.",
+        "shortDescription": "Gain a Barbarian skill; while raging, use Strength for some skill checks.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "barbarian-primal-knowledge",
+            "prompt": "Choose another Barbarian skill.",
+            "count": 1,
+            "from": [
+              "srd-5.2:skill/animal-handling",
+              "srd-5.2:skill/athletics",
+              "srd-5.2:skill/intimidation",
+              "srd-5.2:skill/nature",
+              "srd-5.2:skill/perception",
+              "srd-5.2:skill/survival"
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:barbarian-primal-knowledge"
+          },
+          {
+            "type": "substituteAbility",
+            "target": "abilityCheck",
+            "value": "STR",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              },
+              {
+                "type": "skill",
+                "skills": [
+                  "srd-5.2:skill/acrobatics",
+                  "srd-5.2:skill/intimidation",
+                  "srd-5.2:skill/perception",
+                  "srd-5.2:skill/stealth",
+                  "srd-5.2:skill/survival"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Barbarian levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "barbarian-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:barbarian-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-extra-attack",
+        "name": "Extra Attack",
+        "level": 5,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack twice with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-fast-movement",
+        "name": "Fast Movement",
+        "level": 5,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "Your speed increases by 10 feet while you aren't wearing Heavy armor.",
+        "shortDescription": "+10 feet Speed without Heavy armor.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": 10,
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "heavyArmor",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-feral-instinct",
+        "name": "Feral Instinct",
+        "level": 7,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "Your instincts are so honed that you have Advantage on Initiative rolls.",
+        "shortDescription": "Advantage on Initiative.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "initiative"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "initiative"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-instinctive-pounce",
+        "name": "Instinctive Pounce",
+        "level": 7,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "As part of the Bonus Action you take to enter your Rage, you can move up to half your Speed.",
+        "shortDescription": "Move half your Speed when you enter Rage.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantMovement",
+            "value": {
+              "speedFraction": 0.5
+            },
+            "trigger": {
+              "event": "useFeature",
+              "featureId": "srd-5.2:feature/barbarian-rage",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-brutal-strike",
+        "name": "Brutal Strike",
+        "level": 9,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "If you use Reckless Attack, you can forgo any Advantage on one Strength-based attack roll of your choice on your turn. The chosen attack roll mustn't have Disadvantage. If the chosen attack roll hits, the target takes an extra 1d10 damage of the same type dealt by the weapon or Unarmed Strike, and you can cause one Brutal Strike effect of your choice. You have the following effect options.\n\n**Forceful Blow.** The target is pushed 15 feet straight away from you. You can then move up to half your Speed straight toward the target without provoking Opportunity Attacks.\n\n**Hamstring Blow.** The target's Speed is reduced by 15 feet until the start of your next turn. A target can be affected by only one Hamstring Blow at a time—the most recent one.",
+        "shortDescription": "Trade Advantage on a reckless Strength attack for extra damage and a Brutal Strike effect.",
+        "activation": {
+          "type": "free",
+          "requires": [
+            {
+              "type": "selfState",
+              "featureId": "srd-5.2:feature/barbarian-reckless-attack"
+            },
+            {
+              "type": "ability",
+              "abilities": [
+                "STR"
+              ]
+            }
+          ]
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "none",
+          "perTurn": 1
+        },
+        "scaling": [
+          {
+            "level": 9,
+            "key": "damage",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 17,
+            "key": "damage",
+            "value": {
+              "count": 2,
+              "die": "d10"
+            }
+          },
+          {
+            "level": 9,
+            "key": "options",
+            "value": 1
+          },
+          {
+            "level": 17,
+            "key": "options",
+            "value": 2
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/brutal-strike",
+          "items": [
+            {
+              "id": "forceful-blow",
+              "name": "Forceful Blow",
+              "description": "The target is pushed 15 feet straight away from you. You can then move up to half your Speed straight toward the target without provoking Opportunity Attacks.",
+              "effects": [
+                {
+                  "type": "forcedMovement",
+                  "value": {
+                    "feet": 15,
+                    "direction": "away"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                },
+                {
+                  "type": "grantMovement",
+                  "value": {
+                    "speedFraction": 0.5,
+                    "provokesOpportunityAttacks": false
+                  }
+                }
+              ]
+            },
+            {
+              "id": "hamstring-blow",
+              "name": "Hamstring Blow",
+              "description": "The target's Speed is reduced by 15 feet until the start of your next turn. A target can be affected by only one Hamstring Blow at a time—the most recent one.",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "modifier",
+                  "target": "baseSpeed",
+                  "value": -15,
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "loseAdvantage",
+            "target": "attackRoll",
+            "appliesOnce": true
+          },
+          {
+            "type": "dealDamage",
+            "target": "$derived:weaponDamageType",
+            "value": "$scaling:damage",
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "appliesOnce": true
+          },
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/brutal-strike",
+            "value": "$scaling:options",
+            "trigger": {
+              "event": "hitWithAttack"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-relentless-rage",
+        "name": "Relentless Rage",
+        "level": 11,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "Your Rage can keep you fighting despite grievous wounds. If you drop to 0 Hit Points while your Rage is active and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, your Hit Points instead change to a number equal to twice your Barbarian level.\n\nEach time you use this feature after the first, the DC increases by 5. When you finish a Short or Long Rest, the DC resets to 10.",
+        "shortDescription": "While raging, a DC 10 CON save keeps you up at twice your Barbarian level.",
+        "activation": {
+          "type": "free"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "setHitPointFloor",
+            "value": "$derived:classLevel",
+            "multiplier": 2,
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ],
+            "trigger": {
+              "event": "reducedToZeroHitPoints",
+              "optional": true
+            },
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 10,
+                "increasePerUse": {
+                  "amount": 5,
+                  "resetOn": [
+                    "short",
+                    "long"
+                  ]
+                }
+              },
+              "onSuccess": "none"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-improved-brutal-strike-13",
+        "name": "Improved Brutal Strike",
+        "level": 13,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You have honed new ways to attack furiously. The following effects are now among your Brutal Strike options.\n\n**Staggering Blow.** The target has Disadvantage on the next saving throw it makes, and it can't make Opportunity Attacks until the start of your next turn.\n\n**Sundering Blow.** Before the start of your next turn, the next attack roll made by another creature against the target gains a +5 bonus to the roll. An attack roll can gain only one Sundering Blow bonus.",
+        "shortDescription": "New Brutal Strike options: Staggering Blow and Sundering Blow.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/brutal-strike",
+          "items": [
+            {
+              "id": "staggering-blow",
+              "name": "Staggering Blow",
+              "description": "The target has Disadvantage on the next saving throw it makes, and it can't make Opportunity Attacks until the start of your next turn.",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "savingThrow",
+                  "affects": "others",
+                  "appliesOnce": true,
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                },
+                {
+                  "type": "loseAction",
+                  "target": [
+                    "reaction"
+                  ],
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    },
+                    {
+                      "type": "namedAction",
+                      "actions": [
+                        "attack"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "sundering-blow",
+              "name": "Sundering Blow",
+              "description": "Before the start of your next turn, the next attack roll made by another creature against the target gains a +5 bonus to the roll. An attack roll can gain only one Sundering Blow bonus.",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "rollBonus",
+                  "target": "attackRoll",
+                  "value": 5,
+                  "affects": "others",
+                  "appliesOnce": true,
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-persistent-rage",
+        "name": "Persistent Rage",
+        "level": 15,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "When you roll Initiative, you can regain all expended uses of Rage. After you regain uses of Rage in this way, you can't do so again until you finish a Long Rest.\n\nIn addition, your Rage is so fierce that it now lasts for 10 minutes without you needing to do anything to extend it from round to round. Your Rage ends early if you have the Unconscious condition (not just the Incapacitated condition) or don Heavy armor.",
+        "shortDescription": "Regain all Rages on Initiative once per Long Rest; Rage lasts 10 minutes.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "resource"
+        ],
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "srd-5.2:feature/barbarian-rage",
+            "value": "all",
+            "trigger": {
+              "event": "rollInitiative",
+              "optional": true
+            }
+          },
+          {
+            "type": "overrideFeature",
+            "target": "srd-5.2:feature/barbarian-rage",
+            "value": {
+              "duration": {
+                "value": 10,
+                "unit": "minute"
+              },
+              "sustain": null,
+              "endConditions": [
+                {
+                  "type": "equipment",
+                  "equipment": "heavyArmor"
+                },
+                {
+                  "type": "selfState",
+                  "conditionId": "srd-5.2:condition/unconscious"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-improved-brutal-strike-17",
+        "name": "Improved Brutal Strike",
+        "level": 17,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "The extra damage of your Brutal Strike increases to 2d10. In addition, you can use two different Brutal Strike effects whenever you use your Brutal Strike feature.",
+        "shortDescription": "Brutal Strike deals 2d10 and applies two effects.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-indomitable-might",
+        "name": "Indomitable Might",
+        "level": 18,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "If your total for a Strength check or Strength saving throw is less than your Strength score, you can use that score in place of the total.",
+        "shortDescription": "Strength checks and saves total at least your Strength score.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "rollFloor",
+            "target": "abilityCheck",
+            "value": "$derived:strengthScore",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "rollFloor",
+            "target": "savingThrow",
+            "value": "$derived:strengthScore",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Irresistible Offense is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "barbarian-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:barbarian-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/barbarian-primal-champion",
+        "name": "Primal Champion",
+        "level": 20,
+        "sourceId": "srd-5.2:class/barbarian",
+        "description": "You embody primal power. Your Strength and Constitution scores increase by 4, to a maximum of 25.",
+        "shortDescription": "+4 Strength and Constitution, to a maximum of 25.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "abilityScore"
+        ],
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "STR",
+              "CON"
+            ],
+            "value": {
+              "amount": 4,
+              "maximum": 25
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/bard",
@@ -438,27 +1763,13 @@
           "type": "bonusAction"
         },
         "uses": {
-          "max": "$scaling",
+          "max": "$column:secondWind",
           "recharge": "long",
           "recover": {
             "rest": "short",
             "amount": 1
           }
         },
-        "scaling": [
-          {
-            "level": 1,
-            "value": 2
-          },
-          {
-            "level": 4,
-            "value": 3
-          },
-          {
-            "level": 10,
-            "value": 4
-          }
-        ],
         "tags": [
           "healing"
         ],
@@ -487,7 +1798,7 @@
           {
             "id": "fighter-weapon-mastery",
             "prompt": "Choose kinds of weapons whose mastery properties you can use.",
-            "count": "$scaling",
+            "count": "$column:weaponMastery",
             "fromTypes": [
               "equipment"
             ],
@@ -504,24 +1815,6 @@
               },
               "count": 1
             }
-          }
-        ],
-        "scaling": [
-          {
-            "level": 1,
-            "value": 3
-          },
-          {
-            "level": 4,
-            "value": 4
-          },
-          {
-            "level": 10,
-            "value": 5
-          },
-          {
-            "level": 16,
-            "value": 6
           }
         ],
         "tags": [
@@ -1606,22 +2899,8 @@
           {
             "id": "metamagic-options",
             "prompt": "Choose a Metamagic option.",
-            "count": "$scaling",
+            "count": "$column:metamagicOptions",
             "from": "srd-5.2:list/metamagic-options"
-          }
-        ],
-        "scaling": [
-          {
-            "level": 2,
-            "value": 2
-          },
-          {
-            "level": 10,
-            "value": 3
-          },
-          {
-            "level": 17,
-            "value": 4
           }
         ],
         "tags": [
