@@ -342,6 +342,10 @@
           },
           "minItems": 1,
           "description": "Events that end the effect without a save, as Knock Out's 'or until it takes any damage'."
+        },
+        "ignoresCover": {
+          "type": "boolean",
+          "description": "Half and Three-Quarters Cover give no bonus to this save, as Sacred Flame."
         }
       },
       "required": [
@@ -993,7 +997,11 @@
         "interruptSpell",
         "summon",
         "transform",
-        "retarget"
+        "retarget",
+        "emitLight",
+        "preventHealing",
+        "stabilize",
+        "suppressCondition"
       ]
     },
     "effect": {
@@ -1106,6 +1114,14 @@
             "perSlot"
           ],
           "additionalProperties": false
+        },
+        "duration": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/duration"
+            }
+          ],
+          "description": "How long this one effect lasts when it outlives, or differs from, its spell or feature: Ray of Frost is instantaneous but its slow lasts until the start of your next turn (1 round)."
         }
       },
       "required": [
@@ -2072,12 +2088,15 @@
                 "description": "The roll, or a stat that scales with an ability, as Second-Story Work's jump distance."
               },
               "value": {
-                "allOf": [
+                "oneOf": [
                   {
                     "$ref": "#/$defs/ability"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
                   }
                 ],
-                "description": "The ability used instead. Narrow which rolls with qualifiers."
+                "description": "The ability used instead, or `$derived:spellcastingAbility`."
               }
             }
           }
@@ -2746,7 +2765,14 @@
             ],
             "properties": {
               "value": {
-                "$ref": "#/$defs/diceExpression"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/diceExpression"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               }
             }
           }
@@ -2944,6 +2970,71 @@
                   }
                 ],
                 "description": "What moving the effect to a new target costs."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "emitLight"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Radii in feet. Dim light extends beyond the bright radius by `dim` feet.",
+                "properties": {
+                  "bright": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "dim": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "shape": {
+                    "enum": [
+                      "radius",
+                      "cone"
+                    ]
+                  }
+                },
+                "required": [
+                  "dim"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "suppressCondition"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/conditionId"
               }
             }
           }
@@ -3630,7 +3721,14 @@
               "type": "array",
               "description": "Matches an ability check that uses ANY of these skills.",
               "items": {
-                "$ref": "#/$defs/skillId"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/skillId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               },
               "minItems": 1,
               "uniqueItems": true
@@ -3975,6 +4073,30 @@
           ],
           "additionalProperties": false,
           "description": "The attack or roll was granted by this feature, as Open Hand Technique triggering only on Flurry of Blows attacks."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "weaponKind"
+            },
+            "itemIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/equipmentId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "itemIds"
+          ],
+          "additionalProperties": false,
+          "description": "The weapon is ANY of these items, as Shillelagh's Club or Quarterstaff."
         }
       ]
     },
@@ -4031,10 +4153,11 @@
       "properties": {
         "mode": {
           "type": "string",
-          "description": "`reroll` rolls the die again. `minimum` never rerolls; a rolled value below `minimum` counts as `minimum`.",
+          "description": "`reroll` rolls the die again. `minimum` never rerolls; a rolled value below `minimum` counts as `minimum`. `explode` rolls one more die and adds it whenever a die shows a `triggerValues` result, up to `dice` extra dice, as Sorcerous Burst.",
           "enum": [
             "reroll",
-            "minimum"
+            "minimum",
+            "explode"
           ]
         },
         "triggerValues": {
@@ -4139,6 +4262,24 @@
           "then": {
             "required": [
               "minimum"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "explode"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "triggerValues",
+              "dice"
             ]
           }
         }
