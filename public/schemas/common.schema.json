@@ -3666,6 +3666,153 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "modifier"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/modifierTarget"
+                  },
+                  {
+                    "$ref": "#/$defs/id"
+                  }
+                ]
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "$ref": "#/$defs/diceExpression"
+                  },
+                  {
+                    "$ref": "#/$defs/flatExpression"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/component"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "For `spellComponents` only: the components the spell no longer needs, as Subtle Spell."
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantFeature"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/featureId"
+                  },
+                  {
+                    "$ref": "#/$defs/featId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantExpertise"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/skillId"
+                  },
+                  {
+                    "$ref": "#/$defs/toolId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "cannotTarget",
+                  "cannotApproach",
+                  "loseConcentration",
+                  "dropHeldItem",
+                  "initiativeSwap",
+                  "grantInspiration",
+                  "moveThroughOccupiedSpace",
+                  "preventSpellcasting"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "description": "Flag effects: the type is the whole rule, so a stray `target` or `value` is a mistake.",
+            "properties": {
+              "target": false,
+              "value": false
+            }
+          }
         }
       ]
     },
@@ -5736,6 +5883,24 @@
         "shields"
       ],
       "description": "An armor category a class trains you in."
+    },
+    "modifierTarget": {
+      "type": "string",
+      "description": "A sheet number a `modifier` effect adjusts. Each is a single stored total; rolls go through `rollBonus` instead. `spellRange`, `spellDuration`, `spellDamage`, and `spellComponents` change the spell being cast, for Metamagic and Potent Spellcasting. `spellComponents` takes the list of components dropped rather than a number.",
+      "enum": [
+        "armorClass",
+        "attunementSlots",
+        "baseSpeed",
+        "exhaustionLevel",
+        "hitPointMaximum",
+        "jumpDistance",
+        "passivePerception",
+        "spellComponents",
+        "spellDamage",
+        "spellDuration",
+        "spellRange",
+        "spellSaveDC"
+      ]
     }
   }
 }

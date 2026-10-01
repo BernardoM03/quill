@@ -12141,7 +12141,11 @@
                 {
                   "type": "modifier",
                   "target": "spellComponents",
-                  "value": "none"
+                  "value": [
+                    "verbal",
+                    "somatic",
+                    "material"
+                  ]
                 }
               ]
             },
