@@ -317,11 +317,20 @@
           "type": "string",
           "enum": [
             "prepared",
-            "known"
+            "known",
+            "spellbook"
           ]
         },
         "ritualCasting": {
-          "type": "boolean"
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "const": "spellbook"
+            }
+          ],
+          "description": "Whether the class casts Ritual spells as Rituals. `spellbook` lets it cast any Ritual in its spellbook unprepared, as the Wizard's Ritual Adept."
         },
         "focus": {
           "oneOf": [
@@ -330,9 +339,23 @@
             },
             {
               "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+                  },
+                  {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+                  }
+                ]
+              },
+              "minItems": 2
             }
           ],
-          "description": "The spellcasting focus this class can use: an item, or a tool for the Bard's Musical Instrument."
+          "description": "The spellcasting focus or foci this class can use, as the Wizard's Arcane Focus or spellbook."
         },
         "swapOnLevelUp": {
           "type": "integer",
@@ -349,6 +372,32 @@
             }
           ],
           "description": "How many prepared spells may be exchanged when finishing a Long Rest: one for the Paladin, `all` for the Cleric."
+        },
+        "spellbook": {
+          "type": "object",
+          "description": "A class that prepares from a book of spells it has learned, as the Wizard.",
+          "properties": {
+            "startingSpells": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "spellsPerLevel": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "copyCostPerLevel": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost"
+            },
+            "copyHoursPerLevel": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "startingSpells",
+            "spellsPerLevel"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [

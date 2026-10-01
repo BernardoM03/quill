@@ -636,7 +636,7 @@
           "description": "Casts allowed without expending a spell slot.",
           "properties": {
             "count": {
-              "description": "How many free casts. A derived quantity where the SRD ties it to the character, as Forest Gnome's Speak with Animals does to the Proficiency Bonus.",
+              "description": "How many free casts. A derived quantity where the SRD ties it to the character, as Forest Gnome's Speak with Animals does to the Proficiency Bonus. `atWill` for no limit, as Spell Mastery.",
               "oneOf": [
                 {
                   "type": "integer",
@@ -644,6 +644,9 @@
                 },
                 {
                   "$ref": "#/$defs/deferredValue"
+                },
+                {
+                  "const": "atWill"
                 }
               ]
             },
@@ -656,6 +659,10 @@
             "recharge"
           ],
           "additionalProperties": false
+        },
+        "addToSpellbook": {
+          "type": "boolean",
+          "description": "The spell goes into your spellbook for free rather than being prepared, as Evocation Savant."
         }
       },
       "additionalProperties": false
@@ -1075,7 +1082,8 @@
         "removeCurse",
         "autoSucceed",
         "addTargets",
-        "ignoreResistance"
+        "ignoreResistance",
+        "swapPreparedSpells"
       ]
     },
     "effect": {
@@ -2307,6 +2315,32 @@
                     ],
                     "additionalProperties": false,
                     "description": "Refill until you have this many, as Perfect Focus's 'until you have 4'."
+                  },
+                  {
+                    "type": "object",
+                    "description": "Slots whose levels add up to no more than `totalLevels`, none above `maxSlotLevel`, as Arcane Recovery's half your Wizard level, round up.",
+                    "properties": {
+                      "totalLevels": {
+                        "oneOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          {
+                            "$ref": "#/$defs/deferredValue"
+                          }
+                        ]
+                      },
+                      "maxSlotLevel": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9
+                      }
+                    },
+                    "required": [
+                      "totalLevels"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -3503,6 +3537,30 @@
                 "minItems": 1,
                 "uniqueItems": true,
                 "description": "Damage types whose Resistance your damage ignores, as Boon of Irresistible Offense's Bludgeoning, Piercing, and Slashing."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "swapPreparedSpells"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many prepared spells may be exchanged when the trigger fires, as Memorize Spell's one on a Short Rest."
               }
             }
           }
@@ -4734,6 +4792,39 @@
           ],
           "additionalProperties": false,
           "description": "You are in ANY of these light levels, as Boon of the Night Spirit's 'while within Dim Light or Darkness'."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spellSchool"
+            },
+            "schools": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "abjuration",
+                  "conjuration",
+                  "divination",
+                  "enchantment",
+                  "evocation",
+                  "illusion",
+                  "necromancy",
+                  "transmutation"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "schools"
+          ],
+          "additionalProperties": false,
+          "description": "The spell is of ANY of these schools, as the Evoker's Evocation features."
         }
       ]
     },
