@@ -283,10 +283,10 @@
         },
         "resources": {
           "type": "object",
-          "description": "Class-resource columns keyed by resource id (sorceryPoints, rages, ...).",
+          "description": "Class-resource columns keyed by resource id (sorceryPoints, rages, ...). Numbers may be fractional, as Wild Shape's Max CR of 1/4 (0.25).",
           "additionalProperties": {
             "type": [
-              "integer",
+              "number",
               "string"
             ]
           }

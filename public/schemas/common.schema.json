@@ -1251,6 +1251,10 @@
             }
           ],
           "description": "How long this one effect lasts when it outlives, or differs from, its spell or feature: Ray of Frost is instantaneous but its slow lasts until the start of your next turn (1 round)."
+        },
+        "uses": {
+          "$ref": "#/$defs/uses",
+          "description": "A limit on this one effect when the rest of the feature is unlimited or limited differently. Wild Resurgence trades a spell slot for Wild Shape once per turn, but a Wild Shape use for a slot only once per Long Rest; the second effect carries `uses`. Prefer the feature's own `uses` when every effect shares the limit."
         }
       },
       "required": [
@@ -3200,8 +3204,23 @@
             "properties": {
               "value": {
                 "type": "object",
-                "description": "Placeholder until creature stat blocks exist (Period 6): the form is described by type and a Challenge Rating cap.",
+                "description": "WHAT you become. `forms` names the stat blocks open to you, as creatureIds or a `$choice:` over the creature catalog, as Wild Shape's known forms. `creatureType` and `maxChallengeRating` describe an open set instead, as Polymorph's any Beast up to the target's CR. `retain` lists what the stat block does NOT replace, so Wild Shape keeps your Hit Points and mental scores while Polymorph keeps nothing.",
                 "properties": {
+                  "forms": {
+                    "oneOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/creatureId"
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                      },
+                      {
+                        "$ref": "#/$defs/deferredValue"
+                      }
+                    ]
+                  },
                   "creatureType": {
                     "$ref": "#/$defs/creatureType"
                   },
@@ -3215,10 +3234,41 @@
                         "$ref": "#/$defs/deferredValue"
                       }
                     ]
+                  },
+                  "retain": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "creatureType",
+                        "hitPoints",
+                        "hitPointDice",
+                        "INT",
+                        "WIS",
+                        "CHA",
+                        "classFeatures",
+                        "languages",
+                        "feats",
+                        "skillProficiencies",
+                        "savingThrowProficiencies",
+                        "speech",
+                        "concentration"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
                   }
                 },
-                "required": [
-                  "creatureType"
+                "anyOf": [
+                  {
+                    "required": [
+                      "forms"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "creatureType"
+                    ]
+                  }
                 ],
                 "additionalProperties": false
               }
@@ -4912,6 +4962,57 @@
           ],
           "additionalProperties": false,
           "description": "The attack uses a weapon bonded to you by a feature, as the Warlock's pact weapon."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "challengeRating"
+            },
+            "atMost": {
+              "oneOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "atMost"
+          ],
+          "additionalProperties": false,
+          "description": "The creature's Challenge Rating is at most this. Narrows a pick from the creature catalog, as Wild Shape's known forms reading the Beast Shapes table's Max CR column."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "hasSpeed"
+            },
+            "speeds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/speedType"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "speeds"
+          ],
+          "additionalProperties": false,
+          "description": "The creature has any listed speed. Negated, it excludes them, as Wild Shape's forms lacking a Fly Speed before Druid level 8."
         }
       ]
     },
