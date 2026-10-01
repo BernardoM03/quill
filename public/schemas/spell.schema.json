@@ -230,6 +230,22 @@
       "options": {
         "$ref": "https://quill.local/schemas/common.schema.json#/$defs/optionList",
         "description": "Effects to pick from when casting, as Command's Approach, Drop, Flee, Grovel, and Halt."
+      },
+      "endsOn": {
+        "type": "array",
+        "description": "Events that end the spell early, as Sanctuary ending when the warded creature attacks, casts a spell, or deals damage.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/trigger"
+        },
+        "minItems": 1
+      },
+      "endConditions": {
+        "type": "array",
+        "description": "States that end the spell early when any one holds, as Mage Armor ending when the target dons armor.",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/qualifier"
+        },
+        "minItems": 1
       }
     },
     "required": [

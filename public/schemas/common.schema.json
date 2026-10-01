@@ -328,12 +328,19 @@
           ]
         },
         "repeat": {
-          "allOf": [
+          "oneOf": [
             {
               "$ref": "#/$defs/trigger"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/trigger"
+              },
+              "minItems": 2
             }
           ],
-          "description": "When the affected creature repeats the save to end the effect, as Intimidating Presence's 'at the end of each of the Frightened creature's turns'."
+          "description": "When the affected creature repeats the save to end the effect, as Intimidating Presence's 'at the end of each of the Frightened creature's turns'. A list where several events prompt it, as Hideous Laughter's end of turn and on taking damage."
         },
         "endsOn": {
           "type": "array",
@@ -3386,7 +3393,14 @@
               "type": "array",
               "description": "Matches if the roll uses ANY of these abilities",
               "items": {
-                "$ref": "#/$defs/ability"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ability"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               },
               "minItems": 1,
               "uniqueItems": true
