@@ -3275,6 +3275,10 @@
                   },
                   "silence": {
                     "type": "boolean"
+                  },
+                  "antimagic": {
+                    "type": "boolean",
+                    "description": "No spells, Magic actions, or magical effects work inside, as Antimagic Field."
                   }
                 },
                 "minProperties": 1,
