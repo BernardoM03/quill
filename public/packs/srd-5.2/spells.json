@@ -3564,41 +3564,14 @@
             "size": 5
           }
         ],
-        "trigger": {
-          "event": "endTurnInArea"
-        },
-        "upcast": {
-          "perSlot": {
-            "count": 1,
-            "die": "d6"
-          }
-        }
-      },
-      {
-        "type": "dealDamage",
-        "target": "fire",
-        "value": {
-          "count": 2,
-          "die": "d6"
-        },
-        "save": {
-          "ability": "DEX",
-          "dc": {
-            "base": 8,
-            "ability": "$derived:spellcastingAbility",
-            "proficiency": true
-          },
-          "onSuccess": "half"
-        },
-        "area": [
+        "trigger": [
           {
-            "shape": "sphere",
-            "size": 5
+            "event": "endTurnInArea"
+          },
+          {
+            "event": "enterArea"
           }
         ],
-        "trigger": {
-          "event": "enterArea"
-        },
         "upcast": {
           "perSlot": {
             "count": 1,
@@ -3855,32 +3828,14 @@
             "size": 10
           }
         ],
-        "trigger": {
-          "event": "enterArea"
-        }
-      },
-      {
-        "type": "applyCondition",
-        "target": "srd-5.2:condition/prone",
-        "affects": "target",
-        "save": {
-          "ability": "DEX",
-          "dc": {
-            "base": 8,
-            "ability": "$derived:spellcastingAbility",
-            "proficiency": true
-          },
-          "onSuccess": "negate"
-        },
-        "area": [
+        "trigger": [
           {
-            "shape": "cube",
-            "size": 10
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
           }
-        ],
-        "trigger": {
-          "event": "endTurnInArea"
-        }
+        ]
       }
     ]
   },
@@ -5152,6 +5107,101 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/lesser-restoration",
+    "name": "Lesser Restoration",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a creature and end one condition on it: Blinded, Deafened, Paralyzed, or Poisoned.",
+    "shortDescription": "End Blinded, Deafened, Paralyzed, or Poisoned on a creature.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "lesser-restoration-condition",
+        "prompt": "Choose a condition to end.",
+        "count": 1,
+        "from": [
+          "srd-5.2:condition/blinded",
+          "srd-5.2:condition/deafened",
+          "srd-5.2:condition/paralyzed",
+          "srd-5.2:condition/poisoned"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "endCondition",
+        "target": "$choice:lesser-restoration-condition",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/levitate",
+    "name": "Levitate",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a metal spring",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "One creature or loose object of your choice that you can see within range rises vertically up to 20 feet and remains suspended there for the duration. The spell can levitate an object that weighs up to 500 pounds. An unwilling creature that succeeds on a Constitution saving throw is unaffected. The target can move only by pushing or pulling against a fixed object or surface within reach (such as a wall or a ceiling), which allows it to move as if it were climbing. You can change the target’s altitude by up to 20 feet in either direction on your turn. If you are the target, you can move up or down as part of your move. Otherwise, you can take a Magic action to move the target, which must remain within the spell’s range. When the spell ends, the target floats gently to the ground if it is still aloft.",
+    "shortDescription": "A creature or object up to 500 pounds rises up to 20 feet; an unwilling creature can make a Constitution save.",
+    "targets": {
+      "count": 1,
+      "kind": "creatureOrObject"
+    },
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/light",
     "name": "Light",
     "level": 0,
@@ -5191,6 +5241,94 @@
         "value": {
           "bright": 20,
           "dim": 20
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/locate-animals-or-plants",
+    "name": "Locate Animals or Plants",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "fur from a bloodhound",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "Describe or name a specific kind of Beast, Plant creature, or nonmagical plant. You learn the direction and distance to the closest creature or plant of that kind within 5 miles, if any are present.",
+    "shortDescription": "Learn the direction and distance to the nearest named Beast or plant within 5 miles.",
+    "effects": [
+      {
+        "type": "detect",
+        "value": {
+          "within": 26400,
+          "creatureTypes": [
+            "beast",
+            "plant"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/locate-object",
+    "name": "Locate Object",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a forked twig",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Describe or name an object that is familiar to you. You sense the direction to the object’s location if that object is within 1,000 feet of you. If the object is in motion, you know the direction of its movement. The spell can locate a specific object known to you if you have seen it up close—within 30 feet—at least once. Alternatively, the spell can locate the nearest object of a particular kind, such as a certain kind of apparel, jewelry, furniture, tool, or weapon. This spell can’t locate an object if any thickness of lead blocks a direct path between you and the object.",
+    "shortDescription": "Sense the direction to a familiar object within 1,000 feet.",
+    "effects": [
+      {
+        "type": "detect",
+        "value": {
+          "within": 1000,
+          "things": [
+            "object"
+          ]
         }
       }
     ]
@@ -5381,6 +5519,137 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/magic-mouth",
+    "name": "Magic Mouth",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "jade dust worth 10+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 10,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "untilDispelled"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You implant a message within an object in range—a message that is uttered when a trigger condition is met. Choose an object that you can see and that isn’t being worn or carried by another creature. Then speak the message, which must be 25 words or fewer, though it can be delivered over as long as 10 minutes. Finally, determine the circumstance that will trigger the spell to deliver your message. When that trigger occurs, a magical mouth appears on the object and recites the message in your voice and at the same volume you spoke. If the object you chose has a mouth or something that looks like a mouth (for example, the mouth of a statue), the magical mouth appears there, so the words appear to come from the object’s mouth. When you cast this spell, you can have the spell end after it delivers its message, or it can remain and repeat its message whenever the trigger occurs. The trigger can be as general or as detailed as you like, though it must be based on visual or audible conditions that occur within 30 feet of the object. For example, you could instruct the mouth to speak when any creature moves within 30 feet of the object or when a silver bell rings within 30 feet of it.",
+    "shortDescription": "An object speaks a message when a condition you set is met.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/magic-weapon",
+    "name": "Magic Weapon",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a nonmagical weapon. Until the spell ends, that weapon becomes a magic weapon with a +1 bonus to attack rolls and damage rolls. The spell ends early if you cast it again.",
+    "higherLevels": "The bonus increases to +2 with a level 3–5 spell slot. The bonus increases to +3 with a level 6+ spell slot.",
+    "shortDescription": "A nonmagical weapon gains +1 to attack and damage rolls.",
+    "targets": {
+      "count": 1,
+      "kind": "object"
+    },
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "weapon"
+            ]
+          }
+        ],
+        "upcast": {
+          "steps": [
+            {
+              "minSlot": 3,
+              "value": 2
+            },
+            {
+              "minSlot": 6,
+              "value": 3
+            }
+          ]
+        }
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "weapon"
+            ]
+          }
+        ],
+        "upcast": {
+          "steps": [
+            {
+              "minSlot": 3,
+              "value": 2
+            },
+            {
+              "minSlot": 6,
+              "value": 3
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/mending",
     "name": "Mending",
     "level": 0,
@@ -5456,6 +5725,81 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/mind-spike",
+    "name": "Mind Spike",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You drive a spike of psionic energy into the mind of one creature you can see within range. The target makes a Wisdom saving throw, taking 3d8 Psychic damage on a failed save or half as much damage on a successful one. On a failed save, you also always know the target’s location until the spell ends, but only while the two of you are on the same plane of existence. While you have this knowledge, the target can’t become hidden from you, and if it has the Invisible condition, it gains no benefit from that condition against you.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 2.",
+    "shortDescription": "Wisdom save or 3d8 Psychic damage, and you always know where it is.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": {
+          "count": 3,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "suppressCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          },
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/minor-illusion",
     "name": "Minor Illusion",
     "level": 0,
@@ -5493,6 +5837,40 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/mirror-image",
+    "name": "Mirror Image",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Three illusory duplicates of yourself appear in your space. Until the spell ends, the duplicates move with you and mimic your actions, shifting position so it’s impossible to track which image is real. Each time a creature hits you with an attack roll during the spell’s duration, roll a d6 for each of your remaining duplicates. If any of the d6s rolls a 3 or higher, one of the duplicates is hit instead of you, and the duplicate is destroyed. The duplicates otherwise ignore all other damage and effects. The spell ends when all three duplicates are destroyed. A creature is unaffected by this spell if it has the Blinded condition, Blindsight, or Truesight.",
+    "shortDescription": "Three illusory duplicates may take hits meant for you.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/misty-step",
     "name": "Misty Step",
     "level": 2,
@@ -5523,6 +5901,230 @@
       {
         "type": "teleport",
         "value": 30
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/moonbeam",
+    "name": "Moonbeam",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a moonseed leaf",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A silvery beam of pale light shines down in a 5-foot-radius, 40-foot-high Cylinder centered on a point within range. Until the spell ends, Dim Light fills the Cylinder, and you can take a Magic action on later turns to move the Cylinder up to 60 feet. When the Cylinder appears, each creature in it makes a Constitution saving throw. On a failed save, a creature takes 2d10 Radiant damage, and if the creature is shape-shifted (as a result of the Polymorph spell, for example), it reverts to its true form and can’t shape-shift until it leaves the Cylinder. On a successful save, a creature takes half as much damage only. A creature also makes this save when the spell’s area moves into its space and when it enters the spell’s area or ends its turn there. A creature makes this save only once per turn.",
+    "higherLevels": "The damage increases by 1d10 for each spell slot level above 2.",
+    "shortDescription": "5-foot-radius Cylinder: 2d10 Radiant damage, Constitution save for half.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 0,
+          "dim": 5
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 5,
+            "height": 40
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 5,
+            "height": 40
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        },
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/pass-without-trace",
+    "name": "Pass without Trace",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "ashes from burned mistletoe",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You radiate a concealing aura in a 30-foot Emanation for the duration. While in the aura, you and each creature you choose have a +10 bonus to Dexterity (Stealth) checks and leave no tracks.",
+    "shortDescription": "30-foot Emanation: you and chosen creatures gain +10 to Stealth.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 10,
+        "affects": "target",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 30
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/stealth"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/phantasmal-force",
+    "name": "Phantasmal Force",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of fleece",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You attempt to craft an illusion in the mind of a creature you can see within range. The target makes an Intelligence saving throw. On a failed save, you create a phantasmal object, creature, or other phenomenon that is no larger than a 10-foot Cube and that is perceivable only to the target for the duration. The phantasm includes sound, temperature, and other stimuli. The target can take a Study action to examine the phantasm with an Intelligence (Investigation) check against your spell save DC. If the check succeeds, the target realizes that the phantasm is an illusion, and the spell ends. While affected by the spell, the target treats the phantasm as if it were real and rationalizes any illogical outcomes from interacting with it. For example, if the target steps through a phantasmal bridge and survives the fall, it believes the bridge exists and something else caused it to fall. An affected target can even take damage from the illusion if the phantasm represents a dangerous creature or hazard. On each of your turns, such a phantasm can deal 2d8 Psychic damage to the target if it is in the phantasm’s area or within 5 feet of the phantasm. The target perceives the damage as a type appropriate to the illusion.",
+    "shortDescription": "Intelligence save or a phantasm only the target perceives; it can deal 2d8 Psychic damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "startTurn",
+          "optional": true
+        },
+        "save": {
+          "ability": "INT",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
       }
     ]
   },
@@ -5662,6 +6264,57 @@
       {
         "type": "preventSpellcasting",
         "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/prayer-of-healing",
+    "name": "Prayer of Healing",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Up to five creatures of your choice who remain within range for the spell’s entire casting gain the benefits of a Short Rest and also regain 2d8 Hit Points. A creature can’t be affected by this spell again until that creature finishes a Long Rest.",
+    "higherLevels": "The healing increases by 1d8 for each spell slot level above 2.",
+    "shortDescription": "Up to five creatures gain a Short Rest's benefits and regain 2d8 Hit Points.",
+    "targets": {
+      "count": 5,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "affects": "target",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
       }
     ]
   },
@@ -5896,6 +6549,63 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/protection-from-poison",
+    "name": "Protection from Poison",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a creature and end the Poisoned condition on it. For the duration, the target has Advantage on saving throws to avoid or end the Poisoned condition, and it has Resistance to Poison damage.",
+    "shortDescription": "End Poisoned; Advantage against Poisoned and Resistance to Poison damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "endCondition",
+        "target": "srd-5.2:condition/poisoned",
+        "affects": "target"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "againstCondition",
+            "conditionId": "srd-5.2:condition/poisoned"
+          }
+        ]
+      },
+      {
+        "type": "grantResistance",
+        "target": "poison",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/purify-food-and-drink",
     "name": "Purify Food and Drink",
     "level": 1,
@@ -5929,6 +6639,99 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/ray-of-enfeeblement",
+    "name": "Ray of Enfeeblement",
+    "level": 2,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A beam of enervating energy shoots from you toward a creature within range. The target must make a Constitution saving throw. On a successful save, the target has Disadvantage on the next attack roll it makes until the start of your next turn. On a failed save, the target has Disadvantage on Strength-based D20 Tests for the duration. During that time, it also subtracts 1d8 from all its damage rolls. The target repeats the save at the end of each of its turns, ending the spell on a success.",
+    "shortDescription": "Constitution save or Disadvantage on Strength D20 Tests and -1d8 damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "grantDisadvantage",
+        "target": "d20Test",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": {
+          "count": 1,
+          "die": "d8"
+        },
+        "multiplier": -1,
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "target",
+        "appliesOnce": true,
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "success"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/ray-of-frost",
@@ -6161,6 +6964,39 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/rope-trick",
+    "name": "Rope Trick",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a segment of rope",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a rope. One end of it hovers upward until the rope hangs perpendicular to the ground or the rope reaches a ceiling. At the rope’s upper end, an Invisible 3-foot-by-5-foot portal opens to an extradimensional space that lasts until the spell ends. That space can be reached by climbing the rope, which can be pulled into or dropped out of it. The space can hold up to eight Medium or smaller creatures. Attacks, spells, and other effects can’t pass into or out of the space, but creatures inside it can see through the portal. Anything inside the space drops out when the spell ends.",
+    "shortDescription": "A rope leads to an extradimensional space for up to eight creatures.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/sacred-flame",
     "name": "Sacred Flame",
     "level": 0,
@@ -6310,6 +7146,62 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/scorching-ray",
+    "name": "Scorching Ray",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You hurl three fiery rays. You can hurl them at one target within range or at several. Make a ranged spell attack for each ray. On a hit, the target takes 2d6 Fire damage.",
+    "higherLevels": "You create one additional ray for each spell slot level above 2.",
+    "shortDescription": "Three rays, each a ranged spell attack for 2d6 Fire damage.",
+    "attack": "ranged",
+    "targets": {
+      "count": 3,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "grantAttack",
+        "value": 3,
+        "upcast": {
+          "perSlot": 1
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/searing-smite",
     "name": "Searing Smite",
     "level": 1,
@@ -6384,6 +7276,128 @@
             "event": "startTurn"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/see-invisibility",
+    "name": "See Invisibility",
+    "level": 2,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of talc",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "For the duration, you see creatures and objects that have the Invisible condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly.",
+    "shortDescription": "See Invisible creatures and objects, and into the Ethereal Plane.",
+    "effects": [
+      {
+        "type": "suppressCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "others",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/shatter",
+    "name": "Shatter",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a chip of mica",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A loud noise erupts from a point of your choice within range. Each creature in a 10-foot-radius Sphere centered there makes a Constitution saving throw, taking 3d8 Thunder damage on a failed save or half as much damage on a successful one. A Construct has Disadvantage on the save. A nonmagical object that isn’t being worn or carried also takes the damage if it’s in the spell’s area.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 2.",
+    "shortDescription": "10-foot-radius Sphere: 3d8 Thunder damage, Constitution save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "thunder",
+        "value": {
+          "count": 3,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 10
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -6596,6 +7610,78 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/shining-smite",
+    "name": "Shining Smite",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "bonusAction",
+      "trigger": "Immediately after hitting a creature with a Melee weapon or an Unarmed Strike"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "The target hit by the strike takes an extra 2d6 Radiant damage from the attack. Until the spell ends, the target sheds Bright Light in a 5-foot radius, attack rolls against it have Advantage, and it can’t benefit from the Invisible condition.",
+    "higherLevels": "The damage increases by 1d6 for each spell slot level above 2.",
+    "shortDescription": "After a hit: +2d6 Radiant damage; the target glows and attacks against it have Advantage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 5,
+          "dim": 0
+        },
+        "affects": "target"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "attackRoll",
+        "affects": "others",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      },
+      {
+        "type": "suppressCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/shocking-grasp",
     "name": "Shocking Grasp",
     "level": 0,
@@ -6686,6 +7772,86 @@
             "actions": [
               "attack"
             ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/silence",
+    "name": "Silence",
+    "level": 2,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": true,
+    "description": "For the duration, no sound can be created within or pass through a 20-foot-radius Sphere centered on a point you choose within range. Any creature or object entirely inside the Sphere has Immunity to Thunder damage, and creatures have the Deafened condition while entirely inside it. Casting a spell that includes a Verbal component is impossible there.",
+    "shortDescription": "20-foot-radius Sphere of silence: Deafened, immune to Thunder, no Verbal spells.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "silence": true
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "grantImmunity",
+        "target": "thunder",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/deafened",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "loseComponent",
+        "target": [
+          "verbal"
+        ],
+        "affects": "target",
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
           }
         ]
       }
@@ -6992,6 +8158,123 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/spider-climb",
+    "name": "Spider Climb",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a drop of bitumen and a spider",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Until the spell ends, one willing creature you touch gains the ability to move up, down, and across vertical surfaces and along ceilings, while leaving its hands free. The target also gains a Climb Speed equal to its Speed.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 2.",
+    "shortDescription": "A willing creature climbs walls and ceilings with a Climb Speed.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "traverseTerrain",
+        "target": [
+          "verticalSurfaces"
+        ],
+        "affects": "target"
+      },
+      {
+        "type": "grantSpeed",
+        "target": "climb",
+        "value": "$derived:walkingSpeed",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/spike-growth",
+    "name": "Spike Growth",
+    "level": 2,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 150,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "seven thorns",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "The ground in a 20-foot-radius Sphere centered on a point within range sprouts hard spikes and thorns. The area becomes Difficult Terrain for the duration. When a creature moves into or within the area, it takes 2d4 Piercing damage for every 5 feet it travels. The transformation of the ground is camouflaged to look natural. Any creature that can’t see the area when the spell is cast must take a Search action and succeed on a Wisdom (Perception or Survival) check against your spell save DC to recognize the terrain as hazardous before entering it.",
+    "shortDescription": "20-foot-radius Sphere of spikes: Difficult Terrain, 2d4 Piercing per 5 feet moved.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": {
+          "count": 2,
+          "die": "d4"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "trigger": {
+          "event": "moveInArea"
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/spirit-guardians",
     "name": "Spirit Guardians",
     "level": 3,
@@ -7059,9 +8342,14 @@
           }
         ],
         "frequency": "perTurn",
-        "trigger": {
-          "event": "enterArea"
-        },
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
+          }
+        ],
         "save": {
           "ability": "WIS",
           "dc": {
@@ -7077,32 +8365,61 @@
             "die": "d8"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/spiritual-weapon",
+    "name": "Spiritual Weapon",
+    "level": 2,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "bonusAction"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a floating, spectral force that resembles a weapon of your choice and lasts for the duration. The force appears within range in a space of your choice, and you can immediately make one melee spell attack against one creature within 5 feet of the force. On a hit, the target takes Force damage equal to 1d8 plus your spellcasting ability modifier. As a Bonus Action on your later turns, you can move the force up to 20 feet and repeat the attack against a creature within 5 feet of it.",
+    "higherLevels": "The damage increases by 1d8 for every slot level above 2.",
+    "shortDescription": "A spectral weapon makes melee spell attacks for 1d8 + spellcasting modifier Force damage.",
+    "attack": "melee",
+    "effects": [
+      {
+        "type": "grantAttack",
+        "value": 1
+      },
+      {
+        "type": "grantAttack",
+        "value": {
+          "count": 1,
+          "actionType": "bonusAction"
+        }
       },
       {
         "type": "dealDamage",
-        "target": "$choice:spirit-guardians-damage",
+        "target": "force",
         "value": {
-          "count": 3,
-          "die": "d8"
+          "count": 1,
+          "die": "d8",
+          "modifier": "$derived:spellcastingModifier"
         },
-        "area": [
-          {
-            "shape": "emanation",
-            "size": 15
-          }
-        ],
-        "frequency": "perTurn",
         "trigger": {
-          "event": "endTurnInArea"
-        },
-        "save": {
-          "ability": "WIS",
-          "dc": {
-            "base": 8,
-            "ability": "$derived:spellcastingAbility",
-            "proficiency": true
-          },
-          "onSuccess": "half"
+          "event": "hitWithAttack"
         },
         "upcast": {
           "perSlot": {
@@ -7212,6 +8529,64 @@
         "duration": {
           "value": 1,
           "unit": "round"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/suggestion",
+    "name": "Suggestion",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "material"
+    ],
+    "materialComponent": "a drop of honey",
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You suggest a course of activity—described in no more than 25 words—to one creature you can see within range that can hear and understand you. The suggestion must sound achievable and not involve anything that would obviously deal damage to the target or its allies. For example, you could say, “Fetch the key to the cult’s treasure vault, and give the key to me.” Or you could say, “Stop fighting, leave this library peacefully, and don’t return.” The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration or until you or your allies deal damage to the target. The Charmed target pursues the suggestion to the best of its ability. The suggested activity can continue for the entire duration, but if the suggested activity can be completed in a shorter time, the spell ends for the target upon completing it.",
+    "shortDescription": "Wisdom save or Charmed and following a reasonable suggestion.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "endsOn": [
+            {
+              "event": "takeDamage"
+            }
+          ]
         }
       }
     ]
@@ -7643,32 +9018,193 @@
           "die": "d8"
         },
         "frequency": "perTurn",
-        "trigger": {
-          "event": "endTurnInArea"
-        },
+        "trigger": [
+          {
+            "event": "endTurnInArea"
+          },
+          {
+            "event": "enterArea"
+          }
+        ],
         "upcast": {
           "perSlot": {
             "count": 1,
             "die": "d8"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/warding-bond",
+    "name": "Warding Bond",
+    "level": 2,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pair of platinum rings worth 50+ GP each, which you and the target must wear for the duration",
+    "materialCost": {
+      "cost": {
+        "amount": 50,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch another creature that is willing and create a mystic connection between you and the target until the spell ends. While the target is within 60 feet of you, it gains a +1 bonus to AC and saving throws, and it has Resistance to all damage. Also, each time it takes damage, you take the same amount of damage. The spell ends if you drop to 0 Hit Points or if you and the target become separated by more than 60 feet. It also ends if the spell is cast again on either of the connected creatures.",
+    "shortDescription": "A willing creature gains +1 AC and saves and Resistance to all damage; you share its damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 1,
+        "affects": "target"
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 1,
+        "affects": "target"
+      },
+      {
+        "type": "grantResistance",
+        "target": "allDamage",
+        "affects": "target"
       },
       {
         "type": "dealDamage",
-        "target": "fire",
+        "target": "$derived:triggerDamageType",
+        "value": "$derived:triggerDamage",
+        "trigger": {
+          "event": "takeDamage"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/web",
+    "name": "Web",
+    "level": 2,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a bit of spiderweb",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You conjure a mass of sticky webbing at a point within range. The webs fill a 20-foot Cube there for the duration. The webs are Difficult Terrain, and the area within them is Lightly Obscured. If the webs aren’t anchored between two solid masses (such as walls or trees) or layered across a floor, wall, or ceiling, the web collapses on itself, and the spell ends at the start of your next turn. Webs layered over a flat surface have a depth of 5 feet. The first time a creature enters the webs on a turn or starts its turn there, it must succeed on a Dexterity saving throw or have the Restrained condition while in the webs or until it breaks free. A creature Restrained by the webs can take an action to make a Strength (Athletics) check against your spell save DC. If it succeeds, it is no longer Restrained. The webs are flammable. Any 5-foot Cube of webs exposed to fire burns away in 1 round, dealing 2d4 Fire damage to any creature that starts its turn in the fire.",
+    "shortDescription": "20-foot Cube of webs: Difficult Terrain, Lightly Obscured; Dexterity save or Restrained.",
+    "effects": [
+      {
+        "type": "createZone",
         "value": {
-          "count": 5,
-          "die": "d8"
+          "difficultTerrain": true,
+          "obscured": "light"
         },
-        "frequency": "perTurn",
+        "area": [
+          {
+            "shape": "cube",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "STR",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ]
+          }
+        },
+        "area": [
+          {
+            "shape": "cube",
+            "size": 20
+          }
+        ],
         "trigger": {
           "event": "enterArea"
         },
-        "upcast": {
-          "perSlot": {
-            "count": 1,
-            "die": "d8"
+        "frequency": "perTurn"
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "STR",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ]
           }
+        },
+        "area": [
+          {
+            "shape": "cube",
+            "size": 20
+          }
+        ],
+        "trigger": {
+          "event": "startTurn"
         }
       }
     ]
@@ -7734,5 +9270,40 @@
         }
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/zone-of-truth",
+    "name": "Zone of Truth",
+    "level": 2,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You create a magical zone that guards against deception in a 15-foot-radius Sphere centered on a point within range. Until the spell ends, a creature that enters the spell’s area for the first time on a turn or starts its turn there makes a Charisma saving throw. On a failed save, a creature can’t speak a deliberate lie while in the radius. You know whether a creature succeeds or fails on this save. An affected creature is aware of the spell and can avoid answering questions to which it would normally respond with a lie. Such a creature can be evasive yet must be truthful.",
+    "shortDescription": "15-foot-radius Sphere: Charisma save or unable to speak a deliberate lie.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   }
 ]
