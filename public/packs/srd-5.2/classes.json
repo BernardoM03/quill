@@ -3573,7 +3573,1371 @@
   },
   {
     "id": "srd-5.2:class/druid",
-    "name": "Druid"
+    "name": "Druid",
+    "primaryAbility": [
+      "WIS"
+    ],
+    "hitDie": 8,
+    "savingThrowProficiencies": [
+      "INT",
+      "WIS"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "srd-5.2:skill/animal-handling",
+        "srd-5.2:skill/arcana",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/medicine",
+        "srd-5.2:skill/nature",
+        "srd-5.2:skill/perception",
+        "srd-5.2:skill/religion",
+        "srd-5.2:skill/survival"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "simpleWeapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "lightArmor",
+        "shields"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/herbalism-kit"
+      ]
+    },
+    "weaponMastery": null,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/leather-armor"
+            },
+            {
+              "id": "srd-5.2:equipment/shield"
+            },
+            {
+              "id": "srd-5.2:equipment/sickle"
+            },
+            {
+              "id": "srd-5.2:equipment/druidic-focus",
+              "variant": "wooden-staff"
+            },
+            {
+              "id": "srd-5.2:equipment/explorers-pack"
+            },
+            {
+              "id": "srd-5.2:tool/herbalism-kit"
+            }
+          ],
+          "gold": 9
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    },
+    "startingGold": 50,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "WIS"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [],
+        "armor": [
+          "lightArmor",
+          "shields"
+        ],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": {
+      "ability": "WIS",
+      "progression": "full",
+      "preparationType": "prepared",
+      "ritualCasting": false,
+      "focus": "srd-5.2:equipment/druidic-focus",
+      "swapOnLevelUp": 1,
+      "swapOnLongRest": "all"
+    },
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/druid-spellcasting",
+          "srd-5.2:feature/druid-druidic",
+          "srd-5.2:feature/druid-primal-order"
+        ],
+        "cantripsKnown": 2,
+        "preparedSpells": 4,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 0,
+          "wildShapeForms": 0,
+          "wildShapeMaxCr": 0
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/druid-wild-shape",
+          "srd-5.2:feature/druid-wild-companion"
+        ],
+        "cantripsKnown": 2,
+        "preparedSpells": 5,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 2,
+          "wildShapeForms": 4,
+          "wildShapeMaxCr": 0.25
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/druid-subclass"
+        ],
+        "cantripsKnown": 2,
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 2,
+          "wildShapeForms": 4,
+          "wildShapeMaxCr": 0.25
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/druid-ability-score-improvement"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 2,
+          "wildShapeForms": 6,
+          "wildShapeMaxCr": 0.5
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/druid-wild-resurgence"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 2,
+          "wildShapeForms": 6,
+          "wildShapeMaxCr": 0.5
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "cantripsKnown": 3,
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 6,
+          "wildShapeMaxCr": 0.5
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/druid-elemental-fury"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 6,
+          "wildShapeMaxCr": 0.5
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/druid-ability-score-improvement"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 3,
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/druid-ability-score-improvement"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 17,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 17,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/druid-improved-elemental-fury"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 18,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/druid-ability-score-improvement"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 18,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {
+          "wildShape": 3,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 19,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "wildShape": 4,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/druid-beast-spells"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 20,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "wildShape": 4,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/druid-epic-boon"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 21,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1
+        ],
+        "resources": {
+          "wildShape": 4,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/druid-archdruid"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 22,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "resources": {
+          "wildShape": 4,
+          "wildShapeForms": 8,
+          "wildShapeMaxCr": 1
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/druid-spellcasting",
+        "name": "Spellcasting",
+        "level": 1,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You have learned to cast spells through studying the mystical forces of nature. See \"Spells\" for the rules on spellcasting. The information below details how you use those rules with Druid spells, which appear on the Druid spell list later in the class's description.\n\n**Cantrips.** You know two cantrips of your choice from the Druid spell list. Druidcraft and Produce Flame are recommended.\n\nWhenever you gain a Druid level, you can replace one of your cantrips with another cantrip of your choice from the Druid spell list.\n\nWhen you reach Druid levels 4 and 10, you learn another cantrip of your choice from the Druid spell list, as shown in the Cantrips column of the Druid Features table.\n\n**Spell Slots.** The Druid Features table shows how many spell slots you have to cast your level 1+ spells. You regain all expended slots when you finish a Long Rest.\n\n**Prepared Spells of Level 1+.** You prepare the list of level 1+ spells that are available for you to cast with this feature. To start, choose four level 1 spells from the Druid spell list. Animal Friendship, Cure Wounds, Faerie Fire, and Thunderwave are recommended.\n\nThe number of spells on your list increases as you gain Druid levels, as shown in the Prepared Spells column of the Druid Features table. Whenever that number increases, choose additional spells from the Druid spell list until the number of spells on your list matches the number on the table. The chosen spells must be of a level for which you have spell slots. For example, if you're a level 3 Druid, your list of prepared spells can include six spells of levels 1 and 2 in any combination.\n\nIf another Druid feature gives you spells that you always have prepared, those spells don't count against the number of spells you can prepare with this feature, but those spells otherwise count as Druid spells for you.\n\n**Changing Your Prepared Spells.** Whenever you finish a Long Rest, you can change your list of prepared spells, replacing any of the spells with other Druid spells for which you have spell slots.\n\n**Spellcasting Ability.** Wisdom is your spellcasting ability for your Druid spells.\n\n**Spellcasting Focus.** You can use a Druidic Focus as a Spellcasting Focus for your Druid spells.",
+        "shortDescription": "Cast Druid spells using Wisdom.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/druid"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-druidic",
+        "name": "Druidic",
+        "level": 1,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You know Druidic, the secret language of Druids. While learning this ancient tongue, you also unlocked the magic of communicating with animals; you always have the Speak with Animals spell prepared.\n\nYou can use Druidic to leave hidden messages. You and others who know Druidic automatically spot such a message. Others spot the message's presence with a successful DC 15 Intelligence (Investigation) check but can't decipher it without magic.",
+        "shortDescription": "Know Druidic; Speak with Animals always prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "language"
+        ],
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/druidic"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/speak-with-animals",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-primal-order",
+        "name": "Primal Order",
+        "level": 1,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You have dedicated yourself to one of the following sacred roles of your choice.\n\n**Magician.** You know one extra cantrip from the Druid spell list. In addition, your mystical connection to nature gives you a bonus to your Intelligence (Arcana or Nature) checks. The bonus equals your Wisdom modifier (minimum bonus of +1).\n\n**Warden.** Trained for battle, you gain proficiency with Martial weapons and training with Medium armor.",
+        "shortDescription": "Magician (extra cantrip, Arcana and Nature bonus) or Warden (Martial weapons, Medium armor).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "primal-order",
+            "prompt": "Choose Magician or Warden.",
+            "count": 1,
+            "from": "srd-5.2:list/primal-order"
+          },
+          {
+            "id": "magician-cantrip",
+            "prompt": "Choose an extra Druid cantrip.",
+            "count": 1,
+            "from": "srd-5.2:class/druid",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/primal-order",
+          "items": [
+            {
+              "id": "magician",
+              "name": "Magician",
+              "description": "One extra Druid cantrip, and add your Wisdom modifier (minimum +1) to Intelligence (Arcana or Nature) checks.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "$choice:magician-cantrip"
+                },
+                {
+                  "type": "rollBonus",
+                  "target": "abilityCheck",
+                  "value": {
+                    "base": 0,
+                    "modifier": "$derived:WIS",
+                    "minimum": 1
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "skill",
+                      "skills": [
+                        "srd-5.2:skill/arcana",
+                        "srd-5.2:skill/nature"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "warden",
+              "name": "Warden",
+              "description": "Proficiency with Martial weapons and training with Medium armor.",
+              "effects": [
+                {
+                  "type": "grantProficiency",
+                  "target": "martialWeapons"
+                },
+                {
+                  "type": "grantProficiency",
+                  "target": "mediumArmor"
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:primal-order"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-wild-shape",
+        "name": "Wild Shape",
+        "level": 2,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "The power of nature allows you to assume the form of an animal. As a Bonus Action, you shape-shift into a Beast form that you have learned for this feature (see \"Known Forms\" below). You stay in that form for a number of hours equal to half your Druid level or until you use Wild Shape again, have the Incapacitated condition, or die. You can also leave the form early as a Bonus Action.\n\n**Number of Uses.** You can use Wild Shape twice. You regain one expended use when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest.\n\nYou gain additional uses when you reach certain Druid levels, as shown in the Wild Shape column of the Druid Features table.\n\n**Known Forms.** You know four Beast forms for this feature, chosen from among Beast stat blocks that have a maximum Challenge Rating of 1/4 and that lack a Fly Speed (see \"Animals\" in \"Monsters\" for stat block options). The Rat, Riding Horse, Spider, and Wolf are recommended. Whenever you finish a Long Rest, you can replace one of your known forms with another eligible form.\n\nWhen you reach certain Druid levels, your number of known forms and the maximum Challenge Rating for those forms increases, as shown in the Beast Shapes table. In addition, starting at level 8, you can adopt a form that has a Fly Speed.\n\nWhen choosing known forms, you may look in other sources for eligible Beasts if the Game Master permits you to do so.\n\n| Druid Level | Known Forms | Max CR | Fly Speed |\n|---|---|---|---|\n| 2 | 4 | 1/4 | No |\n| 4 | 6 | 1/2 | No |\n| 8 | 8 | 1 | Yes |\n\n**Rules While Shape-Shifted.** While in a form, you retain your personality, memories, and ability to speak, and the following rules apply:\n\n*Temporary Hit Points.* When you assume a Wild Shape form, you gain a number of Temporary Hit Points equal to your Druid level.\n\n*Game Statistics.* Your game statistics are replaced by the Beast's stat block, but you retain your creature type; Hit Points; Hit Point Dice; Intelligence, Wisdom, and Charisma scores; class features; languages; and feats. You also retain your skill and saving throw proficiencies and use your Proficiency Bonus for them, in addition to gaining the proficiencies of the creature. If a skill or saving throw modifier in the Beast's stat block is higher than yours, use the one in the stat block.\n\n*No Spellcasting.* You can't cast spells, but shape-shifting doesn't break your Concentration or otherwise interfere with a spell you've already cast.\n\n*Objects.* Your ability to handle objects is determined by the form's limbs rather than your own. In addition, you choose whether your equipment falls in your space, merges into your new form, or is worn by it. Worn equipment functions as normal, but the GM decides whether it's practical for the new form to wear a piece of equipment based on the creature's size and shape. Your equipment doesn't change size or shape to match the new form, and any equipment that the new form can't wear must either fall to the ground or merge with the form. Equipment that merges with the form has no effect while you're in that form.",
+        "shortDescription": "Bonus Action: become a known Beast form for half your Druid level in hours, gaining Temporary Hit Points.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$column:wildShape",
+          "recharge": "long",
+          "recover": {
+            "rest": "short",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": "$derived:halfClassLevel",
+          "unit": "hour"
+        },
+        "endConditions": [
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/incapacitated"
+          },
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/dead"
+          }
+        ],
+        "choices": [
+          {
+            "id": "wild-shape-forms",
+            "prompt": "Choose known Beast forms.",
+            "count": "$column:wildShapeForms",
+            "fromTypes": [
+              "creature"
+            ],
+            "qualifiers": [
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "beast"
+                ]
+              },
+              {
+                "type": "challengeRating",
+                "atMost": "$column:wildShapeMaxCr"
+              },
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "hasSpeed",
+                    "speeds": [
+                      "fly"
+                    ],
+                    "negate": true
+                  },
+                  {
+                    "type": "classLevel",
+                    "atLeast": 8
+                  }
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "transformation",
+          "resource"
+        ],
+        "effects": [
+          {
+            "type": "transform",
+            "value": {
+              "forms": "$choice:wild-shape-forms",
+              "creatureType": "beast",
+              "retain": [
+                "creatureType",
+                "hitPoints",
+                "hitPointDice",
+                "INT",
+                "WIS",
+                "CHA",
+                "classFeatures",
+                "languages",
+                "feats",
+                "skillProficiencies",
+                "savingThrowProficiencies",
+                "speech",
+                "concentration"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/druid-wild-shape"
+              }
+            ]
+          },
+          {
+            "type": "grantTemporaryHitPoints",
+            "value": "$derived:classLevel"
+          },
+          {
+            "type": "preventSpellcasting",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/druid-wild-shape"
+              },
+              {
+                "type": "classLevel",
+                "atLeast": 18,
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-wild-companion",
+        "name": "Wild Companion",
+        "level": 2,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You can summon a nature spirit that assumes an animal form to aid you. As a Magic action, you can expend a spell slot or a use of Wild Shape to cast the Find Familiar spell without Material components.\n\nWhen you cast the spell in this way, the familiar is Fey and disappears when you finish a Long Rest.",
+        "shortDescription": "Magic action: cast Find Familiar with a spell slot or a Wild Shape use; the familiar is Fey.",
+        "activation": {
+          "type": "action"
+        },
+        "tags": [
+          "spellcasting",
+          "summon"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/find-familiar",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/find-familiar",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "freeCasts": {
+                "count": "atWill",
+                "recharge": "none"
+              }
+            },
+            "cost": {
+              "featureId": "srd-5.2:feature/druid-wild-shape",
+              "amount": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-subclass",
+        "name": "Druid Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You gain a Druid subclass of your choice. The Circle of the Land subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Druid levels. For the rest of your career, you gain each of your subclass's features that are of your Druid level or lower.",
+        "shortDescription": "Choose a Druid subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/druid-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Druid levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "druid-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:druid-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-wild-resurgence",
+        "name": "Wild Resurgence",
+        "level": 5,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "Once on each of your turns, if you have no uses of Wild Shape left, you can give yourself one use by expending a spell slot (no action required).\n\nIn addition, you can expend one use of Wild Shape (no action required) to give yourself a level 1 spell slot, but you can't do so again until you finish a Long Rest.",
+        "shortDescription": "Trade a spell slot for a Wild Shape use, or once per Long Rest a Wild Shape use for a level 1 slot.",
+        "activation": {
+          "type": "free"
+        },
+        "tags": [
+          "recovery"
+        ],
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "srd-5.2:feature/druid-wild-shape",
+            "value": {
+              "upTo": 1
+            },
+            "cost": {
+              "resource": "spellSlot",
+              "amount": 1
+            },
+            "frequency": "perTurn"
+          },
+          {
+            "type": "restoreUses",
+            "target": "spellSlot",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1
+                ]
+              }
+            ],
+            "cost": {
+              "featureId": "srd-5.2:feature/druid-wild-shape",
+              "amount": 1
+            },
+            "uses": {
+              "max": 1,
+              "recharge": "long"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-elemental-fury",
+        "name": "Elemental Fury",
+        "level": 7,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "The might of the elements flows through you. You gain one of the following options of your choice.\n\n**Potent Spellcasting.** Add your Wisdom modifier to the damage you deal with any Druid cantrip.\n\n**Primal Strike.** Once on each of your turns when you hit a creature with an attack roll using a weapon or a Beast form's attack in Wild Shape, you can cause the target to take an extra 1d8 Cold, Fire, Lightning, or Thunder damage (choose when you hit).",
+        "shortDescription": "Potent Spellcasting (+WIS to cantrip damage) or Primal Strike (+1d8 elemental damage).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "elemental-fury",
+            "prompt": "Choose Potent Spellcasting or Primal Strike.",
+            "count": 1,
+            "from": "srd-5.2:list/elemental-fury"
+          },
+          {
+            "id": "primal-strike-damage",
+            "prompt": "Cold, Fire, Lightning, or Thunder.",
+            "count": 1,
+            "from": [
+              "cold",
+              "fire",
+              "lightning",
+              "thunder"
+            ]
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/elemental-fury",
+          "items": [
+            {
+              "id": "potent-spellcasting",
+              "name": "Potent Spellcasting",
+              "description": "Add your Wisdom modifier to Druid cantrip damage. From level 15, a Druid cantrip with a range of 10 feet or greater gains 300 feet of range.",
+              "effects": [
+                {
+                  "type": "rollBonus",
+                  "target": "damageRoll",
+                  "value": "$derived:WIS",
+                  "qualifiers": [
+                    {
+                      "type": "spellSource",
+                      "sourceId": "srd-5.2:class/druid"
+                    },
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "modifier",
+                  "target": "spellRange",
+                  "value": 300,
+                  "qualifiers": [
+                    {
+                      "type": "spellSource",
+                      "sourceId": "srd-5.2:class/druid"
+                    },
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    },
+                    {
+                      "type": "classLevel",
+                      "atLeast": 15
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "primal-strike",
+              "name": "Primal Strike",
+              "description": "Once per turn, a hit with a weapon or a Beast form's attack deals an extra 1d8 Cold, Fire, Lightning, or Thunder damage (2d8 from level 15).",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "$choice:primal-strike-damage",
+                  "value": "$scaling",
+                  "frequency": "perTurn",
+                  "trigger": {
+                    "event": "hitWithAttack",
+                    "optional": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "anyOf",
+                      "qualifiers": [
+                        {
+                          "type": "attackSource",
+                          "attackSources": [
+                            "weapon"
+                          ]
+                        },
+                        {
+                          "type": "selfState",
+                          "featureId": "srd-5.2:feature/druid-wild-shape"
+                        }
+                      ]
+                    }
+                  ],
+                  "scaling": [
+                    {
+                      "level": 7,
+                      "value": {
+                        "count": 1,
+                        "die": "d8"
+                      }
+                    },
+                    {
+                      "level": 15,
+                      "value": {
+                        "count": 2,
+                        "die": "d8"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:elemental-fury"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-improved-elemental-fury",
+        "name": "Improved Elemental Fury",
+        "level": 15,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "The option you chose for Elemental Fury grows more powerful, as detailed below.\n\n**Potent Spellcasting.** When you cast a Druid cantrip with a range of 10 feet or greater, the spell's range increases by 300 feet.\n\n**Primal Strike.** The extra damage of your Primal Strike increases to 2d8.",
+        "shortDescription": "Druid cantrips gain 300 feet of range, or Primal Strike deals 2d8.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/druid-beast-spells",
+        "name": "Beast Spells",
+        "level": 18,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "While using Wild Shape, you can cast spells in Beast form, except for any spell that has a Material component with a cost specified or that consumes its Material component.",
+        "shortDescription": "Cast spells while in Wild Shape.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting",
+          "transformation"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/druid-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Dimensional Travel is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "druid-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:druid-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/druid-archdruid",
+        "name": "Archdruid",
+        "level": 20,
+        "sourceId": "srd-5.2:class/druid",
+        "description": "The vitality of nature constantly blooms within you, granting you the following benefits.\n\n**Evergreen Wild Shape.** Whenever you roll Initiative and have no uses of Wild Shape left, you regain one expended use of it.\n\n**Nature Magician.** You can convert uses of Wild Shape into a spell slot (no action required). Choose a number of your unexpended uses of Wild Shape and convert them into a single spell slot, with each use contributing 2 spell levels. For example, if you convert two uses of Wild Shape, you produce a level 4 spell slot. Once you use this benefit, you can't do so again until you finish a Long Rest.\n\n**Longevity.** The primal magic that you wield causes you to age more slowly. For every ten years that pass, your body ages only one year.",
+        "shortDescription": "Regain Wild Shape on Initiative, convert Wild Shape uses into a spell slot, and age slowly.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/nature-magician",
+          "items": [
+            {
+              "id": "uses-1",
+              "name": "1 Use into a Level 2 Slot",
+              "description": "Convert 1 Wild Shape use into a level 2 spell slot.",
+              "cost": {
+                "featureId": "srd-5.2:feature/druid-wild-shape",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        2
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "uses-2",
+              "name": "2 Uses into a Level 4 Slot",
+              "description": "Convert 2 Wild Shape uses into a level 4 spell slot.",
+              "cost": {
+                "featureId": "srd-5.2:feature/druid-wild-shape",
+                "amount": 2
+              },
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        4
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "uses-3",
+              "name": "3 Uses into a Level 6 Slot",
+              "description": "Convert 3 Wild Shape uses into a level 6 spell slot.",
+              "cost": {
+                "featureId": "srd-5.2:feature/druid-wild-shape",
+                "amount": 3
+              },
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        6
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "uses-4",
+              "name": "4 Uses into a Level 8 Slot",
+              "description": "Convert 4 Wild Shape uses into a level 8 spell slot.",
+              "cost": {
+                "featureId": "srd-5.2:feature/druid-wild-shape",
+                "amount": 4
+              },
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        8
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "recovery"
+        ],
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "srd-5.2:feature/druid-wild-shape",
+            "value": {
+              "upTo": 1
+            },
+            "trigger": {
+              "event": "rollInitiative"
+            }
+          },
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/nature-magician",
+            "value": 1,
+            "uses": {
+              "max": 1,
+              "recharge": "long"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/fighter",
