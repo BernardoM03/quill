@@ -51,7 +51,8 @@
           "equipment",
           "skills",
           "conditions",
-          "tools"
+          "tools",
+          "languages"
         ]
       },
       "uniqueItems": true

@@ -2377,6 +2377,11 @@
       "description": "Namespaced content id for Equipment: <packId>:equipment/<slug>. Covers everything in the Equipment chapter except tools, which keep their own toolId because proficiency grants and Skilled's 'any skill or tool' pool name them.",
       "pattern": "^[a-z0-9][a-z0-9.-]*:equipment/[a-z0-9-]+$"
     },
+    "languageId": {
+      "type": "string",
+      "description": "Namespaced content id for Languages: <packId>:language/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:language/[a-z0-9-]+$"
+    },
     "entityKind": {
       "type": "string",
       "description": "An entity type segment, matching the middle part of an id. Naming a kind rather than listing members keeps an open pool open: a skill added by a later pack becomes selectable without editing the feature that offers the choice.",
@@ -2389,7 +2394,8 @@
         "subclass",
         "species",
         "origin",
-        "condition"
+        "condition",
+        "language"
       ]
     },
     "weaponProperty": {
