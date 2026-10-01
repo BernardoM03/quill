@@ -452,7 +452,255 @@
   {
     "id": "srd-5.2:subclass/warrior-of-the-open-hand",
     "classId": "srd-5.2:class/monk",
-    "name": "Warrior of the Open Hand"
+    "name": "Warrior of the Open Hand",
+    "flavor": "Master Unarmed Combat Techniques",
+    "description": "Warriors of the Open Hand are masters of unarmed combat. They learn techniques to push and trip their opponents and manipulate their own energy to protect themselves from harm.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      11,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/open-hand-open-hand-technique",
+        "name": "Open Hand Technique",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "Whenever you hit a creature with an attack granted by your Flurry of Blows, you can impose one of the following effects on that target.\n\n**Addle.** The target can't make Opportunity Attacks until the start of its next turn.\n\n**Push.** The target must succeed on a Strength saving throw or be pushed up to 15 feet away from you.\n\n**Topple.** The target must succeed on a Dexterity saving throw or have the Prone condition.",
+        "shortDescription": "Flurry of Blows hits can Addle, Push, or Topple.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/open-hand-technique",
+          "items": [
+            {
+              "id": "addle",
+              "name": "Addle",
+              "description": "The target can't make Opportunity Attacks until the start of its next turn.",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "loseAction",
+                  "target": [
+                    "reaction"
+                  ],
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    },
+                    {
+                      "type": "namedAction",
+                      "actions": [
+                        "attack"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "push",
+              "name": "Push",
+              "description": "The target must succeed on a Strength saving throw or be pushed up to 15 feet away from you.",
+              "effects": [
+                {
+                  "type": "forcedMovement",
+                  "value": {
+                    "feet": 15,
+                    "direction": "away"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ],
+                  "save": {
+                    "ability": "STR",
+                    "dc": {
+                      "base": 8,
+                      "ability": "WIS",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "topple",
+              "name": "Topple",
+              "description": "The target must succeed on a Dexterity saving throw or have the Prone condition.",
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/prone",
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ],
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "base": 8,
+                      "ability": "WIS",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/open-hand-technique",
+            "value": 1,
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "sourceFeature",
+                "featureId": "srd-5.2:feature/monk-flurry-of-blows"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-wholeness-of-body",
+        "name": "Wholeness of Body",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "You gain the ability to heal yourself. As a Bonus Action, you can roll your Martial Arts die. You regain a number of Hit Points equal to the number rolled plus your Wisdom modifier (minimum of 1 Hit Point regained).\n\nYou can use this feature a number of times equal to your Wisdom modifier (minimum of once), and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: heal Martial Arts die + WIS.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:WIS",
+          "minimum": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 1,
+              "die": "$column:martialArts",
+              "modifier": "$derived:WIS",
+              "minimum": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-fleet-step",
+        "name": "Fleet Step",
+        "level": 11,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "When you take a Bonus Action other than Step of the Wind, you can also use Step of the Wind immediately after that Bonus Action.",
+        "shortDescription": "Use Step of the Wind right after another Bonus Action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "triggerFeature",
+            "target": "srd-5.2:feature/monk-step-of-the-wind",
+            "trigger": {
+              "event": "takeAction",
+              "actionType": "bonusAction",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "sourceFeature",
+                "featureId": "srd-5.2:feature/monk-step-of-the-wind",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-quivering-palm",
+        "name": "Quivering Palm",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "You gain the ability to set up lethal vibrations in someone's body. When you hit a creature with an Unarmed Strike, you can expend 4 Focus Points to start these imperceptible vibrations, which last for a number of days equal to your Monk level. The vibrations are harmless unless you take an action to end them. Alternatively, when you take the Attack action on your turn, you can forgo one of the attacks to end the vibrations. To end them, you and the target must be on the same plane of existence. When you end them, the target must make a Constitution saving throw, taking 10d12 Force damage on a failed save or half as much damage on a successful one.\n\nYou can have only one creature under the effect of this feature at a time. You can end the vibrations harmlessly (no action required).",
+        "shortDescription": "4 Focus Points on an Unarmed hit: later end the vibrations for 10d12 Force damage.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "resource": "focusPoints",
+            "amount": 4
+          }
+        },
+        "duration": {
+          "value": "$derived:classLevel",
+          "unit": "day"
+        },
+        "tags": [
+          "damage",
+          "focus"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 10,
+              "die": "d12"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "takeAction",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/open-hand-quivering-palm"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "base": 8,
+                "ability": "WIS",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/oath-of-devotion",
@@ -796,7 +1044,9 @@
               },
               {
                 "type": "damageType",
-                "damageType": "$choice:elemental-affinity-damage-type"
+                "damageTypes": [
+                  "$choice:elemental-affinity-damage-type"
+                ]
               }
             ],
             "appliesOnce": true
