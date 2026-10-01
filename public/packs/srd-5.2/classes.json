@@ -3869,7 +3869,1250 @@
   },
   {
     "id": "srd-5.2:class/paladin",
-    "name": "Paladin"
+    "name": "Paladin",
+    "primaryAbility": [
+      "STR",
+      "CHA"
+    ],
+    "hitDie": 10,
+    "savingThrowProficiencies": [
+      "WIS",
+      "CHA"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/intimidation",
+        "srd-5.2:skill/medicine",
+        "srd-5.2:skill/persuasion",
+        "srd-5.2:skill/religion"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons",
+        "Martial weapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "Light armor",
+        "Medium armor",
+        "Heavy armor",
+        "Shields"
+      ]
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": 2,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/chain-mail"
+            },
+            {
+              "id": "srd-5.2:equipment/shield"
+            },
+            {
+              "id": "srd-5.2:equipment/longsword"
+            },
+            {
+              "id": "srd-5.2:equipment/javelin",
+              "quantity": 6
+            },
+            {
+              "id": "srd-5.2:equipment/holy-symbol"
+            },
+            {
+              "id": "srd-5.2:equipment/priests-pack"
+            }
+          ],
+          "gold": 9
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 150
+        }
+      ]
+    },
+    "startingGold": 150,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "STR"
+          ],
+          "minimum": 13
+        },
+        {
+          "abilities": [
+            "CHA"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [
+          "Martial weapons"
+        ],
+        "armor": [
+          "Light armor",
+          "Medium armor",
+          "Shields"
+        ],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      7,
+      15,
+      20
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": {
+      "ability": "CHA",
+      "progression": "half",
+      "preparationType": "prepared",
+      "ritualCasting": false,
+      "focus": "srd-5.2:equipment/holy-symbol",
+      "swapOnLongRest": 1
+    },
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/paladin-lay-on-hands",
+          "srd-5.2:feature/paladin-spellcasting",
+          "srd-5.2:feature/paladin-weapon-mastery"
+        ],
+        "preparedSpells": 2,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 0
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/paladin-fighting-style",
+          "srd-5.2:feature/paladin-paladins-smite"
+        ],
+        "preparedSpells": 3,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 0
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/paladin-channel-divinity",
+          "srd-5.2:feature/paladin-subclass"
+        ],
+        "preparedSpells": 4,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/paladin-ability-score-improvement"
+        ],
+        "preparedSpells": 5,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/paladin-extra-attack",
+          "srd-5.2:feature/paladin-faithful-steed"
+        ],
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/paladin-aura-of-protection"
+        ],
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/paladin-ability-score-improvement"
+        ],
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/paladin-abjure-foes"
+        ],
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/paladin-aura-of-courage"
+        ],
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 2
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/paladin-radiant-strikes"
+        ],
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/paladin-ability-score-improvement"
+        ],
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/paladin-restoring-touch"
+        ],
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/paladin-ability-score-improvement"
+        ],
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/paladin-aura-expansion"
+        ],
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/paladin-epic-boon"
+        ],
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "channelDivinity": 3
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/paladin-lay-on-hands",
+        "name": "Lay On Hands",
+        "level": 1,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you finish a Long Rest. With that pool, you can restore a total number of Hit Points equal to five times your Paladin level.\n\nAs a Bonus Action, you can touch a creature (which could be yourself) and draw power from the pool of healing to restore a number of Hit Points to that creature, up to the maximum amount remaining in the pool.\n\nYou can also expend 5 Hit Points from the pool of healing power to remove the Poisoned condition from the creature; those points don't also restore Hit Points to the creature.",
+        "shortDescription": "Bonus Action: heal from a pool of five times your Paladin level, or spend 5 to end Poisoned.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:classLevel",
+          "multiplier": 5,
+          "pool": true,
+          "recharge": "long"
+        },
+        "targets": {
+          "count": 1,
+          "kind": "creature"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": "$derived:pointsSpent",
+            "affects": "target"
+          },
+          {
+            "type": "endCondition",
+            "target": "srd-5.2:condition/poisoned",
+            "affects": "target",
+            "cost": {
+              "featureId": "srd-5.2:feature/paladin-lay-on-hands",
+              "amount": 5
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-spellcasting",
+        "name": "Spellcasting",
+        "level": 1,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You have learned to cast spells through prayer and meditation. See \"Spells\" for the rules on spellcasting. The information below details how you use those rules with Paladin spells, which appear in the Paladin spell list later in the class's description.\n\n**Spell Slots.** The Paladin Features table shows how many spell slots you have to cast your level 1+ spells. You regain all expended slots when you finish a Long Rest.\n\n**Prepared Spells of Level 1+.** You prepare the list of level 1+ spells that are available for you to cast with this feature. To start, choose two level 1 Paladin spells. Heroism and Searing Smite are recommended.\n\nThe number of spells on your list increases as you gain Paladin levels, as shown in the Prepared Spells column of the Paladin Features table. Whenever that number increases, choose additional Paladin spells until the number of spells on your list matches the number in the Paladin Features table. The chosen spells must be of a level for which you have spell slots. For example, if you're a level 5 Paladin, your list of prepared spells can include six Paladin spells of level 1 or 2 in any combination.\n\nIf another Paladin feature gives you spells that you always have prepared, those spells don't count against the number of spells you can prepare with this feature, but those spells otherwise count as Paladin spells for you.\n\n**Changing Your Prepared Spells.** Whenever you finish a Long Rest, you can replace one spell on your list with another Paladin spell for which you have spell slots.\n\n**Spellcasting Ability.** Charisma is your spellcasting ability for your Paladin spells.\n\n**Spellcasting Focus.** You can use a Holy Symbol as a Spellcasting Focus for your Paladin spells.",
+        "shortDescription": "Cast Paladin spells using Charisma.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/paladin"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-weapon-mastery",
+        "name": "Weapon Mastery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Longswords and Javelins.\n\nWhenever you finish a Long Rest, you can change the kinds of weapons you chose. For example, you could switch to using the mastery properties of Halberds and Flails.",
+        "shortDescription": "Use the mastery properties of 2 kinds of weapons.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "paladin-weapon-mastery",
+            "prompt": "Choose two kinds of weapons you are proficient with.",
+            "count": 2,
+            "fromTypes": [
+              "equipment"
+            ],
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "weapon"
+              },
+              {
+                "type": "proficient"
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 2
+            }
+          }
+        ],
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "grantMastery",
+            "target": "$choice:paladin-weapon-mastery"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-fighting-style",
+        "name": "Fighting Style",
+        "level": 2,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You gain a Fighting Style feat of your choice (see \"Feats\" for feats). Instead of choosing one of those feats, you can choose the option below.\n\n**Blessed Warrior.** You learn two Cleric cantrips of your choice (see the Cleric class's section for a list of Cleric spells). Guidance and Sacred Flame are recommended. The chosen cantrips count as Paladin spells for you, and Charisma is your spellcasting ability for them. Whenever you gain a Paladin level, you can replace one of these cantrips with another Cleric cantrip.",
+        "shortDescription": "Gain a Fighting Style feat, or two Cleric cantrips (Blessed Warrior).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "paladin-fighting-style",
+            "prompt": "Choose a Fighting Style feat.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "fightingStyle"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "blessed-warrior-cantrips",
+            "prompt": "Choose two Cleric cantrips.",
+            "count": 2,
+            "from": "srd-5.2:class/cleric",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/paladin-fighting-style",
+          "items": [
+            {
+              "id": "fighting-style-feat",
+              "name": "Fighting Style Feat",
+              "description": "Gain a Fighting Style feat of your choice.",
+              "effects": [
+                {
+                  "type": "grantFeature",
+                  "target": "$choice:paladin-fighting-style"
+                }
+              ]
+            },
+            {
+              "id": "blessed-warrior",
+              "name": "Blessed Warrior",
+              "description": "Learn two Cleric cantrips, which count as Paladin spells and use Charisma.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "$choice:blessed-warrior-cantrips"
+                },
+                {
+                  "type": "setSpellcastingAbility",
+                  "value": "CHA"
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/paladin-fighting-style",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-paladins-smite",
+        "name": "Paladin's Smite",
+        "level": 2,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You always have the Divine Smite spell prepared. In addition, you can cast it without expending a spell slot, but you must finish a Long Rest before you can cast it in this way again.",
+        "shortDescription": "Divine Smite always prepared; cast it once free per Long Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/divine-smite",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-channel-divinity",
+        "name": "Channel Divinity",
+        "level": 3,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You can channel divine energy directly from the Outer Planes, using it to fuel magical effects. You start with one such effect: Divine Sense, which is described below. Other Paladin features give additional Channel Divinity effect options. Each time you use this class's Channel Divinity, you choose which effect from this class to create.\n\nYou can use this class's Channel Divinity twice. You regain one of its expended uses when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest. You gain an additional use when you reach Paladin level 11.\n\nIf a Channel Divinity effect requires a saving throw, the DC equals the spell save DC from this class's Spellcasting feature.\n\n**Divine Sense.** As a Bonus Action, you can open your awareness to detect Celestials, Fiends, and Undead. For the next 10 minutes or until you have the Incapacitated condition, you know the location of any creature of those types within 60 feet of yourself, and you know its creature type. Within the same radius, you also detect the presence of any place or object that has been consecrated or desecrated, as with the Hallow spell.",
+        "shortDescription": "Channel divine energy; Divine Sense detects Celestials, Fiends, and Undead within 60 feet.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$column:channelDivinity",
+          "recharge": "long",
+          "recover": {
+            "rest": "short",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "endConditions": [
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/incapacitated"
+          }
+        ],
+        "tags": [
+          "channelDivinity"
+        ],
+        "effects": [
+          {
+            "type": "detect",
+            "value": {
+              "within": 60,
+              "creatureTypes": [
+                "celestial",
+                "fiend",
+                "undead"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-subclass",
+        "name": "Paladin Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You gain a Paladin subclass of your choice. The Oath of Devotion subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Paladin levels. For the rest of your career, you gain each of your subclass's features that are of your Paladin level or lower.",
+        "shortDescription": "Choose a Paladin subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/paladin-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Paladin levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "paladin-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:paladin-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-extra-attack",
+        "name": "Extra Attack",
+        "level": 5,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack twice with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-faithful-steed",
+        "name": "Faithful Steed",
+        "level": 5,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You can call on the aid of an otherworldly steed. You always have the Find Steed spell prepared.\n\nYou can also cast the spell once without expending a spell slot, and you regain the ability to do so when you finish a Long Rest.",
+        "shortDescription": "Find Steed always prepared; cast it once free per Long Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/find-steed",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-aura-of-protection",
+        "name": "Aura of Protection",
+        "level": 6,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You radiate a protective, unseeable aura in a 10-foot Emanation that originates from you. The aura is inactive while you have the Incapacitated condition.\n\nYou and your allies in the aura gain a bonus to saving throws equal to your Charisma modifier (minimum bonus of +1).\n\nIf another Paladin is present, a creature can benefit from only one Aura of Protection at a time; the creature chooses which aura while in them.",
+        "shortDescription": "10-foot aura: you and allies add your Charisma modifier to saves.",
+        "activation": {
+          "type": "passive"
+        },
+        "scaling": [
+          {
+            "level": 6,
+            "value": 10
+          },
+          {
+            "level": 18,
+            "value": 30
+          }
+        ],
+        "tags": [
+          "aura",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "savingThrow",
+            "value": {
+              "base": 0,
+              "modifier": "$derived:CHA",
+              "minimum": 1
+            },
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": "$scaling"
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-abjure-foes",
+        "name": "Abjure Foes",
+        "level": 9,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "As a Magic action, you can expend one use of this class's Channel Divinity to overwhelm foes with awe. As you present your Holy Symbol or weapon, you can target a number of creatures equal to your Charisma modifier (minimum of one creature) that you can see within 60 feet of yourself. Each target must succeed on a Wisdom saving throw or have the Frightened condition for 1 minute or until it takes any damage. While Frightened in this way, a target can do only one of the following on its turns: move, take an action, or take a Bonus Action.",
+        "shortDescription": "Channel Divinity: frighten creatures within 60 feet; they can only move or act.",
+        "activation": {
+          "type": "action",
+          "cost": {
+            "featureId": "srd-5.2:feature/paladin-channel-divinity",
+            "amount": 1
+          }
+        },
+        "targets": {
+          "count": "$derived:CHA",
+          "minimum": 1,
+          "kind": "creature"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "tags": [
+          "channelDivinity",
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "base": 8,
+                "ability": "CHA",
+                "proficiency": true
+              },
+              "onSuccess": "negate",
+              "endsOn": [
+                {
+                  "event": "takeDamage"
+                }
+              ]
+            }
+          },
+          {
+            "type": "limitActions",
+            "value": {
+              "count": 1,
+              "from": [
+                "move",
+                "action",
+                "bonusAction"
+              ]
+            },
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-aura-of-courage",
+        "name": "Aura of Courage",
+        "level": 10,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You and your allies have Immunity to the Frightened condition while in your Aura of Protection. If a Frightened ally enters the aura, that condition has no effect on that ally while there.",
+        "shortDescription": "You and allies in your aura are immune to Frightened.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "aura",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/paladin-aura-of-protection"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-radiant-strikes",
+        "name": "Radiant Strikes",
+        "level": 11,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "Your strikes now carry supernatural power. When you hit a target with an attack roll using a Melee weapon or an Unarmed Strike, the target takes an extra 1d8 Radiant damage.",
+        "shortDescription": "Melee weapon and Unarmed Strike hits deal +1d8 Radiant damage.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "radiant",
+            "value": {
+              "count": 1,
+              "die": "d8"
+            },
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "attackSource",
+                    "attackSources": [
+                      "unarmed"
+                    ]
+                  },
+                  {
+                    "type": "allOf",
+                    "qualifiers": [
+                      {
+                        "type": "attackSource",
+                        "attackSources": [
+                          "weapon"
+                        ]
+                      },
+                      {
+                        "type": "attackRange",
+                        "attackRange": "melee"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-restoring-touch",
+        "name": "Restoring Touch",
+        "level": 14,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "When you use Lay On Hands on a creature, you can also remove one or more of the following conditions from the creature: Blinded, Charmed, Deafened, Frightened, Paralyzed, or Stunned. You must expend 5 Hit Points from the healing pool of Lay On Hands for each of these conditions you remove; those points don't also restore Hit Points to the creature.",
+        "shortDescription": "Lay On Hands can end conditions for 5 points each.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "endCondition",
+            "target": [
+              "srd-5.2:condition/blinded",
+              "srd-5.2:condition/charmed",
+              "srd-5.2:condition/deafened",
+              "srd-5.2:condition/frightened",
+              "srd-5.2:condition/paralyzed",
+              "srd-5.2:condition/stunned"
+            ],
+            "affects": "target",
+            "cost": {
+              "featureId": "srd-5.2:feature/paladin-lay-on-hands",
+              "amount": 5
+            },
+            "trigger": {
+              "event": "useFeature",
+              "featureId": "srd-5.2:feature/paladin-lay-on-hands",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/paladin-aura-expansion",
+        "name": "Aura Expansion",
+        "level": 18,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "Your Aura of Protection is now a 30-foot Emanation.",
+        "shortDescription": "Your aura grows to 30 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "aura"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/paladin-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/paladin",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Truesight is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "paladin-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:paladin-epic-boon"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/ranger",
@@ -5655,7 +6898,12 @@
         "tags": [
           "spellcasting"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/sorcerer"
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/sorcerer-innate-sorcery",
