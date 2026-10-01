@@ -205,7 +205,247 @@
   {
     "id": "srd-5.2:subclass/college-of-lore",
     "classId": "srd-5.2:class/bard",
-    "name": "College of Lore"
+    "name": "College of Lore",
+    "flavor": "Plumb the Depths of Magical Knowledge",
+    "description": "Bards of the College of Lore collect spells and secrets from diverse sources, such as scholarly tomes, mystical rites, and peasant tales. The college's members gather in libraries and universities to share their lore with one another. They also meet at festivals or affairs of state, where they can expose corruption, unravel lies, and poke fun at self-important figures of authority.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/lore-bonus-proficiencies",
+        "name": "Bonus Proficiencies",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You gain proficiency with three skills of your choice.",
+        "shortDescription": "Proficiency in three skills.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "lore-bonus-proficiencies",
+            "prompt": "Choose three skills.",
+            "count": 3,
+            "fromTypes": [
+              "skill"
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:lore-bonus-proficiencies"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-cutting-words",
+        "name": "Cutting Words",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You learn to use your wit to supernaturally distract, confuse, and otherwise sap the confidence and competence of others. When a creature that you can see within 60 feet of yourself makes a damage roll or succeeds on an ability check or attack roll, you can take a Reaction to expend one use of your Bardic Inspiration; roll your Bardic Inspiration die, and subtract the number rolled from the creature's roll, reducing the damage or potentially turning the success into a failure.",
+        "shortDescription": "Reaction: spend Bardic Inspiration to subtract its die from a creature's roll.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "A creature you can see within 60 feet makes a damage roll or succeeds on an ability check or attack roll.",
+          "cost": {
+            "featureId": "srd-5.2:feature/bard-bardic-inspiration",
+            "amount": 1
+          }
+        },
+        "tags": [
+          "reaction",
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-magical-discoveries",
+        "name": "Magical Discoveries",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You learn two spells of your choice. These spells can come from the Cleric, Druid, or Wizard spell list or any combination thereof (see a class's section for its spell list). A spell you choose must be a cantrip or a spell for which you have spell slots, as shown in the Bard Features table.\n\nYou always have the chosen spells prepared, and whenever you gain a Bard level, you can replace one of the spells with another spell that meets these requirements.",
+        "shortDescription": "Two Cleric, Druid, or Wizard spells, always prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "magical-discoveries",
+            "prompt": "Choose two Cleric, Druid, or Wizard spells you can cast.",
+            "count": 2,
+            "fromTypes": [
+              "spell"
+            ],
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/cleric"
+                  },
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/druid"
+                  },
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/wizard"
+                  }
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magical-discoveries",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-peerless-skill",
+        "name": "Peerless Skill",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "When you make an ability check or attack roll and fail, you can expend one use of Bardic Inspiration; roll the Bardic Inspiration die, and add the number rolled to the d20, potentially turning a failure into a success. On a failure, the Bardic Inspiration isn't expended.",
+        "shortDescription": "Spend Bardic Inspiration to add its die to your failed check or attack.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "featureId": "srd-5.2:feature/bard-bardic-inspiration",
+            "amount": 1,
+            "refundOnFailure": true
+          }
+        },
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "appliesOnce": true,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "abilityCheck",
+              "optional": true
+            }
+          },
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "appliesOnce": true,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/life-domain",
