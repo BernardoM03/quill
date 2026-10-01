@@ -472,7 +472,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -494,7 +494,8 @@
         "endTurnInArea",
         "moveInArea",
         "effectEnds",
-        "castSpell"
+        "castSpell",
+        "restoreHitPoints"
       ]
     },
     "trigger": {
@@ -2681,6 +2682,9 @@
                   },
                   {
                     "const": "savingThrow"
+                  },
+                  {
+                    "$ref": "#/$defs/proficiencyCategory"
                   }
                 ]
               }
@@ -5298,6 +5302,18 @@
         "kind"
       ],
       "additionalProperties": false
+    },
+    "proficiencyCategory": {
+      "type": "string",
+      "description": "A weapon or armor category a feature grants proficiency or training in, as Divine Order's Protector granting Martial weapons and Heavy armor.",
+      "enum": [
+        "simpleWeapons",
+        "martialWeapons",
+        "lightArmor",
+        "mediumArmor",
+        "heavyArmor",
+        "shields"
+      ]
     }
   }
 }
