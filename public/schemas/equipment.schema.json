@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://quill.local/schemas/equipment.schema.json",
   "title": "D&D 5.5e SRD Equipment",
-  "description": "Top-level array of mundane equipment: weapons, armor, adventuring gear, packs, mounts, tack, and vehicles. Tools live in tools.json. One schema with a `category` discriminator rather than one per kind, so starting equipment and pack contents point at a single id type. Each category's fields are required by an if/then pair and forbidden on every other category, so a Shield cannot carry weapon damage by mistake.",
+  "description": "Top-level array of mundane equipment: weapons, armor, adventuring gear, packs, mounts, tack, and vehicles. Tools live in tools.json. One schema with a `category` discriminator rather than one per kind, so starting equipment and pack contents point at a single id type. Each category's own fields live in a `<category>Fields` def that the matching if/then pulls in; `unevaluatedProperties: false` rejects any field no matching def declared, so a Shield cannot carry weapon damage by mistake.",
   "type": "array",
   "items": {
     "$ref": "#/$defs/item"
@@ -49,7 +49,154 @@
           },
           "minItems": 1,
           "description": "Forms that differ in price or weight. An item with variants and no top-level cost is priced by the form the player picks."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "weapon"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/weaponFields"
+          }
         },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "armor"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/armorFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "ammunition"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/ammunitionFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "spellcastingFocus"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/spellcastingFocusFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "gear"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/gearFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "pack"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/packFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "mount"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/mountFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "tack"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/tackFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "vehicle"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/vehicleFields"
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "weaponFields": {
+      "properties": {
         "weaponCategory": {
           "type": "string",
           "enum": [
@@ -114,1458 +261,16 @@
         },
         "mastery": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/weaponMastery"
-        },
-        "armorCategory": {
-          "allOf": [
-            {
-              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentCategory"
-            }
-          ],
-          "not": {
-            "const": "armor"
-          },
-          "description": "lightArmor, mediumArmor, heavyArmor, or shield. Never the `armor` umbrella."
-        },
-        "baseArmorClass": {
-          "allOf": [
-            {
-              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/acFormula"
-            }
-          ],
-          "description": "Base AC while worn. Heavy armor has an empty `abilities` list."
-        },
-        "acBonus": {
-          "type": "integer",
-          "description": "A Shield's bonus to AC."
-        },
-        "strength": {
-          "type": "integer",
-          "description": "Strength score below which the wearer's Speed drops by 10 feet."
-        },
-        "stealthDisadvantage": {
-          "type": "boolean"
-        },
-        "donTime": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
-        },
-        "doffTime": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
-        },
-        "bundle": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "How many pieces one purchase buys."
-        },
-        "storage": {
-          "allOf": [
-            {
-              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
-            }
-          ],
-          "description": "The container this ammunition is usually kept in. Bought separately."
-        },
-        "focusType": {
-          "type": "string",
-          "enum": [
-            "arcane",
-            "druidic",
-            "holy"
-          ],
-          "description": "Which classes' spellcasting can use it is the class's call, through its spellcasting focus."
-        },
-        "contents": {
-          "type": "array",
-          "items": {
-            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentGrant"
-          },
-          "minItems": 1
-        },
-        "carryingCapacity": {
-          "type": "integer",
-          "minimum": 0,
-          "description": "Pounds."
-        },
-        "speedMph": {
-          "type": "number",
-          "minimum": 0
-        },
-        "crew": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "passengers": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "cargoTons": {
-          "type": "number",
-          "minimum": 0
-        },
-        "armorClass": {
-          "type": "integer"
-        },
-        "hitPoints": {
-          "type": "integer"
-        },
-        "damageThreshold": {
-          "type": "integer"
         }
       },
       "required": [
-        "id",
-        "name",
-        "category"
+        "weaponCategory",
+        "attackRange",
+        "damage",
+        "damageType",
+        "mastery"
       ],
       "allOf": [
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "weapon"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "weaponCategory",
-              "attackRange",
-              "damage",
-              "damageType",
-              "mastery"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "armor"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "armorCategory"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "ammunition"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "bundle"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "spellcastingFocus"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "focusType",
-              "variants"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "gear"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "pack"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "contents"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "mount"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "carryingCapacity"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "tack"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "cargoTons"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "crew"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageThreshold"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "hitPoints"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "passengers"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "speedMph"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "category": {
-                "const": "vehicle"
-              }
-            },
-            "required": [
-              "category"
-            ]
-          },
-          "then": {
-            "required": [
-              "speedMph",
-              "armorClass",
-              "hitPoints"
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": [
-                    "acBonus"
-                  ]
-                },
-                {
-                  "required": [
-                    "ammunition"
-                  ]
-                },
-                {
-                  "required": [
-                    "armorCategory"
-                  ]
-                },
-                {
-                  "required": [
-                    "attackRange"
-                  ]
-                },
-                {
-                  "required": [
-                    "baseArmorClass"
-                  ]
-                },
-                {
-                  "required": [
-                    "bundle"
-                  ]
-                },
-                {
-                  "required": [
-                    "carryingCapacity"
-                  ]
-                },
-                {
-                  "required": [
-                    "contents"
-                  ]
-                },
-                {
-                  "required": [
-                    "damage"
-                  ]
-                },
-                {
-                  "required": [
-                    "damageType"
-                  ]
-                },
-                {
-                  "required": [
-                    "doffTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "donTime"
-                  ]
-                },
-                {
-                  "required": [
-                    "focusType"
-                  ]
-                },
-                {
-                  "required": [
-                    "mastery"
-                  ]
-                },
-                {
-                  "required": [
-                    "properties"
-                  ]
-                },
-                {
-                  "required": [
-                    "range"
-                  ]
-                },
-                {
-                  "required": [
-                    "stealthDisadvantage"
-                  ]
-                },
-                {
-                  "required": [
-                    "storage"
-                  ]
-                },
-                {
-                  "required": [
-                    "strength"
-                  ]
-                },
-                {
-                  "required": [
-                    "versatileDamage"
-                  ]
-                },
-                {
-                  "required": [
-                    "weaponCategory"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "armorCategory": {
-                "const": "shield"
-              }
-            },
-            "required": [
-              "armorCategory"
-            ]
-          },
-          "then": {
-            "required": [
-              "acBonus"
-            ],
-            "not": {
-              "required": [
-                "baseArmorClass"
-              ]
-            }
-          },
-          "else": {
-            "if": {
-              "required": [
-                "armorCategory"
-              ]
-            },
-            "then": {
-              "required": [
-                "baseArmorClass"
-              ],
-              "not": {
-                "required": [
-                  "acBonus"
-                ]
-              }
-            }
-          }
-        },
         {
           "if": {
             "properties": {
@@ -1623,8 +328,183 @@
             ]
           }
         }
+      ]
+    },
+    "armorFields": {
+      "properties": {
+        "armorCategory": {
+          "allOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentCategory"
+            }
+          ],
+          "not": {
+            "const": "armor"
+          },
+          "description": "lightArmor, mediumArmor, heavyArmor, or shield. Never the `armor` umbrella."
+        },
+        "baseArmorClass": {
+          "allOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/acFormula"
+            }
+          ],
+          "description": "Base AC while worn. Heavy armor has an empty `abilities` list."
+        },
+        "acBonus": {
+          "type": "integer",
+          "description": "A Shield's bonus to AC."
+        },
+        "strength": {
+          "type": "integer",
+          "description": "Strength score below which the wearer's Speed drops by 10 feet."
+        },
+        "stealthDisadvantage": {
+          "type": "boolean"
+        },
+        "donTime": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+        },
+        "doffTime": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+        }
+      },
+      "required": [
+        "armorCategory"
       ],
-      "additionalProperties": false
+      "if": {
+        "properties": {
+          "armorCategory": {
+            "const": "shield"
+          }
+        },
+        "required": [
+          "armorCategory"
+        ]
+      },
+      "then": {
+        "required": [
+          "acBonus"
+        ],
+        "not": {
+          "required": [
+            "baseArmorClass"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "baseArmorClass"
+        ],
+        "not": {
+          "required": [
+            "acBonus"
+          ]
+        }
+      }
+    },
+    "ammunitionFields": {
+      "properties": {
+        "bundle": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many pieces one purchase buys."
+        },
+        "storage": {
+          "allOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+            }
+          ],
+          "description": "The container this ammunition is usually kept in. Bought separately."
+        }
+      },
+      "required": [
+        "bundle"
+      ]
+    },
+    "spellcastingFocusFields": {
+      "properties": {
+        "focusType": {
+          "type": "string",
+          "enum": [
+            "arcane",
+            "druidic",
+            "holy"
+          ],
+          "description": "Which classes' spellcasting can use it is the class's call, through its spellcasting focus."
+        }
+      },
+      "required": [
+        "focusType",
+        "variants"
+      ]
+    },
+    "gearFields": {
+      "properties": {}
+    },
+    "packFields": {
+      "properties": {
+        "contents": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentGrant"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "contents"
+      ]
+    },
+    "mountFields": {
+      "properties": {
+        "carryingCapacity": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Pounds."
+        }
+      },
+      "required": [
+        "carryingCapacity"
+      ]
+    },
+    "tackFields": {
+      "properties": {}
+    },
+    "vehicleFields": {
+      "properties": {
+        "speedMph": {
+          "type": "number",
+          "minimum": 0
+        },
+        "crew": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passengers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cargoTons": {
+          "type": "number",
+          "minimum": 0
+        },
+        "armorClass": {
+          "type": "integer"
+        },
+        "hitPoints": {
+          "type": "integer"
+        },
+        "damageThreshold": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "speedMph",
+        "armorClass",
+        "hitPoints"
+      ]
     }
   }
 }
