@@ -452,11 +452,14 @@
     },
     "specialImmunity": {
       "type": "string",
-      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes.",
+      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes. `instantDeath` is Death Ward's protection from effects that kill without damage. `speedReduction` and `hitPointMaximumReduction` stop those numbers being lowered, as Freedom of Movement and Aura of Life.",
       "enum": [
         "magicalSleep",
         "disease",
-        "foodAndWater"
+        "foodAndWater",
+        "instantDeath",
+        "speedReduction",
+        "hitPointMaximumReduction"
       ]
     },
     "triggerEvent": {
