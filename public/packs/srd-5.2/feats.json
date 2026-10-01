@@ -462,7 +462,9 @@
               },
               {
                 "type": "attackSource",
-                "attackSource": "weapon"
+                "attackSources": [
+                  "weapon"
+                ]
               }
             ]
           }
@@ -520,7 +522,9 @@
               },
               {
                 "type": "attackSource",
-                "attackSource": "weapon"
+                "attackSources": [
+                  "weapon"
+                ]
               },
               {
                 "type": "weaponProperty",

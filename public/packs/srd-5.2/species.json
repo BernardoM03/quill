@@ -1470,7 +1470,9 @@
             "qualifiers": [
               {
                 "type": "featCategory",
-                "featCategory": "origin"
+                "featCategories": [
+                  "origin"
+                ]
               }
             ]
           }

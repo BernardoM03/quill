@@ -17,7 +17,894 @@
   },
   {
     "id": "srd-5.2:class/fighter",
-    "name": "Fighter"
+    "name": "Fighter",
+    "primaryAbility": [
+      "STR",
+      "DEX"
+    ],
+    "hitDie": 10,
+    "savingThrowProficiencies": [
+      "STR",
+      "CON"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "srd-5.2:skill/acrobatics",
+        "srd-5.2:skill/animal-handling",
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/history",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/intimidation",
+        "srd-5.2:skill/persuasion",
+        "srd-5.2:skill/perception",
+        "srd-5.2:skill/survival"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons",
+        "Martial weapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "Light armor",
+        "Medium armor",
+        "Heavy armor",
+        "Shields"
+      ]
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": 3,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/chain-mail"
+            },
+            {
+              "id": "srd-5.2:equipment/greatsword"
+            },
+            {
+              "id": "srd-5.2:equipment/flail"
+            },
+            {
+              "id": "srd-5.2:equipment/javelin",
+              "quantity": 8
+            },
+            {
+              "id": "srd-5.2:equipment/dungeoneers-pack"
+            }
+          ],
+          "gold": 4
+        },
+        {
+          "label": "B",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/studded-leather-armor"
+            },
+            {
+              "id": "srd-5.2:equipment/scimitar"
+            },
+            {
+              "id": "srd-5.2:equipment/shortsword"
+            },
+            {
+              "id": "srd-5.2:equipment/longbow"
+            },
+            {
+              "id": "srd-5.2:equipment/arrows",
+              "note": "20 Arrows, one bundle"
+            },
+            {
+              "id": "srd-5.2:equipment/quiver"
+            },
+            {
+              "id": "srd-5.2:equipment/dungeoneers-pack"
+            }
+          ],
+          "gold": 11
+        },
+        {
+          "label": "C",
+          "items": [],
+          "gold": 155
+        }
+      ]
+    },
+    "startingGold": 155,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "STR",
+            "DEX"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [
+          "Martial weapons"
+        ],
+        "armor": [
+          "Light armor",
+          "Medium armor",
+          "Shields"
+        ],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      7,
+      10,
+      15,
+      18
+    ],
+    "asiLevels": [
+      4,
+      6,
+      8,
+      12,
+      14,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": null,
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/fighter-fighting-style",
+          "srd-5.2:feature/fighter-second-wind",
+          "srd-5.2:feature/fighter-weapon-mastery"
+        ],
+        "resources": {
+          "secondWind": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/fighter-action-surge",
+          "srd-5.2:feature/fighter-tactical-mind"
+        ],
+        "resources": {
+          "secondWind": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/fighter-subclass"
+        ],
+        "resources": {
+          "secondWind": 2,
+          "weaponMastery": 3
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/fighter-extra-attack",
+          "srd-5.2:feature/fighter-tactical-shift"
+        ],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/fighter-indomitable",
+          "srd-5.2:feature/fighter-tactical-master"
+        ],
+        "resources": {
+          "secondWind": 3,
+          "weaponMastery": 4
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/fighter-two-extra-attacks"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/fighter-indomitable",
+          "srd-5.2:feature/fighter-studied-attacks"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 5
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/fighter-ability-score-improvement"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 6
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/fighter-action-surge",
+          "srd-5.2:feature/fighter-indomitable"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 6
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 6
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/fighter-epic-boon"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 6
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/fighter-three-extra-attacks"
+        ],
+        "resources": {
+          "secondWind": 4,
+          "weaponMastery": 6
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/fighter-fighting-style",
+        "name": "Fighting Style",
+        "level": 1,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You have honed your martial prowess and gain a Fighting Style feat of your choice (see \"Feats\"). Defense is recommended.\n\nWhenever you gain a Fighter level, you can replace the feat you chose with a different Fighting Style feat.",
+        "shortDescription": "Gain a Fighting Style feat; swap it on any Fighter level.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "fighter-fighting-style",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "fightingStyle"
+                ]
+              }
+            ],
+            "prompt": "Choose a Fighting Style feat.",
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:fighter-fighting-style"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-second-wind",
+        "name": "Second Wind",
+        "level": 1,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You have a limited well of physical and mental stamina that you can draw on. As a Bonus Action, you can use it to regain Hit Points equal to 1d10 plus your Fighter level.\n\nYou can use this feature twice. You regain one expended use when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest.\n\nWhen you reach certain Fighter levels, you gain more uses of this feature, as shown in the Second Wind column of the Fighter Features table.",
+        "shortDescription": "Bonus Action: regain 1d10 + Fighter level HP.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$scaling",
+          "recharge": "long",
+          "recover": {
+            "rest": "short",
+            "amount": 1
+          }
+        },
+        "scaling": [
+          {
+            "level": 1,
+            "value": 2
+          },
+          {
+            "level": 4,
+            "value": 3
+          },
+          {
+            "level": 10,
+            "value": 4
+          }
+        ],
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 1,
+              "die": "d10",
+              "modifier": "$derived:classLevel"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-weapon-mastery",
+        "name": "Weapon Mastery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "Your training with weapons allows you to use the mastery properties of three kinds of Simple or Martial weapons of your choice. Whenever you finish a Long Rest, you can practice weapon drills and change one of those weapon choices.\n\nWhen you reach certain Fighter levels, you gain the ability to use the mastery properties of more kinds of weapons, as shown in the Weapon Mastery column of the Fighter Features table.",
+        "shortDescription": "Use the mastery properties of 3 kinds of weapons (more at higher levels).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "fighter-weapon-mastery",
+            "prompt": "Choose kinds of weapons whose mastery properties you can use.",
+            "count": "$scaling",
+            "fromTypes": [
+              "equipment"
+            ],
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "weapon"
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "scaling": [
+          {
+            "level": 1,
+            "value": 3
+          },
+          {
+            "level": 4,
+            "value": 4
+          },
+          {
+            "level": 10,
+            "value": 5
+          },
+          {
+            "level": 16,
+            "value": 6
+          }
+        ],
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "grantMastery",
+            "target": "$choice:fighter-weapon-mastery"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-action-surge",
+        "name": "Action Surge",
+        "level": 2,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action, except the Magic action.\n\nOnce you use this feature, you can't do so again until you finish a Short or Long Rest. Starting at level 17, you can use it twice before a rest but only once on a turn.",
+        "shortDescription": "Take one additional action on your turn (not Magic).",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": "$scaling",
+          "recharge": "short",
+          "perTurn": 1
+        },
+        "scaling": [
+          {
+            "level": 2,
+            "value": 1
+          },
+          {
+            "level": 17,
+            "value": 2
+          }
+        ],
+        "tags": [
+          "actionEconomy"
+        ],
+        "effects": [
+          {
+            "type": "extraAction",
+            "value": "action",
+            "qualifiers": [
+              {
+                "type": "namedAction",
+                "actions": [
+                  "magic"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-tactical-mind",
+        "name": "Tactical Mind",
+        "level": 2,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You have a mind for tactics on and off the battlefield. When you fail an ability check, you can expend a use of your Second Wind to push yourself toward success. Rather than regaining Hit Points, you roll 1d10 and add the number rolled to the ability check, potentially turning it into a success. If the check still fails, this use of Second Wind isn't expended.",
+        "shortDescription": "After failing an ability check, spend a Second Wind use to add 1d10.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "featureId": "srd-5.2:feature/fighter-second-wind",
+            "amount": 1,
+            "refundOnFailure": true
+          }
+        },
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "appliesOnce": true,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "abilityCheck",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-subclass",
+        "name": "Fighter Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You gain a Fighter subclass of your choice. The Champion subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Fighter levels. For the rest of your career, you gain each of your subclass's features that are of your Fighter level or lower.",
+        "shortDescription": "Choose a Fighter subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/fighter-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Fighter levels 6, 8, 12, 14, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "fighter-ability-score-improvement",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ],
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for."
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:fighter-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-extra-attack",
+        "name": "Extra Attack",
+        "level": 5,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack twice with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-tactical-shift",
+        "name": "Tactical Shift",
+        "level": 5,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "Whenever you activate your Second Wind with a Bonus Action, you can move up to half your Speed without provoking Opportunity Attacks.",
+        "shortDescription": "Move half your Speed without provoking when you use Second Wind.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantMovement",
+            "value": {
+              "speedFraction": 0.5,
+              "provokesOpportunityAttacks": false
+            },
+            "trigger": {
+              "event": "useFeature",
+              "featureId": "srd-5.2:feature/fighter-second-wind",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-indomitable",
+        "name": "Indomitable",
+        "level": 9,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "If you fail a saving throw, you can reroll it with a bonus equal to your Fighter level. You must use the new roll, and you can't use this feature again until you finish a Long Rest.\n\nYou can use this feature twice before a Long Rest starting at level 13 and three times before a Long Rest starting at level 17.",
+        "shortDescription": "Reroll a failed save with a bonus equal to your Fighter level.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": "$scaling",
+          "recharge": "long"
+        },
+        "scaling": [
+          {
+            "level": 9,
+            "value": 1
+          },
+          {
+            "level": 13,
+            "value": 2
+          },
+          {
+            "level": 17,
+            "value": 3
+          }
+        ],
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "rerollD20",
+            "target": "savingThrow",
+            "reroll": {
+              "mode": "reroll",
+              "dice": 1,
+              "keep": "new",
+              "bonus": "$derived:classLevel"
+            },
+            "trigger": {
+              "event": "failRoll",
+              "roll": "savingThrow",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-tactical-master",
+        "name": "Tactical Master",
+        "level": 9,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "When you attack with a weapon whose mastery property you can use, you can replace that property with the Push, Sap, or Slow property for that attack.",
+        "shortDescription": "Swap a weapon's mastery for Push, Sap, or Slow on an attack.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "substituteMastery",
+            "value": [
+              "push",
+              "sap",
+              "slow"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-two-extra-attacks",
+        "name": "Two Extra Attacks",
+        "level": 11,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You can attack three times instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack three times with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "supersedes": "srd-5.2:feature/fighter-extra-attack",
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-studied-attacks",
+        "name": "Studied Attacks",
+        "level": 13,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You study your opponents and learn from each attack you make. If you make an attack roll against a creature and miss, you have Advantage on your next attack roll against that creature before the end of your next turn.",
+        "shortDescription": "After a miss, Advantage on your next attack against that creature.",
+        "activation": {
+          "type": "passive"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "triggerCreature"
+              }
+            ],
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Combat Prowess is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "fighter-epic-boon",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ],
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for."
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:fighter-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fighter-three-extra-attacks",
+        "name": "Three Extra Attacks",
+        "level": 20,
+        "sourceId": "srd-5.2:class/fighter",
+        "description": "You can attack four times instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack four times with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "supersedes": "srd-5.2:feature/fighter-two-extra-attacks",
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 4
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/monk",
@@ -104,7 +991,9 @@
     "multiclassing": {
       "prerequisites": [
         {
-          "ability": "CHA",
+          "abilities": [
+            "CHA"
+          ],
           "minimum": 13
         }
       ],
@@ -717,7 +1606,7 @@
           {
             "id": "metamagic-options",
             "prompt": "Choose a Metamagic option.",
-            "count": 2,
+            "count": "$scaling",
             "from": "srd-5.2:list/metamagic-options"
           }
         ],
@@ -765,10 +1654,34 @@
         "activation": {
           "type": "passive"
         },
+        "choices": [
+          {
+            "id": "sorcerer-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
         "tags": [
           "progression"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:sorcerer-ability-score-improvement"
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/sorcerer-sorcerous-restoration",
@@ -815,10 +1728,34 @@
         "activation": {
           "type": "passive"
         },
+        "choices": [
+          {
+            "id": "sorcerer-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
         "tags": [
           "progression"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:sorcerer-epic-boon"
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/sorcerer-arcane-apotheosis",

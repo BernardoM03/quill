@@ -22,7 +22,234 @@
   {
     "id": "srd-5.2:subclass/champion",
     "classId": "srd-5.2:class/fighter",
-    "name": "Champion"
+    "name": "Champion",
+    "flavor": "Pursue Physical Excellence in Combat",
+    "description": "A Champion focuses on the development of martial prowess in a relentless pursuit of victory. Champions combine rigorous training with physical excellence to deal devastating blows, withstand peril, and garner glory. Whether in athletic contests or bloody battle, Champions strive for the crown of the victor.",
+    "subclassFeatureLevels": [
+      3,
+      7,
+      10,
+      15,
+      18
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/champion-improved-critical",
+        "name": "Improved Critical",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Your attack rolls with weapons and Unarmed Strikes can score a Critical Hit on a roll of 19 or 20 on the d20.",
+        "shortDescription": "Critical Hit on 19-20 with weapons and Unarmed Strikes.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setCritThreshold",
+            "target": "attackRoll",
+            "value": 19,
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-remarkable-athlete",
+        "name": "Remarkable Athlete",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Thanks to your athleticism, you have Advantage on Initiative rolls and Strength (Athletics) checks.\n\nIn addition, immediately after you score a Critical Hit, you can move up to half your Speed without provoking Opportunity Attacks.",
+        "shortDescription": "Advantage on Initiative and Athletics; move after a Critical Hit.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement",
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "initiative"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "skill",
+                "skills": [
+                  "srd-5.2:skill/athletics"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantMovement",
+            "value": {
+              "speedFraction": 0.5,
+              "provokesOpportunityAttacks": false
+            },
+            "trigger": {
+              "event": "criticalHit",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-additional-fighting-style",
+        "name": "Additional Fighting Style",
+        "level": 7,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "You gain another Fighting Style feat of your choice.",
+        "shortDescription": "Gain another Fighting Style feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "champion-fighting-style",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "fightingStyle"
+                ]
+              }
+            ],
+            "prompt": "Choose another Fighting Style feat."
+          }
+        ],
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:champion-fighting-style"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-heroic-warrior",
+        "name": "Heroic Warrior",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "The thrill of battle drives you toward victory. During combat, you can give yourself Heroic Inspiration whenever you start your turn without it.",
+        "shortDescription": "In combat, gain Heroic Inspiration at the start of your turn if you lack it.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "inspiration"
+        ],
+        "effects": [
+          {
+            "type": "grantInspiration",
+            "trigger": {
+              "event": "startTurn",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "situationType",
+                "situationType": "combat"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-superior-critical",
+        "name": "Superior Critical",
+        "level": 15,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Your attack rolls with weapons and Unarmed Strikes can now score a Critical Hit on a roll of 18–20 on the d20.",
+        "shortDescription": "Critical Hit on 18-20 with weapons and Unarmed Strikes.",
+        "activation": {
+          "type": "passive"
+        },
+        "supersedes": "srd-5.2:feature/champion-improved-critical",
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setCritThreshold",
+            "target": "attackRoll",
+            "value": 18,
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-survivor",
+        "name": "Survivor",
+        "level": 18,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "You attain the pinnacle of resilience in battle, giving you these benefits.\n\n**Defy Death.** You have Advantage on Death Saving Throws. Moreover, when you roll 18–20 on a Death Saving Throw, you gain the benefit of rolling a 20 on it.\n\n**Heroic Rally.** At the start of each of your turns, you regain Hit Points equal to 5 plus your Constitution modifier if you are Bloodied and have at least 1 Hit Point.",
+        "shortDescription": "Better Death Saves; regain 5 + CON HP each turn while Bloodied.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "deathSave"
+          },
+          {
+            "type": "setCritThreshold",
+            "target": "deathSave",
+            "value": 18
+          },
+          {
+            "type": "heal",
+            "value": {
+              "base": 5,
+              "modifier": "$derived:CON"
+            },
+            "trigger": {
+              "event": "startTurn"
+            },
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true,
+                "minimum": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/warrior-of-the-open-hand",
