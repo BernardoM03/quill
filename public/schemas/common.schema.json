@@ -1044,7 +1044,8 @@
         "maximizeDice",
         "dispel",
         "revive",
-        "removeCurse"
+        "removeCurse",
+        "autoSucceed"
       ]
     },
     "effect": {
@@ -1338,7 +1339,8 @@
                 "enum": [
                   "grantAdvantage",
                   "grantDisadvantage",
-                  "autoFail"
+                  "autoFail",
+                  "autoSucceed"
                 ]
               }
             },
@@ -4479,6 +4481,37 @@
           ],
           "additionalProperties": false,
           "description": "The weapon is ANY of these items, as Shillelagh's Club or Quarterstaff."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "environment"
+            },
+            "hazards": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "extremeCold",
+                  "extremeHeat",
+                  "strongWind",
+                  "heavyPrecipitation",
+                  "highAltitude",
+                  "deepWater"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "hazards"
+          ],
+          "additionalProperties": false,
+          "description": "The roll is against ANY of these environmental hazards, as a Blanket's saves against extreme cold."
         }
       ]
     },
@@ -4798,6 +4831,13 @@
         "alsoWeapon": {
           "$ref": "#/$defs/equipmentId",
           "description": "The weapon this form also counts as, as the staff focus does for a Quarterstaff."
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "description": "Mechanics only this form has, as the Military Saddle's Advantage to stay mounted."
         }
       },
       "required": [

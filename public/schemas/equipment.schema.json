@@ -49,6 +49,28 @@
           },
           "minItems": 1,
           "description": "Forms that differ in price or weight. An item with variants and no top-level cost is priced by the form the player picks."
+        },
+        "activation": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation",
+          "description": "What using the item costs, as Antitoxin's Bonus Action. Thrown flasks replace one attack of the Attack action, written as an action with a trigger note."
+        },
+        "uses": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/uses",
+          "description": "Charges in the item, as a Healer's Kit's ten uses (recharge none)."
+        },
+        "effects": {
+          "type": "array",
+          "description": "The item's mechanics, in the shared effect vocabulary. A thrown flask's save DC is 8 plus the thrower's Dexterity modifier and Proficiency Bonus.",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+          }
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+          },
+          "description": "Decisions fixed when the item is made or bought, as the spell a Spell Scroll holds."
         }
       },
       "required": [
