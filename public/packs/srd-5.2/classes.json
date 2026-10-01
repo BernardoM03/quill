@@ -23,15 +23,15 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons"
+        "simpleWeapons",
+        "martialWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor",
-        "Medium armor",
-        "Shields"
+        "lightArmor",
+        "mediumArmor",
+        "shields"
       ]
     },
     "toolProficiencies": {
@@ -75,10 +75,10 @@
       ],
       "proficienciesGained": {
         "weapons": [
-          "Martial weapons"
+          "martialWeapons"
         ],
         "armor": [
-          "Shields"
+          "shields"
         ],
         "tools": [],
         "skills": []
@@ -1361,12 +1361,12 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons"
+        "simpleWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor"
+        "lightArmor"
       ]
     },
     "toolProficiencies": {
@@ -1417,7 +1417,7 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [
-          "Light armor"
+          "lightArmor"
         ],
         "tools": [
           "One Musical Instrument"
@@ -2376,14 +2376,14 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons"
+        "simpleWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor",
-        "Medium armor",
-        "Shields"
+        "lightArmor",
+        "mediumArmor",
+        "shields"
       ]
     },
     "toolProficiencies": {
@@ -2433,9 +2433,9 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [
-          "Light armor",
-          "Medium armor",
-          "Shields"
+          "lightArmor",
+          "mediumArmor",
+          "shields"
         ],
         "tools": [],
         "skills": []
@@ -3603,16 +3603,16 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons"
+        "simpleWeapons",
+        "martialWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor",
-        "Medium armor",
-        "Heavy armor",
-        "Shields"
+        "lightArmor",
+        "mediumArmor",
+        "heavyArmor",
+        "shields"
       ]
     },
     "toolProficiencies": {
@@ -3691,12 +3691,12 @@
       ],
       "proficienciesGained": {
         "weapons": [
-          "Martial weapons"
+          "martialWeapons"
         ],
         "armor": [
-          "Light armor",
-          "Medium armor",
-          "Shields"
+          "lightArmor",
+          "mediumArmor",
+          "shields"
         ],
         "tools": [],
         "skills": []
@@ -4459,8 +4459,13 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons that have the Light property"
+        "simpleWeapons",
+        {
+          "category": "martialWeapons",
+          "withProperties": [
+            "light"
+          ]
+        }
       ]
     },
     "armorProficiencies": {
@@ -6127,16 +6132,16 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons"
+        "simpleWeapons",
+        "martialWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor",
-        "Medium armor",
-        "Heavy armor",
-        "Shields"
+        "lightArmor",
+        "mediumArmor",
+        "heavyArmor",
+        "shields"
       ]
     },
     "toolProficiencies": {
@@ -6195,12 +6200,12 @@
       ],
       "proficienciesGained": {
         "weapons": [
-          "Martial weapons"
+          "martialWeapons"
         ],
         "armor": [
-          "Light armor",
-          "Medium armor",
-          "Shields"
+          "lightArmor",
+          "mediumArmor",
+          "shields"
         ],
         "tools": [],
         "skills": []
@@ -7376,15 +7381,15 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons"
+        "simpleWeapons",
+        "martialWeapons"
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor",
-        "Medium armor",
-        "Shields"
+        "lightArmor",
+        "mediumArmor",
+        "shields"
       ]
     },
     "toolProficiencies": {
@@ -7450,12 +7455,12 @@
       ],
       "proficienciesGained": {
         "weapons": [
-          "Martial weapons"
+          "martialWeapons"
         ],
         "armor": [
-          "Light armor",
-          "Medium armor",
-          "Shields"
+          "lightArmor",
+          "mediumArmor",
+          "shields"
         ],
         "tools": [],
         "skills": [
@@ -8549,13 +8554,19 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons",
-        "Martial weapons that have the Finesse or Light property"
+        "simpleWeapons",
+        {
+          "category": "martialWeapons",
+          "withProperties": [
+            "finesse",
+            "light"
+          ]
+        }
       ]
     },
     "armorProficiencies": {
       "items": [
-        "Light armor"
+        "lightArmor"
       ]
     },
     "toolProficiencies": {
@@ -8618,7 +8629,7 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [
-          "Light armor"
+          "lightArmor"
         ],
         "tools": [
           "srd-5.2:tool/thieves-tools"
@@ -9731,7 +9742,7 @@
     },
     "weaponProficiencies": {
       "items": [
-        "Simple weapons"
+        "simpleWeapons"
       ]
     },
     "armorProficiencies": {

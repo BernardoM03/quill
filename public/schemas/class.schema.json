@@ -50,10 +50,34 @@
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
         },
         "weaponProficiencies": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/weaponProficiency"
+              }
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
         },
         "armorProficiencies": {
-          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/armorTraining"
+              }
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
         },
         "toolProficiencies": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
@@ -110,13 +134,13 @@
                 "weapons": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/weaponProficiency"
                   }
                 },
                 "armor": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/armorTraining"
                   }
                 },
                 "tools": {

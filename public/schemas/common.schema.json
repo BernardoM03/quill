@@ -5402,6 +5402,50 @@
         "heavyArmor",
         "shields"
       ]
+    },
+    "weaponProficiency": {
+      "description": "A weapon proficiency: a whole category, or a category narrowed to weapons with ANY of the listed properties, as the Rogue's 'Martial weapons that have the Finesse or Light property'.",
+      "oneOf": [
+        {
+          "enum": [
+            "simpleWeapons",
+            "martialWeapons"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "category": {
+              "enum": [
+                "simpleWeapons",
+                "martialWeapons"
+              ]
+            },
+            "withProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/weaponProperty"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "category",
+            "withProperties"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "armorTraining": {
+      "enum": [
+        "lightArmor",
+        "mediumArmor",
+        "heavyArmor",
+        "shields"
+      ],
+      "description": "An armor category a class trains you in."
     }
   }
 }
