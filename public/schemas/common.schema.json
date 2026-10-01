@@ -1074,7 +1074,8 @@
         "revive",
         "removeCurse",
         "autoSucceed",
-        "addTargets"
+        "addTargets",
+        "ignoreResistance"
       ]
     },
     "effect": {
@@ -2267,7 +2268,7 @@
             ],
             "properties": {
               "target": {
-                "description": "The feature whose uses, or the class resource whose points, come back.",
+                "description": "The feature or feat whose uses, or the class resource whose points, come back. `spellSlot` refunds a slot, as Boon of Spell Recall.",
                 "oneOf": [
                   {
                     "$ref": "#/$defs/featureId"
@@ -2275,6 +2276,9 @@
                   {
                     "type": "string",
                     "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"
+                  },
+                  {
+                    "$ref": "#/$defs/featId"
                   }
                 ]
               },
@@ -3471,6 +3475,34 @@
                 "type": "integer",
                 "minimum": 1,
                 "description": "Extra targets a spell can take. Narrow which spells with a `spell` qualifier and how far the new target may be with `range`, as Words of Creation's second creature within 10 feet."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ignoreResistance"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/damageType"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "Damage types whose Resistance your damage ignores, as Boon of Irresistible Offense's Bludgeoning, Piercing, and Slashing."
               }
             }
           }
@@ -4674,6 +4706,34 @@
           ],
           "additionalProperties": false,
           "description": "The attack is an Opportunity Attack, as Escape the Horde."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "lightLevel"
+            },
+            "levels": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "bright",
+                  "dim",
+                  "darkness"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "levels"
+          ],
+          "additionalProperties": false,
+          "description": "You are in ANY of these light levels, as Boon of the Night Spirit's 'while within Dim Light or Darkness'."
         }
       ]
     },

@@ -591,5 +591,455 @@
     "tags": [
       "fightingStyle"
     ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-combat-prowess",
+    "name": "Boon of Combat Prowess",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Peerless Aim",
+        "description": "When you miss with an attack roll, you can hit instead. Once you use this benefit, you can't use it again until the start of your next turn.",
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "attackRoll",
+            "frequency": "perRound",
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "attack"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-dimensional-travel",
+    "name": "Boon of Dimensional Travel",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Blink Steps",
+        "description": "Immediately after you take the Attack action or the Magic action, you can teleport up to 30 feet to an unoccupied space you can see.",
+        "effects": [
+          {
+            "type": "teleport",
+            "value": 30,
+            "trigger": [
+              {
+                "event": "takeAction",
+                "action": "attack",
+                "optional": true
+              },
+              {
+                "event": "takeAction",
+                "action": "magic",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "movement"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-fate",
+    "name": "Boon of Fate",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "short"
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Improve Fate",
+        "description": "When you or another creature within 60 feet of you succeeds on or fails a D20 Test, you can roll 2d4 and apply the total rolled as a bonus or penalty to the d20 roll. Once you use this benefit, you can't use it again until you roll Initiative or finish a Short or Long Rest.",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "d20Test",
+            "value": {
+              "count": 2,
+              "die": "d4"
+            },
+            "affects": "target",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "d20Test",
+            "value": {
+              "count": 2,
+              "die": "d4"
+            },
+            "multiplier": -1,
+            "affects": "target",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ]
+          },
+          {
+            "type": "restoreUses",
+            "target": "srd-5.2:feat/boon-of-fate",
+            "value": "all",
+            "trigger": {
+              "event": "rollInitiative"
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "luck"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-irresistible-offense",
+    "name": "Boon of Irresistible Offense",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase your Strength or Dexterity score by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Overcome Defenses",
+        "description": "The Bludgeoning, Piercing, and Slashing damage you deal always ignores Resistance.",
+        "effects": [
+          {
+            "type": "ignoreResistance",
+            "target": [
+              "bludgeoning",
+              "piercing",
+              "slashing"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Overwhelming Strike",
+        "description": "When you roll a 20 on the d20 for an attack roll, you can deal extra damage to the target equal to the ability score increased by this feat. The extra damage's type is the same as the attack's type.",
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "$derived:attackDamageType",
+            "value": "$derived:boonAbilityScore",
+            "trigger": {
+              "event": "criticalHit",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "damage"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-spell-recall",
+    "name": "Boon of Spell Recall",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      },
+      {
+        "type": "spellcasting",
+        "note": "Spellcasting Feature"
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase your Intelligence or Wisdom or Charisma score by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Free Casting",
+        "description": "Whenever you cast a spell with a level 1–4 spell slot, roll 1d4. If the number you roll is the same as the slot's level, the slot isn't expended.",
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "spellSlot",
+            "value": 1,
+            "trigger": {
+              "event": "castSpell"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "spellcasting"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-the-night-spirit",
+    "name": "Boon of the Night Spirit",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Merge with Shadows",
+        "description": "While within Dim Light or Darkness, you can give yourself the Invisible condition as a Bonus Action. The condition ends on you immediately after you take an action, a Bonus Action, or a Reaction.",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/invisible",
+            "trigger": {
+              "event": "takeAction",
+              "actionType": "bonusAction",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "lightLevel",
+                "levels": [
+                  "dim",
+                  "darkness"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Shadowy Form",
+        "description": "While within Dim Light or Darkness, you have Resistance to all damage except Psychic and Radiant.",
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "allDamage",
+            "qualifiers": [
+              {
+                "type": "lightLevel",
+                "levels": [
+                  "dim",
+                  "darkness"
+                ]
+              },
+              {
+                "type": "damageType",
+                "damageTypes": [
+                  "psychic",
+                  "radiant"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "stealth"
+    ]
+  },
+  {
+    "id": "srd-5.2:feat/boon-of-truesight",
+    "name": "Boon of Truesight",
+    "category": "epicBoon",
+    "prerequisites": [
+      {
+        "type": "level",
+        "minimum": 19
+      }
+    ],
+    "repeatable": false,
+    "abilityScoreIncrease": {
+      "from": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ],
+      "amount": 1,
+      "maximum": 30
+    },
+    "effectGroups": [
+      {
+        "name": "Ability Score Increase",
+        "description": "Increase one ability score of your choice by 1, to a maximum of 30.",
+        "effects": []
+      },
+      {
+        "name": "Truesight",
+        "description": "You have Truesight with a range of 60 feet.",
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "truesight",
+            "value": 60
+          }
+        ]
+      }
+    ],
+    "tags": [
+      "epicBoon",
+      "senses"
+    ]
   }
 ]
