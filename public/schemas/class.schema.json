@@ -290,6 +290,26 @@
               "string"
             ]
           }
+        },
+        "pactSlots": {
+          "type": "object",
+          "description": "Pact Magic slots: how many, all of one level.",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "slotLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "required": [
+            "count",
+            "slotLevel"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -398,6 +418,10 @@
             "spellsPerLevel"
           ],
           "additionalProperties": false
+        },
+        "slotRecharge": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest",
+          "description": "When the class's spell slots come back. Long by default; the Warlock's Pact Magic slots return on a Short Rest."
         }
       },
       "required": [

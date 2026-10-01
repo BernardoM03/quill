@@ -472,7 +472,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -495,7 +495,8 @@
         "moveInArea",
         "effectEnds",
         "castSpell",
-        "restoreHitPoints"
+        "restoreHitPoints",
+        "reduceEnemyToZero"
       ]
     },
     "trigger": {
@@ -3388,7 +3389,8 @@
               "target": {
                 "enum": [
                   "healing",
-                  "damageRoll"
+                  "damageRoll",
+                  "temporaryHitPoints"
                 ],
                 "description": "Which dice count as their maximum, as Beacon of Hope's healing."
               }
@@ -4825,6 +4827,41 @@
           ],
           "additionalProperties": false,
           "description": "The spell is of ANY of these schools, as the Evoker's Evocation features."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "knowsOption"
+            },
+            "optionId": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "optionId"
+          ],
+          "additionalProperties": false,
+          "description": "You have picked this option from the same catalog, as an invocation requiring Pact of the Blade."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "bondedWeapon"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The attack uses a weapon bonded to you by a feature, as the Warlock's pact weapon."
         }
       ]
     },
@@ -5235,7 +5272,7 @@
         },
         "resource": {
           "type": "string",
-          "description": "A class resource id, or `spellSlot` for an expended spell slot."
+          "description": "A class resource id, `spellSlot` for an expended spell slot, or `hitPointDice` for a spent Hit Point Die, as Lifedrinker."
         },
         "amount": {
           "oneOf": [
@@ -5414,7 +5451,11 @@
           "items": {
             "$ref": "#/$defs/qualifier"
           },
-          "description": "Qualifiers that must hold to pick this option, as Poison's Poisoner's Kit."
+          "description": "Qualifiers that must hold to pick or use this option: a Poisoner's Kit for Poison, Warlock level 5 and Pact of the Blade (`knowsOption`) for Eldritch Smite."
+        },
+        "repeatable": {
+          "type": "boolean",
+          "description": "The option can be picked more than once, as Agonizing Blast."
         }
       },
       "required": [
