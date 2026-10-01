@@ -9850,8 +9850,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 0,
-          "metamagicOptions": 0
+          "sorceryPoints": 0
         }
       },
       {
@@ -9875,8 +9874,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 2,
-          "metamagicOptions": 2
+          "sorceryPoints": 2
         }
       },
       {
@@ -9899,8 +9897,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 3,
-          "metamagicOptions": 2
+          "sorceryPoints": 3
         }
       },
       {
@@ -9923,8 +9920,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 4,
-          "metamagicOptions": 2
+          "sorceryPoints": 4
         }
       },
       {
@@ -9947,8 +9943,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 5,
-          "metamagicOptions": 2
+          "sorceryPoints": 5
         }
       },
       {
@@ -9969,8 +9964,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 6,
-          "metamagicOptions": 2
+          "sorceryPoints": 6
         }
       },
       {
@@ -9993,8 +9987,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 7,
-          "metamagicOptions": 2
+          "sorceryPoints": 7
         }
       },
       {
@@ -10017,8 +10010,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 8,
-          "metamagicOptions": 2
+          "sorceryPoints": 8
         }
       },
       {
@@ -10039,8 +10031,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 9,
-          "metamagicOptions": 2
+          "sorceryPoints": 9
         }
       },
       {
@@ -10063,8 +10054,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 10,
-          "metamagicOptions": 3
+          "sorceryPoints": 10
         }
       },
       {
@@ -10085,8 +10075,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 11,
-          "metamagicOptions": 3
+          "sorceryPoints": 11
         }
       },
       {
@@ -10109,8 +10098,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 12,
-          "metamagicOptions": 3
+          "sorceryPoints": 12
         }
       },
       {
@@ -10131,8 +10119,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 13,
-          "metamagicOptions": 3
+          "sorceryPoints": 13
         }
       },
       {
@@ -10153,8 +10140,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 14,
-          "metamagicOptions": 3
+          "sorceryPoints": 14
         }
       },
       {
@@ -10175,8 +10161,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 15,
-          "metamagicOptions": 3
+          "sorceryPoints": 15
         }
       },
       {
@@ -10199,8 +10184,7 @@
           0
         ],
         "resources": {
-          "sorceryPoints": 16,
-          "metamagicOptions": 3
+          "sorceryPoints": 16
         }
       },
       {
@@ -10223,8 +10207,7 @@
           1
         ],
         "resources": {
-          "sorceryPoints": 17,
-          "metamagicOptions": 4
+          "sorceryPoints": 17
         }
       },
       {
@@ -10245,8 +10228,7 @@
           1
         ],
         "resources": {
-          "sorceryPoints": 18,
-          "metamagicOptions": 4
+          "sorceryPoints": 18
         }
       },
       {
@@ -10269,8 +10251,7 @@
           1
         ],
         "resources": {
-          "sorceryPoints": 19,
-          "metamagicOptions": 4
+          "sorceryPoints": 19
         }
       },
       {
@@ -10293,8 +10274,7 @@
           1
         ],
         "resources": {
-          "sorceryPoints": 20,
-          "metamagicOptions": 4
+          "sorceryPoints": 20
         }
       }
     ],
@@ -10381,7 +10361,7 @@
         "name": "Font of Magic",
         "level": 2,
         "sourceId": "srd-5.2:class/sorcerer",
-        "description": "You can tap into the wellspring of magic within yourself. This wellspring is represented by Sorcery Points, which allow you to create a variety of magical effects.\n\nYou have 2 Sorcery Points, and you gain more as you reach higher levels. You can't have more Sorcery Points than the maximum for your level. You regain all expended Sorcery Points when you finish a Long Rest.\n\n**Converting Spell Slots to Sorcery Points.** You can expend a spell slot to gain a number of Sorcery Points equal to the slot's level (no action required).\n\n**Creating Spell Slots.** As a Bonus Action, you can transform unexpended Sorcery Points into one spell slot.",
+        "description": "You can tap into the wellspring of magic within yourself. This wellspring is represented by Sorcery Points, which allow you to create a variety of magical effects.\n\nYou have 2 Sorcery Points, and you gain more as you reach higher levels, as shown in the Sorcery Points column of the Sorcerer Features table. You can't have more Sorcery Points than the number shown in the table for your level. You regain all expended Sorcery Points when you finish a Long Rest.\n\nYou can use your Sorcery Points to fuel the options below, along with other features, such as Metamagic, that use those points.\n\n**Converting Spell Slots to Sorcery Points.** You can expend a spell slot to gain a number of Sorcery Points equal to the slot's level (no action required).\n\n**Creating Spell Slots.** As a Bonus Action, you can transform unexpended Sorcery Points into one spell slot. The Creating Spell Slots table shows the cost of creating a spell slot of a given level, and it lists the minimum Sorcerer level you must be to create a slot. You can create a spell slot no higher than level 5.\n\nAny spell slot you create with this feature vanishes when you finish a Long Rest.\n\n| Spell Slot Level | Sorcery Point Cost | Min. Sorcerer Level |\n|---|---|---|\n| 1 | 2 | 2 |\n| 2 | 3 | 3 |\n| 3 | 5 | 5 |\n| 4 | 6 | 7 |\n| 5 | 7 | 9 |",
         "shortDescription": "Gain Sorcery Points; convert them to and from spell slots.",
         "activation": {
           "type": "passive"
@@ -10389,14 +10369,189 @@
         "tags": [
           "resource"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "sorceryPoints",
+            "value": "$derived:slotLevel",
+            "cost": {
+              "resource": "spellSlot",
+              "amount": 1
+            }
+          },
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/creating-spell-slots",
+            "value": 1,
+            "trigger": {
+              "event": "takeAction",
+              "actionType": "bonusAction",
+              "optional": true
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/creating-spell-slots",
+          "items": [
+            {
+              "id": "level-1",
+              "name": "Level 1 Slot",
+              "description": "Spend 2 Sorcery Points to create a level 1 spell slot (Sorcerer level 2+). It vanishes on a Long Rest.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 2
+              },
+              "requires": [
+                {
+                  "type": "classLevel",
+                  "atLeast": 2
+                }
+              ],
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        1
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "level-2",
+              "name": "Level 2 Slot",
+              "description": "Spend 3 Sorcery Points to create a level 2 spell slot (Sorcerer level 3+). It vanishes on a Long Rest.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 3
+              },
+              "requires": [
+                {
+                  "type": "classLevel",
+                  "atLeast": 3
+                }
+              ],
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        2
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "level-3",
+              "name": "Level 3 Slot",
+              "description": "Spend 5 Sorcery Points to create a level 3 spell slot (Sorcerer level 5+). It vanishes on a Long Rest.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 5
+              },
+              "requires": [
+                {
+                  "type": "classLevel",
+                  "atLeast": 5
+                }
+              ],
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        3
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "level-4",
+              "name": "Level 4 Slot",
+              "description": "Spend 6 Sorcery Points to create a level 4 spell slot (Sorcerer level 7+). It vanishes on a Long Rest.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 6
+              },
+              "requires": [
+                {
+                  "type": "classLevel",
+                  "atLeast": 7
+                }
+              ],
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        4
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "level-5",
+              "name": "Level 5 Slot",
+              "description": "Spend 7 Sorcery Points to create a level 5 spell slot (Sorcerer level 9+). It vanishes on a Long Rest.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 7
+              },
+              "requires": [
+                {
+                  "type": "classLevel",
+                  "atLeast": 9
+                }
+              ],
+              "effects": [
+                {
+                  "type": "restoreUses",
+                  "target": "spellSlot",
+                  "value": 1,
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        5
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       {
         "id": "srd-5.2:feature/sorcerer-metamagic",
         "name": "Metamagic",
         "level": 2,
         "sourceId": "srd-5.2:class/sorcerer",
-        "description": "You gain the ability to twist your spells to suit your needs. You gain two Metamagic options of your choice. You gain another one at Sorcerer levels 10 and 17.\n\nYou can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options.",
+        "description": "Because your magic flows from within, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from \"Metamagic Options\" later in this class's description. You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs.\n\nYou can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options.\n\nWhenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17.",
         "shortDescription": "Alter your spells by spending Sorcery Points.",
         "activation": {
           "type": "special"
@@ -10404,15 +10559,273 @@
         "choices": [
           {
             "id": "metamagic-options",
-            "prompt": "Choose a Metamagic option.",
-            "count": "$column:metamagicOptions",
-            "from": "srd-5.2:list/metamagic-options"
+            "prompt": "Choose Metamagic options.",
+            "count": "$scaling",
+            "from": "srd-5.2:list/metamagic-options",
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          },
+          {
+            "id": "transmuted-spell-type",
+            "prompt": "Choose the new damage type.",
+            "count": 1,
+            "from": [
+              "acid",
+              "cold",
+              "fire",
+              "lightning",
+              "poison",
+              "thunder"
+            ]
           }
         ],
         "tags": [
           "spellcasting"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:metamagic-options"
+          },
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/metamagic-options",
+            "value": 1,
+            "trigger": {
+              "event": "castSpell",
+              "optional": true
+            }
+          }
+        ],
+        "scaling": [
+          {
+            "level": 2,
+            "value": 2
+          },
+          {
+            "level": 10,
+            "value": 4
+          },
+          {
+            "level": 17,
+            "value": 6
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/metamagic-options",
+          "items": [
+            {
+              "id": "careful-spell",
+              "name": "Careful Spell",
+              "description": "Up to your Charisma modifier (minimum one) creatures automatically succeed on their saves against your spell, and take no damage where they would take half.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "autoSucceed",
+                  "target": "savingThrow",
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    }
+                  ]
+                },
+                {
+                  "type": "saveOutcome",
+                  "value": {
+                    "appliesTo": "half",
+                    "onSuccess": "negate"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "distant-spell",
+              "name": "Distant Spell",
+              "description": "Double a spell's range of at least 5 feet, or make a Touch spell's range 30 feet.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "modifier",
+                  "target": "spellRange",
+                  "value": "$derived:spellRange"
+                }
+              ]
+            },
+            {
+              "id": "empowered-spell",
+              "name": "Empowered Spell",
+              "description": "Reroll up to your Charisma modifier (minimum one) of the spell's damage dice, using the new rolls. Usable alongside another option.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "rerollDamage",
+                  "reroll": {
+                    "mode": "reroll",
+                    "dice": "$derived:CHA",
+                    "keep": "new"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "extended-spell",
+              "name": "Extended Spell",
+              "description": "Double a spell's duration of 1 minute or longer, to a maximum of 24 hours, with Advantage on Concentration saves for it.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "modifier",
+                  "target": "spellDuration",
+                  "value": "$derived:spellDuration"
+                },
+                {
+                  "type": "grantAdvantage",
+                  "target": "concentration"
+                }
+              ]
+            },
+            {
+              "id": "heightened-spell",
+              "name": "Heightened Spell",
+              "description": "One target of the spell has Disadvantage on saves against it.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 2
+              },
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "savingThrow",
+                  "affects": "target"
+                }
+              ]
+            },
+            {
+              "id": "quickened-spell",
+              "name": "Quickened Spell",
+              "description": "Cast a spell with a casting time of an action as a Bonus Action, if you haven't cast and won't cast another level 1+ spell this turn.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 2
+              },
+              "effects": [
+                {
+                  "type": "grantAction",
+                  "target": "magic",
+                  "value": "bonusAction"
+                }
+              ]
+            },
+            {
+              "id": "seeking-spell",
+              "name": "Seeking Spell",
+              "description": "Reroll a missed spell attack roll, using the new roll. Usable alongside another option.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "rerollD20",
+                  "target": "attackRoll",
+                  "reroll": {
+                    "mode": "reroll",
+                    "dice": 1,
+                    "keep": "new"
+                  },
+                  "trigger": {
+                    "event": "failRoll",
+                    "roll": "attackRoll"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "subtle-spell",
+              "name": "Subtle Spell",
+              "description": "Cast without Verbal, Somatic, or Material components, except consumed or priced materials.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "modifier",
+                  "target": "spellComponents",
+                  "value": "none"
+                }
+              ]
+            },
+            {
+              "id": "transmuted-spell",
+              "name": "Transmuted Spell",
+              "description": "Change the spell's Acid, Cold, Fire, Lightning, Poison, or Thunder damage to another of those types.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "changeDamageType",
+                  "value": "$choice:transmuted-spell-type",
+                  "qualifiers": [
+                    {
+                      "type": "damageType",
+                      "damageTypes": [
+                        "acid",
+                        "cold",
+                        "fire",
+                        "lightning",
+                        "poison",
+                        "thunder"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "twinned-spell",
+              "name": "Twinned Spell",
+              "description": "Raise the effective level by 1 of a spell that targets an extra creature at higher levels.",
+              "cost": {
+                "resource": "sorceryPoints",
+                "amount": 1
+              },
+              "effects": [
+                {
+                  "type": "addTargets",
+                  "value": 1
+                }
+              ]
+            }
+          ]
+        }
       },
       {
         "id": "srd-5.2:feature/sorcerer-subclass",
@@ -10486,7 +10899,19 @@
           "resource",
           "recovery"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "sorceryPoints",
+            "value": "$derived:classLevel",
+            "multiplier": 0.5,
+            "trigger": {
+              "event": "finishRest",
+              "rest": "short",
+              "optional": true
+            }
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/sorcerer-sorcery-incarnate",
@@ -10501,7 +10926,37 @@
         "tags": [
           "spellcasting"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "overrideFeature",
+            "target": "srd-5.2:feature/sorcerer-innate-sorcery",
+            "value": {
+              "uses": {
+                "max": 2,
+                "recharge": "long",
+                "alternativeCost": {
+                  "resource": "sorceryPoints",
+                  "amount": 2
+                }
+              }
+            }
+          },
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/metamagic-options",
+            "value": 2,
+            "trigger": {
+              "event": "castSpell",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/sorcerer-innate-sorcery"
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/sorcerer-epic-boon",
@@ -10556,7 +11011,28 @@
           "capstone",
           "spellcasting"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/metamagic-options",
+            "value": 1,
+            "frequency": "perTurn",
+            "cost": {
+              "resource": "sorceryPoints",
+              "amount": 0
+            },
+            "trigger": {
+              "event": "castSpell",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/sorcerer-innate-sorcery"
+              }
+            ]
+          }
+        ]
       }
     ]
   },

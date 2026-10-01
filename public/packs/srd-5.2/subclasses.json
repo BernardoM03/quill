@@ -2169,8 +2169,8 @@
     "id": "srd-5.2:subclass/draconic-sorcery",
     "classId": "srd-5.2:class/sorcerer",
     "name": "Draconic Sorcery",
-    "description": "Your innate magic comes from the gift of a dragon. Perhaps an ancient dragon facing death bestowed some of its magical power on you or your ancestor. You might have absorbed magic from a site infused with dragons' power. Or perhaps you handled a treasure taken from a dragon's hoard that was steeped in draconic power.",
-    "flavor": "Draw on the power of dragons.",
+    "description": "Your innate magic comes from the gift of a dragon. Perhaps an ancient dragon facing death bequeathed some of its magical power to you or your ancestor. You might have absorbed magic from a site infused with dragons' power. Or perhaps you handled a treasure taken from a dragon's hoard that was steeped in draconic power. Or you might have a dragon for an ancestor.",
+    "flavor": "Breathe the Magic of Dragons",
     "subclassFeatureLevels": [
       3,
       6,
@@ -2201,81 +2201,7 @@
           {
             "type": "modifier",
             "target": "hitPointMaximum",
-            "value": 3,
-            "scaling": [
-              {
-                "level": 3,
-                "value": 3
-              },
-              {
-                "level": 4,
-                "value": 4
-              },
-              {
-                "level": 5,
-                "value": 5
-              },
-              {
-                "level": 6,
-                "value": 6
-              },
-              {
-                "level": 7,
-                "value": 7
-              },
-              {
-                "level": 8,
-                "value": 8
-              },
-              {
-                "level": 9,
-                "value": 9
-              },
-              {
-                "level": 10,
-                "value": 10
-              },
-              {
-                "level": 11,
-                "value": 11
-              },
-              {
-                "level": 12,
-                "value": 12
-              },
-              {
-                "level": 13,
-                "value": 13
-              },
-              {
-                "level": 14,
-                "value": 14
-              },
-              {
-                "level": 15,
-                "value": 15
-              },
-              {
-                "level": 16,
-                "value": 16
-              },
-              {
-                "level": 17,
-                "value": 17
-              },
-              {
-                "level": 18,
-                "value": 18
-              },
-              {
-                "level": 19,
-                "value": 19
-              },
-              {
-                "level": 20,
-                "value": 20
-              }
-            ]
+            "value": "$derived:classLevel"
           },
           {
             "type": "setBaseAc",
@@ -2297,11 +2223,157 @@
         ]
       },
       {
+        "id": "srd-5.2:feature/draconic-sorcery-draconic-spells",
+        "name": "Draconic Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "When you reach a Sorcerer level specified in the Draconic Spells table, you thereafter always have the listed spells prepared.\n\n| Sorcerer Level | Spells |\n|---|---|\n| 3 | Alter Self, Chromatic Orb, Command, Dragon's Breath |\n| 5 | Fear, Fly |\n| 7 | Arcane Eye, Charm Monster |\n| 9 | Legend Lore, Summon Dragon |",
+        "shortDescription": "Always have Draconic spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/alter-self",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/chromatic-orb",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/command",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/dragons-breath",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fear",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fly",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/arcane-eye",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/charm-monster",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/legend-lore",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/summon-dragon",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
         "id": "srd-5.2:feature/draconic-sorcery-elemental-affinity",
         "name": "Elemental Affinity",
         "level": 6,
         "sourceId": "srd-5.2:subclass/draconic-sorcery",
-        "description": "Choose one of the following damage types: Acid, Cold, Fire, Lightning, or Poison. You have Resistance to that damage type, and when you cast a Sorcerer spell that deals damage of that type, you can add your Charisma modifier to one damage roll of that spell.",
+        "description": "Your draconic magic has an affinity with a damage type associated with dragons. Choose one of those types: Acid, Cold, Fire, Lightning, or Poison.\n\nYou have Resistance to that damage type, and when you cast a spell that deals damage of that type, you can add your Charisma modifier to one damage roll of that spell.",
         "shortDescription": "Resistance to a chosen damage type, and add CHA to one damage roll of that type.",
         "activation": {
           "type": "passive"
@@ -2335,10 +2407,6 @@
             "value": "$derived:CHA",
             "qualifiers": [
               {
-                "type": "spellSource",
-                "sourceId": "srd-5.2:class/sorcerer"
-              },
-              {
                 "type": "damageType",
                 "damageTypes": [
                   "$choice:elemental-affinity-damage-type"
@@ -2354,14 +2422,18 @@
         "name": "Dragon Wings",
         "level": 14,
         "sourceId": "srd-5.2:subclass/draconic-sorcery",
-        "description": "As a Bonus Action, you can cause draconic wings to appear on your back. The wings last for 1 hour or until you dismiss them (no action required). For the duration, you have a Fly Speed equal to your Speed.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you spend 3 Sorcery Points to use it again.",
-        "shortDescription": "Bonus Action: gain a Fly Speed equal to your Speed for 1 hour.",
+        "description": "As a Bonus Action, you can cause draconic wings to appear on your back. The wings last for 1 hour or until you dismiss them (no action required). For the duration, you have a Fly Speed of 60 feet.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you spend 3 Sorcery Points (no action required) to restore your use of it.",
+        "shortDescription": "Bonus Action: Fly Speed 60 feet for 1 hour.",
         "activation": {
           "type": "bonusAction"
         },
         "uses": {
           "max": 1,
-          "recharge": "long"
+          "recharge": "long",
+          "alternativeCost": {
+            "resource": "sorceryPoints",
+            "amount": 3
+          }
         },
         "duration": {
           "value": 1,
@@ -2375,7 +2447,7 @@
           {
             "type": "grantSpeed",
             "target": "fly",
-            "value": "$derived:walkingSpeed",
+            "value": 60,
             "qualifiers": [
               {
                 "type": "selfState",

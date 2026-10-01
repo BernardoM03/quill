@@ -5150,12 +5150,13 @@
           "oneOf": [
             {
               "type": "integer",
-              "minimum": 1
+              "minimum": 0
             },
             {
               "$ref": "#/$defs/deferredValue"
             }
-          ]
+          ],
+          "description": "How much is spent. 0 waives a cost the thing would otherwise have, as Arcane Apotheosis using one Metamagic option per turn for free."
         },
         "refundOnFailure": {
           "type": "boolean",
