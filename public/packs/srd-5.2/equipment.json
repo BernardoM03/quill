@@ -3565,5 +3565,12 @@
     "passengers": 60,
     "cargoTons": 200,
     "damageThreshold": 20
+  },
+  {
+    "id": "srd-5.2:equipment/spellbook",
+    "name": "Spellbook",
+    "category": "gear",
+    "weight": 3,
+    "description": "A Wizard's spellbook is a Tiny object that weighs 3 pounds, contains 100 pages, and can be read only by its owner or someone casting Identify. It holds the level 1+ spells the Wizard knows, and it can serve as the Wizard's Spellcasting Focus."
   }
 ]

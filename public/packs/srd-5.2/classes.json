@@ -11042,6 +11042,881 @@
   },
   {
     "id": "srd-5.2:class/wizard",
-    "name": "Wizard"
+    "name": "Wizard",
+    "primaryAbility": [
+      "INT"
+    ],
+    "hitDie": 6,
+    "savingThrowProficiencies": [
+      "INT",
+      "WIS"
+    ],
+    "skillProficiencies": {
+      "count": 2,
+      "from": [
+        "srd-5.2:skill/arcana",
+        "srd-5.2:skill/history",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/investigation",
+        "srd-5.2:skill/medicine",
+        "srd-5.2:skill/nature",
+        "srd-5.2:skill/religion"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "simpleWeapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": []
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": null,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/dagger",
+              "quantity": 2
+            },
+            {
+              "id": "srd-5.2:equipment/arcane-focus",
+              "variant": "staff"
+            },
+            {
+              "id": "srd-5.2:equipment/robe"
+            },
+            {
+              "id": "srd-5.2:equipment/spellbook"
+            },
+            {
+              "id": "srd-5.2:equipment/scholars-pack"
+            }
+          ],
+          "gold": 5
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 55
+        }
+      ]
+    },
+    "startingGold": 55,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "INT"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [],
+        "armor": [],
+        "tools": [],
+        "skills": []
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": {
+      "ability": "INT",
+      "progression": "full",
+      "preparationType": "spellbook",
+      "ritualCasting": "spellbook",
+      "focus": [
+        "srd-5.2:equipment/arcane-focus",
+        "srd-5.2:equipment/spellbook"
+      ],
+      "swapOnLongRest": "all",
+      "spellbook": {
+        "startingSpells": 6,
+        "spellsPerLevel": 2,
+        "copyCostPerLevel": {
+          "amount": 50,
+          "unit": "gp"
+        },
+        "copyHoursPerLevel": 2
+      }
+    },
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/wizard-spellcasting",
+          "srd-5.2:feature/wizard-ritual-adept",
+          "srd-5.2:feature/wizard-arcane-recovery"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 4,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/wizard-scholar"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 5,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/wizard-subclass"
+        ],
+        "cantripsKnown": 3,
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/wizard-ability-score-improvement"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/wizard-memorize-spell"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/wizard-ability-score-improvement"
+        ],
+        "cantripsKnown": 4,
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 4,
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/wizard-ability-score-improvement"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 16,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          0,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 17,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 18,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          0,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 19,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/wizard-ability-score-improvement"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 21,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          0
+        ],
+        "resources": {}
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "cantripsKnown": 5,
+        "preparedSpells": 22,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {}
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/wizard-spell-mastery"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 23,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          1,
+          1,
+          1,
+          1
+        ],
+        "resources": {}
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/wizard-epic-boon"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 24,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          1,
+          1,
+          1
+        ],
+        "resources": {}
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/wizard-signature-spells"
+        ],
+        "cantripsKnown": 5,
+        "preparedSpells": 25,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "resources": {}
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/wizard-spellcasting",
+        "name": "Spellcasting",
+        "level": 1,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "As a student of arcane magic, you have learned to cast spells. See \"Spells\" for the rules on spellcasting. The information below details how you use those rules with Wizard spells, which appear in the Wizard spell list later in the class's description.\n\n**Cantrips.** You know three Wizard cantrips of your choice. Light, Mage Hand, and Ray of Frost are recommended. Whenever you finish a Long Rest, you can replace one of your cantrips from this feature with another Wizard cantrip of your choice.\n\nWhen you reach Wizard levels 4 and 10, you learn another Wizard cantrip of your choice, as shown in the Cantrips column of the Wizard Features table.\n\n**Spellbook.** Your wizardly apprenticeship culminated in the creation of a unique book: your spellbook. It is a Tiny object that weighs 3 pounds, contains 100 pages, and can be read only by you or someone casting Identify. You determine the book's appearance and materials, such as a gilt-edged tome or a collection of vellum bound with twine.\n\nThe book contains the level 1+ spells you know. It starts with six level 1 Wizard spells of your choice. Detect Magic, Feather Fall, Mage Armor, Magic Missile, Sleep, and Thunderwave are recommended.\n\nWhenever you gain a Wizard level after 1, add two Wizard spells of your choice to your spellbook. Each of these spells must be of a level for which you have spell slots, as shown in the Wizard Features table. The spells are the culmination of arcane research you do regularly.\n\n**Spell Slots.** The Wizard Features table shows how many spell slots you have to cast your level 1+ spells. You regain all expended slots when you finish a Long Rest.\n\n**Prepared Spells of Level 1+.** You prepare the list of level 1+ spells that are available for you to cast with this feature. To do so, choose four spells from your spellbook. The chosen spells must be of a level for which you have spell slots.\n\nThe number of spells on your list increases as you gain Wizard levels, as shown in the Prepared Spells column of the Wizard Features table. Whenever that number increases, choose additional Wizard spells until the number of spells on your list matches the number in the table. The chosen spells must be of a level for which you have spell slots. For example, if you're a level 3 Wizard, your list of prepared spells can include six spells of levels 1 and 2 in any combination, chosen from your spellbook.\n\nIf another Wizard feature gives you spells that you always have prepared, those spells don't count against the number of spells you can prepare with this feature, but those spells otherwise count as Wizard spells for you.\n\n**Changing Your Prepared Spells.** Whenever you finish a Long Rest, you can change your list of prepared spells, replacing any of the spells there with spells from your spellbook.\n\n**Spellcasting Ability.** Intelligence is your spellcasting ability for your Wizard spells.\n\n**Spellcasting Focus.** You can use an Arcane Focus or your spellbook as a Spellcasting Focus for your Wizard spells.\n\n**Expanding and Replacing a Spellbook.** You can copy a level 1+ Wizard spell you find into your spellbook if it's of a level you can prepare: 2 hours and 50 GP per spell level. Copying a spell from your spellbook into another book takes 1 hour and 10 GP per spell level.",
+        "shortDescription": "Cast Wizard spells from your spellbook using Intelligence.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/wizard"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-ritual-adept",
+        "name": "Ritual Adept",
+        "level": 1,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You can cast any spell as a Ritual if that spell has the Ritual tag and the spell is in your spellbook. You needn't have the spell prepared, but you must read from the book to cast a spell in this way.",
+        "shortDescription": "Cast Ritual spells from your spellbook without preparing them.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/wizard-arcane-recovery",
+        "name": "Arcane Recovery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You can regain some of your magical energy by studying your spellbook. When you finish a Short Rest, you can choose expended spell slots to recover. The spell slots can have a combined level equal to no more than half your Wizard level (round up), and none of the slots can be level 6 or higher. For example, if you're a level 4 Wizard, you can recover up to two levels' worth of spell slots, regaining either one level 2 spell slot or two level 1 spell slots.\n\nOnce you use this feature, you can't do so again until you finish a Long Rest.",
+        "shortDescription": "On a Short Rest, recover slots totaling half your Wizard level (round up).",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "recovery"
+        ],
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "spellSlot",
+            "value": {
+              "totalLevels": "$derived:halfClassLevelRoundUp",
+              "maxSlotLevel": 5
+            },
+            "trigger": {
+              "event": "finishRest",
+              "rest": "short",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-scholar",
+        "name": "Scholar",
+        "level": 2,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "While studying magic, you also specialized in another field of study. Choose one of the following skills in which you have proficiency: Arcana, History, Investigation, Medicine, Nature, or Religion. You have Expertise in the chosen skill.",
+        "shortDescription": "Expertise in one academic skill.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "wizard-scholar",
+            "prompt": "Choose a skill you are proficient in.",
+            "count": 1,
+            "from": [
+              "srd-5.2:skill/arcana",
+              "srd-5.2:skill/history",
+              "srd-5.2:skill/investigation",
+              "srd-5.2:skill/medicine",
+              "srd-5.2:skill/nature",
+              "srd-5.2:skill/religion"
+            ],
+            "qualifiers": [
+              {
+                "type": "proficient"
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantExpertise",
+            "target": "$choice:wizard-scholar"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-subclass",
+        "name": "Wizard Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You gain a Wizard subclass of your choice. The Evoker subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Wizard levels. For the rest of your career, you gain each of your subclass's features that are of your Wizard level or lower.",
+        "shortDescription": "Choose a Wizard subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/wizard-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Wizard levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "wizard-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:wizard-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-memorize-spell",
+        "name": "Memorize Spell",
+        "level": 5,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "Whenever you finish a Short Rest, you can study your spellbook and replace one of the level 1+ Wizard spells you have prepared for your Spellcasting feature with another level 1+ spell from the book.",
+        "shortDescription": "Swap one prepared spell on a Short Rest.",
+        "activation": {
+          "type": "free"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "swapPreparedSpells",
+            "value": 1,
+            "trigger": {
+              "event": "finishRest",
+              "rest": "short",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-spell-mastery",
+        "name": "Spell Mastery",
+        "level": 18,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You have achieved such mastery over certain spells that you can cast them at will. Choose a level 1 and a level 2 spell in your spellbook that have a casting time of an action. You always have those spells prepared, and you can cast them at their lowest level without expending a spell slot. To cast either spell at a higher level, you must expend a spell slot.\n\nWhenever you finish a Long Rest, you can study your spellbook and replace one of those spells with an eligible spell of the same level from the book.",
+        "shortDescription": "A level 1 and a level 2 spell cast at will.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "spell-mastery-1",
+            "prompt": "Choose a level 1 spell from your spellbook with a casting time of an action.",
+            "count": 1,
+            "from": "srd-5.2:class/wizard",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          },
+          {
+            "id": "spell-mastery-2",
+            "prompt": "Choose a level 2 spell from your spellbook with a casting time of an action.",
+            "count": 1,
+            "from": "srd-5.2:class/wizard",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  2
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:spell-mastery-1",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": "atWill",
+                "recharge": "none"
+              }
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "$choice:spell-mastery-2",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": "atWill",
+                "recharge": "none"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Spell Recall is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "wizard-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:wizard-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/wizard-signature-spells",
+        "name": "Signature Spells",
+        "level": 20,
+        "sourceId": "srd-5.2:class/wizard",
+        "description": "Choose two level 3 spells in your spellbook as your signature spells. You always have these spells prepared, and you can cast each of them once at level 3 without expending a spell slot. When you do so, you can't cast them in this way again until you finish a Short or Long Rest. To cast either spell at a higher level, you must expend a spell slot.",
+        "shortDescription": "Two level 3 spells, each cast once free per Short Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "signature-spells",
+            "prompt": "Choose two level 3 spells from your spellbook.",
+            "count": 2,
+            "from": "srd-5.2:class/wizard",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  3
+                ]
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:signature-spells",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "short"
+              }
+            }
+          }
+        ]
+      }
+    ]
   }
 ]

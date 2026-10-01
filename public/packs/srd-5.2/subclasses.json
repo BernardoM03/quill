@@ -2499,6 +2499,253 @@
   {
     "id": "srd-5.2:subclass/evoker",
     "classId": "srd-5.2:class/wizard",
-    "name": "Evoker"
+    "name": "Evoker",
+    "flavor": "Create Explosive Elemental Effects",
+    "description": "Your studies focus on magic that creates powerful elemental effects such as bitter cold, searing flame, rolling thunder, crackling lightning, and burning acid. Some Evokers find employment in military forces, serving as artillery to blast armies from afar. Others use their power to protect others, while some seek their own gain.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/evoker-evocation-savant",
+        "name": "Evocation Savant",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Choose two Wizard spells from the Evocation school, each of which must be no higher than level 2, and add them to your spellbook for free.\n\nIn addition, whenever you gain access to a new level of spell slots in this class, you can add one Wizard spell from the Evocation school to your spellbook for free. The chosen spell must be of a level for which you have spell slots.",
+        "shortDescription": "Two free Evocation spells, and one more per new slot level.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "evocation-savant",
+            "prompt": "Choose Wizard Evocation spells.",
+            "count": 2,
+            "from": "srd-5.2:class/wizard",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2
+                ]
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:evocation-savant",
+            "castingOverrides": {
+              "addToSpellbook": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-potent-cantrip",
+        "name": "Potent Cantrip",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Your damaging cantrips affect even creatures that avoid the brunt of the effect. When you cast a cantrip at a creature and you miss with the attack roll or the target succeeds on a saving throw against the cantrip, the target takes half the cantrip's damage (if any) but suffers no additional effect from the cantrip.",
+        "shortDescription": "Cantrips deal half damage on a miss or a successful save.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "saveOutcome",
+            "value": {
+              "appliesTo": "negate",
+              "onSuccess": "half"
+            },
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "type": "dealDamage",
+            "target": "$derived:spellDamageType",
+            "value": "$derived:spellDamage",
+            "multiplier": 0.5,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-sculpt-spells",
+        "name": "Sculpt Spells",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "You can create pockets of relative safety within the effects of your evocations. When you cast an Evocation spell that affects other creatures that you can see, you can choose a number of them equal to 1 plus the spell's level. The chosen creatures automatically succeed on their saving throws against the spell, and they take no damage if they would normally take half damage on a successful save.",
+        "shortDescription": "Shield 1 + spell level creatures from your Evocation spells.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "savingThrow",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "ally"
+              }
+            ]
+          },
+          {
+            "type": "saveOutcome",
+            "value": {
+              "appliesTo": "half",
+              "onSuccess": "negate"
+            },
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "ally"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-empowered-evocation",
+        "name": "Empowered Evocation",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Whenever you cast a Wizard spell from the Evocation school, you can add your Intelligence modifier to one damage roll of that spell.",
+        "shortDescription": "Add Intelligence to one damage roll of your Wizard Evocation spells.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellDamage",
+            "value": "$derived:INT",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "spellSource",
+                "sourceId": "srd-5.2:class/wizard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-overchannel",
+        "name": "Overchannel",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "You can increase the power of your spells. When you cast a Wizard spell with a spell slot of levels 1–5 that deals damage, you can deal maximum damage with that spell on the turn you cast it.\n\nThe first time you do so, you suffer no adverse effect. If you use this feature again before you finish a Long Rest, you take 2d12 Necrotic damage for each level of the spell slot immediately after you cast it. This damage ignores Resistance and Immunity.\n\nEach time you use this feature again before finishing a Long Rest, the Necrotic damage per spell level increases by 1d12.",
+        "shortDescription": "Maximize a level 1-5 Wizard spell's damage; repeats cost Necrotic damage.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "maximizeDice",
+            "target": "damageRoll",
+            "qualifiers": [
+              {
+                "type": "spellSource",
+                "sourceId": "srd-5.2:class/wizard"
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "type": "dealDamage",
+            "target": "necrotic",
+            "value": {
+              "count": "$derived:overchannelDice",
+              "die": "d12"
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/evoker-overchannel"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]
