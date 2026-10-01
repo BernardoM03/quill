@@ -467,7 +467,159 @@
   {
     "id": "srd-5.2:subclass/thief",
     "classId": "srd-5.2:class/rogue",
-    "name": "Thief"
+    "name": "Thief",
+    "flavor": "Hunt for Treasure as a Classic Adventurer",
+    "description": "A mix of burglar, treasure hunter, and explorer, you are the epitome of an adventurer. In addition to improving your agility and stealth, you gain abilities useful for delving into ruins and getting maximum benefit from the magic items you find there.",
+    "subclassFeatureLevels": [
+      3,
+      9,
+      13,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/thief-fast-hands",
+        "name": "Fast Hands",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "As a Bonus Action, you can do one of the following.\n\n**Sleight of Hand.** Make a Dexterity (Sleight of Hand) check to pick a lock or disarm a trap with Thieves' Tools or to pick a pocket.\n\n**Use an Object.** Take the Utilize action, or take the Magic action to use a magic item that requires that action.",
+        "shortDescription": "Bonus Action: Sleight of Hand, Utilize, or use a magic item.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "actionEconomy"
+        ],
+        "effects": [
+          {
+            "type": "grantAction",
+            "target": "utilize",
+            "value": "bonusAction"
+          },
+          {
+            "type": "grantAction",
+            "target": "magic",
+            "value": "bonusAction"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-second-story-work",
+        "name": "Second-Story Work",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You've trained to get into especially hard-to-reach places, granting you these benefits.\n\n**Climber.** You gain a Climb Speed equal to your Speed.\n\n**Jumper.** You can determine your jump distance using your Dexterity rather than your Strength.",
+        "shortDescription": "Climb Speed equal to your Speed; jump using Dexterity.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "climb",
+            "value": "$derived:walkingSpeed"
+          },
+          {
+            "type": "substituteAbility",
+            "target": "jumpDistance",
+            "value": "DEX"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-supreme-sneak",
+        "name": "Supreme Sneak",
+        "level": 9,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You gain the following Cunning Strike option.\n\n**Stealth Attack (Cost: 1d6).** If you have the Hide action's Invisible condition, this attack doesn't end that condition on you if you end the turn behind Three-Quarters Cover or Total Cover.",
+        "shortDescription": "New Cunning Strike option: Stealth Attack.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/cunning-strike",
+          "items": [
+            {
+              "id": "stealth-attack",
+              "name": "Stealth Attack",
+              "description": "If you have the Hide action's Invisible condition, this attack doesn't end that condition on you if you end the turn behind Three-Quarters Cover or Total Cover.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 1,
+                "unit": "dice"
+              },
+              "effects": [
+                {
+                  "type": "keepCondition",
+                  "target": "srd-5.2:condition/invisible",
+                  "qualifiers": [
+                    {
+                      "type": "selfState",
+                      "conditionId": "srd-5.2:condition/invisible"
+                    },
+                    {
+                      "type": "cover",
+                      "atLeast": "threeQuarters"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "stealth"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/thief-use-magic-device",
+        "name": "Use Magic Device",
+        "level": 13,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You've learned how to maximize use of magic items, granting you the following benefits.\n\n**Attunement.** You can attune to up to four magic items at once.\n\n**Charges.** Whenever you use a magic item property that expends charges, roll 1d6. On a roll of 6, you use the property without expending the charges.\n\n**Scrolls.** You can use any Spell Scroll, using Intelligence as your spellcasting ability for the spell. If the spell is a cantrip or a level 1 spell, you can cast it reliably. If the scroll contains a higher-level spell, you must first succeed on an Intelligence (Arcana) check (DC 10 plus the spell's level). On a successful check, you cast the spell from the scroll. On a failed check, the scroll disintegrates.",
+        "shortDescription": "Attune to four items; sometimes save charges; use any Spell Scroll.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "magicItem"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "attunementSlots",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-thiefs-reflexes",
+        "name": "Thief's Reflexes",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You are adept at laying ambushes and quickly escaping danger. You can take two turns during the first round of any combat. You take your first turn at your normal Initiative and your second turn at your Initiative minus 10.",
+        "shortDescription": "Take a second turn in the first round at Initiative minus 10.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "initiative"
+        ],
+        "effects": [
+          {
+            "type": "extraTurn",
+            "value": {
+              "round": 1,
+              "initiativeOffset": -10
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/draconic-sorcery",

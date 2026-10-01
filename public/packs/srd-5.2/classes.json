@@ -2213,7 +2213,1187 @@
   },
   {
     "id": "srd-5.2:class/rogue",
-    "name": "Rogue"
+    "name": "Rogue",
+    "primaryAbility": [
+      "DEX"
+    ],
+    "hitDie": 8,
+    "savingThrowProficiencies": [
+      "DEX",
+      "INT"
+    ],
+    "skillProficiencies": {
+      "count": 4,
+      "from": [
+        "srd-5.2:skill/acrobatics",
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/deception",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/intimidation",
+        "srd-5.2:skill/investigation",
+        "srd-5.2:skill/perception",
+        "srd-5.2:skill/persuasion",
+        "srd-5.2:skill/sleight-of-hand",
+        "srd-5.2:skill/stealth"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons",
+        "Martial weapons that have the Finesse or Light property"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "Light armor"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/thieves-tools"
+      ]
+    },
+    "weaponMastery": 2,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/leather-armor"
+            },
+            {
+              "id": "srd-5.2:equipment/dagger",
+              "quantity": 2
+            },
+            {
+              "id": "srd-5.2:equipment/shortsword"
+            },
+            {
+              "id": "srd-5.2:equipment/shortbow"
+            },
+            {
+              "id": "srd-5.2:equipment/arrows",
+              "note": "20 Arrows, one bundle"
+            },
+            {
+              "id": "srd-5.2:equipment/quiver"
+            },
+            {
+              "id": "srd-5.2:tool/thieves-tools"
+            },
+            {
+              "id": "srd-5.2:equipment/burglars-pack"
+            }
+          ],
+          "gold": 8
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 100
+        }
+      ]
+    },
+    "startingGold": 100,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "DEX"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [],
+        "armor": [
+          "Light armor"
+        ],
+        "tools": [
+          "srd-5.2:tool/thieves-tools"
+        ],
+        "skills": [
+          "One skill from the Rogue's skill list"
+        ]
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      9,
+      13,
+      17
+    ],
+    "asiLevels": [
+      4,
+      8,
+      10,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": null,
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/rogue-expertise",
+          "srd-5.2:feature/rogue-sneak-attack",
+          "srd-5.2:feature/rogue-thieves-cant",
+          "srd-5.2:feature/rogue-weapon-mastery"
+        ],
+        "resources": {
+          "sneakAttack": 1
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/rogue-cunning-action"
+        ],
+        "resources": {
+          "sneakAttack": 1
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/rogue-subclass",
+          "srd-5.2:feature/rogue-steady-aim"
+        ],
+        "resources": {
+          "sneakAttack": 2
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/rogue-ability-score-improvement"
+        ],
+        "resources": {
+          "sneakAttack": 2
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/rogue-cunning-strike",
+          "srd-5.2:feature/rogue-uncanny-dodge"
+        ],
+        "resources": {
+          "sneakAttack": 3
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/rogue-expertise"
+        ],
+        "resources": {
+          "sneakAttack": 3
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/rogue-evasion",
+          "srd-5.2:feature/rogue-reliable-talent"
+        ],
+        "resources": {
+          "sneakAttack": 4
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/rogue-ability-score-improvement"
+        ],
+        "resources": {
+          "sneakAttack": 4
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "resources": {
+          "sneakAttack": 5
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/rogue-ability-score-improvement"
+        ],
+        "resources": {
+          "sneakAttack": 5
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/rogue-improved-cunning-strike"
+        ],
+        "resources": {
+          "sneakAttack": 6
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/rogue-ability-score-improvement"
+        ],
+        "resources": {
+          "sneakAttack": 6
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "resources": {
+          "sneakAttack": 7
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/rogue-devious-strikes"
+        ],
+        "resources": {
+          "sneakAttack": 7
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/rogue-slippery-mind"
+        ],
+        "resources": {
+          "sneakAttack": 8
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/rogue-ability-score-improvement"
+        ],
+        "resources": {
+          "sneakAttack": 8
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [],
+        "resources": {
+          "sneakAttack": 9
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/rogue-elusive"
+        ],
+        "resources": {
+          "sneakAttack": 9
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/rogue-epic-boon"
+        ],
+        "resources": {
+          "sneakAttack": 10
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/rogue-stroke-of-luck"
+        ],
+        "resources": {
+          "sneakAttack": 10
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/rogue-expertise",
+        "name": "Expertise",
+        "level": 1,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You gain Expertise in two of your skill proficiencies of your choice. Sleight of Hand and Stealth are recommended if you have proficiency in them.\n\nAt Rogue level 6, you gain Expertise in two more of your skill proficiencies of your choice.",
+        "shortDescription": "Expertise in two proficient skills (two more at level 6).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "rogue-expertise",
+            "prompt": "Choose two skills you are proficient in.",
+            "count": 2,
+            "fromTypes": [
+              "skill"
+            ],
+            "qualifiers": [
+              {
+                "type": "proficient"
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantExpertise",
+            "target": "$choice:rogue-expertise"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-sneak-attack",
+        "name": "Sneak Attack",
+        "level": 1,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or a Ranged weapon. The extra damage's type is the same as the weapon's type.\n\nYou don't need Advantage on the attack roll if at least one of your allies is within 5 feet of the target, the ally doesn't have the Incapacitated condition, and you don't have Disadvantage on the attack roll.\n\nThe extra damage increases as you gain Rogue levels, as shown in the Sneak Attack column of the Rogue Features table.",
+        "shortDescription": "Once per turn, extra d6s on a Finesse or Ranged hit with Advantage or an adjacent ally.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack",
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "$derived:weaponDamageType",
+            "value": {
+              "count": "$column:sneakAttack",
+              "die": "d6"
+            },
+            "frequency": "perTurn",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon"
+                ]
+              },
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "weaponProperty",
+                    "weaponProperties": [
+                      "finesse"
+                    ]
+                  },
+                  {
+                    "type": "attackRange",
+                    "attackRange": "ranged"
+                  }
+                ]
+              },
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "rollMode",
+                    "mode": "advantage"
+                  },
+                  {
+                    "type": "allOf",
+                    "qualifiers": [
+                      {
+                        "type": "nearbyCreature",
+                        "relation": "ally",
+                        "within": 5,
+                        "around": "target",
+                        "withoutCondition": "srd-5.2:condition/incapacitated"
+                      },
+                      {
+                        "type": "rollMode",
+                        "mode": "disadvantage",
+                        "negate": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-thieves-cant",
+        "name": "Thieves' Cant",
+        "level": 1,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You picked up various languages in the communities where you plied your roguish talents. You know Thieves' Cant and one other language of your choice, which you choose from the language tables in \"Character Creation.\"",
+        "shortDescription": "Know Thieves' Cant and one other language.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "rogue-language",
+            "prompt": "Choose one other language.",
+            "count": 1,
+            "fromTypes": [
+              "language"
+            ]
+          }
+        ],
+        "tags": [
+          "language"
+        ],
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/thieves-cant"
+          },
+          {
+            "type": "grantLanguage",
+            "target": "$choice:rogue-language"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-weapon-mastery",
+        "name": "Weapon Mastery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Daggers and Shortbows.\n\nWhenever you finish a Long Rest, you can change the kinds of weapons you chose. For example, you could switch to using the mastery properties of Scimitars and Shortswords.",
+        "shortDescription": "Use the mastery properties of 2 kinds of weapons.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "rogue-weapon-mastery",
+            "prompt": "Choose two kinds of weapons you are proficient with.",
+            "count": 2,
+            "fromTypes": [
+              "equipment"
+            ],
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "weapon"
+              },
+              {
+                "type": "proficient"
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 2
+            }
+          }
+        ],
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "grantMastery",
+            "target": "$choice:rogue-weapon-mastery"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-cunning-action",
+        "name": "Cunning Action",
+        "level": 2,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "Your quick thinking and agility allow you to move and act quickly. On your turn, you can take one of the following actions as a Bonus Action: Dash, Disengage, or Hide.",
+        "shortDescription": "Dash, Disengage, or Hide as a Bonus Action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "actionEconomy"
+        ],
+        "effects": [
+          {
+            "type": "grantAction",
+            "target": "dash",
+            "value": "bonusAction"
+          },
+          {
+            "type": "grantAction",
+            "target": "disengage",
+            "value": "bonusAction"
+          },
+          {
+            "type": "grantAction",
+            "target": "hide",
+            "value": "bonusAction"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-subclass",
+        "name": "Rogue Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You gain a Rogue subclass of your choice. The Thief subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Rogue levels. For the rest of your career, you gain each of your subclass's features that are of your Rogue level or lower.",
+        "shortDescription": "Choose a Rogue subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/rogue-steady-aim",
+        "name": "Steady Aim",
+        "level": 3,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "As a Bonus Action, you give yourself Advantage on your next attack roll on the current turn. You can use this feature only if you haven't moved during this turn, and after you use it, your Speed is 0 until the end of the current turn.",
+        "shortDescription": "Bonus Action: Advantage on your next attack this turn; Speed becomes 0.",
+        "activation": {
+          "type": "bonusAction",
+          "requires": [
+            {
+              "type": "movedThisTurn",
+              "negate": true
+            }
+          ]
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "appliesOnce": true
+          },
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Rogue levels 8, 10, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "rogue-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:rogue-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-cunning-strike",
+        "name": "Cunning Strike",
+        "level": 5,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling.\n\nIf a Cunning Strike effect requires a saving throw, the DC equals 8 plus your Dexterity modifier and Proficiency Bonus.\n\n**Poison (Cost: 1d6).** You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success.\n\nTo use this effect, you must have a Poisoner's Kit on your person.\n\n**Trip (Cost: 1d6).** If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.\n\n**Withdraw (Cost: 1d6).** Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.",
+        "shortDescription": "Forgo Sneak Attack dice to Poison, Trip, or Withdraw.",
+        "activation": {
+          "type": "passive"
+        },
+        "scaling": [
+          {
+            "level": 5,
+            "value": 1
+          },
+          {
+            "level": 11,
+            "value": 2
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/cunning-strike",
+          "items": [
+            {
+              "id": "poison",
+              "name": "Poison",
+              "description": "You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success. To use this effect, you must have a Poisoner's Kit on your person.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 1,
+                "unit": "dice"
+              },
+              "requires": [
+                {
+                  "type": "hasItem",
+                  "itemId": "srd-5.2:tool/poisoners-kit"
+                }
+              ],
+              "duration": {
+                "value": 1,
+                "unit": "minute"
+              },
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/poisoned",
+                  "save": {
+                    "ability": "CON",
+                    "dc": {
+                      "base": 8,
+                      "ability": "DEX",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate",
+                    "repeat": {
+                      "event": "endTurn"
+                    }
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "trip",
+              "name": "Trip",
+              "description": "If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 1,
+                "unit": "dice"
+              },
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/prone",
+                  "qualifiers": [
+                    {
+                      "type": "creatureSize",
+                      "maxSize": "large"
+                    },
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ],
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "base": 8,
+                      "ability": "DEX",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  },
+                  "affects": "others"
+                }
+              ]
+            },
+            {
+              "id": "withdraw",
+              "name": "Withdraw",
+              "description": "Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 1,
+                "unit": "dice"
+              },
+              "effects": [
+                {
+                  "type": "grantMovement",
+                  "value": {
+                    "speedFraction": 0.5,
+                    "provokesOpportunityAttacks": false
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/cunning-strike",
+            "value": "$scaling",
+            "trigger": {
+              "event": "useFeature",
+              "featureId": "srd-5.2:feature/rogue-sneak-attack",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-uncanny-dodge",
+        "name": "Uncanny Dodge",
+        "level": 5,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "When an attacker that you can see hits you with an attack roll, you can take a Reaction to halve the attack's damage against you (round down).",
+        "shortDescription": "Reaction: halve the damage of an attack that hits you.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "An attacker you can see hits you with an attack roll."
+        },
+        "tags": [
+          "defense",
+          "reaction"
+        ],
+        "effects": [
+          {
+            "type": "reduceDamage",
+            "value": {
+              "fraction": 0.5
+            },
+            "trigger": {
+              "event": "hitByAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "triggerCreature",
+                "sense": "sight"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-evasion",
+        "name": "Evasion",
+        "level": 7,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You can nimbly dodge out of the way of certain dangers. When you're subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw and only half damage if you fail. You can't use this feature if you have the Incapacitated condition.",
+        "shortDescription": "Dexterity saves for half damage: no damage on a success, half on a failure.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "saveOutcome",
+            "value": {
+              "appliesTo": "half",
+              "onSuccess": "negate",
+              "onFailure": "half"
+            },
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-reliable-talent",
+        "name": "Reliable Talent",
+        "level": 7,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "Whenever you make an ability check that uses one of your skill or tool proficiencies, you can treat a d20 roll of 9 or lower as a 10.",
+        "shortDescription": "Proficient ability checks treat a d20 roll of 9 or lower as 10.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "rerollD20",
+            "target": "abilityCheck",
+            "reroll": {
+              "mode": "minimum",
+              "triggerValues": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "minimum": 10
+            },
+            "qualifiers": [
+              {
+                "type": "proficient"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-improved-cunning-strike",
+        "name": "Improved Cunning Strike",
+        "level": 11,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You can use up to two Cunning Strike effects when you deal Sneak Attack damage, paying the die cost for each effect.",
+        "shortDescription": "Use up to two Cunning Strike effects.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/rogue-devious-strikes",
+        "name": "Devious Strikes",
+        "level": 14,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You've practiced new ways to use your Sneak Attack deviously. The following effects are now among your Cunning Strike options.\n\n**Daze (Cost: 2d6).** The target must succeed on a Constitution saving throw, or on its next turn, it can do only one of the following: move or take an action or a Bonus Action.\n\n**Knock Out (Cost: 6d6).** The target must succeed on a Constitution saving throw, or it has the Unconscious condition for 1 minute or until it takes any damage. The Unconscious target repeats the save at the end of each of its turns, ending the effect on itself on a success.\n\n**Obscure (Cost: 3d6).** The target must succeed on a Dexterity saving throw, or it has the Blinded condition until the end of its next turn.",
+        "shortDescription": "New Cunning Strike options: Daze, Knock Out, and Obscure.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/cunning-strike",
+          "items": [
+            {
+              "id": "daze",
+              "name": "Daze",
+              "description": "The target must succeed on a Constitution saving throw, or on its next turn, it can do only one of the following: move or take an action or a Bonus Action.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 2,
+                "unit": "dice"
+              },
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "limitActions",
+                  "value": {
+                    "count": 1,
+                    "from": [
+                      "move",
+                      "action",
+                      "bonusAction"
+                    ]
+                  },
+                  "save": {
+                    "ability": "CON",
+                    "dc": {
+                      "base": 8,
+                      "ability": "DEX",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "knock-out",
+              "name": "Knock Out",
+              "description": "The target must succeed on a Constitution saving throw, or it has the Unconscious condition for 1 minute or until it takes any damage. The Unconscious target repeats the save at the end of each of its turns, ending the effect on itself on a success.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 6,
+                "unit": "dice"
+              },
+              "duration": {
+                "value": 1,
+                "unit": "minute"
+              },
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/unconscious",
+                  "save": {
+                    "ability": "CON",
+                    "dc": {
+                      "base": 8,
+                      "ability": "DEX",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate",
+                    "repeat": {
+                      "event": "endTurn"
+                    },
+                    "endsOn": [
+                      {
+                        "event": "takeDamage"
+                      }
+                    ]
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "obscure",
+              "name": "Obscure",
+              "description": "The target must succeed on a Dexterity saving throw, or it has the Blinded condition until the end of its next turn.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 3,
+                "unit": "dice"
+              },
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/blinded",
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "base": 8,
+                      "ability": "DEX",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/rogue-slippery-mind",
+        "name": "Slippery Mind",
+        "level": 15,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "Your cunning mind is exceptionally difficult to control. You gain proficiency in Wisdom and Charisma saving throws.",
+        "shortDescription": "Proficiency in Wisdom and Charisma saves.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "savingThrow",
+            "value": [
+              "WIS",
+              "CHA"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-elusive",
+        "name": "Elusive",
+        "level": 18,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You're so evasive that attackers rarely gain the upper hand against you. No attack roll can have Advantage against you unless you have the Incapacitated condition.",
+        "shortDescription": "Attack rolls against you can't have Advantage.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "loseAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of the Night Spirit is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "rogue-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:rogue-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/rogue-stroke-of-luck",
+        "name": "Stroke of Luck",
+        "level": 20,
+        "sourceId": "srd-5.2:class/rogue",
+        "description": "You have a marvelous knack for succeeding when you need to. If you fail a D20 Test, you can turn the roll into a 20.\n\nOnce you use this feature, you can't use it again until you finish a Short or Long Rest.",
+        "shortDescription": "Turn a failed D20 Test into a 20.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "short"
+        },
+        "tags": [
+          "luck"
+        ],
+        "effects": [
+          {
+            "type": "rerollD20",
+            "target": "d20Test",
+            "reroll": {
+              "mode": "minimum",
+              "minimum": 20
+            },
+            "trigger": {
+              "event": "failRoll",
+              "roll": "d20Test",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/sorcerer",
