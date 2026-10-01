@@ -12,7 +12,7 @@
           {
             "type": "rollBonus",
             "target": "initiative",
-            "value": "$derived:proficiency"
+            "value": "$derived:proficiencyBonus"
           }
         ]
       },

@@ -22042,7 +22042,7 @@
     "effects": [
       {
         "type": "teleport",
-        "value": "$derived:unlimited",
+        "value": "unlimited",
         "affects": "target"
       }
     ]

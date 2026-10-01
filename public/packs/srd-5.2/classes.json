@@ -1005,7 +1005,7 @@
           },
           {
             "type": "dealDamage",
-            "target": "$derived:weaponDamageType",
+            "target": "$derived:attackDamageType",
             "value": "$scaling:damage",
             "trigger": {
               "event": "hitWithAttack"
@@ -5451,7 +5451,7 @@
           },
           {
             "type": "dealDamage",
-            "target": "$derived:attackDamageType",
+            "target": "$derived:triggerDamageType",
             "value": {
               "count": 2,
               "die": "$column:martialArts",
@@ -8911,7 +8911,7 @@
         "effects": [
           {
             "type": "dealDamage",
-            "target": "$derived:weaponDamageType",
+            "target": "$derived:attackDamageType",
             "value": {
               "count": "$column:sneakAttack",
               "die": "d6"

@@ -1852,7 +1852,7 @@
             ],
             "properties": {
               "value": {
-                "description": "Distance in feet.",
+                "description": "Distance in feet, or `unlimited` for any distance on the same plane, as Word of Recall.",
                 "oneOf": [
                   {
                     "type": "integer",
@@ -1860,6 +1860,9 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "const": "unlimited"
                   }
                 ]
               }

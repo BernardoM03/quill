@@ -28,7 +28,7 @@
         "effects": [
           {
             "type": "dealDamage",
-            "target": "$derived:weaponDamageType",
+            "target": "$derived:attackDamageType",
             "value": {
               "count": "$column:rageDamage",
               "die": "d6"
@@ -1781,7 +1781,7 @@
               "effects": [
                 {
                   "type": "dealDamage",
-                  "target": "$derived:weaponDamageType",
+                  "target": "$derived:attackDamageType",
                   "value": {
                     "count": 1,
                     "die": "d8"
