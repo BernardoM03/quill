@@ -12156,13 +12156,13 @@
                   "type": "summon",
                   "value": {
                     "forms": [
-                      "Imp",
-                      "Pseudodragon",
-                      "Quasit",
-                      "Skeleton",
-                      "Sphinx of Wonder",
-                      "Sprite",
-                      "Venomous Snake"
+                      "srd-5.2:creature/imp",
+                      "srd-5.2:creature/pseudodragon",
+                      "srd-5.2:creature/quasit",
+                      "srd-5.2:creature/skeleton",
+                      "srd-5.2:creature/sphinx-of-wonder",
+                      "srd-5.2:creature/sprite",
+                      "srd-5.2:creature/venomous-snake"
                     ]
                   }
                 }

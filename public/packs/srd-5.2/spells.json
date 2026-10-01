@@ -570,8 +570,8 @@
         "type": "summon",
         "value": {
           "forms": [
-            "Skeleton",
-            "Zombie"
+            "srd-5.2:creature/skeleton",
+            "srd-5.2:creature/zombie"
           ],
           "count": 1
         },
@@ -616,9 +616,7 @@
       {
         "type": "summon",
         "value": {
-          "forms": [
-            "Animated Object"
-          ],
+          "statBlock": "Animated Object",
           "count": "$derived:spellcastingModifier"
         }
       }
@@ -4950,7 +4948,7 @@
         "type": "summon",
         "value": {
           "forms": [
-            "Ghoul"
+            "srd-5.2:creature/ghoul"
           ],
           "count": 3
         },
@@ -7959,19 +7957,24 @@
         "type": "summon",
         "value": {
           "forms": [
-            "Bat",
-            "Cat",
-            "Frog",
-            "Hawk",
-            "Lizard",
-            "Octopus",
-            "Owl",
-            "Rat",
-            "Raven",
-            "Spider",
-            "Weasel",
-            "Beast of Challenge Rating 0"
+            "srd-5.2:creature/bat",
+            "srd-5.2:creature/cat",
+            "srd-5.2:creature/frog",
+            "srd-5.2:creature/hawk",
+            "srd-5.2:creature/lizard",
+            "srd-5.2:creature/octopus",
+            "srd-5.2:creature/owl",
+            "srd-5.2:creature/rat",
+            "srd-5.2:creature/raven",
+            "srd-5.2:creature/spider",
+            "srd-5.2:creature/weasel"
           ],
+          "pool": {
+            "creatureTypes": [
+              "beast"
+            ],
+            "maxChallengeRating": 0
+          },
           "creatureTypes": [
             "celestial",
             "fey",
@@ -8014,9 +8017,7 @@
       {
         "type": "summon",
         "value": {
-          "forms": [
-            "Otherworldly Steed"
-          ],
+          "statBlock": "Otherworldly Steed",
           "creatureTypes": [
             "celestial",
             "fey",
@@ -9556,9 +9557,7 @@
       {
         "type": "summon",
         "value": {
-          "forms": [
-            "Giant Insect"
-          ]
+          "statBlock": "Giant Insect"
         }
       }
     ]
@@ -14816,7 +14815,7 @@
         "type": "summon",
         "value": {
           "forms": [
-            "Riding Horse"
+            "srd-5.2:creature/riding-horse"
           ]
         }
       }
@@ -14855,14 +14854,14 @@
       {
         "type": "summon",
         "value": {
-          "forms": [
-            "Celestial, Elemental, or Fiend chosen by the GM"
-          ],
-          "creatureTypes": [
-            "celestial",
-            "elemental",
-            "fiend"
-          ]
+          "pool": {
+            "creatureTypes": [
+              "celestial",
+              "elemental",
+              "fiend"
+            ],
+            "chosenBy": "gm"
+          }
         }
       }
     ]
@@ -19502,9 +19501,7 @@
       {
         "type": "summon",
         "value": {
-          "forms": [
-            "Draconic Spirit"
-          ],
+          "statBlock": "Draconic Spirit",
           "creatureTypes": [
             "dragon"
           ]
