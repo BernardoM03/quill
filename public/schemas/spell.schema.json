@@ -226,6 +226,10 @@
         "items": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
         }
+      },
+      "options": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/optionList",
+        "description": "Effects to pick from when casting, as Command's Approach, Drop, Flee, Grovel, and Halt."
       }
     },
     "required": [

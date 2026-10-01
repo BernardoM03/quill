@@ -346,6 +346,30 @@
         "ignoresCover": {
           "type": "boolean",
           "description": "Half and Three-Quarters Cover give no bonus to this save, as Sacred Flame."
+        },
+        "escape": {
+          "type": "object",
+          "description": "An ability check that also ends the effect, taken as an action by the target or a creature next to it, against the same DC. Entangle's Strength (Athletics) check.",
+          "properties": {
+            "ability": {
+              "$ref": "#/$defs/ability"
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/skillId"
+              },
+              "minItems": 1
+            },
+            "byOthers": {
+              "type": "boolean",
+              "description": "A creature within reach of the target can make the check for it."
+            }
+          },
+          "required": [
+            "ability"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1001,7 +1025,9 @@
         "emitLight",
         "preventHealing",
         "stabilize",
-        "suppressCondition"
+        "suppressCondition",
+        "detect",
+        "createZone"
       ]
     },
     "effect": {
@@ -1108,12 +1134,16 @@
                   "minimum": 1
                 }
               ]
+            },
+            "area": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Feet added to the area's size for each slot level above the spell's, as Fog Cloud's 20."
             }
           },
-          "required": [
-            "perSlot"
-          ],
-          "additionalProperties": false
+          "required": [],
+          "additionalProperties": false,
+          "minProperties": 1
         },
         "duration": {
           "allOf": [
@@ -2585,8 +2615,18 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "const": "all"
                   }
                 ]
+              },
+              "value": {
+                "enum": [
+                  "understand",
+                  "speak"
+                ],
+                "description": "`understand` grants comprehension only, as Comprehend Languages. Omit for full knowledge of the language."
               }
             }
           }
@@ -3035,6 +3075,107 @@
             "properties": {
               "target": {
                 "$ref": "#/$defs/conditionId"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "detect"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "What you sense, and how far. `creatureTypes` for Detect Evil and Good; `magic` and `poisonAndDisease` for the other Detect spells.",
+                "properties": {
+                  "within": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "creatureTypes": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/creatureType"
+                    },
+                    "minItems": 1
+                  },
+                  "things": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "magic",
+                        "poisonAndDisease",
+                        "thoughts",
+                        "traps",
+                        "object",
+                        "creature"
+                      ]
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "within"
+                ],
+                "minProperties": 2,
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "createZone"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value",
+              "area"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "What the area becomes for the duration.",
+                "properties": {
+                  "difficultTerrain": {
+                    "type": "boolean"
+                  },
+                  "obscured": {
+                    "enum": [
+                      "light",
+                      "heavy"
+                    ]
+                  },
+                  "darkness": {
+                    "enum": [
+                      "dim",
+                      "magical"
+                    ]
+                  },
+                  "silence": {
+                    "type": "boolean"
+                  }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
               }
             }
           }
