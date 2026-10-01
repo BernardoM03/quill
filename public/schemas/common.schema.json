@@ -87,8 +87,16 @@
       "description": "A rolled quantity, e.g. Bardic Inspiration's 1d6.",
       "properties": {
         "count": {
-          "type": "integer",
-          "minimum": 1
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "How many dice. A deferred value where the count is itself a number from the sheet, as Frenzy's d6s equal to your Rage Damage bonus."
         },
         "die": {
           "$ref": "#/$defs/rollType"
@@ -232,6 +240,29 @@
         "fixed": {
           "type": "integer",
           "description": "A flat DC independent of the character."
+        },
+        "increasePerUse": {
+          "type": "object",
+          "description": "A DC that climbs each time the feature is used and resets on a rest, as Relentless Rage's DC 10 plus 5 per use.",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "resetOn": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/rest"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "amount",
+            "resetOn"
+          ],
+          "additionalProperties": false
         }
       },
       "additionalProperties": false,
@@ -266,6 +297,14 @@
             "negate",
             "none"
           ]
+        },
+        "repeat": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/trigger"
+            }
+          ],
+          "description": "When the affected creature repeats the save to end the effect, as Intimidating Presence's 'at the end of each of the Frightened creature's turns'."
         }
       },
       "required": [
@@ -361,7 +400,10 @@
         "failRoll",
         "criticalHit",
         "useFeature",
-        "gainLevel"
+        "gainLevel",
+        "makeAttackRoll",
+        "forceSave",
+        "rollInitiative"
       ]
     },
     "trigger": {
@@ -398,6 +440,14 @@
             }
           ],
           "description": "Which feature, when event is useFeature. Tactical Shift hangs off Second Wind this way."
+        },
+        "actionType": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/actionType"
+            }
+          ],
+          "description": "Which action type, when event is takeAction and the rule names a cost rather than an action, as Rage's 'take a Bonus Action to extend your Rage'."
         }
       },
       "required": [
@@ -533,8 +583,8 @@
     },
     "deferredValue": {
       "type": "string",
-      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id declared by any feature of the same grantor - the species, class, subclass, or feat - resolved when the player picks. Scoped to the grantor rather than to the single feature because the SRD routinely lets one decision drive several traits: Draconic Ancestry is chosen once and read by both Breath Weapon and Damage Resistance. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves. `$derived:classLevel` is your level in the class that grants the feature, so Second Wind's '1d10 plus your Fighter level' needs no class-specific name. `$scaling` is the owning feature's `scaling` value at your current level: Second Wind's uses grow 2, 3, 4 down a table column, so `uses.max` is `$scaling` and the rows carry the numbers.",
-      "pattern": "^\\$((choice|derived):[A-Za-z][A-Za-z0-9-]*|scaling)$"
+      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id declared by any feature of the same grantor - the species, class, subclass, or feat - resolved when the player picks. Scoped to the grantor rather than to the single feature because the SRD routinely lets one decision drive several traits: Draconic Ancestry is chosen once and read by both Breath Weapon and Damage Resistance. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves. `$derived:classLevel` is your level in the class that grants the feature, so Second Wind's '1d10 plus your Fighter level' needs no class-specific name. `$scaling` is the owning feature's `scaling` value at your current level: Second Wind's uses grow 2, 3, 4 down a table column, so `uses.max` is `$scaling` and the rows carry the numbers. `$column:<name>` reads the granting class's progression column at your level, so Rage's uses and damage come straight from the Rages and Rage Damage columns. Prefer it whenever the class table prints the number. `$scaling:<key>` reads the scaling rows with that `key`, for a feature with more than one growing number.",
+      "pattern": "^\\$((choice|derived|column):[A-Za-z][A-Za-z0-9-]*|scaling(:[A-Za-z][A-Za-z0-9-]*)?)$"
     },
     "rest": {
       "type": "string",
@@ -567,6 +617,13 @@
         },
         "cost": {
           "$ref": "#/$defs/resourceCost"
+        },
+        "requires": {
+          "type": "array",
+          "description": "Qualifiers that must hold for you to use the feature at all, as Rage's 'if you aren't wearing Heavy armor'.",
+          "items": {
+            "$ref": "#/$defs/qualifier"
+          }
         }
       },
       "required": [
@@ -615,6 +672,14 @@
           "type": "integer",
           "minimum": 1,
           "description": "Most uses spendable in one turn, as Action Surge's 'only once on a turn'."
+        },
+        "alternativeCost": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/resourceCost"
+            }
+          ],
+          "description": "What you can spend to use the feature when no uses remain, as Intimidating Presence restored by a use of Rage."
         }
       },
       "required": [
@@ -785,6 +850,10 @@
               "$ref": "#/$defs/diceExpression"
             }
           ]
+        },
+        "key": {
+          "type": "string",
+          "description": "Which of the feature's growing numbers this row belongs to, read by `$scaling:<key>`. Omit when the feature has only one."
         }
       },
       "required": [
@@ -844,7 +913,18 @@
         "grantMovement",
         "grantMastery",
         "substituteMastery",
-        "setCritThreshold"
+        "setCritThreshold",
+        "preventSpellcasting",
+        "substituteAbility",
+        "restoreUses",
+        "overrideFeature",
+        "loseAdvantage",
+        "forcedMovement",
+        "rollFloor",
+        "increaseAbilityScore",
+        "endCondition",
+        "grantAttack",
+        "chooseOptions"
       ]
     },
     "effect": {
@@ -870,7 +950,7 @@
         },
         "multiplier": {
           "type": "integer",
-          "description": "Scales `value` when it is a derived quantity. `value: \"$derived:exhaustionLevel\"` with `multiplier: -2` is 'reduced by 2 times your Exhaustion level'. Omit when `value` is already the final amount."
+          "description": "Scales `value` when it is a derived quantity. `value: \"$derived:exhaustionLevel\"` with `multiplier: -2` is 'reduced by 2 times your Exhaustion level'. Omit when `value` is already the final amount. Also doubles a derived value outright, as Relentless Rage's Hit Points equal to twice your Barbarian level."
         },
         "affects": {
           "type": "string",
@@ -918,6 +998,15 @@
         },
         "trigger": {
           "$ref": "#/$defs/trigger"
+        },
+        "frequency": {
+          "type": "string",
+          "description": "How often the effect can apply. Frenzy hits only the first target you hit on your turn: `perTurn`. Defaults to `unlimited`.",
+          "enum": [
+            "unlimited",
+            "perTurn",
+            "perRound"
+          ]
         }
       },
       "required": [
@@ -1575,8 +1664,16 @@
             ],
             "properties": {
               "value": {
-                "type": "integer",
-                "minimum": 0
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ],
+                "description": "The Hit Points you are left with instead. Scale a derived value with `multiplier`, as Relentless Rage's twice your Barbarian level."
               }
             }
           }
@@ -1844,6 +1941,386 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "substituteAbility"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
+              },
+              "value": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/ability"
+                  }
+                ],
+                "description": "The ability used instead. Narrow which rolls with qualifiers."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "restoreUses"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "description": "The feature whose uses, or the class resource whose points, come back.",
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/featureId"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"
+                  }
+                ]
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "const": "all"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "overrideFeature"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/featureId"
+              },
+              "value": {
+                "type": "object",
+                "description": "Fields of the target feature replaced while this feature is held. `null` removes a field, as Persistent Rage removing Rage's need to be sustained.",
+                "properties": {
+                  "sustain": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/sustain"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "endConditions": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/qualifier"
+                    }
+                  },
+                  "duration": {
+                    "$ref": "#/$defs/duration"
+                  }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "loseAdvantage"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "forcedMovement"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "feet": {
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      {
+                        "$ref": "#/$defs/deferredValue"
+                      }
+                    ]
+                  },
+                  "direction": {
+                    "enum": [
+                      "away",
+                      "toward",
+                      "any"
+                    ]
+                  }
+                },
+                "required": [
+                  "feet",
+                  "direction"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rollFloor"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/rollTarget"
+              },
+              "value": {
+                "description": "The lowest total the roll can produce.",
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "increaseAbilityScore"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ability"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "Every listed score increases."
+              },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "maximum": {
+                    "oneOf": [
+                      {
+                        "type": "integer",
+                        "maximum": 30
+                      },
+                      {
+                        "$ref": "#/$defs/deferredValue"
+                      }
+                    ],
+                    "description": "The cap the increase can reach, which may be above the usual 20."
+                  }
+                },
+                "required": [
+                  "amount",
+                  "maximum"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "endCondition"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/conditionId"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/conditionId"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantAttack"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "How many attacks. Narrow range and source with qualifiers; the action spent is the feature's activation."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "chooseOptions"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9.-]*:list/[a-z0-9-]+$",
+                "description": "The option catalog to pick from."
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ],
+                "description": "How many different options per use."
+              }
+            }
+          }
         }
       ]
     },
@@ -1937,6 +2414,19 @@
           "items": {
             "$ref": "#/$defs/effect"
           }
+        },
+        "sustain": {
+          "$ref": "#/$defs/sustain"
+        },
+        "endConditions": {
+          "type": "array",
+          "description": "Qualifiers that end the feature early when any one holds, as Rage ending if you don Heavy armor or have the Incapacitated condition. ORed, unlike effect qualifiers.",
+          "items": {
+            "$ref": "#/$defs/qualifier"
+          }
+        },
+        "options": {
+          "$ref": "#/$defs/optionList"
         }
       },
       "required": [
@@ -2216,13 +2706,32 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "conditionId": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/conditionId"
+                }
+              ],
+              "description": "Applies only while you have this condition, e.g. Danger Sense 'unless you have the Incapacitated condition', negated."
             }
           },
           "required": [
-            "type",
-            "featureId"
+            "type"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "oneOf": [
+            {
+              "required": [
+                "featureId"
+              ]
+            },
+            {
+              "required": [
+                "conditionId"
+              ]
+            }
+          ]
         },
         {
           "properties": {
@@ -3018,6 +3527,84 @@
           ]
         }
       ]
+    },
+    "sustain": {
+      "type": "object",
+      "description": "How a toggled feature is kept running. Rage lasts until the end of your next turn and is extended by any of the `extendedBy` events, up to `maximum`.",
+      "properties": {
+        "maximum": {
+          "$ref": "#/$defs/duration"
+        },
+        "extendedBy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trigger"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "maximum",
+        "extendedBy"
+      ],
+      "additionalProperties": false
+    },
+    "option": {
+      "type": "object",
+      "description": "One entry in an option catalog: a Brutal Strike effect, a Metamagic option, an Eldritch Invocation. Options live on the feature that introduces them and join the catalog named by that feature's `options.list`, so a later feature or another pack adds options without editing the first.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "cost": {
+          "$ref": "#/$defs/resourceCost"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        },
+        "duration": {
+          "$ref": "#/$defs/duration"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "effects"
+      ],
+      "additionalProperties": false
+    },
+    "optionList": {
+      "type": "object",
+      "description": "Options a feature adds to a catalog. `list` is the catalog id, shared by every feature that adds to or draws from it.",
+      "properties": {
+        "list": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9.-]*:list/[a-z0-9-]+$"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "list",
+        "items"
+      ],
+      "additionalProperties": false
     }
   }
 }
