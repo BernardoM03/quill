@@ -305,6 +305,14 @@
             }
           ],
           "description": "When the affected creature repeats the save to end the effect, as Intimidating Presence's 'at the end of each of the Frightened creature's turns'."
+        },
+        "endsOn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trigger"
+          },
+          "minItems": 1,
+          "description": "Events that end the effect without a save, as Knock Out's 'or until it takes any damage'."
         }
       },
       "required": [
@@ -388,7 +396,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -403,7 +411,8 @@
         "gainLevel",
         "makeAttackRoll",
         "forceSave",
-        "rollInitiative"
+        "rollInitiative",
+        "hitByAttack"
       ]
     },
     "trigger": {
@@ -923,7 +932,12 @@
         "increaseAbilityScore",
         "endCondition",
         "grantAttack",
-        "chooseOptions"
+        "chooseOptions",
+        "grantLanguage",
+        "saveOutcome",
+        "limitActions",
+        "keepCondition",
+        "extraTurn"
       ]
     },
     "effect": {
@@ -1552,6 +1566,21 @@
                   },
                   {
                     "$ref": "#/$defs/flatExpression"
+                  },
+                  {
+                    "type": "object",
+                    "description": "A share of the incoming amount, as Uncanny Dodge's half.",
+                    "properties": {
+                      "fraction": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "fraction"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -1940,7 +1969,15 @@
             ],
             "properties": {
               "target": {
-                "$ref": "#/$defs/rollTarget"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/rollTarget"
+                  },
+                  {
+                    "const": "jumpDistance"
+                  }
+                ],
+                "description": "The roll, or a stat that scales with an ability, as Second-Story Work's jump distance."
               },
               "value": {
                 "allOf": [
@@ -2298,6 +2335,259 @@
                   }
                 ],
                 "description": "How many different options per use."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantProficiency"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/skillId"
+                  },
+                  {
+                    "$ref": "#/$defs/toolId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "const": "savingThrow"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantProficiency"
+              },
+              "target": {
+                "const": "savingThrow"
+              }
+            },
+            "required": [
+              "type",
+              "target"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ability"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "The saving throws you become proficient in."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantLanguage"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/languageId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "saveOutcome"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Replaces what a save does for you. `appliesTo` is the `onSuccess` the effect normally has, so Evasion touches only half-damage saves.",
+                "properties": {
+                  "appliesTo": {
+                    "enum": [
+                      "half",
+                      "negate",
+                      "none"
+                    ]
+                  },
+                  "onSuccess": {
+                    "enum": [
+                      "half",
+                      "negate",
+                      "none"
+                    ]
+                  },
+                  "onFailure": {
+                    "enum": [
+                      "full",
+                      "half"
+                    ]
+                  }
+                },
+                "required": [
+                  "appliesTo"
+                ],
+                "minProperties": 2,
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "limitActions"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "On its turn the creature can do only `count` of the listed things.",
+                "properties": {
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "from": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "move",
+                        "action",
+                        "bonusAction",
+                        "reaction"
+                      ]
+                    },
+                    "minItems": 2,
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "count",
+                  "from"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "keepCondition"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/conditionId"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "extraTurn"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "round": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "The combat round the extra turn happens in."
+                  },
+                  "initiativeOffset": {
+                    "type": "integer",
+                    "description": "Added to your Initiative for the extra turn."
+                  }
+                },
+                "required": [
+                  "round",
+                  "initiativeOffset"
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -3036,6 +3326,193 @@
           ],
           "minProperties": 2,
           "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "anyOf"
+            },
+            "qualifiers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/qualifier"
+              },
+              "minItems": 2
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "qualifiers"
+          ],
+          "additionalProperties": false,
+          "description": "Holds when ANY member holds. The way to OR across different kinds, which a single qualifier's value list cannot: Sneak Attack's 'a Finesse or a Ranged weapon' is a weaponProperty and an attackRange."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "allOf"
+            },
+            "qualifiers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/qualifier"
+              },
+              "minItems": 2
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "qualifiers"
+          ],
+          "additionalProperties": false,
+          "description": "Holds when EVERY member holds. Only needed inside anyOf, since an effect's own qualifier list already ANDs."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "rollMode"
+            },
+            "mode": {
+              "enum": [
+                "advantage",
+                "disadvantage"
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "mode"
+          ],
+          "additionalProperties": false,
+          "description": "The roll has Advantage, or Disadvantage."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "nearbyCreature"
+            },
+            "relation": {
+              "$ref": "#/$defs/relation"
+            },
+            "within": {
+              "type": "number",
+              "minimum": 0
+            },
+            "around": {
+              "enum": [
+                "self",
+                "target"
+              ],
+              "description": "Whose position the distance is measured from."
+            },
+            "withoutCondition": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/conditionId"
+                }
+              ],
+              "description": "The nearby creature must not have this condition."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "relation",
+            "within",
+            "around"
+          ],
+          "additionalProperties": false,
+          "description": "Another creature in that relation to you stands within `within` feet, as Sneak Attack's ally within 5 feet of the target who isn't Incapacitated."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "movedThisTurn"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "You have moved this turn. Negate for Steady Aim's 'only if you haven't moved'."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "hasItem"
+            },
+            "itemId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/equipmentId"
+                },
+                {
+                  "$ref": "#/$defs/toolId"
+                }
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "itemId"
+          ],
+          "additionalProperties": false,
+          "description": "You have the item on your person."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "proficient"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The roll uses a skill, tool, or save you are proficient in. Reliable Talent needs it; Jack of All Trades negates it."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "cover"
+            },
+            "atLeast": {
+              "enum": [
+                "half",
+                "threeQuarters",
+                "total"
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "atLeast"
+          ],
+          "additionalProperties": false,
+          "description": "You are behind at least this degree of cover."
         }
       ]
     },
@@ -3435,6 +3912,14 @@
         "refundOnFailure": {
           "type": "boolean",
           "description": "True where the SRD says the use isn't expended if the attempt still fails, as with Tactical Mind."
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "uses",
+            "dice"
+          ],
+          "description": "`uses` (the default) spends the feature's uses or the resource's points. `dice` forgoes that many of the feature's damage dice, as a Cunning Strike option forgoing Sneak Attack d6s."
         }
       },
       "required": [
@@ -3554,6 +4039,13 @@
         },
         "duration": {
           "$ref": "#/$defs/duration"
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/qualifier"
+          },
+          "description": "Qualifiers that must hold to pick this option, as Poison's Poisoner's Kit."
         }
       },
       "required": [
