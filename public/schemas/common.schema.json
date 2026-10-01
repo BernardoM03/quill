@@ -99,7 +99,15 @@
           "description": "How many dice. A deferred value where the count is itself a number from the sheet, as Frenzy's d6s equal to your Rage Damage bonus."
         },
         "die": {
-          "$ref": "#/$defs/rollType"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/rollType"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "The die. A deferred value where a class column holds it, as the Martial Arts die."
         },
         "modifier": {
           "description": "A flat or derived amount added to the rolled total, as in Stone's Endurance's '1d12 plus your Constitution modifier'. Carried here rather than as a sibling effect because it is part of one quantity - splitting it would let a consumer apply the dice and drop the modifier.",
@@ -109,8 +117,27 @@
             },
             {
               "$ref": "#/$defs/deferredValue"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "minItems": 2,
+              "description": "Summed, as Deflect Attacks' Dexterity modifier plus Monk level."
             }
           ]
+        },
+        "minimum": {
+          "type": "integer",
+          "description": "Lowest total, as Wholeness of Body's 'minimum of 1 Hit Point'."
         }
       },
       "required": [
@@ -388,10 +415,11 @@
     },
     "specialImmunity": {
       "type": "string",
-      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively.",
+      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes.",
       "enum": [
         "magicalSleep",
-        "disease"
+        "disease",
+        "foodAndWater"
       ]
     },
     "triggerEvent": {
@@ -412,7 +440,8 @@
         "makeAttackRoll",
         "forceSave",
         "rollInitiative",
-        "hitByAttack"
+        "hitByAttack",
+        "fall"
       ]
     },
     "trigger": {
@@ -689,6 +718,11 @@
             }
           ],
           "description": "What you can spend to use the feature when no uses remain, as Intimidating Presence restored by a use of Rage."
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Floor on a deferred `max`, as Wholeness of Body's 'minimum of once'."
         }
       },
       "required": [
@@ -701,7 +735,15 @@
       "type": "object",
       "properties": {
         "value": {
-          "type": "number"
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "A deferred value where the length scales, as Quivering Palm's days equal to your Monk level."
         },
         "unit": {
           "type": "string",
@@ -937,7 +979,11 @@
         "saveOutcome",
         "limitActions",
         "keepCondition",
-        "extraTurn"
+        "extraTurn",
+        "replaceDamageDice",
+        "changeDamageType",
+        "traverseTerrain",
+        "triggerFeature"
       ]
     },
     "effect": {
@@ -962,7 +1008,7 @@
           "description": "Shape depends on `type`; see the allOf constraints below. Unconstrained for effect types that do not yet have an if/then pair."
         },
         "multiplier": {
-          "type": "integer",
+          "type": "number",
           "description": "Scales `value` when it is a derived quantity. `value: \"$derived:exhaustionLevel\"` with `multiplier: -2` is 'reduced by 2 times your Exhaustion level'. Omit when `value` is already the final amount. Also doubles a derived value outright, as Relentless Rage's Hit Points equal to twice your Barbarian level."
         },
         "affects": {
@@ -1020,6 +1066,14 @@
             "perTurn",
             "perRound"
           ]
+        },
+        "cost": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/resourceCost"
+            }
+          ],
+          "description": "What applying this one effect spends, when the rest of the feature is free. Disciplined Survivor's proficiency costs nothing; its reroll costs 1 Focus Point."
         }
       },
       "required": [
@@ -1974,7 +2028,10 @@
                     "$ref": "#/$defs/rollTarget"
                   },
                   {
-                    "const": "jumpDistance"
+                    "enum": [
+                      "jumpDistance",
+                      "unarmedStrikeSaveDc"
+                    ]
                   }
                 ],
                 "description": "The roll, or a stat that scales with an ability, as Second-Story Work's jump distance."
@@ -2030,6 +2087,20 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "upTo": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    },
+                    "required": [
+                      "upTo"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Refill until you have this many, as Perfect Focus's 'until you have 4'."
                   }
                 ]
               }
@@ -2295,9 +2366,40 @@
             ],
             "properties": {
               "value": {
-                "type": "integer",
-                "minimum": 1,
-                "description": "How many attacks. Narrow range and source with qualifiers; the action spent is the feature's activation."
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "oneOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          {
+                            "$ref": "#/$defs/deferredValue"
+                          }
+                        ]
+                      },
+                      "actionType": {
+                        "$ref": "#/$defs/actionType"
+                      }
+                    },
+                    "required": [
+                      "count",
+                      "actionType"
+                    ],
+                    "additionalProperties": false
+                  }
+                ],
+                "description": "How many attacks, and the action they cost when the effect has its own: Flurry of Blows is two Unarmed Strikes as a Bonus Action."
               }
             }
           }
@@ -2588,6 +2690,115 @@
                   "initiativeOffset"
                 ],
                 "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "replaceDamageDice"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/diceExpression"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "changeDamageType"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/damageType"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "traverseTerrain"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "verticalSurfaces",
+                    "liquids",
+                    "difficultTerrain"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "triggerFeature"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/featureId"
+                  }
+                ],
+                "description": "A feature you may use right away, without paying its action, as Fleet Step's Step of the Wind."
               }
             }
           }
@@ -3048,24 +3259,29 @@
             "type": {
               "const": "damageType"
             },
-            "damageType": {
-              "oneOf": [
-                {
-                  "$ref": "#/$defs/damageType"
-                },
-                {
-                  "$ref": "#/$defs/deferredValue"
-                }
-              ],
-              "description": "Applies only to damage of this type. Accepts a $choice: sentinel when the type is chosen by the player."
-            },
             "negate": {
               "type": "boolean"
+            },
+            "damageTypes": {
+              "type": "array",
+              "description": "Matches damage of ANY of these types, as Deflect Attacks' Bludgeoning, Piercing, or Slashing.",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/damageType"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
             "type",
-            "damageType"
+            "damageTypes"
           ],
           "additionalProperties": false
         },
@@ -3505,6 +3721,13 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "subject": {
+              "enum": [
+                "self",
+                "target"
+              ],
+              "description": "Who is behind cover. Defaults to you."
             }
           },
           "required": [
@@ -3513,6 +3736,95 @@
           ],
           "additionalProperties": false,
           "description": "You are behind at least this degree of cover."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "weaponCategory"
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "simple",
+                  "martial"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "categories"
+          ],
+          "additionalProperties": false,
+          "description": "The weapon is in ANY of these categories. Monk weapons are Simple Melee weapons, or Martial Melee weapons with the Light property."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "classLevel"
+            },
+            "atLeast": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "atLeast"
+          ],
+          "additionalProperties": false,
+          "description": "Your level in the class granting the feature is at least this. Lets one feature hold a benefit a later level unlocks, as Heightened Focus's extra Patient Defense benefit."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "saveResult"
+            },
+            "result": {
+              "enum": [
+                "success",
+                "failure"
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "result"
+          ],
+          "additionalProperties": false,
+          "description": "The target's save against this feature succeeded, or failed. For rules that do something on a success too, as Stunning Strike halving Speed when the target saves."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "sourceFeature"
+            },
+            "featureId": {
+              "$ref": "#/$defs/featureId"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "featureId"
+          ],
+          "additionalProperties": false,
+          "description": "The attack or roll was granted by this feature, as Open Hand Technique triggering only on Flurry of Blows attacks."
         }
       ]
     },
@@ -3947,7 +4259,26 @@
           "type": "integer"
         },
         "modifier": {
-          "$ref": "#/$defs/deferredValue"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/deferredValue"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "minItems": 2,
+              "description": "Summed, as Deflect Attacks' Dexterity modifier plus Monk level."
+            }
+          ]
         }
       },
       "required": [
