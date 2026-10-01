@@ -357,7 +357,11 @@
         "finishRest",
         "takeAction",
         "startTurn",
-        "endTurn"
+        "endTurn",
+        "failRoll",
+        "criticalHit",
+        "useFeature",
+        "gainLevel"
       ]
     },
     "trigger": {
@@ -378,6 +382,22 @@
         "optional": {
           "type": "boolean",
           "description": "True where the SRD says 'you can' rather than 'you do', so the player decides whether to spend the trigger."
+        },
+        "roll": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/rollTarget"
+            }
+          ],
+          "description": "Which roll, when event is failRoll or criticalHit. A missed attack is a failed attackRoll."
+        },
+        "featureId": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/featureId"
+            }
+          ],
+          "description": "Which feature, when event is useFeature. Tactical Shift hangs off Second Wind this way."
         }
       },
       "required": [
@@ -401,13 +421,14 @@
     },
     "relation": {
       "type": "string",
-      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive.",
+      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks.",
       "enum": [
         "self",
         "others",
         "conditionSource",
         "ally",
-        "enemy"
+        "enemy",
+        "triggerCreature"
       ]
     },
     "acFormula": {
@@ -438,13 +459,14 @@
     },
     "equipmentCategory": {
       "type": "string",
-      "description": "What the character is wearing or wielding. Negate for 'while not wearing armor'. `armor` is the umbrella for qualifiers that mean any suit of armor; an armor item names its specific category instead.",
+      "description": "What the character is wearing or wielding. Negate for 'while not wearing armor'. `armor` is the umbrella for qualifiers that mean any suit of armor; an armor item names its specific category instead. `weapon` matches any weapon; a choice uses it to offer weapon kinds, as Weapon Mastery does.",
       "enum": [
         "armor",
         "lightArmor",
         "mediumArmor",
         "heavyArmor",
-        "shield"
+        "shield",
+        "weapon"
       ]
     },
     "castingOverrides": {
@@ -511,8 +533,8 @@
     },
     "deferredValue": {
       "type": "string",
-      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id declared by any feature of the same grantor - the species, class, subclass, or feat - resolved when the player picks. Scoped to the grantor rather than to the single feature because the SRD routinely lets one decision drive several traits: Draconic Ancestry is chosen once and read by both Breath Weapon and Damage Resistance. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves.",
-      "pattern": "^\\$(choice|derived):[A-Za-z][A-Za-z0-9-]*$"
+      "description": "A value not known when the content is authored. `$choice:<choiceId>` refers to a choices[].id declared by any feature of the same grantor - the species, class, subclass, or feat - resolved when the player picks. Scoped to the grantor rather than to the single feature because the SRD routinely lets one decision drive several traits: Draconic Ancestry is chosen once and read by both Breath Weapon and Damage Resistance. `$derived:<stat>` is computed from the character sheet (walkingSpeed, proficiencyBonus, CHA, ...). The loader verifies every $choice: id resolves. `$derived:classLevel` is your level in the class that grants the feature, so Second Wind's '1d10 plus your Fighter level' needs no class-specific name. `$scaling` is the owning feature's `scaling` value at your current level: Second Wind's uses grow 2, 3, 4 down a table column, so `uses.max` is `$scaling` and the rows carry the numbers.",
+      "pattern": "^\\$((choice|derived):[A-Za-z][A-Za-z0-9-]*|scaling)$"
     },
     "rest": {
       "type": "string",
@@ -525,7 +547,7 @@
     },
     "activation": {
       "type": "object",
-      "description": "What it costs to use a feature, in action economy.",
+      "description": "What it costs to use a feature: the action it takes, and any resource it spends.",
       "properties": {
         "type": {
           "type": "string",
@@ -542,6 +564,9 @@
         "trigger": {
           "type": "string",
           "description": "Required when type is reaction: what the reaction responds to."
+        },
+        "cost": {
+          "$ref": "#/$defs/resourceCost"
         }
       },
       "required": [
@@ -554,14 +579,42 @@
       "description": "A bounded pool of uses attached to a single feature.",
       "properties": {
         "max": {
-          "description": "Fixed number, or a named formula the app resolves (e.g. 'proficiencyBonus').",
-          "type": [
-            "integer",
-            "string"
+          "description": "A fixed number, or a deferred value: `$derived:proficiencyBonus`, or `$scaling` for a count that grows with level.",
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
           ]
         },
         "recharge": {
           "$ref": "#/$defs/rest"
+        },
+        "recover": {
+          "type": "object",
+          "description": "A partial refill on a shorter rest, on top of the full refill named by `recharge`. Second Wind regains one use on a Short Rest and all on a Long Rest.",
+          "properties": {
+            "rest": {
+              "$ref": "#/$defs/rest"
+            },
+            "amount": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "rest",
+            "amount"
+          ],
+          "additionalProperties": false
+        },
+        "perTurn": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Most uses spendable in one turn, as Action Surge's 'only once on a turn'."
         }
       },
       "required": [
@@ -605,8 +658,16 @@
           "type": "string"
         },
         "count": {
-          "type": "integer",
-          "minimum": 1
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "How many to pick. `$scaling` where the count grows with level, as Weapon Mastery's 3 to 6."
         },
         "from": {
           "description": "Either a list id to resolve, or a literal set of options. An option is a bare string when what the player reads is also what the mechanics consume, and a {value,label} pair when they differ: Draconic Ancestry offers ten dragons that collapse to five damage types, so the label names the dragon while the value carries the type an effect picks up through $choice:. Without the pair that mapping would have to live inside a consumer, and the dragon would stop being data.",
@@ -664,6 +725,24 @@
           "items": {
             "$ref": "#/$defs/qualifier"
           }
+        },
+        "swap": {
+          "type": "object",
+          "description": "When picks may be changed afterwards, and how many at a time. Fighting Style swaps one on gaining a Fighter level; Weapon Mastery swaps one on a Long Rest.",
+          "properties": {
+            "trigger": {
+              "$ref": "#/$defs/trigger"
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "trigger",
+            "count"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -758,7 +837,14 @@
         "grantAction",
         "moveThroughOccupiedSpace",
         "setRestDuration",
-        "rerollD20"
+        "rerollD20",
+        "heal",
+        "setAttackCount",
+        "extraAction",
+        "grantMovement",
+        "grantMastery",
+        "substituteMastery",
+        "setCritThreshold"
       ]
     },
     "effect": {
@@ -1350,7 +1436,8 @@
               "type": {
                 "enum": [
                   "grantTemporaryHitPoints",
-                  "reduceDamage"
+                  "reduceDamage",
+                  "heal"
                 ]
               }
             },
@@ -1374,6 +1461,9 @@
                   },
                   {
                     "$ref": "#/$defs/diceExpression"
+                  },
+                  {
+                    "$ref": "#/$defs/flatExpression"
                   }
                 ]
               }
@@ -1587,6 +1677,170 @@
             "properties": {
               "target": {
                 "$ref": "#/$defs/rollTarget"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setAttackCount"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "integer",
+                "minimum": 2,
+                "description": "Attacks you make, in total, when you take the Attack action on your turn."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "extraAction"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/actionType"
+                  }
+                ],
+                "description": "What you get one more of. Narrow which actions it may be spent on with a namedAction qualifier."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantMovement"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/movementGrant"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantMastery"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "description": "The weapon kind whose mastery property you can use.",
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/equipmentId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "substituteMastery"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "array",
+                "description": "Mastery properties you may use in place of the weapon's own for one attack.",
+                "items": {
+                  "$ref": "#/$defs/weaponMastery"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setCritThreshold"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "enum": [
+                  "attackRoll",
+                  "deathSave"
+                ],
+                "description": "attackRoll scores a Critical Hit; deathSave counts as rolling a 20."
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 2,
+                "maximum": 20,
+                "description": "Lowest d20 roll that counts."
               }
             }
           }
@@ -2173,22 +2427,28 @@
             "type": {
               "const": "featCategory"
             },
-            "featCategory": {
-              "type": "string",
-              "description": "Narrows a feat pool to one category, as Human's Versatile does to Origin feats.",
-              "enum": [
-                "origin",
-                "general",
-                "fightingStyle"
-              ]
-            },
             "negate": {
               "type": "boolean"
+            },
+            "featCategories": {
+              "type": "array",
+              "description": "Narrows a feat pool to ANY of these categories. Human's Versatile names origin; a class's Ability Score Improvement negates origin, leaving every feat you could qualify for.",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "origin",
+                  "general",
+                  "fightingStyle",
+                  "epicBoon"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
             "type",
-            "featCategory"
+            "featCategories"
           ],
           "additionalProperties": false
         },
@@ -2197,8 +2457,38 @@
             "type": {
               "const": "attackSource"
             },
-            "attackSource": {
-              "$ref": "#/$defs/attackSource"
+            "negate": {
+              "type": "boolean"
+            },
+            "attackSources": {
+              "type": "array",
+              "description": "Matches if the attack comes from ANY of these sources, so Improved Critical's 'weapons and Unarmed Strikes' is one qualifier.",
+              "items": {
+                "$ref": "#/$defs/attackSource"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "type",
+            "attackSources"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "skill"
+            },
+            "skills": {
+              "type": "array",
+              "description": "Matches an ability check that uses ANY of these skills.",
+              "items": {
+                "$ref": "#/$defs/skillId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             },
             "negate": {
               "type": "boolean"
@@ -2206,8 +2496,56 @@
           },
           "required": [
             "type",
-            "attackSource"
+            "skills"
           ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "namedAction"
+            },
+            "actions": {
+              "type": "array",
+              "description": "Matches when the action taken is ANY of these. Action Surge's 'except the Magic action' is this negated.",
+              "items": {
+                "$ref": "#/$defs/namedAction"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "actions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "hitPoints"
+            },
+            "bloodied": {
+              "type": "boolean",
+              "description": "True: at half your Hit Point maximum or lower."
+            },
+            "minimum": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "At least this many Hit Points."
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "minProperties": 2,
           "additionalProperties": false
         }
       ]
@@ -2323,6 +2661,17 @@
             "perTurn",
             "perRound"
           ]
+        },
+        "bonus": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "Added to the new roll, as Indomitable's bonus equal to your Fighter level."
         }
       },
       "required": [
@@ -2395,7 +2744,8 @@
         "species",
         "origin",
         "condition",
-        "language"
+        "language",
+        "equipment"
       ]
     },
     "weaponProperty": {
@@ -2571,6 +2921,103 @@
         "options"
       ],
       "additionalProperties": false
+    },
+    "resourceCost": {
+      "type": "object",
+      "description": "What using a feature spends. Exactly one of `featureId` (spend that feature's `uses`, as Tactical Mind spends Second Wind) or `resource` (a class resource id from the class's `resources`, as Sorcery Points).",
+      "properties": {
+        "featureId": {
+          "$ref": "#/$defs/featureId"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "amount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
+        },
+        "refundOnFailure": {
+          "type": "boolean",
+          "description": "True where the SRD says the use isn't expended if the attempt still fails, as with Tactical Mind."
+        }
+      },
+      "required": [
+        "amount"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "featureId"
+          ]
+        },
+        {
+          "required": [
+            "resource"
+          ]
+        }
+      ]
+    },
+    "flatExpression": {
+      "type": "object",
+      "description": "A fixed number plus a modifier, with no dice, as Heroic Rally's '5 plus your Constitution modifier'. The diceless sibling of diceExpression, kept separate so a dice expression always has dice.",
+      "properties": {
+        "base": {
+          "type": "integer"
+        },
+        "modifier": {
+          "$ref": "#/$defs/deferredValue"
+        }
+      },
+      "required": [
+        "base",
+        "modifier"
+      ],
+      "additionalProperties": false
+    },
+    "movementGrant": {
+      "type": "object",
+      "description": "Movement granted outside your normal move. Exactly one of `feet` or `speedFraction`. `provokesOpportunityAttacks: false` is Tactical Shift's and Remarkable Athlete's 'without provoking Opportunity Attacks'.",
+      "properties": {
+        "feet": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ]
+        },
+        "speedFraction": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "provokesOpportunityAttacks": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "feet"
+          ]
+        },
+        {
+          "required": [
+            "speedFraction"
+          ]
+        }
+      ]
     }
   }
 }

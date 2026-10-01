@@ -84,19 +84,25 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "ability": {
-                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+                  "abilities": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
                   },
                   "minimum": {
                     "type": "integer"
                   }
                 },
                 "required": [
-                  "ability",
+                  "abilities",
                   "minimum"
                 ],
                 "additionalProperties": false
-              }
+              },
+              "description": "Every entry must hold. Inside one entry, ANY listed ability meeting the minimum is enough, so Fighter's 'Strength or Dexterity 13' is one entry and Paladin's 'Strength and Charisma 13' is two."
             },
             "proficienciesGained": {
               "type": "object",
