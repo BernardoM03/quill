@@ -412,7 +412,7 @@
     },
     "acFormula": {
       "type": "object",
-      "description": "Structured unarmored-AC formula",
+      "description": "Structured AC formula: a base plus ability modifiers, optionally capped. Unarmored Defense and Draconic Resilience leave `maxBonus` off; Medium armor's '12 + Dex modifier (max 2)' sets it.",
       "properties": {
         "base": {
           "type": "integer",
@@ -423,6 +423,11 @@
           "items": {
             "$ref": "#/$defs/ability"
           }
+        },
+        "maxBonus": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Cap on the summed ability modifiers. Omit when uncapped."
         }
       },
       "required": [
@@ -433,7 +438,7 @@
     },
     "equipmentCategory": {
       "type": "string",
-      "description": "What the character is wearing or wielding. Negate for 'while not wearing armor'.",
+      "description": "What the character is wearing or wielding. Negate for 'while not wearing armor'. `armor` is the umbrella for qualifiers that mean any suit of armor; an armor item names its specific category instead.",
       "enum": [
         "armor",
         "lightArmor",
@@ -2367,6 +2372,11 @@
       "description": "Namespaced content id for Tools: <packId>:tool/<slug>",
       "pattern": "^[a-z0-9][a-z0-9.-]*:tool/[a-z0-9-]+$"
     },
+    "equipmentId": {
+      "type": "string",
+      "description": "Namespaced content id for Equipment: <packId>:equipment/<slug>. Covers everything in the Equipment chapter except tools, which keep their own toolId because proficiency grants and Skilled's 'any skill or tool' pool name them.",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:equipment/[a-z0-9-]+$"
+    },
     "entityKind": {
       "type": "string",
       "description": "An entity type segment, matching the middle part of an id. Naming a kind rather than listing members keeps an open pool open: a skill added by a later pack becomes selectable without editing the feature that offers the choice.",
@@ -2397,6 +2407,20 @@
         "versatile"
       ]
     },
+    "weaponMastery": {
+      "type": "string",
+      "description": "A weapon's mastery property. Every weapon has exactly one, usable only by a character with a feature such as Weapon Mastery that unlocks it.",
+      "enum": [
+        "cleave",
+        "graze",
+        "nick",
+        "push",
+        "sap",
+        "slow",
+        "topple",
+        "vex"
+      ]
+    },
     "actionType": {
       "type": "string",
       "enum": [
@@ -2419,6 +2443,128 @@
         "spell",
         "unarmed"
       ]
+    },
+    "cost": {
+      "type": "object",
+      "description": "A price in coins. Kept in its listed coin rather than converted to GP, so 1 SP stays 1 SP and the sheet does the conversion.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "cp",
+            "sp",
+            "ep",
+            "gp",
+            "pp"
+          ]
+        }
+      },
+      "required": [
+        "amount",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "itemVariant": {
+      "type": "object",
+      "description": "One form of an item that comes in several, each with its own price and weight: a Gaming Set's dice or playing cards, an Arcane Focus's crystal or orb, a Riding Saddle. Variants are not separate entities because nothing grants proficiency in, or points at, one form over the item.",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Pounds. Omit where the table shows a dash."
+        },
+        "alsoWeapon": {
+          "$ref": "#/$defs/equipmentId",
+          "description": "The weapon this form also counts as, as the staff focus does for a Quarterstaff."
+        }
+      },
+      "required": [
+        "slug",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "equipmentGrant": {
+      "type": "object",
+      "description": "Some number of one item, as listed in starting equipment or a pack's contents. `variant` names an itemVariant slug; leave it off an item that has variants and the player picks the form.",
+      "properties": {
+        "id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/equipmentId"
+            },
+            {
+              "$ref": "#/$defs/toolId"
+            }
+          ]
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "variant": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "note": {
+          "type": "string",
+          "description": "Display-only detail with no mechanical result, as in Acolyte's 'Book (prayers)'."
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "startingEquipment": {
+      "type": "object",
+      "description": "Mutually exclusive kits offered at character creation. Shared by classes and origins, which print them the same way: option A is a list of items plus pocket gold, option B is gold alone.",
+      "properties": {
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/equipmentGrant"
+                }
+              },
+              "gold": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "additionalProperties": false
     }
   }
 }

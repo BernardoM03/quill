@@ -17,6 +17,7 @@ PAIRS=(
   "skill:skills"
   "tool:tools"
   "spell:spells"
+  "equipment:equipment"
   "conditions:conditions"
   "pack:pack"
 )

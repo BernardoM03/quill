@@ -66,37 +66,7 @@
           ]
         },
         "startingEquipment": {
-          "type": "object",
-          "properties": {
-            "options": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "gold": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "label"
-                ],
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": [
-            "options"
-          ],
-          "additionalProperties": false
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/startingEquipment"
         },
         "startingGold": {
           "type": [
@@ -324,7 +294,8 @@
           "type": "boolean"
         },
         "focus": {
-          "type": "string"
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId",
+          "description": "The spellcasting focus item this class can use, such as an Arcane Focus."
         },
         "swapOnLevelUp": {
           "type": "integer",

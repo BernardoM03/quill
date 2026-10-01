@@ -18,6 +18,14 @@
         "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability",
         "description": "The ability a check using this tool is normally made against. Omitted where the rules say it varies."
       },
+      "cost": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost" },
+      "weight": { "type": "number", "minimum": 0, "description": "Pounds. Omit where the rules say it varies." },
+      "variants": {
+        "type": "array",
+        "description": "Forms that each need their own proficiency, as a Gaming Set's dice or a Musical Instrument's lute. Price and weight live on the variant when they differ by form.",
+        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/itemVariant" },
+        "minItems": 1
+      },
       "description": { "type": "string" }
     },
     "required": ["id", "name", "category"],
