@@ -8648,6 +8648,67 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/hold-monster",
+    "name": "Hold Monster",
+    "level": 5,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 90,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a straight piece of iron",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Choose a creature that you can see within range. The target must succeed on a Wisdom saving throw or have the Paralyzed condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success.",
+    "higherLevels": "You can target one additional creature for each spell slot level above 5.",
+    "shortDescription": "A creature makes a Wisdom save or is Paralyzed.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "targetsPerSlot": 1
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/paralyzed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/hold-person",
     "name": "Hold Person",
     "level": 2,
@@ -9231,6 +9292,123 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/insect-plague",
+    "name": "Insect Plague",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 300,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a locust",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Swarming locusts fill a 20-foot-radius Sphere centered on a point you choose within range. The Sphere remains for the duration, and its area is Lightly Obscured and Difficult Terrain. When the swarm appears, each creature in it makes a Constitution saving throw, taking 4d10 Piercing damage on a failed save or half as much damage on a successful one. A creature also makes this save when it enters the spell’s area for the first time on a turn or ends its turn there. A creature makes this save only once per turn.",
+    "higherLevels": "The damage increases by 1d10 for each spell slot level above 5.",
+    "shortDescription": "20-foot-radius Sphere of locusts: 4d10 Piercing damage, Constitution save for half.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true,
+          "obscured": "light"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": {
+          "count": 4,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": {
+          "count": 4,
+          "die": "d10"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d10"
+          }
+        },
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/invisibility",
     "name": "Invisibility",
     "level": 2,
@@ -9366,6 +9544,49 @@
     "ritual": false,
     "description": "Choose an object that you can see within range. The object can be a door, a box, a chest, a set of manacles, a padlock, or another object that contains a mundane or magical means that prevents access. A target that is held shut by a mundane lock or that is stuck or barred becomes unlocked, unstuck, or unbarred. If the object has multiple locks, only one of them is unlocked. If the target is held shut by Arcane Lock, that spell is suppressed for 10 minutes, during which time the target can be opened and closed. When you cast the spell, a loud knock, audible up to 300 feet away, emanates from the target.",
     "shortDescription": "Unlock one lock or bar on an object; a loud knock sounds.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/legend-lore",
+    "name": "Legend Lore",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "incense worth 250+ GP, which the spell consumes, and four ivory strips worth 50+ GP each",
+    "materialCost": {
+      "cost": {
+        "amount": 250,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Name or describe a famous person, place, or object. The spell brings to your mind a brief summary of the significant lore about that famous thing, as described by the GM. The lore might consist of important details, amusing revelations, or even secret lore that has never been widely known. The more information you already know about the thing, the more precise and detailed the information you receive is. That information is accurate but might be couched in figurative language or poetry, as determined by the GM. If the famous thing you chose isn’t actually famous, you hear sad musical notes played on a trombone, and the spell fails.",
+    "shortDescription": "Learn significant lore about a famous person, place, or object.",
     "tags": [
       "narrative"
     ],
@@ -10160,6 +10381,65 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/mass-cure-wounds",
+    "name": "Mass Cure Wounds",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A wave of healing energy washes out from a point you can see within range. Choose up to six creatures in a 30-foot-radius Sphere centered on that point. Each target regains Hit Points equal to 5d8 plus your spellcasting ability modifier.",
+    "higherLevels": "The healing increases by 1d8 for each spell slot level above 5.",
+    "shortDescription": "Up to six creatures in a 30-foot Sphere regain 5d8 + spellcasting modifier.",
+    "targets": {
+      "count": 6,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 5,
+          "die": "d8",
+          "modifier": "$derived:spellcastingModifier"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 30
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/mass-healing-word",
     "name": "Mass Healing Word",
     "level": 3,
@@ -10465,6 +10745,52 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/mislead",
+    "name": "Mislead",
+    "level": 5,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You gain the Invisible condition at the same time that an illusory double of you appears where you are standing. The double lasts for the duration, but the invisibility ends immediately after you make an attack roll, deal damage, or cast a spell. As a Magic action, you can move the illusory double up to twice your Speed and make it gesture, speak, and behave in whatever way you choose. It is intangible and invulnerable. You can see through its eyes and hear through its ears as if you were located where it is.",
+    "shortDescription": "You turn Invisible and project an illusory double.",
+    "endsOn": [
+      {
+        "event": "makeAttackRoll"
+      },
+      {
+        "event": "hitWithAttack"
+      },
+      {
+        "event": "takeAction",
+        "action": "magic"
+      }
+    ],
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/invisible"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/misty-step",
     "name": "Misty Step",
     "level": 2,
@@ -10495,6 +10821,84 @@
       {
         "type": "teleport",
         "value": 30
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/modify-memory",
+    "name": "Modify Memory",
+    "level": 5,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You attempt to reshape another creature’s memories. One creature that you can see within range makes a Wisdom saving throw. If you are fighting the creature, it has Advantage on the save. On a failed save, the target has the Charmed condition for the duration. While Charmed in this way, the target also has the Incapacitated condition and is unaware of its surroundings, though it can hear you. If it takes any damage or is targeted by another spell, this spell ends, and no memories are modified. While this charm lasts, you can affect the target’s memory of an event that it experienced within the last 24 hours and that lasted no more than 10 minutes. You can permanently eliminate all memory of the event, allow the target to recall the event with perfect clarity, change its memory of the event’s details, or create a memory of some other event. You must speak to the target to describe how its memories are affected, and it must be able to understand your language for the modified memories to take root. Its mind fills in any gaps in the details of your description. If the spell ends before you finish describing the modified memories, the creature’s memory isn’t altered. Otherwise, the modified memories take hold when the spell ends. A modified memory doesn’t necessarily affect how a creature behaves, particularly if the memory contradicts the creature’s natural inclinations, alignment, or beliefs. An illogical modified memory, such as a false memory of how much the creature enjoyed swimming in acid, is dismissed as a bad dream. The GM might deem a modified memory too nonsensical to affect a creature. A Remove Curse or Greater Restoration spell cast on the target restores the creature’s true memory.",
+    "higherLevels": "You can alter the target’s memories of an event that took place up to 7 days ago (level 6 spell slot), 30 days ago (level 7 spell slot), 365 days ago (level 8 spell slot), or any time in the creature’s past (level 9 spell slot).",
+    "shortDescription": "Wisdom save or Charmed and Incapacitated while you rewrite a recent memory.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "endsOn": [
+            {
+              "event": "takeDamage"
+            }
+          ]
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/incapacitated",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "situationType",
+            "situationType": "combat"
+          }
+        ]
       }
     ]
   },
@@ -10646,6 +11050,41 @@
     "ritual": false,
     "description": "For the duration, you hide a target that you touch from Divination spells. The target can be a willing creature, or it can be a place or an object no larger than 10 feet in any dimension. The target can’t be targeted by any Divination spell or perceived through magical scrying sensors.",
     "shortDescription": "Hide a creature, place, or object from Divination spells and scrying.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/passwall",
+    "name": "Passwall",
+    "level": 5,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of sesame seeds",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A passage appears at a point that you can see on a wooden, plaster, or stone surface (such as a wall, ceiling, or floor) within range and lasts for the duration. You choose the opening’s dimensions: up to 5 feet wide, 8 feet tall, and 20 feet deep. The passage creates no instability in a structure surrounding it. When the opening disappears, any creatures or objects still in the passage created by the spell are safely ejected to an unoccupied space nearest to the surface on which you cast the spell.",
+    "shortDescription": "Open a passage through wood, plaster, or stone.",
     "tags": [
       "narrative"
     ],
@@ -10916,6 +11355,113 @@
             "Riding Horse"
           ]
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/planar-binding",
+    "name": "Planar Binding",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a jewel worth 1,000+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 1000,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You attempt to bind a Celestial, an Elemental, a Fey, or a Fiend to your service. The creature must be within range for the entire casting of the spell. (Typically, the creature is first summoned into the center of the inverted version of the Magic Circle spell to trap it while this spell is cast.) At the completion of the casting, the target must succeed on a Charisma saving throw or be bound to serve you for the duration. If the creature was summoned or created by another spell, that spell’s duration is extended to match the duration of this spell. A bound creature must follow your commands to the best of its ability. You might command the creature to accompany you on an adventure, to guard a location, or to deliver a message. If the creature is Hostile, it strives to twist your commands to achieve its own objectives. If the creature carries out your commands completely before the spell ends, it travels to you to report this fact if you are on the same plane of existence. If you are on a different plane, it returns to the place where you bound it and remains there until the spell ends.",
+    "higherLevels": "The duration increases with a spell slot of level 6 (10 days), 7 (30 days), 8 (180 days), and 9 (366 days).",
+    "shortDescription": "A Celestial, Elemental, Fey, or Fiend makes a Charisma save or serves you.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "duration": [
+        {
+          "minSlot": 6,
+          "duration": {
+            "value": 10,
+            "unit": "day"
+          }
+        },
+        {
+          "minSlot": 7,
+          "duration": {
+            "value": 30,
+            "unit": "day"
+          }
+        },
+        {
+          "minSlot": 8,
+          "duration": {
+            "value": 180,
+            "unit": "day"
+          }
+        },
+        {
+          "minSlot": 9,
+          "duration": {
+            "value": 366,
+            "unit": "day"
+          }
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "CHA",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "celestial",
+              "elemental",
+              "fey",
+              "fiend"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -11571,6 +12117,68 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/raise-dead",
+    "name": "Raise Dead",
+    "level": 5,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a diamond worth 500+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 500,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "With a touch, you revive a dead creature if it has been dead no longer than 10 days and it wasn’t Undead when it died. The creature returns to life with 1 Hit Point. This spell also neutralizes any poisons that affected the creature at the time of death. This spell closes all mortal wounds, but it doesn’t restore missing body parts. If the creature is lacking body parts or organs integral for its survival— its head, for instance—the spell automatically fails. Coming back from the dead is an ordeal. The target takes a −4 penalty to D20 Tests. Every time the target finishes a Long Rest, the penalty is reduced by 1 until it becomes 0.",
+    "shortDescription": "Revive a creature dead up to 10 days with 1 Hit Point and a fading -4 to D20 Tests.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "revive",
+        "value": {
+          "hitPoints": 1,
+          "within": {
+            "value": 10,
+            "unit": "day"
+          }
+        },
+        "affects": "target"
+      },
+      {
+        "type": "rollBonus",
+        "target": "d20Test",
+        "value": -4,
+        "affects": "target"
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/ray-of-enfeeblement",
     "name": "Ray of Enfeeblement",
     "level": 2,
@@ -11816,6 +12424,68 @@
           "value": 1,
           "unit": "round"
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/reincarnate",
+    "name": "Reincarnate",
+    "level": 5,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "rare oils worth 1,000+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 1000,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a dead Humanoid or a piece of one. If the creature has been dead no longer than 10 days, the spell forms a new body for it and calls the soul to enter that body. Roll 1d10 and consult the table below to determine the body’s species, or the GM chooses another playable species. 1d10 Species 1d10 Species Roll again.\n\nGoliath Dragonborn Halfling Dwarf Human Elf Orc Gnome Tiefling The reincarnated creature makes any choices that a species’ description offers, and the creature recalls its former life. It retains the capabilities it had in its original form, except it loses the traits of its previous species and gains the traits of its new one.",
+    "shortDescription": "Revive a Humanoid dead up to 10 days in a new body of a random species.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "revive",
+        "value": {
+          "hitPoints": "max",
+          "within": {
+            "value": 10,
+            "unit": "day"
+          }
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "humanoid"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -12285,6 +12955,51 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/scrying",
+    "name": "Scrying",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a focus worth 1,000+ GP, such as a crystal ball, mirror, or water-filled font",
+    "materialCost": {
+      "cost": {
+        "amount": 1000,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You can see and hear a creature you choose that is on the same plane of existence as you. The target makes a Wisdom saving throw, which is modified (see the tables below) by how well you know the target and the sort of physical connection you have to it. The target doesn’t know what it is making the save against, only that it feels uneasy. Your Knowledge of the Target Is … Save Modifier Secondhand (heard of the target)\n\n+5 Firsthand (met the target)\n\n+0 Extensive (know the target well)\n\n−5 You Have the Target’s … Save Modifier Picture or other likeness −2 Garment or other possession −4 Body part, lock of hair, or bit of nail −10 On a successful save, the target isn’t affected, and you can’t use this spell on it again for 24 hours. On a failed save, the spell creates an Invisible, intangible sensor within 10 feet of the target. You can see and hear through the sensor as if you were there. The sensor moves with the target, remaining within 10 feet of it for the duration. If something can see the sensor, it appears as a luminous orb about the size of your fist. Instead of targeting a creature, you can target a location you have seen. When you do so, the sensor appears at that location and doesn’t move.",
+    "shortDescription": "See and hear a creature through an invisible sensor if it fails a modified Wisdom save.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/searing-smite",
     "name": "Searing Smite",
     "level": 1,
@@ -12445,6 +13160,41 @@
         ]
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/seeming",
+    "name": "Seeming",
+    "level": 5,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You give an illusory appearance to each creature of your choice that you can see within range. An unwilling target can make a Charisma saving throw, and if it succeeds, it is unaffected by this spell. You can give the same appearance or different ones to the targets. The spell can change the appearance of the targets’ bodies and equipment. You can make each creature seem 1 foot shorter or taller and appear heavier or lighter. A target’s new appearance must have the same basic arrangement of limbs as the target, but the extent of the illusion is otherwise up to you. The spell lasts for the duration. The changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to a creature’s outfit, objects pass through the hat. A creature that takes the Study action to examine a target can make an Intelligence (Investigation) check against your spell save DC. If it succeeds, it becomes aware that the target is disguised.",
+    "shortDescription": "Give chosen creatures an illusory appearance.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/sending",
@@ -14214,6 +14964,209 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/summon-dragon",
+    "name": "Summon Dragon",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "an object with the image of a dragon engraved on it worth 500+ GP",
+    "materialCost": {
+      "cost": {
+        "amount": 500,
+        "unit": "gp"
+      },
+      "consumed": false
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You call forth a Dragon spirit. It manifests in an unoccupied space that you can see within range and uses the Draconic Spirit stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends. The creature is an ally to you and your allies. In combat, the creature shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don’t issue any, it takes the Dodge action and uses its movement to avoid danger.",
+    "higherLevels": "Use the spell slot’s level for the spell’s level in the stat block. \n\nDraconic Spirit Large Dragon, Neutral AC 14 + the spell’s level HP 50 + 10 for each spell level above 5 Speed 30 ft., Fly 60 ft., Swim 30 ft. MOD SAVE MOD SAVE MOD SAVE Str 19 +4 +4 Int 10 +0 +0 Dex 14 +2 +2 Wis 14 +2 +2 Con 17 +3 +3 Cha 14 +2 +2 Resistances Acid, Cold, Fire, Lightning, Poison Immunities Charmed, Frightened, Poisoned Senses Blindsight 30 ft., Darkvision 60 ft.; Passive Perception 12 Languages Draconic, understands the languages you know CR None (XP 0; PB equals your Proficiency Bonus) \n\nTraits Shared Resistances. When you summon the spirit, choose one of its Resistances. You have Resistance to the chosen damage type until the spell ends. \n\nActions Multiattack. The spirit makes a number of Rend attacks equal to half the spell’s level (round down), and it uses Breath Weapon. Rend. Melee Attack Roll: Bonus equals your spell attack modifier, reach 10 feet. Hit: 1d6 + 4 + the spell’s level Piercing damage. Breath Weapon. Dexterity Saving Throw: DC equals your spell save DC, each creature in a 30-foot Cone. Failure: 2d6 damage of a type this spirit has Resistance to (your choice when you cast the spell). Success: Half damage.",
+    "shortDescription": "Summon a Draconic Spirit ally.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Draconic Spirit"
+          ],
+          "creatureTypes": [
+            "dragon"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/telekinesis",
+    "name": "Telekinesis",
+    "level": 5,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You gain the ability to move or manipulate creatures or objects by thought. When you cast the spell and as a Magic action on your later turns before the spell ends, you can exert your will on one creature or object that you can see within range, causing the appropriate effect below. You can affect the same target round after round or choose a new one at any time. If you switch targets, the prior target is no longer affected by the spell. Creature. You can try to move a Huge or smaller creature. The target must succeed on a Strength saving throw, or you move it up to 30 feet in any direction within the spell’s range. Until the end of your next turn, the creature has the Restrained condition, and if you lift it into the air, it is suspended there. It falls at the end of your next turn unless you use this option on it again and it fails the save. Object. You can try to move a Huge or smaller object. If the object isn’t being worn or carried, you automatically move it up to 30 feet in any direction within the spell’s range.\n\nIf the object is worn or carried by a creature, that creature must succeed on a Strength saving throw, or you pull the object away and move it up to 30 feet in any direction within the spell’s range. You can exert fine control on objects with your telekinetic grip, such as manipulating a simple tool,",
+    "shortDescription": "Move a creature (Strength save) or object up to 30 feet; a moved creature is Restrained.",
+    "effects": [
+      {
+        "type": "forcedMovement",
+        "value": {
+          "feet": 30,
+          "direction": "any"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "creatureSize",
+            "maxSize": "huge"
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/telepathic-bond",
+    "name": "Telepathic Bond",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "two eggs",
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You forge a telepathic link among up to eight willing creatures of your choice within range, psychically linking each creature to all the others for the duration. Creatures that can’t communicate in any languages aren’t affected by this spell. Until the spell ends, the targets can communicate telepathically through the bond whether or not they share a language. The communication is possible over any distance, though it can’t extend to other planes of existence.",
+    "shortDescription": "Up to eight willing creatures share a telepathic link.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/teleportation-circle",
+    "name": "Teleportation Circle",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 10,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "material"
+    ],
+    "materialComponent": "rare inks worth 50+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 50,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 1,
+      "unit": "round"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "As you cast the spell, you draw a 5-foot-radius circle on the ground inscribed with sigils that link your location to a permanent teleportation circle of your choice whose sigil sequence you know and that is on the same plane of existence as you. A shimmering portal opens within the circle you drew and remains open until the end of your next turn. Any creature that enters the portal instantly appears within 5 feet of the destination circle or in the nearest unoccupied space if that space is occupied.\n\nMany major temples, guildhalls, and other important places have permanent teleportation circles. Each circle includes a unique sigil sequence—a string of runes arranged in a particular pattern. When you first gain the ability to cast this spell, you learn the sigil sequences for two destinations on the Material Plane, determined by the GM. You might learn additional sigil sequences during your adventures. You can commit a new sigil sequence to memory after studying it for 1 minute. You can create a permanent teleportation circle by casting this spell in the same location every day for 365 days.",
+    "shortDescription": "Open a portal to a permanent teleportation circle you know.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/thaumaturgy",
     "name": "Thaumaturgy",
     "level": 0,
@@ -14422,6 +15375,38 @@
         "affects": "target"
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/tree-stride",
+    "name": "Tree Stride",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You gain the ability to enter a tree and move from inside it to inside another tree of the same kind within 500 feet. Both trees must be living and at least the same size as you. You must use 5 feet of movement to enter a tree. You instantly know the location of all other trees of the same kind within 500 feet and, as part of the move used to enter the tree, can either pass into one of those trees or step out of the tree you’re in. You appear in a spot of your choice within 5 feet of the destination tree, using another 5 feet of movement. If you have no movement left, you appear within 5 feet of the tree you entered. You can use this transportation ability only once on each of your turns. You must end each turn outside a tree.",
+    "shortDescription": "Step into a tree and out of another of its kind within 500 feet.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/true-strike",
@@ -14893,6 +15878,78 @@
         }
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/wall-of-force",
+    "name": "Wall of Force",
+    "level": 5,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a shard of glass",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "An Invisible wall of force springs into existence at a point you choose within range. The wall appears in any orientation you choose, as a horizontal or vertical barrier or at an angle. It can be free floating or resting on a solid surface. You can form it into a hemispherical dome or a globe with a radius of up to 10 feet, or you can shape a flat surface made up of ten 10-foot-by-10-foot panels. Each panel must be contiguous with another panel. In any form, the wall is 1/4 inch thick and lasts for the duration. If the wall cuts through a creature’s space when it appears, the creature is pushed to one side of the wall (you choose which side). Nothing can physically pass through the wall. It is immune to all damage and can’t be dispelled by Dispel Magic. A Disintegrate spell destroys the wall instantly, however. The wall also extends into the Ethereal Plane and blocks ethereal travel through the wall.",
+    "shortDescription": "Create an invisible, impassable wall or dome of force.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/wall-of-stone",
+    "name": "Wall of Stone",
+    "level": 5,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a cube of granite",
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "A nonmagical wall of solid stone springs into existence at a point you choose within range. The wall is 6 inches thick and is composed of ten 10-foot-by10-foot panels. Each panel must be contiguous with another panel. Alternatively, you can create 10-footby-20-foot panels that are only 3 inches thick. If the wall cuts through a creature’s space when it appears, the creature is pushed to one side of the wall (you choose which side). If a creature would be surrounded on all sides by the wall (or the wall and another solid surface), that creature can make a Dexterity saving throw. On a success, it can use its Reaction to move up to its Speed so that it is no longer enclosed by the wall. The wall can have any shape you desire, though it can’t occupy the same space as a creature or object. The wall doesn’t need to be vertical or rest on a firm foundation. It must, however, merge with and be solidly supported by existing stone. Thus, you can use this spell to bridge a chasm or create a ramp. If you create a span greater than 20 feet in length, you must halve the size of each panel to create supports. You can crudely shape the wall to create battlements and the like. The wall is an object made of stone that can be damaged and thus breached. Each panel has AC 15 and 30 Hit Points per inch of thickness, and it has Immunity to Poison and Psychic damage. Reducing a panel to 0 Hit Points destroys it and might cause connected panels to collapse at the GM’s discretion. If you maintain your Concentration on this spell for its full duration, the wall becomes permanent and can’t be dispelled. Otherwise, the wall disappears when the spell ends.",
+    "shortDescription": "Create a wall of stone panels; trapped creatures can make a Dexterity save to escape.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/warding-bond",
