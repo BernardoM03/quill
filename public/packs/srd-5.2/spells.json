@@ -539,6 +539,98 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/animate-objects",
+    "name": "Animate Objects",
+    "level": 5,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "Objects animate at your command. Choose a number of nonmagical objects within range that aren’t being worn or carried, aren’t fixed to a surface, and aren’t Gargantuan. The maximum number of objects is equal to your spellcasting ability modifier; for this number, a Medium or smaller target counts as one object, a Large target counts as two, and a Huge target counts as three. Each target animates, sprouts legs, and becomes a Construct that uses the Animated Object stat block; this creature is under your control until the spell ends or until it is reduced to 0 Hit Points. Each creature you make with this spell is an ally to you and your allies. In combat, it shares your Initiative count and takes its turn immediately after yours. Until the spell ends, you can take a Bonus Action to mentally command any creature you made with this spell if the creature is within 500 feet of you (if you control multiple creatures, you can command any of them at the same time, issuing the same command to each one). If you issue no commands, the creature takes the Dodge action and moves only to avoid harm. When the creature drops to 0 Hit Points, it reverts to its object form, and any remaining damage carries over to that form.",
+    "higherLevels": "The creature’s Slam damage increases by 1d4 (Medium or smaller), 1d6 (Large), or 1d12 (Huge) for each spell slot level above 5. \n\nAnimated Object Huge or Smaller Construct, Unaligned AC 15 HP 10 (Medium or smaller), 20 (Large), 40 (Huge) Speed 30 ft. MOD SAVE MOD SAVE MOD SAVE Str 16 +3 +3 Int 3 −4 −4 Dex 10 +0 +0 Wis 3 −4 −4 Con 10 +0 +0 Cha 1 −5 −5 Immunities Poison, Psychic; Charmed, Exhaustion, Frightened, Paralyzed, Poisoned Senses Blindsight 30 ft.; Passive Perception 6 Languages Understands the languages you know CR None (XP 0; PB equals your Proficiency Bonus) \n\nActions Slam. Melee Attack Roll: Bonus equals your spell attack modifier, reach 5 ft. Hit: Force damage equal to 1d4 + 3 (Medium or smaller), 2d6 + 3 + your spellcasting ability modifier (Large), or 2d12 + 3 + your spellcasting ability modifier (Huge).",
+    "shortDescription": "Animate objects as Constructs under your control.",
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "Animated Object"
+          ],
+          "count": "$derived:spellcastingModifier"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/antilife-shell",
+    "name": "Antilife Shell",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "An aura extends from you in a 10-foot Emanation for the duration. The aura prevents creatures other than Constructs and Undead from passing or reaching through it. An affected creature can cast spells or make attacks with Ranged or Reach weapons through the barrier. If you move so that an affected creature is forced to pass through the barrier, the spell ends.",
+    "shortDescription": "10-foot Emanation that creatures other than Constructs and Undead can't pass.",
+    "effects": [
+      {
+        "type": "cannotApproach",
+        "affects": "others",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 10
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct",
+              "undead"
+            ],
+            "negate": true
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/arcane-eye",
     "name": "Arcane Eye",
     "level": 4,
@@ -572,6 +664,193 @@
       "narrative"
     ],
     "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/arcane-hand",
+    "name": "Arcane Hand",
+    "level": 5,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "an eggshell and a glove",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a Large hand of shimmering magical energy in an unoccupied space that you can see within range. The hand lasts for the duration, and it moves at your command, mimicking the movements of your own hand. The hand is an object that has AC 20 and Hit Points equal to your Hit Point maximum. If it drops to 0 Hit Points, the spell ends. The hand doesn’t occupy its space. When you cast the spell and as a Bonus Action on your later turns, you can move the hand up to 60 feet and then cause one of the following effects: Clenched Fist. The hand strikes a target within 5 feet of it. Make a melee spell attack. On a hit, the target takes 5d8 Force damage. Forceful Hand. The hand attempts to push a Huge or smaller creature within 5 feet of it. The target must succeed on a Strength saving throw, or the hand pushes the target up to 5 feet plus a number of feet equal to five times your spellcasting ability modifier. The hand moves with the target, remaining within 5 feet of it.\n\nGrasping Hand. The hand attempts to grapple a Huge or smaller creature within 5 feet of it. The target must succeed on a Dexterity saving throw, or the target has the Grappled condition, with an escape DC equal to your spell save DC. While the hand grapples the target, you can take a Bonus Action to cause the hand to crush it, dealing Bludgeoning damage to the target equal to 4d6 plus your spellcasting ability modifier. Interposing Hand. The hand grants you Half Cover against attacks and other effects that originate from its space or that pass through it. In addition, its space counts as Difficult Terrain for your enemies.",
+    "higherLevels": "The damage of the Clenched Fist increases by 2d8 and the damage of the Grasping Hand increases by 2d6 for each spell slot level above 5.",
+    "shortDescription": "A Large hand of force punches, pushes, grapples, or shields.",
+    "options": {
+      "list": "srd-5.2:list/arcane-hand",
+      "items": [
+        {
+          "id": "clenched-fist",
+          "name": "Clenched Fist",
+          "description": "Melee spell attack against a target within 5 feet of the hand: 5d8 Force damage.",
+          "effects": [
+            {
+              "type": "grantAttack",
+              "value": 1
+            },
+            {
+              "type": "dealDamage",
+              "target": "force",
+              "value": {
+                "count": 5,
+                "die": "d8"
+              },
+              "trigger": {
+                "event": "hitWithAttack"
+              },
+              "upcast": {
+                "perSlot": {
+                  "count": 2,
+                  "die": "d8"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "forceful-hand",
+          "name": "Forceful Hand",
+          "description": "A Huge or smaller creature makes a Strength save or is pushed 5 feet plus five times your spellcasting modifier.",
+          "effects": [
+            {
+              "type": "forcedMovement",
+              "value": {
+                "feet": "$derived:forcefulHandDistance",
+                "direction": "away"
+              },
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "creatureSize",
+                  "maxSize": "huge"
+                }
+              ],
+              "save": {
+                "ability": "STR",
+                "dc": {
+                  "base": 8,
+                  "ability": "$derived:spellcastingAbility",
+                  "proficiency": true
+                },
+                "onSuccess": "negate"
+              }
+            }
+          ]
+        },
+        {
+          "id": "grasping-hand",
+          "name": "Grasping Hand",
+          "description": "A Huge or smaller creature makes a Dexterity save or is Grappled; crush it for 4d6 + spellcasting modifier as a Bonus Action.",
+          "effects": [
+            {
+              "type": "applyCondition",
+              "target": "srd-5.2:condition/grappled",
+              "affects": "target",
+              "save": {
+                "ability": "DEX",
+                "dc": {
+                  "base": 8,
+                  "ability": "$derived:spellcastingAbility",
+                  "proficiency": true
+                },
+                "onSuccess": "negate"
+              },
+              "qualifiers": [
+                {
+                  "type": "creatureSize",
+                  "maxSize": "huge"
+                }
+              ]
+            },
+            {
+              "type": "dealDamage",
+              "target": "bludgeoning",
+              "value": {
+                "count": 4,
+                "die": "d6",
+                "modifier": "$derived:spellcastingModifier"
+              },
+              "affects": "target",
+              "trigger": {
+                "event": "takeAction",
+                "actionType": "bonusAction",
+                "optional": true
+              },
+              "qualifiers": [
+                {
+                  "type": "targetCondition",
+                  "conditionId": "srd-5.2:condition/grappled"
+                }
+              ],
+              "upcast": {
+                "perSlot": {
+                  "count": 2,
+                  "die": "d6"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "interposing-hand",
+          "name": "Interposing Hand",
+          "description": "You gain Half Cover from the hand's direction, and its space is Difficult Terrain for enemies.",
+          "effects": [
+            {
+              "type": "modifier",
+              "target": "armorClass",
+              "value": 2
+            },
+            {
+              "type": "rollBonus",
+              "target": "savingThrow",
+              "value": 2,
+              "qualifiers": [
+                {
+                  "type": "ability",
+                  "abilities": [
+                    "DEX"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/arcane-hand",
+        "value": 1,
+        "trigger": {
+          "event": "takeAction",
+          "actionType": "bonusAction",
+          "optional": true
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/arcane-lock",
@@ -774,6 +1053,59 @@
             "negate": true
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/awaken",
+    "name": "Awaken",
+    "level": 5,
+    "school": "transmutation",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "an agate worth 1,000+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 1000,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You spend the casting time tracing magical pathways within a precious gemstone, and then touch the target. The target must be either a Beast or Plant creature with an Intelligence of 3 or less or a natural plant that isn’t a creature. The target gains an Intelligence of 10 and the ability to speak one language you know. If the target is a natural plant, it becomes a Plant creature and gains the ability to move its limbs, roots, vines, creepers, and so forth, and it gains senses similar to a human’s. The GM chooses statistics appropriate for the awakened Plant, such as the statistics for the Awakened Shrub or Awakened Tree in “Monsters.” The awakened target has the Charmed condition for 30 days or until you or your allies deal damage to it. When that condition ends, the awakened creature chooses its attitude toward you.",
+    "shortDescription": "A Beast or plant gains Intelligence 10, speech, and is Charmed by you for 30 days.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "duration": {
+          "value": 30,
+          "unit": "day"
+        }
       }
     ]
   },
@@ -2251,6 +2583,119 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/cloudkill",
+    "name": "Cloudkill",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 120,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You create a 20-foot-radius Sphere of yellow-green fog centered on a point within range. The fog lasts for the duration or until strong wind (such as the one created by Gust of Wind) disperses it, ending the spell. Its area is Heavily Obscured. Each creature in the Sphere makes a Constitution saving throw, taking 5d8 Poison damage on a failed save or half as much damage on a successful one. A creature must also make this save when the Sphere moves into its space and when it enters the Sphere or ends its turn there. A creature makes this save only once per turn. The Sphere moves 10 feet away from you at the start of each of your turns.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 5.",
+    "shortDescription": "20-foot-radius Sphere of poison fog: 5d8 Poison damage, Constitution save for half.",
+    "effects": [
+      {
+        "type": "createZone",
+        "value": {
+          "obscured": "heavy"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "poison",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "poison",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "sphere",
+            "size": 20
+          }
+        ],
+        "frequency": "perTurn",
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        },
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/color-spray",
     "name": "Color Spray",
     "level": 1,
@@ -2441,6 +2886,73 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/commune",
+    "name": "Commune",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "incense",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You contact a deity or a divine proxy and ask up to three questions that can be answered with yes or no. You must ask your questions before the spell ends. You receive a correct answer for each question. Divine beings aren’t necessarily omniscient, so you might receive “unclear” as an answer if a question pertains to information that lies beyond the deity’s knowledge. In a case where a one-word answer could be misleading or contrary to the deity’s interests, the GM might offer a short phrase as an answer instead. If you cast the spell more than once before finishing a Long Rest, there is a cumulative 25 percent chance for each casting after the first that you get no answer.",
+    "shortDescription": "Ask a deity up to three yes-or-no questions.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/commune-with-nature",
+    "name": "Commune with Nature",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You commune with nature spirits and gain knowledge of the surrounding area. In the outdoors, the spell gives you knowledge of the area within 3 miles of you. In caves and other natural underground settings, the radius is limited to 300 feet. The spell doesn’t function where nature has been replaced by construction, such as in castles and settlements. Choose three of the following facts; you learn those facts as they pertain to the spell’s area: • Locations of settlements • Locations of portals to other planes of existence • Location of one Challenge Rating 10+ creature (GM’s choice) that is a Celestial, an Elemental, a Fey, a Fiend, or an Undead • The most prevalent kind of plant, mineral, or Beast (you choose which to learn) • Locations of bodies of water For example, you could determine the location of a powerful monster in the area, the locations of bodies of water, and the locations of any towns.",
+    "shortDescription": "Learn three facts about the land within 3 miles.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
     "id": "srd-5.2:spell/comprehend-languages",
     "name": "Comprehend Languages",
     "level": 1,
@@ -2542,6 +3054,69 @@
           "event": "takeAction",
           "actionType": "bonusAction",
           "optional": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/cone-of-cold",
+    "name": "Cone of Cold",
+    "level": 5,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a small crystal or glass cone",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You unleash a blast of cold air. Each creature in a 60-foot Cone originating from you makes a Constitution saving throw, taking 8d8 Cold damage on a failed save or half as much damage on a successful one. A creature killed by this spell becomes a frozen statue until it thaws.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 5.",
+    "shortDescription": "60-foot Cone: 8d8 Cold damage, Constitution save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "cold",
+        "value": {
+          "count": 8,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cone",
+            "size": 60
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
         }
       }
     ]
@@ -2694,6 +3269,159 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/conjure-elemental",
+    "name": "Conjure Elemental",
+    "level": 5,
+    "school": "conjuration",
+    "sourceIds": [
+      "srd-5.2:class/druid",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "You conjure a Large, intangible spirit from the Elemental Planes that appears in an unoccupied space within range. Choose the spirit’s element, which determines its damage type: air (Lightning), earth (Thunder), fire (Fire), or water (Cold). The spirit lasts for the duration. Whenever a creature you can see enters the spirit’s space or starts its turn within 5 feet of the spirit, you can force that creature to make a Dexterity saving throw if the spirit has no creature Restrained. On failed save, the target takes 8d8 damage of the spirit’s type, and the target has the Restrained condition until the spell ends. At the start of each of its turns, the Restrained target repeats the save.\n\nOn a failed save, the target takes 4d8 damage of the spirit’s type. On a successful save, the target isn’t Restrained by the spirit.",
+    "higherLevels": "The damage increases by 1d8 for each spell slot level above 5.",
+    "shortDescription": "An elemental spirit Restrains a nearby creature and deals 8d8 damage.",
+    "choices": [
+      {
+        "id": "conjure-elemental-damage",
+        "prompt": "Choose the spirit's element.",
+        "count": 1,
+        "from": [
+          {
+            "value": "lightning",
+            "label": "Air"
+          },
+          {
+            "value": "thunder",
+            "label": "Earth"
+          },
+          {
+            "value": "fire",
+            "label": "Fire"
+          },
+          {
+            "value": "cold",
+            "label": "Water"
+          }
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "$choice:conjure-elemental-damage",
+        "value": {
+          "count": 8,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 5
+          }
+        ],
+        "trigger": [
+          {
+            "event": "enterArea",
+            "optional": true
+          },
+          {
+            "event": "startTurn",
+            "optional": true
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d8"
+          }
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "startTurn"
+          }
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 5
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "$choice:conjure-elemental-damage",
+        "value": {
+          "count": 4,
+          "die": "d8"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "startTurn"
+        },
+        "qualifiers": [
+          {
+            "type": "targetCondition",
+            "conditionId": "srd-5.2:condition/restrained"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
       }
     ]
   },
@@ -2855,6 +3583,167 @@
         "type": "grantAction",
         "target": "disengage",
         "value": "bonusAction"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/contact-other-plane",
+    "name": "Contact Other Plane",
+    "level": 5,
+    "school": "divination",
+    "sourceIds": [
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": false,
+    "ritual": true,
+    "description": "You mentally contact a demigod, the spirit of a longdead sage, or some other knowledgeable entity from another plane. Contacting this otherworldly intelligence can break your mind. When you cast this spell, make a DC 15 Intelligence saving throw. On a successful save, you can ask the entity up to five questions. You must ask your questions before the spell ends. The GM answers each question with one word, such as “yes,” “no,” “maybe,” “never,” “irrelevant,” or “unclear” (if the entity doesn’t know the answer to the question). If a one-word answer would be misleading, the GM might instead offer a short phrase as an answer. On a failed save, you take 6d6 Psychic damage and have the Incapacitated condition until you finish a Long Rest. A Greater Restoration spell cast on you ends this effect.",
+    "shortDescription": "DC 15 Intelligence save to ask five questions; on a failure, 6d6 Psychic damage and Incapacitated.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": {
+          "count": 6,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "INT",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/incapacitated",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/contagion",
+    "name": "Contagion",
+    "level": 5,
+    "school": "necromancy",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 7,
+      "unit": "day"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "Your touch inflicts a magical contagion. The target must succeed on a Constitution saving throw or take 11d8 Necrotic damage and have the Poisoned condition. Also, choose one ability when you cast the spell. While Poisoned, the target has Disadvantage on saving throws made with the chosen ability. The target must repeat the saving throw at the end of each of its turns until it gets three successes or failures. If the target succeeds on three of these saves, the spell ends on the target. If the target fails three of the saves, the spell lasts for 7 days on it. Whenever the Poisoned target receives an effect that would end the Poisoned condition, the target must succeed on a Constitution saving throw, or the Poisoned condition doesn’t end on it.",
+    "shortDescription": "Constitution save or 11d8 Necrotic damage and a lingering Poisoned contagion.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "choices": [
+      {
+        "id": "contagion-ability",
+        "prompt": "Choose an ability.",
+        "count": 1,
+        "from": [
+          "STR",
+          "DEX",
+          "CON",
+          "INT",
+          "WIS",
+          "CHA"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": {
+          "count": 11,
+          "die": "d8"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/poisoned",
+        "affects": "target",
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          },
+          {
+            "type": "ability",
+            "abilities": [
+              "$choice:contagion-ability"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -3062,6 +3951,44 @@
     "description": "You do one of the following:\n\nCreate Water. You create up to 10 gallons of clean water within range in an open container. Alternatively, the water falls as rain in a 30-foot Cube within range, extinguishing exposed flames there. Destroy Water. You destroy up to 10 gallons of water in an open container within range. Alternatively, you destroy fog in a 30-foot Cube within range.",
     "higherLevels": "You create or destroy 10 additional gallons of water, or the size of the Cube increases by 5 feet, for each spell slot level above 1.",
     "shortDescription": "Create or destroy 10 gallons of water, as rain or fog in a 30-foot Cube.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
+  },
+  {
+    "id": "srd-5.2:spell/creation",
+    "name": "Creation",
+    "level": 5,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 30,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a paintbrush",
+    "duration": {
+      "value": 0,
+      "unit": "special"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You pull wisps of shadow material from the Shadowfell to create an object within range. It is either an object of vegetable matter (soft goods, rope, wood, and the like) or mineral matter (stone, crystal, metal, and the like). The object must be no larger than a 5-foot Cube, and the object must be of a form and material that you have seen. The spell’s duration depends on the object’s material, as shown in the Materials table. If the object is composed of multiple materials, use the shortest duration. Using any object created by this spell as another spell’s Material component causes the other spell to fail.\n\nMaterials Material Duration Vegetable matter 24 hours Stone or crystal 12 hours Precious metals 1 hour Gems 10 minutes Adamantine or mithral 1 minute",
+    "higherLevels": "The Cube increases by 5 feet for each spell slot level above 5.",
+    "shortDescription": "Create a nonmagical object of shadow material up to a 5-foot Cube.",
     "tags": [
       "narrative"
     ],
@@ -3586,6 +4513,72 @@
     "effects": []
   },
   {
+    "id": "srd-5.2:spell/dispel-evil-and-good",
+    "name": "Dispel Evil and Good",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/paladin"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "self"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "powdered silver and iron",
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "For the duration, Celestials, Elementals, Fey, Fiends, and Undead have Disadvantage on attack rolls against you. You can end the spell early by using either of the following special functions. Break Enchantment. As a Magic action, you touch a creature that is possessed by or has the Charmed or Frightened condition from one or more creatures of the types above. The target is no longer possessed, Charmed, or Frightened by such creatures. Dismissal. As a Magic action, you target one creature you can see within 5 feet of you that has one of the creature types above. The target must succeed on a Charisma saving throw or be sent back to its home plane if it isn’t there already. If they aren’t on their home plane, Undead are sent to the Shadowfell, and Fey are sent to the Feywild.",
+    "shortDescription": "Celestials, Elementals, Fey, Fiends, and Undead have Disadvantage on attacks against you.",
+    "effects": [
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "others",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "celestial",
+              "elemental",
+              "fey",
+              "fiend",
+              "undead"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "endCondition",
+        "target": [
+          "srd-5.2:condition/charmed",
+          "srd-5.2:condition/frightened"
+        ],
+        "affects": "target",
+        "trigger": {
+          "event": "takeAction",
+          "action": "magic",
+          "optional": true
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/dispel-magic",
     "name": "Dispel Magic",
     "level": 3,
@@ -3958,6 +4951,105 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/dominate-person",
+    "name": "Dominate Person",
+    "level": 5,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/sorcerer",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic"
+    ],
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "concentration": true,
+    "ritual": false,
+    "description": "One Humanoid you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success. You have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as “Attack that creature,” “Move over there,” or “Fetch that object.” The target does its best to obey on its turn. If it completes an order and doesn’t receive further direction from you, it acts and moves as it likes, focusing on protecting itself. You can command the target to take a Reaction but must take your own Reaction to do so.",
+    "higherLevels": "Your Concentration can last longer with a spell slot of level 6 (up to 10 minutes), 7 (up to 1 hour), or 8+ (up to 8 hours).",
+    "shortDescription": "A Humanoid makes a Wisdom save or is Charmed and follows your telepathic commands.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "duration": [
+        {
+          "minSlot": 6,
+          "duration": {
+            "value": 10,
+            "unit": "minute"
+          }
+        },
+        {
+          "minSlot": 7,
+          "duration": {
+            "value": 1,
+            "unit": "hour"
+          }
+        },
+        {
+          "minSlot": 8,
+          "duration": {
+            "value": 8,
+            "unit": "hour"
+          }
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "takeDamage"
+          }
+        },
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "humanoid"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "situationType",
+            "situationType": "combat"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/dragons-breath",
     "name": "Dragon’s Breath",
     "level": 2,
@@ -4038,6 +5130,62 @@
             "die": "d6"
           }
         }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:spell/dream",
+    "name": "Dream",
+    "level": 5,
+    "school": "illusion",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/warlock",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "special"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a handful of sand",
+    "duration": {
+      "value": 8,
+      "unit": "hour"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You target a creature you know on the same plane of existence. You or a willing creature you touch enters a trance state to act as a dream messenger. While in the trance, the messenger is Incapacitated and has a Speed of 0. If the target is asleep, the messenger appears in the target’s dreams and can converse with the target as long as it remains asleep, through the spell’s duration. The messenger can also shape the dream’s environment, creating landscapes, objects, and other images. The messenger can emerge from the trance at any time, ending the spell. The target recalls the dream perfectly upon waking. If the target is awake when you cast the spell, the messenger knows it and can either end the trance (and the spell) or wait for the target to sleep, at which point the messenger enters its dreams. You can make the messenger terrifying to the target. If you do so, the messenger can deliver a message of no more than ten words, and then the target makes a Wisdom saving throw. On a failed save, the target gains no benefit from its rest, and it takes 3d6 Psychic damage when it wakes up.",
+    "shortDescription": "Send a dream message; a terrifying one can deny rest and deal 3d6 Psychic damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": {
+          "count": 3,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "affects": "target"
       }
     ]
   },
@@ -5527,6 +6675,100 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/flame-strike",
+    "name": "Flame Strike",
+    "level": 5,
+    "school": "evocation",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "a pinch of sulfur",
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "A vertical column of brilliant fire roars down from above. Each creature in a 10-foot-radius, 40-foothigh Cylinder centered on a point within range makes a Dexterity saving throw, taking 5d6 Fire damage and 5d6 Radiant damage on a failed save or half as much damage on a successful one.",
+    "higherLevels": "The Fire damage and the Radiant damage increase by 1d6 for each spell slot level above 5.",
+    "shortDescription": "10-foot-radius Cylinder: 5d6 Fire and 5d6 Radiant damage, Dexterity save for half.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 5,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 10,
+            "height": 40
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 5,
+          "die": "d6"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 10,
+            "height": 40
+          }
+        ],
+        "upcast": {
+          "perSlot": {
+            "count": 1,
+            "die": "d6"
+          }
+        }
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/flaming-sphere",
     "name": "Flaming Sphere",
     "level": 2,
@@ -5905,6 +7147,93 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/geas",
+    "name": "Geas",
+    "level": 5,
+    "school": "enchantment",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/wizard"
+    ],
+    "castingTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "range": {
+      "type": "ranged",
+      "distance": 60,
+      "unit": "feet"
+    },
+    "components": [
+      "verbal"
+    ],
+    "duration": {
+      "value": 30,
+      "unit": "day"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You give a verbal command to a creature that you can see within range, ordering it to carry out some service or refrain from an action or a course of activity as you decide. The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target automatically succeeds if it can’t understand your command. While Charmed, the creature takes 5d10 Psychic damage if it acts in a manner directly counter to your command. It takes this damage no more than once each day. You can issue any command you choose, short of an activity that would result in certain death. Should you issue a suicidal command, the spell ends. A Remove Curse, Greater Restoration, or Wish spell ends this spell.",
+    "higherLevels": "If you use a level 7 or 8 spell slot, the duration is 365 days. If you use a level 9 spell slot, the spell lasts until it is ended by one of the spells mentioned above.",
+    "shortDescription": "Wisdom save or Charmed by a command; disobeying deals 5d10 Psychic damage.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "upcast": {
+      "duration": [
+        {
+          "minSlot": 7,
+          "duration": {
+            "value": 365,
+            "unit": "day"
+          }
+        },
+        {
+          "minSlot": 9,
+          "duration": {
+            "value": 0,
+            "unit": "untilDispelled"
+          }
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "psychic",
+        "value": {
+          "count": 5,
+          "die": "d10"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/gentle-repose",
     "name": "Gentle Repose",
     "level": 2,
@@ -6236,6 +7565,106 @@
     ]
   },
   {
+    "id": "srd-5.2:spell/greater-restoration",
+    "name": "Greater Restoration",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/bard",
+      "srd-5.2:class/cleric",
+      "srd-5.2:class/druid",
+      "srd-5.2:class/paladin",
+      "srd-5.2:class/ranger"
+    ],
+    "castingTime": {
+      "type": "action"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "diamond dust worth 100+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 100,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "instantaneous"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a creature and magically remove one of the following effects from it:\n\n• 1 Exhaustion level • The Charmed or Petrified condition • A curse, including the target’s Attunement to a cursed magic item • Any reduction to one of the target’s ability scores • Any reduction to the target’s Hit Point maximum",
+    "shortDescription": "Remove an Exhaustion level, Charmed, Petrified, a curse, or a reduction.",
+    "targets": {
+      "count": 1,
+      "kind": "creature"
+    },
+    "options": {
+      "list": "srd-5.2:list/greater-restoration",
+      "items": [
+        {
+          "id": "exhaustion",
+          "name": "Exhaustion",
+          "description": "Remove 1 Exhaustion level.",
+          "effects": [
+            {
+              "type": "endCondition",
+              "target": "srd-5.2:condition/exhaustion",
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "charm-or-petrify",
+          "name": "Charmed or Petrified",
+          "description": "End the Charmed or Petrified condition.",
+          "effects": [
+            {
+              "type": "endCondition",
+              "target": [
+                "srd-5.2:condition/charmed",
+                "srd-5.2:condition/petrified"
+              ],
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "curse",
+          "name": "Curse",
+          "description": "End a curse, including Attunement to a cursed magic item.",
+          "effects": [
+            {
+              "type": "removeCurse",
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "reduction",
+          "name": "Reduction",
+          "description": "End a reduction to an ability score or the Hit Point maximum.",
+          "effects": []
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/greater-restoration",
+        "value": 1
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:spell/guardian-of-faith",
     "name": "Guardian of Faith",
     "level": 4,
@@ -6531,6 +7960,47 @@
         ]
       }
     ]
+  },
+  {
+    "id": "srd-5.2:spell/hallow",
+    "name": "Hallow",
+    "level": 5,
+    "school": "abjuration",
+    "sourceIds": [
+      "srd-5.2:class/cleric"
+    ],
+    "castingTime": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "range": {
+      "type": "touch"
+    },
+    "components": [
+      "verbal",
+      "somatic",
+      "material"
+    ],
+    "materialComponent": "incense worth 1,000+ GP, which the spell consumes",
+    "materialCost": {
+      "cost": {
+        "amount": 1000,
+        "unit": "gp"
+      },
+      "consumed": true
+    },
+    "duration": {
+      "value": 0,
+      "unit": "untilDispelled"
+    },
+    "concentration": false,
+    "ritual": false,
+    "description": "You touch a point and infuse an area around it with holy or unholy power. The area can have a radius up to 60 feet, and the spell fails if the radius includes an area already under the effect of Hallow. The affected area has the following effects. Hallowed Ward. Choose any of these creature types: Aberration, Celestial, Elemental, Fey, Fiend, or Undead. Creatures of the chosen types can’t willingly enter the area, and any creature that is possessed by or that has the Charmed or Frightened condition from such creatures isn’t possessed, Charmed, or Frightened by them while in the area. Extra Effect. You bind an extra effect to the area from the list below: Courage. Creatures of any types you choose can’t gain the Frightened condition while in the area. Darkness. Darkness fills the area. Normal light, as well as magical light created by spells of a level lower than this spell, can’t illuminate the area.\n\nDaylight. Bright light fills the area. Magical Darkness created by spells of a level lower than this spell can’t extinguish the light. Peaceful Rest. Dead bodies interred in the area can’t be turned into Undead. Extradimensional Interference. Creatures of any types you choose can’t enter or exit the area using teleportation or interplanar travel. Fear. Creatures of any types you choose have the Frightened condition while in the area. Resistance. Creatures of any types you choose have Resistance to one damage type of your choice while in the area. Silence. No sound can emanate from within the area, and no sound can reach into it. Tongues. Creatures of any types you choose can communicate with any other creature in the area even if they don’t share a common language. Vulnerability. Creatures of any types you choose have Vulnerability to one damage type of your choice while in the area.",
+    "shortDescription": "Ward a 60-foot-radius area against chosen creature types and bind an extra effect.",
+    "tags": [
+      "narrative"
+    ],
+    "effects": []
   },
   {
     "id": "srd-5.2:spell/hallucinatory-terrain",
