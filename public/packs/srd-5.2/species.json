@@ -1512,7 +1512,7 @@
         ],
         "effects": [
           {
-            "type": "grantActionAtCost",
+            "type": "grantAction",
             "target": "dash",
             "value": "bonusAction"
           },

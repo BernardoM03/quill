@@ -902,7 +902,6 @@
         "setSize",
         "countAsSize",
         "setHitPointFloor",
-        "grantActionAtCost",
         "grantAction",
         "moveThroughOccupiedSpace",
         "setRestDuration",
@@ -1682,33 +1681,6 @@
           "if": {
             "properties": {
               "type": {
-                "const": "grantActionAtCost"
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          "then": {
-            "required": [
-              "target",
-              "value"
-            ],
-            "properties": {
-              "target": {
-                "$ref": "#/$defs/namedAction"
-              },
-              "value": {
-                "$ref": "#/$defs/actionType",
-                "description": "The cost the action may instead be taken at."
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
                 "const": "grantAction"
               }
             },
@@ -1723,6 +1695,14 @@
             "properties": {
               "target": {
                 "$ref": "#/$defs/namedAction"
+              },
+              "value": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/actionType"
+                  }
+                ],
+                "description": "The cost the action may instead be taken at, as Adrenaline Rush's Dash as a Bonus Action. Omit when the grant is permission to take the action at all."
               }
             }
           }

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "validate": "bash scripts/validate-packs.sh"
+    "validate": "bash scripts/validate-packs.sh",
+    "check-refs": "node scripts/check-refs.mjs"
   },
   "dependencies": {
     "axios": "^1.16.1",
