@@ -5116,7 +5116,1175 @@
   },
   {
     "id": "srd-5.2:class/ranger",
-    "name": "Ranger"
+    "name": "Ranger",
+    "primaryAbility": [
+      "DEX",
+      "WIS"
+    ],
+    "hitDie": 10,
+    "savingThrowProficiencies": [
+      "STR",
+      "DEX"
+    ],
+    "skillProficiencies": {
+      "count": 3,
+      "from": [
+        "srd-5.2:skill/animal-handling",
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/investigation",
+        "srd-5.2:skill/nature",
+        "srd-5.2:skill/perception",
+        "srd-5.2:skill/stealth",
+        "srd-5.2:skill/survival"
+      ]
+    },
+    "weaponProficiencies": {
+      "items": [
+        "Simple weapons",
+        "Martial weapons"
+      ]
+    },
+    "armorProficiencies": {
+      "items": [
+        "Light armor",
+        "Medium armor",
+        "Shields"
+      ]
+    },
+    "toolProficiencies": {
+      "items": []
+    },
+    "weaponMastery": 2,
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/studded-leather-armor"
+            },
+            {
+              "id": "srd-5.2:equipment/scimitar"
+            },
+            {
+              "id": "srd-5.2:equipment/shortsword"
+            },
+            {
+              "id": "srd-5.2:equipment/longbow"
+            },
+            {
+              "id": "srd-5.2:equipment/arrows",
+              "note": "20 Arrows, one bundle"
+            },
+            {
+              "id": "srd-5.2:equipment/quiver"
+            },
+            {
+              "id": "srd-5.2:equipment/druidic-focus",
+              "variant": "sprig-of-mistletoe"
+            },
+            {
+              "id": "srd-5.2:equipment/explorers-pack"
+            }
+          ],
+          "gold": 7
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 150
+        }
+      ]
+    },
+    "startingGold": 150,
+    "multiclassing": {
+      "prerequisites": [
+        {
+          "abilities": [
+            "DEX"
+          ],
+          "minimum": 13
+        },
+        {
+          "abilities": [
+            "WIS"
+          ],
+          "minimum": 13
+        }
+      ],
+      "proficienciesGained": {
+        "weapons": [
+          "Martial weapons"
+        ],
+        "armor": [
+          "Light armor",
+          "Medium armor",
+          "Shields"
+        ],
+        "tools": [],
+        "skills": [
+          "One skill from the Ranger's skill list"
+        ]
+      }
+    },
+    "subclassLevel": 3,
+    "subclassFeatureLevels": [
+      3,
+      7,
+      11,
+      15
+    ],
+    "asiLevels": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "epicBoonLevel": 19,
+    "spellcasting": {
+      "ability": "WIS",
+      "progression": "half",
+      "preparationType": "prepared",
+      "ritualCasting": false,
+      "focus": "srd-5.2:equipment/druidic-focus",
+      "swapOnLongRest": 1
+    },
+    "resources": [],
+    "progression": [
+      {
+        "level": 1,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/ranger-spellcasting",
+          "srd-5.2:feature/ranger-favored-enemy",
+          "srd-5.2:feature/ranger-weapon-mastery"
+        ],
+        "preparedSpells": 2,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 2
+        }
+      },
+      {
+        "level": 2,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/ranger-deft-explorer",
+          "srd-5.2:feature/ranger-fighting-style"
+        ],
+        "preparedSpells": 3,
+        "spellSlots": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 2
+        }
+      },
+      {
+        "level": 3,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/ranger-subclass"
+        ],
+        "preparedSpells": 4,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 2
+        }
+      },
+      {
+        "level": 4,
+        "proficiencyBonus": 2,
+        "featureIds": [
+          "srd-5.2:feature/ranger-ability-score-improvement"
+        ],
+        "preparedSpells": 5,
+        "spellSlots": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 2
+        }
+      },
+      {
+        "level": 5,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/ranger-extra-attack"
+        ],
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 3
+        }
+      },
+      {
+        "level": 6,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/ranger-roving"
+        ],
+        "preparedSpells": 6,
+        "spellSlots": [
+          4,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 3
+        }
+      },
+      {
+        "level": 7,
+        "proficiencyBonus": 3,
+        "featureIds": [],
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 3
+        }
+      },
+      {
+        "level": 8,
+        "proficiencyBonus": 3,
+        "featureIds": [
+          "srd-5.2:feature/ranger-ability-score-improvement"
+        ],
+        "preparedSpells": 7,
+        "spellSlots": [
+          4,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 3
+        }
+      },
+      {
+        "level": 9,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/ranger-expertise"
+        ],
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 4
+        }
+      },
+      {
+        "level": 10,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/ranger-tireless"
+        ],
+        "preparedSpells": 9,
+        "spellSlots": [
+          4,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 4
+        }
+      },
+      {
+        "level": 11,
+        "proficiencyBonus": 4,
+        "featureIds": [],
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 4
+        }
+      },
+      {
+        "level": 12,
+        "proficiencyBonus": 4,
+        "featureIds": [
+          "srd-5.2:feature/ranger-ability-score-improvement"
+        ],
+        "preparedSpells": 10,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 4
+        }
+      },
+      {
+        "level": 13,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/ranger-relentless-hunter"
+        ],
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 5
+        }
+      },
+      {
+        "level": 14,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/ranger-natures-veil"
+        ],
+        "preparedSpells": 11,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 5
+        }
+      },
+      {
+        "level": 15,
+        "proficiencyBonus": 5,
+        "featureIds": [],
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 5
+        }
+      },
+      {
+        "level": 16,
+        "proficiencyBonus": 5,
+        "featureIds": [
+          "srd-5.2:feature/ranger-ability-score-improvement"
+        ],
+        "preparedSpells": 12,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 5
+        }
+      },
+      {
+        "level": 17,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/ranger-precise-hunter"
+        ],
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 6
+        }
+      },
+      {
+        "level": 18,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/ranger-feral-senses"
+        ],
+        "preparedSpells": 14,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 6
+        }
+      },
+      {
+        "level": 19,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/ranger-epic-boon"
+        ],
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 6
+        }
+      },
+      {
+        "level": 20,
+        "proficiencyBonus": 6,
+        "featureIds": [
+          "srd-5.2:feature/ranger-foe-slayer"
+        ],
+        "preparedSpells": 15,
+        "spellSlots": [
+          4,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0
+        ],
+        "resources": {
+          "favoredEnemy": 6
+        }
+      }
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/ranger-spellcasting",
+        "name": "Spellcasting",
+        "level": 1,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You have learned to channel the magical essence of nature to cast spells. See \"Spells\" for the rules on spellcasting. The information below details how you use those rules with Ranger spells, which appear in the Ranger spell list later in the class's description.\n\n**Spell Slots.** The Ranger Features table shows how many spell slots you have to cast your level 1+ spells. You regain all expended slots when you finish a Long Rest.\n\n**Prepared Spells of Level 1+.** You prepare the list of level 1+ spells that are available for you to cast with this feature. To start, choose two level 1 Ranger spells. Cure Wounds and Ensnaring Strike are recommended.\n\nThe number of spells on your list increases as you gain Ranger levels, as shown in the Prepared Spells column of the Ranger Features table. Whenever that number increases, choose additional Ranger spells until the number of spells on your list matches the number in the Ranger Features table. The chosen spells must be of a level for which you have spell slots. For example, if you're a level 5 Ranger, your list of prepared spells can include six Ranger spells of level 1 or 2 in any combination.\n\nIf another Ranger feature gives you spells that you always have prepared, those spells don't count against the number of spells you can prepare with this feature, but those spells otherwise count as Ranger spells for you.\n\n**Changing Your Prepared Spells.** Whenever you finish a Long Rest, you can replace one spell on your list with another Ranger spell for which you have spell slots.\n\n**Spellcasting Ability.** Wisdom is your spellcasting ability for your Ranger spells.\n\n**Spellcasting Focus.** You can use a Druidic Focus as a Spellcasting Focus for your Ranger spells.",
+        "shortDescription": "Cast Ranger spells using Wisdom.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/ranger"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-favored-enemy",
+        "name": "Favored Enemy",
+        "level": 1,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You always have the Hunter's Mark spell prepared. You can cast it twice without expending a spell slot, and you regain all expended uses of this ability when you finish a Long Rest.\n\nThe number of times you can cast the spell without a spell slot increases when you reach certain Ranger levels, as shown in the Favored Enemy column of the Ranger Features table.",
+        "shortDescription": "Hunter's Mark always prepared, with free casts per Long Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/hunters-mark",
+            "castingOverrides": {
+              "alwaysPrepared": true,
+              "freeCasts": {
+                "count": "$column:favoredEnemy",
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-weapon-mastery",
+        "name": "Weapon Mastery",
+        "level": 1,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Longbows and Shortswords.\n\nWhenever you finish a Long Rest, you can change the kinds of weapons you chose. For example, you could switch to using the mastery properties of Scimitars and Longswords.",
+        "shortDescription": "Use the mastery properties of 2 kinds of weapons.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "ranger-weapon-mastery",
+            "prompt": "Choose two kinds of weapons you are proficient with.",
+            "count": 2,
+            "fromTypes": [
+              "equipment"
+            ],
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "weapon"
+              },
+              {
+                "type": "proficient"
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 2
+            }
+          }
+        ],
+        "tags": [
+          "weaponMastery"
+        ],
+        "effects": [
+          {
+            "type": "grantMastery",
+            "target": "$choice:ranger-weapon-mastery"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-deft-explorer",
+        "name": "Deft Explorer",
+        "level": 2,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Thanks to your travels, you gain the following benefits.\n\n**Expertise.** Choose one of your skill proficiencies with which you lack Expertise. You gain Expertise in that skill.\n\n**Languages.** You know two languages of your choice from the language tables in \"Character Creation.\"",
+        "shortDescription": "Expertise in one skill and two languages.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "deft-explorer-expertise",
+            "prompt": "Choose 1 skill you are proficient in but lack Expertise in.",
+            "count": 1,
+            "fromTypes": [
+              "skill"
+            ],
+            "qualifiers": [
+              {
+                "type": "proficient"
+              }
+            ]
+          },
+          {
+            "id": "deft-explorer-languages",
+            "prompt": "Choose two languages.",
+            "count": 2,
+            "fromTypes": [
+              "language"
+            ]
+          }
+        ],
+        "tags": [
+          "skill",
+          "language"
+        ],
+        "effects": [
+          {
+            "type": "grantExpertise",
+            "target": "$choice:deft-explorer-expertise"
+          },
+          {
+            "type": "grantLanguage",
+            "target": "$choice:deft-explorer-languages"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-fighting-style",
+        "name": "Fighting Style",
+        "level": 2,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You gain a Fighting Style feat of your choice (see \"Feats\"). Instead of choosing one of those feats, you can choose the option below.\n\n**Druidic Warrior.** You learn two Druid cantrips of your choice (see the Druid class's section for a list of Druid spells). Guidance and Starry Wisp are recommended. The chosen cantrips count as Ranger spells for you, and Wisdom is your spellcasting ability for them. Whenever you gain a Ranger level, you can replace one of these cantrips with another Druid cantrip.",
+        "shortDescription": "Gain a Fighting Style feat, or two Druid cantrips (Druidic Warrior).",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "ranger-fighting-style",
+            "prompt": "Choose a Fighting Style feat.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "fightingStyle"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "druidic-warrior-cantrips",
+            "prompt": "Choose two Druid cantrips.",
+            "count": 2,
+            "from": "srd-5.2:class/druid",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/ranger-fighting-style",
+          "items": [
+            {
+              "id": "fighting-style-feat",
+              "name": "Fighting Style Feat",
+              "description": "Gain a Fighting Style feat of your choice.",
+              "effects": [
+                {
+                  "type": "grantFeature",
+                  "target": "$choice:ranger-fighting-style"
+                }
+              ]
+            },
+            {
+              "id": "druidic-warrior",
+              "name": "Druidic Warrior",
+              "description": "Learn two Druid cantrips, which count as Ranger spells and use Wisdom.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "$choice:druidic-warrior-cantrips"
+                },
+                {
+                  "type": "setSpellcastingAbility",
+                  "value": "WIS"
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/ranger-fighting-style",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-subclass",
+        "name": "Ranger Subclass",
+        "level": 3,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You gain a Ranger subclass of your choice. The Hunter subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Ranger levels. For the rest of your career, you gain each of your subclass's features that are of your Ranger level or lower.",
+        "shortDescription": "Choose a Ranger subclass.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "subclass"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/ranger-ability-score-improvement",
+        "name": "Ability Score Improvement",
+        "level": 4,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You gain the Ability Score Improvement feat (see \"Feats\") or another feat of your choice for which you qualify. You gain this feature again at Ranger levels 8, 12, and 16.",
+        "shortDescription": "Take a feat, or increase ability scores.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "ranger-ability-score-improvement",
+            "prompt": "Choose Ability Score Improvement or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:ranger-ability-score-improvement"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-extra-attack",
+        "name": "Extra Attack",
+        "level": 5,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+        "shortDescription": "Attack twice with the Attack action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setAttackCount",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-roving",
+        "name": "Roving",
+        "level": 6,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Your Speed increases by 10 feet while you aren't wearing Heavy armor. You also have a Climb Speed and a Swim Speed equal to your Speed.",
+        "shortDescription": "+10 feet Speed without Heavy armor; Climb and Swim Speeds equal your Speed.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": 10,
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "heavyArmor",
+                "negate": true
+              }
+            ]
+          },
+          {
+            "type": "grantSpeed",
+            "target": "climb",
+            "value": "$derived:walkingSpeed"
+          },
+          {
+            "type": "grantSpeed",
+            "target": "swim",
+            "value": "$derived:walkingSpeed"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-expertise",
+        "name": "Expertise",
+        "level": 9,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Choose two of your skill proficiencies with which you lack Expertise. You gain Expertise in those skills.",
+        "shortDescription": "Expertise in two more skills.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "ranger-expertise",
+            "prompt": "Choose 2 skills you are proficient in but lack Expertise in.",
+            "count": 2,
+            "fromTypes": [
+              "skill"
+            ],
+            "qualifiers": [
+              {
+                "type": "proficient"
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantExpertise",
+            "target": "$choice:ranger-expertise"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-tireless",
+        "name": "Tireless",
+        "level": 10,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Primal forces now help fuel you on your journeys, granting you the following benefits.\n\n**Temporary Hit Points.** As a Magic action, you can give yourself a number of Temporary Hit Points equal to 1d8 plus your Wisdom modifier (minimum of 1). You can use this action a number of times equal to your Wisdom modifier (minimum of once), and you regain all expended uses when you finish a Long Rest.\n\n**Decrease Exhaustion.** Whenever you finish a Short Rest, your Exhaustion level, if any, decreases by 1.",
+        "shortDescription": "Magic action: 1d8 + WIS Temporary Hit Points; Short Rests reduce Exhaustion.",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": "$derived:WIS",
+          "minimum": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "grantTemporaryHitPoints",
+            "value": {
+              "count": 1,
+              "die": "d8",
+              "modifier": "$derived:WIS",
+              "minimum": 1
+            }
+          },
+          {
+            "type": "modifier",
+            "target": "exhaustionLevel",
+            "value": -1,
+            "trigger": {
+              "event": "finishRest",
+              "rest": "short"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-relentless-hunter",
+        "name": "Relentless Hunter",
+        "level": 13,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Taking damage can't break your Concentration on Hunter's Mark.",
+        "shortDescription": "Damage can't break your Concentration on Hunter's Mark.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "concentration",
+            "qualifiers": [
+              {
+                "type": "spell",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-natures-veil",
+        "name": "Nature's Veil",
+        "level": 14,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You invoke spirits of nature to magically hide yourself. As a Bonus Action, you can give yourself the Invisible condition until the end of your next turn.\n\nYou can use this feature a number of times equal to your Wisdom modifier (minimum of once), and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: become Invisible until the end of your next turn.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:WIS",
+          "minimum": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "stealth"
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/invisible",
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-precise-hunter",
+        "name": "Precise Hunter",
+        "level": 17,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You have Advantage on attack rolls against the creature currently marked by your Hunter's Mark.",
+        "shortDescription": "Advantage on attacks against your Hunter's Mark target.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "affectedBy",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-feral-senses",
+        "name": "Feral Senses",
+        "level": 18,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "Your connection to the forces of nature grants you Blindsight with a range of 30 feet.",
+        "shortDescription": "Blindsight 30 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "senses"
+        ],
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "blindsight",
+            "value": 30
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-epic-boon",
+        "name": "Epic Boon",
+        "level": 19,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Dimensional Travel is recommended.",
+        "shortDescription": "Take an Epic Boon or another feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "ranger-epic-boon",
+            "prompt": "Choose an Epic Boon feat or another feat you qualify for.",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "origin"
+                ],
+                "negate": true
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "progression"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:ranger-epic-boon"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/ranger-foe-slayer",
+        "name": "Foe Slayer",
+        "level": 20,
+        "sourceId": "srd-5.2:class/ranger",
+        "description": "The damage die of your Hunter's Mark is a d10 rather than a d6.",
+        "shortDescription": "Hunter's Mark deals d10s.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "replaceDamageDice",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "qualifiers": [
+              {
+                "type": "spell",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:class/rogue",

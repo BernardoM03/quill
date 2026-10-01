@@ -1136,7 +1136,310 @@
   {
     "id": "srd-5.2:subclass/hunter",
     "classId": "srd-5.2:class/ranger",
-    "name": "Hunter"
+    "name": "Hunter",
+    "flavor": "Protect Nature and People from Destruction",
+    "description": "You stalk prey in the wilds and elsewhere, using your abilities as a Hunter to protect nature and people everywhere from forces that would destroy them.",
+    "subclassFeatureLevels": [
+      3,
+      7,
+      11,
+      15
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/hunter-hunters-lore",
+        "name": "Hunter's Lore",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You can call on the forces of nature to reveal certain strengths and weaknesses of your prey. While a creature is marked by your Hunter's Mark, you know whether that creature has any Immunities, Resistances, or Vulnerabilities, and if the creature has any, you know what they are.",
+        "shortDescription": "Know the Immunities, Resistances, and Vulnerabilities of your Hunter's Mark target.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "knowledge"
+        ],
+        "effects": [
+          {
+            "type": "detect",
+            "value": {
+              "within": 90,
+              "things": [
+                "damageDefenses"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "affectedBy",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-hunters-prey",
+        "name": "Hunter's Prey",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Colossus Slayer.** Your tenacity can wear down even the most resilient foes. When you hit a creature with a weapon, the weapon deals an extra 1d8 damage to the target if it's missing any of its Hit Points. You can deal this extra damage only once per turn.\n\n**Horde Breaker.** Once on each of your turns when you make an attack with a weapon, you can make another attack with the same weapon against a different creature that is within 5 feet of the original target, that is within the weapon's range, and that you haven't attacked this turn.",
+        "shortDescription": "Choose Colossus Slayer or Horde Breaker; swap on a rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "hunters-prey",
+            "prompt": "Choose Colossus Slayer or Horde Breaker.",
+            "count": 1,
+            "from": "srd-5.2:list/hunters-prey",
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "short"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/hunters-prey",
+          "items": [
+            {
+              "id": "colossus-slayer",
+              "name": "Colossus Slayer",
+              "description": "Once per turn, a weapon hit deals an extra 1d8 damage to a target missing any of its Hit Points.",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "$derived:weaponDamageType",
+                  "value": {
+                    "count": 1,
+                    "die": "d8"
+                  },
+                  "frequency": "perTurn",
+                  "trigger": {
+                    "event": "hitWithAttack"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "attackSource",
+                      "attackSources": [
+                        "weapon"
+                      ]
+                    },
+                    {
+                      "type": "hitPoints",
+                      "subject": "target",
+                      "atMaximum": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "horde-breaker",
+              "name": "Horde Breaker",
+              "description": "Once per turn, make another weapon attack against a different creature within 5 feet of the original target.",
+              "effects": [
+                {
+                  "type": "grantAttack",
+                  "value": 1,
+                  "frequency": "perTurn",
+                  "trigger": {
+                    "event": "makeAttackRoll"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "attackSource",
+                      "attackSources": [
+                        "weapon"
+                      ]
+                    },
+                    {
+                      "type": "nearbyCreature",
+                      "relation": "enemy",
+                      "within": 5,
+                      "around": "target"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:hunters-prey"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-defensive-tactics",
+        "name": "Defensive Tactics",
+        "level": 7,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Escape the Horde.** Opportunity Attacks have Disadvantage against you.\n\n**Multiattack Defense.** When a creature hits you with an attack roll, that creature has Disadvantage on all other attack rolls against you this turn.",
+        "shortDescription": "Choose Escape the Horde or Multiattack Defense; swap on a rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "defensive-tactics",
+            "prompt": "Choose Escape the Horde or Multiattack Defense.",
+            "count": 1,
+            "from": "srd-5.2:list/defensive-tactics",
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "short"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/defensive-tactics",
+          "items": [
+            {
+              "id": "escape-the-horde",
+              "name": "Escape the Horde",
+              "description": "Opportunity Attacks have Disadvantage against you.",
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "attackRoll",
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "self"
+                    },
+                    {
+                      "type": "opportunityAttack"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "multiattack-defense",
+              "name": "Multiattack Defense",
+              "description": "A creature that hits you has Disadvantage on its other attack rolls against you this turn.",
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "attackRoll",
+                  "affects": "affector",
+                  "trigger": {
+                    "event": "hitByAttack"
+                  },
+                  "duration": {
+                    "value": 1,
+                    "unit": "round"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "self"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:defensive-tactics"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-superior-hunters-prey",
+        "name": "Superior Hunter's Prey",
+        "level": 11,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "Once per turn when you deal damage to a creature marked by your Hunter's Mark, you can also deal that spell's extra damage to a different creature that you can see within 30 feet of the first creature.",
+        "shortDescription": "Once per turn, spread Hunter's Mark damage to a second creature within 30 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 1,
+              "die": "$derived:huntersMarkDie"
+            },
+            "frequency": "perTurn",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "affectedBy",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              },
+              {
+                "type": "nearbyCreature",
+                "relation": "enemy",
+                "within": 30,
+                "around": "target"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-superior-hunters-defense",
+        "name": "Superior Hunter's Defense",
+        "level": 15,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "When you take damage, you can take a Reaction to give yourself Resistance to that damage and any other damage of the same type until the end of the current turn.",
+        "shortDescription": "Reaction: Resistance to a damage type until the end of the turn.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You take damage."
+        },
+        "tags": [
+          "defense",
+          "reaction"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$derived:triggerDamageType",
+            "trigger": {
+              "event": "takeDamage",
+              "optional": true
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:subclass/thief",
