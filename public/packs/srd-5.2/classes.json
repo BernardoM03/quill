@@ -1113,10 +1113,7 @@
                       "relation": "triggerCreature"
                     },
                     {
-                      "type": "namedAction",
-                      "actions": [
-                        "attack"
-                      ]
+                      "type": "opportunityAttack"
                     }
                   ]
                 }

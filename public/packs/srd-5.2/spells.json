@@ -18059,10 +18059,7 @@
         },
         "qualifiers": [
           {
-            "type": "namedAction",
-            "actions": [
-              "attack"
-            ]
+            "type": "opportunityAttack"
           }
         ]
       }

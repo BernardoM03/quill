@@ -36,25 +36,6 @@
             "maximum": 20
           }
         },
-        "spellcasting": {
-          "type": "object",
-          "description": "Subclass-granted spellcasting, e.g. Domain Spells.",
-          "properties": {
-            "alwaysPrepared": {
-              "type": "boolean"
-            },
-            "spellsByLevel": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "additionalProperties": false
-        },
         "features": {
           "type": "array",
           "items": {
