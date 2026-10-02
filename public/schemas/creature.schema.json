@@ -101,6 +101,11 @@
           "items": {
             "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
           }
+        },
+        "escapeDc": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The DC to escape a condition this action applies, as a bite's 'Grappled (escape DC 13)'."
         }
       },
       "required": [

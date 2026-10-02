@@ -28,7 +28,8 @@
             "pack",
             "mount",
             "tack",
-            "vehicle"
+            "vehicle",
+            "service"
           ]
         },
         "cost": {
@@ -212,6 +213,21 @@
           },
           "then": {
             "$ref": "#/$defs/vehicleFields"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "service"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/serviceFields"
           }
         }
       ],
@@ -527,6 +543,25 @@
         "armorClass",
         "hitPoints"
       ]
+    },
+    "serviceFields": {
+      "properties": {
+        "per": {
+          "enum": [
+            "day",
+            "night",
+            "mile",
+            "meal",
+            "cast",
+            "item"
+          ],
+          "description": "What one payment buys."
+        },
+        "availability": {
+          "type": "string",
+          "description": "Where the service is found, as a level 9 spell's 'City only'."
+        }
+      }
     }
   }
 }

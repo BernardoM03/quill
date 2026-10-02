@@ -72,6 +72,9 @@
         "items": {
           "type": "string"
         }
+      },
+      "options": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/optionList"
       }
     },
     "required": [

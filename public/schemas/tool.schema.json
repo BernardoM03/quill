@@ -7,28 +7,117 @@
   "items": {
     "type": "object",
     "properties": {
-      "id": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId" },
-      "name": { "type": "string" },
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+      },
+      "name": {
+        "type": "string"
+      },
       "category": {
         "type": "string",
         "description": "Artisan's tools, gaming sets, and musical instruments are named as groups by features that grant 'one of your choice'.",
-        "enum": ["artisan", "gaming", "instrument", "kit", "other"]
+        "enum": [
+          "artisan",
+          "gaming",
+          "instrument",
+          "kit",
+          "other"
+        ]
       },
       "ability": {
         "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability",
         "description": "The ability a check using this tool is normally made against. Omitted where the rules say it varies."
       },
-      "cost": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost" },
-      "weight": { "type": "number", "minimum": 0, "description": "Pounds. Omit where the rules say it varies." },
+      "cost": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost"
+      },
+      "weight": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Pounds. Omit where the rules say it varies."
+      },
       "variants": {
         "type": "array",
         "description": "Forms that each need their own proficiency, as a Gaming Set's dice or a Musical Instrument's lute. Price and weight live on the variant when they differ by form.",
-        "items": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/itemVariant" },
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/itemVariant"
+        },
         "minItems": 1
       },
-      "description": { "type": "string" }
+      "description": {
+        "type": "string"
+      },
+      "utilize": {
+        "type": "array",
+        "minItems": 1,
+        "description": "What the Utilize action does with this tool, one per action, each with its DC.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "dc": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "action",
+            "dc"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "craft": {
+        "type": "array",
+        "minItems": 1,
+        "description": "What you can craft with this tool: an item by id, or a group of items described by category with exceptions, as Smith's Tools' 'any Melee weapon except Club'.",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "enum": [
+                    "weapon",
+                    "armor"
+                  ]
+                },
+                "attackRange": {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/attackRange"
+                },
+                "armorCategory": {
+                  "enum": [
+                    "light",
+                    "medium",
+                    "heavy"
+                  ]
+                },
+                "except": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+                  }
+                }
+              },
+              "required": [
+                "category"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      }
     },
-    "required": ["id", "name", "category"],
+    "required": [
+      "id",
+      "name",
+      "category"
+    ],
     "additionalProperties": false
   }
 }

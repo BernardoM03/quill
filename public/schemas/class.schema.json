@@ -144,16 +144,10 @@
                   }
                 },
                 "tools": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
                 },
                 "skills": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
                 }
               },
               "additionalProperties": false
@@ -422,6 +416,22 @@
         "slotRecharge": {
           "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest",
           "description": "When the class's spell slots come back. Long by default; the Warlock's Pact Magic slots return on a Short Rest."
+        },
+        "cantripSwap": {
+          "type": "object",
+          "description": "How many cantrips you may replace, and when. One on each level for most casters; one per Long Rest for the Wizard.",
+          "properties": {
+            "onLevelUp": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "onLongRest": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "minProperties": 1,
+          "additionalProperties": false
         }
       },
       "required": [

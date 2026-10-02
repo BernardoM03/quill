@@ -138,6 +138,11 @@
         "minimum": {
           "type": "integer",
           "description": "Lowest total, as Wholeness of Body's 'minimum of 1 Hit Point'."
+        },
+        "minimumCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Floor on a deferred `count`, as Sear Undead's 'minimum of 1d8'."
         }
       },
       "required": [
@@ -300,6 +305,17 @@
             "resetOn"
           ],
           "additionalProperties": false
+        },
+        "modifier": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "Added to `base`, as Use Magic Device's 'DC 10 plus the spell's level' with `$derived:spellLevel`."
         }
       },
       "additionalProperties": false,
@@ -321,7 +337,20 @@
       "description": "A save made against an effect by whoever the effect is aimed at. Distinct from the `savingThrow` rollTarget, which is the character's own save being modified.",
       "properties": {
         "ability": {
-          "$ref": "#/$defs/ability"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ability"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ability"
+              },
+              "minItems": 2,
+              "uniqueItems": true
+            }
+          ],
+          "description": "The save's ability, or a list the target picks from, as a Grapple's 'Strength or Dexterity saving throw (its choice)'."
         },
         "dc": {
           "$ref": "#/$defs/saveDc"
@@ -460,19 +489,20 @@
     },
     "specialImmunity": {
       "type": "string",
-      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes. `instantDeath` is Death Ward's protection from effects that kill without damage. `speedReduction` and `hitPointMaximumReduction` stop those numbers being lowered, as Freedom of Movement and Aura of Life.",
+      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes. `instantDeath` is Death Ward's protection from effects that kill without damage. `speedReduction` and `hitPointMaximumReduction` stop those numbers being lowered, as Freedom of Movement and Aura of Life. `spells` is immunity to spells, narrowed by `spellLevel` and `inArea` qualifiers, as Globe of Invulnerability.",
       "enum": [
         "magicalSleep",
         "disease",
         "foodAndWater",
         "instantDeath",
         "speedReduction",
-        "hitPointMaximumReduction"
+        "hitPointMaximumReduction",
+        "spells"
       ]
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing. `dealDamage` fires when you deal damage, as Sanctuary ending. `expendCharges` fires when you use a magic item property that spends charges, as Use Magic Device.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -496,7 +526,9 @@
         "effectEnds",
         "castSpell",
         "restoreHitPoints",
-        "reduceEnemyToZero"
+        "reduceEnemyToZero",
+        "dealDamage",
+        "expendCharges"
       ]
     },
     "trigger": {
@@ -549,6 +581,14 @@
             }
           ],
           "description": "Which spell, when event is castSpell, as Smite of Protection on casting Divine Smite."
+        },
+        "subject": {
+          "enum": [
+            "self",
+            "target",
+            "summon"
+          ],
+          "description": "Whose event it is. Defaults to you. `target` is the creature your spell targets, as Warding Bond's 'each time it takes damage'."
         }
       },
       "required": [
@@ -664,32 +704,30 @@
         "addToSpellbook": {
           "type": "boolean",
           "description": "The spell goes into your spellbook for free rather than being prepared, as Evocation Savant."
+        },
+        "ignoreConcentration": {
+          "type": "boolean",
+          "description": "Cast without Concentration, as Dragon Companion's Summon Dragon."
+        },
+        "duration": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/duration"
+            }
+          ],
+          "description": "The spell's duration when cast this way, as Dragon Companion's 1 minute."
         }
       },
       "additionalProperties": false
     },
     "effectGroup": {
-      "type": "object",
       "description": "One named bullet of a condition or feature, mirroring how the SRD writes them ('Can't See', 'Attacks Affected'). Prose in `description`, mechanics in `effects`.",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "effects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/effect"
-          }
+      "allOf": [
+        {
+          "$ref": "#/$defs/effectGroupCore"
         }
-      },
-      "required": [
-        "name",
-        "description"
       ],
-      "additionalProperties": false
+      "unevaluatedProperties": false
     },
     "deferredValue": {
       "type": "string",
@@ -835,8 +873,19 @@
             "day",
             "instantaneous",
             "untilDispelled",
-            "special"
+            "special",
+            "year",
+            "untilRest",
+            "permanent"
           ]
+        },
+        "rest": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/rest"
+            }
+          ],
+          "description": "With `untilRest`, the rest that ends it, as created spell slots vanishing on a Long Rest. `value` is 0."
         }
       },
       "required": [
@@ -941,6 +990,13 @@
             "count"
           ],
           "additionalProperties": false
+        },
+        "when": {
+          "enum": [
+            "gain",
+            "use"
+          ],
+          "description": "`gain` (the default): picked when the feature is gained, and kept until `swap` allows a change. `use`: picked fresh each time the effect is used, as Primal Strike's damage type or Natural Recovery's spell. Spell choices are always per cast."
         }
       },
       "required": [
@@ -1084,7 +1140,10 @@
         "autoSucceed",
         "addTargets",
         "ignoreResistance",
-        "swapPreparedSpells"
+        "swapPreparedSpells",
+        "grantCover",
+        "restrictMovement",
+        "shareSenses"
       ]
     },
     "effect": {
@@ -1114,12 +1173,13 @@
         },
         "affects": {
           "type": "string",
-          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'. `target` is whoever the spell or feature targets, as Bless's targets adding 1d4 to their own rolls. `affector` is the creature that caused the effect: the source of a condition, or the creature whose action fired a trigger, as Multiattack Defense's attacker.",
+          "description": "WHO performs the affected roll. Defaults to `self` when absent. This axis answers only 'whose roll is it'; restrict WHOM the roll is against with a `targetRelation` qualifier instead. Keeping the two axes separate is deliberate — compounding them ('selfAgainstAffector') multiplies enum values and cannot express exclusions like 'against any target other than the grappler'. `target` is whoever the spell or feature targets, as Bless's targets adding 1d4 to their own rolls. `affector` is the creature that caused the effect: the source of a condition, or the creature whose action fired a trigger, as Multiattack Defense's attacker. `summon` is a creature you summoned with the spell or feature named by a `spell` or `sourceFeature` qualifier, as Investment of the Chain Master's familiar.",
           "enum": [
             "self",
             "affector",
             "others",
-            "target"
+            "target",
+            "summon"
           ]
         },
         "qualifiers": {
@@ -1255,6 +1315,95 @@
         "uses": {
           "$ref": "#/$defs/uses",
           "description": "A limit on this one effect when the rest of the feature is unlimited or limited differently. Wild Resurgence trades a spell slot for Wild Shape once per turn, but a Wild Shape use for a slot only once per Long Rest; the second effect carries `uses`. Prefer the feature's own `uses` when every effect shares the limit."
+        },
+        "increasePerUse": {
+          "type": "object",
+          "description": "The effect grows each time it fires before `resetOn`, and skips the first `freeUses` uses. Overchannel's backlash is nothing the first time, then 2d12 per slot level, then 1d12 more per level each time after.",
+          "properties": {
+            "amount": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                },
+                {
+                  "$ref": "#/$defs/diceExpression"
+                }
+              ]
+            },
+            "resetOn": {
+              "$ref": "#/$defs/rest"
+            },
+            "freeUses": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "amount",
+            "resetOn"
+          ],
+          "additionalProperties": false
+        },
+        "ignores": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "resistance",
+              "immunity",
+              "reduction"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Defenses this damage passes through, as Overchannel's backlash ignoring Resistance and Immunity, or Wish's stress damage that can't be reduced."
+        },
+        "hitPointCap": {
+          "type": "object",
+          "properties": {
+            "fraction": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "fraction"
+          ],
+          "additionalProperties": false,
+          "description": "Healing stops once the creature reaches this share of its Hit Point maximum, as Preserve Life's half."
+        },
+        "check": {
+          "type": "object",
+          "description": "An ability check you must pass before the effect happens, as Use Magic Device's Intelligence (Arcana) check to cast a higher-level scroll. `onFailure: consume` loses the item anyway.",
+          "properties": {
+            "ability": {
+              "$ref": "#/$defs/ability"
+            },
+            "skills": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/skillId"
+              },
+              "minItems": 1
+            },
+            "dc": {
+              "$ref": "#/$defs/saveDc"
+            },
+            "onFailure": {
+              "enum": [
+                "fail",
+                "consume"
+              ]
+            }
+          },
+          "required": [
+            "ability",
+            "dc"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -1730,6 +1879,23 @@
                   },
                   {
                     "$ref": "#/$defs/deferredValue"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "range": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "magicalDarkness": {
+                        "type": "boolean",
+                        "description": "Sees through magical Darkness too, as Devil's Sight."
+                      }
+                    },
+                    "required": [
+                      "range"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
               }
@@ -2246,7 +2412,8 @@
                   {
                     "enum": [
                       "jumpDistance",
-                      "unarmedStrikeSaveDc"
+                      "unarmedStrikeSaveDc",
+                      "saveDc"
                     ]
                   }
                 ],
@@ -2684,9 +2851,16 @@
             ],
             "properties": {
               "target": {
-                "type": "string",
-                "pattern": "^[a-z0-9][a-z0-9.-]*:list/[a-z0-9-]+$",
-                "description": "The option catalog to pick from."
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9.-]*:list/[a-z0-9-]+$"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ],
+                "description": "The option catalog to pick from, or a `$choice:` whose value is one, as Teleport picking the outcome table for your familiarity."
               },
               "value": {
                 "oneOf": [
@@ -3256,6 +3430,31 @@
                     },
                     "minItems": 1,
                     "uniqueItems": true
+                  },
+                  "keepHigher": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "skills",
+                        "savingThrows"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Modifiers where you use whichever is higher, yours or the stat block's, as Wild Shape."
+                  },
+                  "equipment": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "fall",
+                        "merge",
+                        "worn"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "What you may do with your gear when you change, as Wild Shape's fall, merge, or wear."
                   }
                 },
                 "anyOf": [
@@ -3813,133 +4012,258 @@
               "value": false
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grantCover"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "half",
+                  "threeQuarters",
+                  "total"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "restrictMovement"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "modes": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "crawl",
+                        "standUp",
+                        "walk",
+                        "climb",
+                        "swim",
+                        "fly",
+                        "burrow",
+                        "jump"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "The only ways you may move, as Prone's crawl or stand up."
+                  },
+                  "maxFeetFromAnchor": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "maxFallFeet": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "shareSenses"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "within": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "castFrom": {
+                    "type": "boolean",
+                    "description": "You can cast spells as if from the other creature's space, as Gaze of Two Minds."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
         }
       ]
     },
     "feature": {
-      "type": "object",
       "description": "A class or subclass feature. Splits display (description) from mechanics (effects).",
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/featureId"
+      "allOf": [
+        {
+          "$ref": "#/$defs/effectGroupCore"
         },
-        "name": {
-          "type": "string"
-        },
-        "level": {
-          "type": "integer",
-          "description": "The class level at which the feature is gained. Omit for features with no level, such as species traits, which you have from level 1.",
-          "minimum": 1,
-          "maximum": 20
-        },
-        "sourceId": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/classId"
-            },
-            {
-              "$ref": "#/$defs/subclassId"
-            },
-            {
-              "$ref": "#/$defs/speciesId"
-            }
-          ],
-          "description": "What grants this feature. A class, a subclass, or a species."
-        },
-        "description": {
-          "type": "string",
-          "description": "Markdown prose rendered by the UI."
-        },
-        "shortDescription": {
-          "type": "string",
-          "description": "Tooltip / hover text."
-        },
-        "activation": {
-          "$ref": "#/$defs/activation"
-        },
-        "uses": {
-          "$ref": "#/$defs/uses"
-        },
-        "duration": {
-          "$ref": "#/$defs/duration"
-        },
-        "concentration": {
-          "type": "boolean"
-        },
-        "supersedes": {
-          "oneOf": [
-            {
+        {
+          "type": "object",
+          "properties": {
+            "id": {
               "$ref": "#/$defs/featureId"
             },
-            {
-              "type": "null"
+            "level": {
+              "type": "integer",
+              "description": "The class level at which the feature is gained. Omit for features with no level, such as species traits, which you have from level 1.",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "sourceId": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/classId"
+                },
+                {
+                  "$ref": "#/$defs/subclassId"
+                },
+                {
+                  "$ref": "#/$defs/speciesId"
+                }
+              ],
+              "description": "What grants this feature. A class, a subclass, or a species."
+            },
+            "shortDescription": {
+              "type": "string",
+              "description": "Tooltip / hover text."
+            },
+            "activation": {
+              "$ref": "#/$defs/activation"
+            },
+            "uses": {
+              "$ref": "#/$defs/uses"
+            },
+            "duration": {
+              "$ref": "#/$defs/duration"
+            },
+            "concentration": {
+              "type": "boolean"
+            },
+            "supersedes": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/featureId"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Feature id this one replaces, e.g. Extra Attack (2) over Extra Attack."
+            },
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/choice"
+              }
+            },
+            "scaling": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/scalingRow"
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sustain": {
+              "$ref": "#/$defs/sustain"
+            },
+            "endConditions": {
+              "type": "array",
+              "description": "Qualifiers that end the feature early when any one holds, as Rage ending if you don Heavy armor or have the Incapacitated condition. ORed, unlike effect qualifiers.",
+              "items": {
+                "$ref": "#/$defs/qualifier"
+              }
+            },
+            "options": {
+              "$ref": "#/$defs/optionList"
+            },
+            "targets": {
+              "$ref": "#/$defs/targets"
             }
-          ],
-          "description": "Feature id this one replaces, e.g. Extra Attack (2) over Extra Attack."
-        },
-        "prerequisites": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "choices": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/choice"
-          }
-        },
-        "scaling": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/scalingRow"
-          }
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "effects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/effect"
-          }
-        },
-        "sustain": {
-          "$ref": "#/$defs/sustain"
-        },
-        "endConditions": {
-          "type": "array",
-          "description": "Qualifiers that end the feature early when any one holds, as Rage ending if you don Heavy armor or have the Incapacitated condition. ORed, unlike effect qualifiers.",
-          "items": {
-            "$ref": "#/$defs/qualifier"
-          }
-        },
-        "options": {
-          "$ref": "#/$defs/optionList"
-        },
-        "targets": {
-          "$ref": "#/$defs/targets"
+          },
+          "required": [
+            "id",
+            "sourceId"
+          ]
         }
-      },
-      "required": [
-        "id",
-        "name",
-        "sourceId",
-        "description"
       ],
-      "additionalProperties": false
+      "unevaluatedProperties": false
     },
     "proficiencyGrant": {
       "type": "object",
-      "description": "Either a flat grant (`items`) or a player choice from a pool (`count` + `from`). Exactly one form, so an empty object is rejected.",
+      "description": "Either a flat grant (`items`) or a pick (`count` plus `from` or `fromTypes`). The pick form is a `choice` minus the prompt: `from` is a fixed list, `fromTypes` an open pool of every loaded entity of those kinds, narrowed by `qualifiers`, so the Bard's 'any three skills' sees skills a later pack adds. `id` names the pick so `$choice:` can read it, as Soldier's starting Gaming Set matching its proficiency. Items and `from` entries are ids, or `{id, variant}` for one form of a tool.",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "items": {
           "type": "array",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/toolId"
+                  },
+                  "variant": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$"
+                  }
+                },
+                "required": [
+                  "id",
+                  "variant"
+                ],
+                "additionalProperties": false,
+                "description": "One variant of a tool, as a Gaming Set's dice. Each variant is its own proficiency."
+              }
+            ]
           }
         },
         "count": {
@@ -3949,7 +4273,42 @@
         "from": {
           "type": "array",
           "items": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/toolId"
+                  },
+                  "variant": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-]+$"
+                  }
+                },
+                "required": [
+                  "id",
+                  "variant"
+                ],
+                "additionalProperties": false,
+                "description": "One variant of a tool, as a Gaming Set's dice. Each variant is its own proficiency."
+              }
+            ]
+          }
+        },
+        "fromTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/entityKind"
+          },
+          "minItems": 1
+        },
+        "qualifiers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/qualifier"
           }
         }
       },
@@ -3965,6 +4324,12 @@
             "count",
             "from"
           ]
+        },
+        {
+          "required": [
+            "count",
+            "fromTypes"
+          ]
         }
       ]
     },
@@ -3977,16 +4342,21 @@
             "type": {
               "const": "sense"
             },
-            "sense": {
-              "$ref": "#/$defs/sense"
-            },
             "negate": {
               "type": "boolean"
+            },
+            "senses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/sense"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
             "type",
-            "sense"
+            "senses"
           ],
           "additionalProperties": false
         },
@@ -4144,16 +4514,21 @@
             "type": {
               "const": "situationType"
             },
-            "situationType": {
-              "$ref": "#/$defs/situationType"
-            },
             "negate": {
               "type": "boolean"
+            },
+            "situationTypes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/situationType"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
             "type",
-            "situationType"
+            "situationTypes"
           ],
           "additionalProperties": false
         },
@@ -4194,15 +4569,34 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "specialSenses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/specialSense"
+              },
+              "minItems": 1,
+              "description": "Perceiving through one of these special senses, as Blur's exception for Blindsight and Truesight."
             }
           },
           "required": [
             "type",
             "perceiver",
-            "perceived",
-            "sense"
+            "perceived"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "sense"
+              ]
+            },
+            {
+              "required": [
+                "specialSenses"
+              ]
+            }
+          ]
         },
         {
           "properties": {
@@ -4324,7 +4718,12 @@
               "const": "equipment"
             },
             "equipment": {
-              "$ref": "#/$defs/equipmentCategory"
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/equipmentCategory"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             },
             "negate": {
               "type": "boolean"
@@ -4385,16 +4784,21 @@
             "type": {
               "const": "attackRange"
             },
-            "attackRange": {
-              "$ref": "#/$defs/attackRange"
-            },
             "negate": {
               "type": "boolean"
+            },
+            "attackRanges": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/attackRange"
+              },
+              "minItems": 1,
+              "uniqueItems": true
             }
           },
           "required": [
             "type",
-            "attackRange"
+            "attackRanges"
           ],
           "additionalProperties": false
         },
@@ -4868,14 +5272,33 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "weaponProperty": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/weaponProperty"
+                }
+              ],
+              "description": "The attack was granted by this weapon property, as the extra attack a Light weapon allows."
             }
           },
           "required": [
-            "type",
-            "featureId"
+            "type"
           ],
           "additionalProperties": false,
-          "description": "The attack or roll was granted by this feature, as Open Hand Technique triggering only on Flurry of Blows attacks."
+          "description": "The attack or roll was granted by this feature, as Open Hand Technique on Flurry of Blows attacks, or by this weapon property, as Two-Weapon Fighting on the Light property's extra attack.",
+          "oneOf": [
+            {
+              "required": [
+                "featureId"
+              ]
+            },
+            {
+              "required": [
+                "weaponProperty"
+              ]
+            }
+          ]
         },
         {
           "properties": {
@@ -4942,14 +5365,36 @@
             },
             "negate": {
               "type": "boolean"
+            },
+            "spellId": {
+              "$ref": "#/$defs/spellId"
+            },
+            "subject": {
+              "enum": [
+                "self",
+                "target",
+                "affector"
+              ],
+              "description": "Whose position is tested. Defaults to the creature the effect applies to. `affector` is the creature causing the effect, as Globe of Invulnerability's spells cast from outside."
             }
           },
           "required": [
-            "type",
-            "featureId"
+            "type"
           ],
           "additionalProperties": false,
-          "description": "The creature is inside that feature's area, as Aura of Courage applying within Aura of Protection."
+          "description": "The creature is inside that feature's or spell's area, as Aura of Courage within Aura of Protection.",
+          "oneOf": [
+            {
+              "required": [
+                "featureId"
+              ]
+            },
+            {
+              "required": [
+                "spellId"
+              ]
+            }
+          ]
         },
         {
           "properties": {
@@ -4959,7 +5404,14 @@
             "spellIds": {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/spellId"
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/spellId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
               },
               "minItems": 1,
               "uniqueItems": true
@@ -5160,6 +5612,205 @@
           ],
           "additionalProperties": false,
           "description": "The creature has any listed speed. Negated, it excludes them, as Wild Shape's forms lacking a Fly Speed before Druid level 8."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "damageRemaining"
+            },
+            "atMost": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "atMost"
+          ],
+          "additionalProperties": false,
+          "description": "The damage left after your reductions is at most this, as Deflect Attacks redirecting only when it reduced the damage to 0."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "usedFeature"
+            },
+            "featureId": {
+              "$ref": "#/$defs/featureId"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "featureId"
+          ],
+          "additionalProperties": false,
+          "description": "You used that feature on the same trigger or this turn. Negated, Perfect Focus applies only when you didn't use Uncanny Metabolism."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "spellMaterial"
+            },
+            "costly": {
+              "type": "boolean"
+            },
+            "consumed": {
+              "type": "boolean"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The spell's Material component has a listed cost, or is consumed. Both set means either. Beast Spells excludes these.",
+          "minProperties": 2
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "elapsedRounds"
+            },
+            "atLeast": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "atMost": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The spell or feature has been running for this many rounds, counting the first as 1, as Storm of Vengeance's turn-by-turn effects.",
+          "minProperties": 2
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "roll"
+            },
+            "die": {
+              "$ref": "#/$defs/rollType"
+            },
+            "count": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ]
+            },
+            "atLeast": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ]
+            },
+            "equals": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/$defs/deferredValue"
+                }
+              ]
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "die"
+          ],
+          "additionalProperties": false,
+          "description": "Roll this die (or `count` of them; any one counts) and hold on the listed result, as Boon of Spell Recall's d4 equal to the slot level or Mirror Image's d6 of 3 or higher per duplicate.",
+          "anyOf": [
+            {
+              "required": [
+                "atLeast"
+              ]
+            },
+            {
+              "required": [
+                "equals"
+              ]
+            }
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "rollPurpose"
+            },
+            "purposes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "remainMounted"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "purposes"
+          ],
+          "additionalProperties": false,
+          "description": "The roll is made for this purpose, as the Military Saddle's checks to remain mounted."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "usingItem"
+            },
+            "kinds": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "magicItem",
+                  "spellScroll"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "kinds"
+          ],
+          "additionalProperties": false,
+          "description": "The action or spell uses an item of this kind, as Fast Hands' Magic action with a magic item or Use Magic Device's scrolls."
         }
       ]
     },
@@ -5254,10 +5905,11 @@
         },
         "keep": {
           "type": "string",
-          "description": "`new` forces the second result. `best` lets the roller choose the higher result. Only meaningful when mode is `reroll`.",
+          "description": "`new` forces the second result. `best` lets the roller choose the higher result. Only meaningful when mode is `reroll`. `either` lets whoever forced the reroll pick which result stands, as Wish's Roll Redo.",
           "enum": [
             "new",
-            "best"
+            "best",
+            "either"
           ]
         },
         "minimum": {
@@ -5492,6 +6144,10 @@
             "$ref": "#/$defs/effect"
           },
           "description": "Mechanics only this form has, as the Military Saddle's Advantage to stay mounted."
+        },
+        "availability": {
+          "type": "string",
+          "description": "Where a service variant is found, as a level 9 spell's 'City only'."
         }
       },
       "required": [
@@ -5520,8 +6176,16 @@
           "default": 1
         },
         "variant": {
-          "type": "string",
-          "pattern": "^[a-z0-9-]+$"
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$"
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "An itemVariant slug, or `$choice:` naming a proficiency pick, as Soldier's Gaming Set of the same kind as its proficiency."
         },
         "note": {
           "type": "string",
@@ -5576,7 +6240,7 @@
         },
         "resource": {
           "type": "string",
-          "description": "A class resource id, `spellSlot` for an expended spell slot, or `hitPointDice` for a spent Hit Point Die, as Lifedrinker."
+          "description": "A class resource id, `spellSlot` for an expended spell slot, `hitPointDice` for a spent Hit Point Die, as Lifedrinker, or `attack` for one attack forgone from the Attack action, as Quivering Palm."
         },
         "amount": {
           "oneOf": [
@@ -5607,6 +6271,31 @@
           "minimum": 1,
           "maximum": 9,
           "description": "The slot level spent, when `resource` is spellSlot, as Holy Nimbus restored by a level 5 slot."
+        },
+        "recoverAfter": {
+          "type": "object",
+          "properties": {
+            "rests": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "$ref": "#/$defs/diceExpression"
+                }
+              ]
+            },
+            "rest": {
+              "$ref": "#/$defs/rest"
+            }
+          },
+          "required": [
+            "rests",
+            "rest"
+          ],
+          "additionalProperties": false,
+          "description": "The spent use stays spent for this many rests, as Greater Divine Intervention's 2d4 Long Rests."
         }
       },
       "required": [
@@ -5668,7 +6357,7 @@
     },
     "movementGrant": {
       "type": "object",
-      "description": "Movement granted outside your normal move. Exactly one of `feet` or `speedFraction`. `provokesOpportunityAttacks: false` is Tactical Shift's and Remarkable Athlete's 'without provoking Opportunity Attacks'.",
+      "description": "Movement granted outside your normal move: `feet`, `speedFraction`, or `withYou` (carried along with your own move). `provokesOpportunityAttacks` defaults to the normal rules, so leaving an enemy's reach provokes unless it is set to false, as Tactical Shift. Instinctive Pounce leaves it unset because the SRD does.",
       "properties": {
         "feet": {
           "oneOf": [
@@ -5687,6 +6376,10 @@
         },
         "provokesOpportunityAttacks": {
           "type": "boolean"
+        },
+        "withYou": {
+          "const": true,
+          "description": "The creature moves along with you for the turn, as Step of the Wind carrying an ally."
         }
       },
       "additionalProperties": false,
@@ -5699,6 +6392,11 @@
         {
           "required": [
             "speedFraction"
+          ]
+        },
+        {
+          "required": [
+            "withYou"
           ]
         }
       ]
@@ -5760,6 +6458,64 @@
         "repeatable": {
           "type": "boolean",
           "description": "The option can be picked more than once, as Agonizing Blast."
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/choice"
+          },
+          "description": "Picks this option needs, as Agonizing Blast's cantrip. A repeatable option makes the pick again each time it is taken."
+        },
+        "roll": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "min",
+                "max"
+              ],
+              "additionalProperties": false,
+              "description": "The die results that select this option when the catalog is rolled on, as Confusion's 2-6."
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "description": "Ranges per table row, when the catalog's `row` picks one, as Teleport's familiarity rows.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "row": {
+                    "type": "string"
+                  },
+                  "min": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "row",
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "description": "The die results that select this option when the catalog is rolled on, as Confusion's 2-6."
         }
       },
       "required": [
@@ -5784,6 +6540,22 @@
             "$ref": "#/$defs/option"
           },
           "minItems": 1
+        },
+        "die": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/rollType"
+            }
+          ],
+          "description": "Set when the catalog is a table you roll on instead of picking from, as Prismatic Spray's d8 or Teleport's d100."
+        },
+        "row": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "A `$choice:` naming which row of a rolled table applies, as Teleport's familiarity."
         }
       },
       "required": [
@@ -5900,6 +6672,29 @@
         "spellDuration",
         "spellRange",
         "spellSaveDC"
+      ]
+    },
+    "effectGroupCore": {
+      "type": "object",
+      "description": "The fields every named block of rules shares: a condition's bullet, a feat's bullet, a class feature. `effectGroup` is this alone; `feature` adds identity and timing on top, so the two cannot drift apart.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "Markdown prose rendered by the UI."
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "description"
       ]
     }
   }

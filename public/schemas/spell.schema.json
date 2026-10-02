@@ -75,6 +75,13 @@
               "feet",
               "miles"
             ]
+          },
+          "scaling": {
+            "type": "array",
+            "items": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/scalingRow"
+            },
+            "description": "Range by character level, as Spare the Dying's 15 feet doubling at levels 5, 11, and 17."
           }
         },
         "required": [
