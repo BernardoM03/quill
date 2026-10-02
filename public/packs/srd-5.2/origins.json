@@ -1,0 +1,221 @@
+[
+  {
+    "id": "srd-5.2:origin/acolyte",
+    "name": "Acolyte",
+    "description": "You devoted yourself to service in a temple, either nestled in a town or secluded in a sacred grove. There you performed rites in honor of a god or pantheon. You served under a priest and studied religion.",
+    "abilityScores": [
+      "INT",
+      "WIS",
+      "CHA"
+    ],
+    "featId": "srd-5.2:feat/magic-initiate-cleric",
+    "skillProficiencies": {
+      "items": [
+        "srd-5.2:skill/insight",
+        "srd-5.2:skill/religion"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/calligraphers-supplies"
+      ]
+    },
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:tool/calligraphers-supplies"
+            },
+            {
+              "id": "srd-5.2:equipment/book",
+              "note": "prayers"
+            },
+            {
+              "id": "srd-5.2:equipment/holy-symbol"
+            },
+            {
+              "id": "srd-5.2:equipment/parchment",
+              "quantity": 10
+            },
+            {
+              "id": "srd-5.2:equipment/robe"
+            }
+          ],
+          "gold": 8
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    }
+  },
+  {
+    "id": "srd-5.2:origin/criminal",
+    "name": "Criminal",
+    "abilityScores": [
+      "DEX",
+      "CON",
+      "INT"
+    ],
+    "featId": "srd-5.2:feat/alert",
+    "skillProficiencies": {
+      "items": [
+        "srd-5.2:skill/sleight-of-hand",
+        "srd-5.2:skill/stealth"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/thieves-tools"
+      ]
+    },
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/dagger",
+              "quantity": 2
+            },
+            {
+              "id": "srd-5.2:tool/thieves-tools"
+            },
+            {
+              "id": "srd-5.2:equipment/crowbar"
+            },
+            {
+              "id": "srd-5.2:equipment/pouch",
+              "quantity": 2
+            },
+            {
+              "id": "srd-5.2:equipment/clothes-travelers"
+            }
+          ],
+          "gold": 16
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    }
+  },
+  {
+    "id": "srd-5.2:origin/sage",
+    "name": "Sage",
+    "abilityScores": [
+      "CON",
+      "INT",
+      "WIS"
+    ],
+    "featId": "srd-5.2:feat/magic-initiate-wizard",
+    "skillProficiencies": {
+      "items": [
+        "srd-5.2:skill/arcana",
+        "srd-5.2:skill/history"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/calligraphers-supplies"
+      ]
+    },
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/quarterstaff"
+            },
+            {
+              "id": "srd-5.2:tool/calligraphers-supplies"
+            },
+            {
+              "id": "srd-5.2:equipment/book",
+              "note": "history"
+            },
+            {
+              "id": "srd-5.2:equipment/parchment",
+              "quantity": 8
+            },
+            {
+              "id": "srd-5.2:equipment/robe"
+            }
+          ],
+          "gold": 8
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    }
+  },
+  {
+    "id": "srd-5.2:origin/soldier",
+    "name": "Soldier",
+    "abilityScores": [
+      "STR",
+      "DEX",
+      "CON"
+    ],
+    "featId": "srd-5.2:feat/savage-attacker",
+    "skillProficiencies": {
+      "items": [
+        "srd-5.2:skill/athletics",
+        "srd-5.2:skill/intimidation"
+      ]
+    },
+    "toolProficiencies": {
+      "items": [
+        "srd-5.2:tool/gaming-set"
+      ]
+    },
+    "startingEquipment": {
+      "options": [
+        {
+          "label": "A",
+          "items": [
+            {
+              "id": "srd-5.2:equipment/spear"
+            },
+            {
+              "id": "srd-5.2:equipment/shortbow"
+            },
+            {
+              "id": "srd-5.2:equipment/arrows",
+              "note": "20 Arrows, one bundle"
+            },
+            {
+              "id": "srd-5.2:tool/gaming-set",
+              "note": "same kind as the tool proficiency"
+            },
+            {
+              "id": "srd-5.2:equipment/healers-kit"
+            },
+            {
+              "id": "srd-5.2:equipment/quiver"
+            },
+            {
+              "id": "srd-5.2:equipment/clothes-travelers"
+            }
+          ],
+          "gold": 14
+        },
+        {
+          "label": "B",
+          "items": [],
+          "gold": 50
+        }
+      ]
+    }
+  }
+]

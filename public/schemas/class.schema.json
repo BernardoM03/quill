@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/class.schema.json",
+  "title": "D&D 5.5e SRD Classes",
+  "description": "Top-level array of character classes. Classes do NOT list their subclasses: subclasses are separate entities that point back at a class via classId, so a pack can add a subclass without modifying the class.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/class"
+  },
+  "$defs": {
+    "class": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/classId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "flavor": {
+          "type": "string"
+        },
+        "primaryAbility": {
+          "type": "array",
+          "description": "More than one when the class allows a choice (2024 Fighter: STR or DEX).",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+          },
+          "minItems": 1
+        },
+        "hitDie": {
+          "type": "integer",
+          "enum": [
+            6,
+            8,
+            10,
+            12
+          ]
+        },
+        "savingThrowProficiencies": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+          }
+        },
+        "skillProficiencies": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+        },
+        "weaponProficiencies": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/weaponProficiency"
+              }
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        "armorProficiencies": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/armorTraining"
+              }
+            }
+          },
+          "required": [
+            "items"
+          ],
+          "additionalProperties": false
+        },
+        "toolProficiencies": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/proficiencyGrant"
+        },
+        "weaponMastery": {
+          "description": "2024 rules. Number of weapons with mastery, or null for classes without it.",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "startingEquipment": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/startingEquipment"
+        },
+        "startingGold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "The 'instead of equipment' lump sum."
+        },
+        "multiclassing": {
+          "type": "object",
+          "description": "Prerequisites, plus proficiencies gained on multiclass — which differ from starting proficiencies.",
+          "properties": {
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "abilities": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "minimum": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "abilities",
+                  "minimum"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Every entry must hold. Inside one entry, ANY listed ability meeting the minimum is enough, so Fighter's 'Strength or Dexterity 13' is one entry and Paladin's 'Strength and Charisma 13' is two."
+            },
+            "proficienciesGained": {
+              "type": "object",
+              "properties": {
+                "weapons": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/weaponProficiency"
+                  }
+                },
+                "armor": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/armorTraining"
+                  }
+                },
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "subclassLevel": {
+          "type": "integer",
+          "description": "Level at which a subclass is chosen."
+        },
+        "subclassFeatureLevels": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "asiLevels": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "epicBoonLevel": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "spellcasting": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/spellcasting"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resources": {
+          "type": "array",
+          "description": "Named pools the class spends (Rage, Sorcery Points, Channel Divinity).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "recharge": {
+                "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest"
+              },
+              "column": {
+                "type": "string",
+                "description": "Progression column holding this resource's maximum by level."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "recharge"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "progression": {
+          "type": "array",
+          "description": "One row per character level, 1-20.",
+          "items": {
+            "$ref": "#/$defs/progressionRow"
+          }
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/feature"
+          }
+        },
+        "spellList": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/spellList"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "progressionRow": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "proficiencyBonus": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 6
+        },
+        "featureIds": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/featureId"
+          }
+        },
+        "cantripsKnown": {
+          "type": "integer"
+        },
+        "preparedSpells": {
+          "type": "integer"
+        },
+        "spellSlots": {
+          "type": "array",
+          "description": "Slots for spell levels 1-9, in order. Trailing zeros included.",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 9,
+          "maxItems": 9
+        },
+        "resources": {
+          "type": "object",
+          "description": "Class-resource columns keyed by resource id (sorceryPoints, rages, ...). Numbers may be fractional, as Wild Shape's Max CR of 1/4 (0.25).",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "string"
+            ]
+          }
+        },
+        "pactSlots": {
+          "type": "object",
+          "description": "Pact Magic slots: how many, all of one level.",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "slotLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "required": [
+            "count",
+            "slotLevel"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "level",
+        "proficiencyBonus"
+      ],
+      "additionalProperties": false
+    },
+    "spellcasting": {
+      "type": "object",
+      "properties": {
+        "ability": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability"
+        },
+        "progression": {
+          "type": "string",
+          "enum": [
+            "full",
+            "half",
+            "third",
+            "pact"
+          ]
+        },
+        "preparationType": {
+          "type": "string",
+          "enum": [
+            "prepared",
+            "known",
+            "spellbook"
+          ]
+        },
+        "ritualCasting": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "const": "spellbook"
+            }
+          ],
+          "description": "Whether the class casts Ritual spells as Rituals. `spellbook` lets it cast any Ritual in its spellbook unprepared, as the Wizard's Ritual Adept."
+        },
+        "focus": {
+          "oneOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+            },
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
+                  },
+                  {
+                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/toolId"
+                  }
+                ]
+              },
+              "minItems": 2
+            }
+          ],
+          "description": "The spellcasting focus or foci this class can use, as the Wizard's Arcane Focus or spellbook."
+        },
+        "swapOnLevelUp": {
+          "type": "integer",
+          "description": "How many prepared/known spells may be exchanged when gaining a level."
+        },
+        "swapOnLongRest": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "const": "all"
+            }
+          ],
+          "description": "How many prepared spells may be exchanged when finishing a Long Rest: one for the Paladin, `all` for the Cleric."
+        },
+        "spellbook": {
+          "type": "object",
+          "description": "A class that prepares from a book of spells it has learned, as the Wizard.",
+          "properties": {
+            "startingSpells": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "spellsPerLevel": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "copyCostPerLevel": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/cost"
+            },
+            "copyHoursPerLevel": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "startingSpells",
+            "spellsPerLevel"
+          ],
+          "additionalProperties": false
+        },
+        "slotRecharge": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest",
+          "description": "When the class's spell slots come back. Long by default; the Warlock's Pact Magic slots return on a Short Rest."
+        }
+      },
+      "required": [
+        "ability",
+        "progression"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

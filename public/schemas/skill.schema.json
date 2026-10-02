@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/skill.schema.json",
+  "title": "D&D 5.5e SRD Skills",
+  "description": "Skills denote the aspects related to the main SIX ability scores.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "$ref": "https://quill.local/schemas/common.schema.json#/$defs/skillId" },
+      "name": { "type": "string" },
+      "ability": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability",
+        "description": "The ability a check with this skill is made against."
+      },
+      "description": { "type": "string" }
+    },
+    "required": ["id", "name", "ability"],
+    "additionalProperties": false
+  }
+}

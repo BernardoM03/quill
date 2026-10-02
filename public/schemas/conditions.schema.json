@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/conditions.schema.json",
+  "title": "D&D 5.5 SRD Conditions",
+  "description": "A condition is a temporary game state. The effects of condition define how it affects the target.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/conditionId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "repeatable": {
+        "type": "boolean",
+        "description": "Whether the condition stacks. A property of the condition as a whole, so two effect groups can never disagree about it."
+      },
+      "levels": {
+        "type": "object",
+        "description": "Present only on conditions that stack in levels. (i.e Exhaustion ). `derivedValueId` names the counter that effects reference as `$derived:<id>`.",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "max": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "derivedValueId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "min",
+          "max",
+          "derivedValueId"
+        ],
+        "additionalProperties": false
+      },
+      "effectGroups": {
+        "type": "array",
+        "description": "The effects that make up this condition",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effectGroup"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name"
+    ],
+    "additionalProperties": false
+  }
+}

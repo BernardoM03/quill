@@ -1,0 +1,879 @@
+[
+  {
+    "id": "srd-5.2:condition/blinded",
+    "name": "Blinded",
+    "effectGroups": [
+      {
+        "name": "Can't See",
+        "description": "You can't see and automatically fail any ability check that requires sight.",
+        "effects": [
+          {
+            "type": "loseSense",
+            "target": [
+              "sight"
+            ]
+          },
+          {
+            "type": "autoFail",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "sense",
+                "sense": "sight"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage, and your attack rolls have Disadvantage.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/charmed",
+    "name": "Charmed",
+    "effectGroups": [
+      {
+        "name": "Can't Harm the Charmer",
+        "description": "You can't attack the charmer or target the charmer with damaging abilities or magical effect.",
+        "effects": [
+          {
+            "type": "cannotTarget",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "conditionSource"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Social Advantage",
+        "description": "The charmer has Advantage on any ability check to interact with you socially.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "affects": "affector",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "situationType",
+                "situationType": "social"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/dead",
+    "name": "Dead",
+    "effectGroups": [
+      {
+        "name": "Incapacitated",
+        "description": "You are out of the fight and can take no actions.",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/deafened",
+    "name": "Deafened",
+    "effectGroups": [
+      {
+        "name": "Can't Hear",
+        "description": "You can't hear and automatically fail any ability check that requires hearing.",
+        "effects": [
+          {
+            "type": "loseSense",
+            "target": [
+              "hearing"
+            ]
+          },
+          {
+            "type": "autoFail",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "sense",
+                "sense": "hearing"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/exhaustion",
+    "name": "Exhaustion",
+    "levels": {
+      "min": 1,
+      "max": 6,
+      "derivedValueId": "exhaustionLevel"
+    },
+    "effectGroups": [
+      {
+        "name": "D20 Tests Affected",
+        "description": "When you make a D20 Test, the roll is reduced by 2 times your Exhaustion level.",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "d20Test",
+            "value": "$derived:exhaustionLevel",
+            "multiplier": -2
+          }
+        ]
+      },
+      {
+        "name": "Speed Reduced",
+        "description": "Your Speed is reduced by a number of feet equal to 5 times your Exhaustion level.",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": "$derived:exhaustionLevel",
+            "multiplier": -5
+          }
+        ]
+      },
+      {
+        "name": "Death",
+        "description": "While you have 6 Exhaustion levels, you die.",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/dead",
+            "qualifiers": [
+              {
+                "type": "conditionLevel",
+                "atLeast": 6
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/frightened",
+    "name": "Frightened",
+    "effectGroups": [
+      {
+        "name": "Ability Checks and Attacks Affected",
+        "description": "You have Disadvantage on ability checks and attack rolls while the source of fear is within line of sight.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "abilityCheck",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "perceives",
+                "sense": "sight",
+                "perceiver": "self",
+                "perceived": "conditionSource"
+              }
+            ]
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "perceives",
+                "sense": "sight",
+                "perceiver": "self",
+                "perceived": "conditionSource"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Can't Approach",
+        "description": "You can't willingly move closer to the source of fear.",
+        "effects": [
+          {
+            "type": "cannotApproach",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "conditionSource"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/grappled",
+    "name": "Grappled",
+    "effectGroups": [
+      {
+        "name": "Speed 0",
+        "description": "Your Speed is 0 and can't increase.",
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          },
+          {
+            "type": "preventIncrease",
+            "target": "base",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "You have Disadvantage on attack rolls against any target other than the grappler.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "conditionSource",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/incapacitated",
+    "name": "Incapacitated",
+    "effectGroups": [
+      {
+        "name": "Inactive",
+        "description": "You can't take any Action, Bonus Action, or Reaction",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "action",
+              "bonusAction",
+              "reaction"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "No Concentration",
+        "description": "Your concentration is broken",
+        "effects": [
+          {
+            "type": "loseConcentration"
+          }
+        ]
+      },
+      {
+        "name": "Speechless",
+        "description": "You can't speak",
+        "effects": [
+          {
+            "type": "loseComponent",
+            "target": [
+              "verbal"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Surprised",
+        "description": "If you’re Incapacitated when you roll Initiative, you have Disadvantage on the roll.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "initiative",
+            "affects": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/invisible",
+    "name": "Invisible",
+    "effectGroups": [
+      {
+        "name": "Surprise",
+        "description": "When you roll initiative, you have Advantage on the roll.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "initiative",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Concealed",
+        "description": "You aren’t affected by any effect that requires its target to be seen unless the effect’s creator can somehow see you. Any equipment you are wearing or carrying is also concealed.",
+        "effects": [
+          {
+            "type": "concealFrom",
+            "target": [
+              "sight"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Disadvantage, and your attack rolls have Advantage. If a creature can somehow see you, you don't gain this benefit against that creature.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "perceives",
+                "sense": "sight",
+                "perceiver": "others",
+                "perceived": "self",
+                "negate": true
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "self",
+            "qualifiers": [
+              {
+                "type": "perceives",
+                "sense": "sight",
+                "perceiver": "others",
+                "perceived": "self",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/paralyzed",
+    "name": "Paralyzed",
+    "effectGroups": [
+      {
+        "name": "Incapacitated",
+        "description": "You have the incapacitated condition",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated"
+          }
+        ]
+      },
+      {
+        "name": "Speed 0",
+        "description": "Your Speed is 0 and can't increase.",
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          },
+          {
+            "type": "preventIncrease",
+            "target": "base",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Saving Throws Affected",
+        "description": "You automatically fail Strength and Dexterity saving throws",
+        "effects": [
+          {
+            "type": "autoFail",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR",
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Automatic Critical Hits",
+        "description": "Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you",
+        "effects": [
+          {
+            "type": "autoCrit",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "range",
+                "within": 5,
+                "unit": "feet"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/petrified",
+    "name": "Petrified",
+    "effectGroups": [
+      {
+        "name": "Incapacitated",
+        "description": "You have the incapacitated condition",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated"
+          }
+        ]
+      },
+      {
+        "name": "Speed 0",
+        "description": "Your Speed is 0 and can't increase.",
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          },
+          {
+            "type": "preventIncrease",
+            "target": "base",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others"
+          }
+        ]
+      },
+      {
+        "name": "Saving Throws Affected",
+        "description": "You automatically fail Strength and Dexterity saving throws",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR",
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Resist Damage",
+        "description": "You have Resistance to all damage",
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "allDamage"
+          }
+        ]
+      },
+      {
+        "name": "Poison Immunity",
+        "description": "You have Immunity to the Poisoned-condition",
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/poisoned"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/poisoned",
+    "name": "Poisoned",
+    "effectGroups": [
+      {
+        "name": "Ability Checks and Attacks Affected",
+        "description": "You have Disadvantage on ability checks and attack rolls.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "abilityCheck",
+            "affects": "self"
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/prone",
+    "name": "Prone",
+    "effectGroups": [
+      {
+        "name": "Restricted Movement",
+        "description": "Your only movement options are to crawl or spend an amount of movement equal to half your Speed (round down) to right yourself and thereby end the condition. If your Speed is 0, you can't right yourself.",
+        "effects": []
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "You have Disadvantage on attack rolls. An attack roll against you has Advantage if the attacker is within 5 feet of you. Otherwise, that Attack Roll has disadvantage.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "range",
+                "within": 5,
+                "unit": "feet"
+              }
+            ]
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "range",
+                "within": 5,
+                "unit": "feet",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/restrained",
+    "name": "Restrained",
+    "effectGroups": [
+      {
+        "name": "Speed 0",
+        "description": "Your Speed is 0 and can't increase.",
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          },
+          {
+            "type": "preventIncrease",
+            "target": "base",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage, and your attack rolls have Disadvantage.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Saving Throws Affected",
+        "description": "You have Disadvantage on Dexterity saving throws.",
+        "effects": [
+          {
+            "type": "grantDisadvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/stunned",
+    "name": "Stunned",
+    "effectGroups": [
+      {
+        "name": "Incapacitated",
+        "description": "You have the incapacitated condition",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated"
+          }
+        ]
+      },
+      {
+        "name": "Saving Throws Affected",
+        "description": "You automatically fail Strength and Dexterity saving throws",
+        "effects": [
+          {
+            "type": "autoFail",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR",
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:condition/unconscious",
+    "name": "Unconscious",
+    "effectGroups": [
+      {
+        "name": "Inert",
+        "description": "You have the Incapacitated and Prone conditions, and you drop whatever you’re holding. When this condition ends, you remain Prone.",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated"
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone"
+          },
+          {
+            "type": "dropHeldItem"
+          }
+        ]
+      },
+      {
+        "name": "Speed 0",
+        "description": "Your Speed is 0 and can't increase.",
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "base",
+            "value": 0
+          },
+          {
+            "type": "preventIncrease",
+            "target": "base",
+            "affects": "self"
+          }
+        ]
+      },
+      {
+        "name": "Attacks Affected",
+        "description": "Attack rolls against you have Advantage",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Saving Throws Affected",
+        "description": "You automatically fail Strength and Dexterity saving throws",
+        "effects": [
+          {
+            "type": "autoFail",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR",
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Automatic Critical Hits",
+        "description": "Any attack roll that hits you is a Critical Hit if the attacker is within 5 feet of you",
+        "effects": [
+          {
+            "type": "autoCrit",
+            "target": "attackRoll",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "range",
+                "within": 5,
+                "unit": "feet"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Unaware",
+        "description": "You are unaware of your surroundings.",
+        "effects": [
+          {
+            "type": "loseSense",
+            "target": [
+              "sight",
+              "hearing",
+              "smell",
+              "touch",
+              "taste"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

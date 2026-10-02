@@ -8,6 +8,7 @@ import App from './App'
 import Rules from './routes/Rules'
 import SetupCampaign from './routes/SetupCampaign'
 import CampaignSettings from './routes/CampaignSettings';
+import Legal from './routes/Legal';
 
 let router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ let router = createBrowserRouter([
       {
       path : "rules",
       element : <Rules />
+      },
+      {
+      path : "legal",
+      element : <Legal />
       }
     ]
   },

@@ -1,0 +1,3882 @@
+[
+  {
+    "id": "srd-5.2:subclass/path-of-the-berserker",
+    "classId": "srd-5.2:class/barbarian",
+    "name": "Path of the Berserker",
+    "flavor": "Channel Rage into Violent Fury",
+    "description": "Barbarians who walk the Path of the Berserker direct their Rage primarily toward violence. Their path is one of untrammeled fury, and they thrill in the chaos of battle as they allow their Rage to seize and empower them.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/berserker-frenzy",
+        "name": "Frenzy",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/path-of-the-berserker",
+        "description": "If you use Reckless Attack while your Rage is active, you deal extra damage to the first target you hit on your turn with a Strength-based attack. To determine the extra damage, roll a number of d6s equal to your Rage Damage bonus, and add them together. The damage has the same type as the weapon or Unarmed Strike used for the attack.",
+        "shortDescription": "While raging and reckless, your first Strength hit each turn deals extra d6s.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "$derived:attackDamageType",
+            "value": {
+              "count": "$column:rageDamage",
+              "die": "d6"
+            },
+            "frequency": "perTurn",
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-reckless-attack"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "STR"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/berserker-mindless-rage",
+        "name": "Mindless Rage",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/path-of-the-berserker",
+        "description": "You have Immunity to the Charmed and Frightened conditions while your Rage is active. If you're Charmed or Frightened when you enter your Rage, the condition ends on you.",
+        "shortDescription": "Immune to Charmed and Frightened while raging.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/charmed",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/frightened",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/barbarian-rage"
+              }
+            ]
+          },
+          {
+            "type": "endCondition",
+            "target": [
+              "srd-5.2:condition/charmed",
+              "srd-5.2:condition/frightened"
+            ],
+            "trigger": {
+              "event": "useFeature",
+              "featureId": "srd-5.2:feature/barbarian-rage"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/berserker-retaliation",
+        "name": "Retaliation",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/path-of-the-berserker",
+        "description": "When you take damage from a creature that is within 5 feet of you, you can take a Reaction to make one melee attack against that creature, using a weapon or an Unarmed Strike.",
+        "shortDescription": "Reaction: melee attack a creature within 5 feet that damages you.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You take damage from a creature within 5 feet of you."
+        },
+        "tags": [
+          "attack",
+          "reaction"
+        ],
+        "effects": [
+          {
+            "type": "grantAttack",
+            "value": 1,
+            "trigger": {
+              "event": "takeDamage"
+            },
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "triggerCreature"
+              },
+              {
+                "type": "range",
+                "within": 5,
+                "unit": "feet"
+              },
+              {
+                "type": "attackRange",
+                "attackRange": "melee"
+              },
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/berserker-intimidating-presence",
+        "name": "Intimidating Presence",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/path-of-the-berserker",
+        "description": "As a Bonus Action, you can strike terror into others with your menacing presence and primal power. When you do so, each creature of your choice in a 30-foot Emanation originating from you must make a Wisdom saving throw (DC 8 plus your Strength modifier and Proficiency Bonus). On a failed save, a creature has the Frightened condition for 1 minute. At the end of each of the Frightened creature's turns, the creature repeats the save, ending the effect on itself on a success.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you expend a use of your Rage (no action required) to restore your use of it.",
+        "shortDescription": "Bonus Action: frighten chosen creatures in a 30-foot Emanation.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long",
+          "alternativeCost": {
+            "featureId": "srd-5.2:feature/barbarian-rage",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "tags": [
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "base": 8,
+                "ability": "STR",
+                "proficiency": true
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/college-of-lore",
+    "classId": "srd-5.2:class/bard",
+    "name": "College of Lore",
+    "flavor": "Plumb the Depths of Magical Knowledge",
+    "description": "Bards of the College of Lore collect spells and secrets from diverse sources, such as scholarly tomes, mystical rites, and peasant tales. The college's members gather in libraries and universities to share their lore with one another. They also meet at festivals or affairs of state, where they can expose corruption, unravel lies, and poke fun at self-important figures of authority.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/lore-bonus-proficiencies",
+        "name": "Bonus Proficiencies",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You gain proficiency with three skills of your choice.",
+        "shortDescription": "Proficiency in three skills.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "lore-bonus-proficiencies",
+            "prompt": "Choose three skills.",
+            "count": 3,
+            "fromTypes": [
+              "skill"
+            ]
+          }
+        ],
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantProficiency",
+            "target": "$choice:lore-bonus-proficiencies"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-cutting-words",
+        "name": "Cutting Words",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You learn to use your wit to supernaturally distract, confuse, and otherwise sap the confidence and competence of others. When a creature that you can see within 60 feet of yourself makes a damage roll or succeeds on an ability check or attack roll, you can take a Reaction to expend one use of your Bardic Inspiration; roll your Bardic Inspiration die, and subtract the number rolled from the creature's roll, reducing the damage or potentially turning the success into a failure.",
+        "shortDescription": "Reaction: spend Bardic Inspiration to subtract its die from a creature's roll.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "A creature you can see within 60 feet makes a damage roll or succeeds on an ability check or attack roll.",
+          "cost": {
+            "featureId": "srd-5.2:feature/bard-bardic-inspiration",
+            "amount": 1
+          }
+        },
+        "tags": [
+          "reaction",
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "multiplier": -1,
+            "affects": "others",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              },
+              {
+                "type": "perceives",
+                "perceiver": "self",
+                "perceived": "others",
+                "sense": "sight"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-magical-discoveries",
+        "name": "Magical Discoveries",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "You learn two spells of your choice. These spells can come from the Cleric, Druid, or Wizard spell list or any combination thereof (see a class's section for its spell list). A spell you choose must be a cantrip or a spell for which you have spell slots, as shown in the Bard Features table.\n\nYou always have the chosen spells prepared, and whenever you gain a Bard level, you can replace one of the spells with another spell that meets these requirements.",
+        "shortDescription": "Two Cleric, Druid, or Wizard spells, always prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "magical-discoveries",
+            "prompt": "Choose two Cleric, Druid, or Wizard spells you can cast.",
+            "count": 2,
+            "fromTypes": [
+              "spell"
+            ],
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/cleric"
+                  },
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/druid"
+                  },
+                  {
+                    "type": "spellSource",
+                    "sourceId": "srd-5.2:class/wizard"
+                  }
+                ]
+              }
+            ],
+            "swap": {
+              "trigger": {
+                "event": "gainLevel"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:magical-discoveries",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/lore-peerless-skill",
+        "name": "Peerless Skill",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/college-of-lore",
+        "description": "When you make an ability check or attack roll and fail, you can expend one use of Bardic Inspiration; roll the Bardic Inspiration die, and add the number rolled to the d20, potentially turning a failure into a success. On a failure, the Bardic Inspiration isn't expended.",
+        "shortDescription": "Spend Bardic Inspiration to add its die to your failed check or attack.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "featureId": "srd-5.2:feature/bard-bardic-inspiration",
+            "amount": 1,
+            "refundOnFailure": true
+          }
+        },
+        "tags": [
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "appliesOnce": true,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "abilityCheck",
+              "optional": true
+            }
+          },
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": {
+              "count": 1,
+              "die": "$column:bardicDie"
+            },
+            "appliesOnce": true,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/life-domain",
+    "classId": "srd-5.2:class/cleric",
+    "name": "Life Domain",
+    "flavor": "Soothe the Hurts of the World",
+    "description": "The Life Domain focuses on the positive energy that helps sustain all life in the multiverse. Clerics who tap into this domain are masters of healing, using that life force to cure many hurts.\n\nExistence itself relies on the positive energy associated with this domain, so a Cleric of almost any religious tradition might choose it. This domain is particularly associated with agricultural deities, gods of healing or endurance, and gods of home and community. Religious orders of healing also seek the magic of this domain.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/life-disciple-of-life",
+        "name": "Disciple of Life",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "When a spell you cast with a spell slot restores Hit Points to a creature, that creature regains additional Hit Points on the turn you cast the spell. The additional Hit Points equal 2 plus the spell slot's level.",
+        "shortDescription": "Healing spells cast with a slot restore 2 + slot level more.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "base": 2,
+              "modifier": "$derived:slotLevel"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "restoreHitPoints"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-life-domain-spells",
+        "name": "Life Domain Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "Your connection to this divine domain ensures you always have certain spells ready. When you reach a Cleric level specified in the Life Domain Spells table, you thereafter always have the listed spells prepared.\n\n| Cleric Level | Prepared Spells |\n|---|---|\n| 3 | Aid, Bless, Cure Wounds, Lesser Restoration |\n| 5 | Mass Healing Word, Revivify |\n| 7 | Aura of Life, Death Ward |\n| 9 | Greater Restoration, Mass Cure Wounds |",
+        "shortDescription": "Always have Life Domain spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/aid",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/bless",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/cure-wounds",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/lesser-restoration",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/mass-healing-word",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/revivify",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/aura-of-life",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/death-ward",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/greater-restoration",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/mass-cure-wounds",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-preserve-life",
+        "name": "Preserve Life",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "As a Magic action, you present your Holy Symbol and expend a use of your Channel Divinity to evoke healing energy that can restore a number of Hit Points equal to five times your Cleric level. Choose Bloodied creatures within 30 feet of yourself (which can include you), and divide those Hit Points among them. This feature can restore a creature to no more than half its Hit Point maximum.",
+        "shortDescription": "Channel Divinity: divide five times your Cleric level in healing among Bloodied creatures.",
+        "activation": {
+          "type": "action",
+          "cost": {
+            "featureId": "srd-5.2:feature/cleric-channel-divinity",
+            "amount": 1
+          }
+        },
+        "tags": [
+          "channelDivinity",
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": "$derived:classLevel",
+            "multiplier": 5,
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "subject": "target",
+                "bloodied": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-blessed-healer",
+        "name": "Blessed Healer",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "The healing spells you cast on others heal you as well. Immediately after you cast a spell with a spell slot that restores Hit Points to one or more creatures other than yourself, you regain Hit Points equal to 2 plus the spell slot's level.",
+        "shortDescription": "Healing others with a slot spell heals you 2 + slot level.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "base": 2,
+              "modifier": "$derived:slotLevel"
+            },
+            "trigger": {
+              "event": "restoreHitPoints"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "others"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/life-supreme-healing",
+        "name": "Supreme Healing",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/life-domain",
+        "description": "When you would normally roll one or more dice to restore Hit Points to a creature with a spell or Channel Divinity, don't roll those dice for the healing; instead use the highest number possible for each die. For example, instead of restoring 2d6 Hit Points to a creature with a spell, you restore 12.",
+        "shortDescription": "Healing dice from your spells and Channel Divinity are maximized.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "maximizeDice",
+            "target": "healing",
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "spellLevel",
+                    "spellLevels": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9
+                    ]
+                  },
+                  {
+                    "type": "sourceFeature",
+                    "featureId": "srd-5.2:feature/cleric-channel-divinity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/circle-of-the-land",
+    "classId": "srd-5.2:class/druid",
+    "name": "Circle of the Land",
+    "flavor": "Celebrate Connection to the Natural World",
+    "description": "The Circle of the Land comprises mystics and sages who safeguard ancient knowledge and rites. These Druids meet within sacred circles of trees or standing stones to whisper primal secrets in Druidic. The circle's wisest members preside as the chief priests of their communities.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/land-circle-of-the-land-spells",
+        "name": "Circle of the Land Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/circle-of-the-land",
+        "description": "Whenever you finish a Long Rest, choose one type of land: arid, polar, temperate, or tropical. Consult the table below that corresponds to the chosen type; you have the spells listed for your Druid level and lower prepared.\n\n**Arid Land**\n\n| Druid Level | Circle Spells |\n|---|---|\n| 3 | Blur, Burning Hands, Fire Bolt |\n| 5 | Fireball |\n| 7 | Blight |\n| 9 | Wall of Stone |\n\n**Polar Land**\n\n| Druid Level | Circle Spells |\n|---|---|\n| 3 | Fog Cloud, Hold Person, Ray of Frost |\n| 5 | Sleet Storm |\n| 7 | Ice Storm |\n| 9 | Cone of Cold |\n\n**Temperate Land**\n\n| Druid Level | Circle Spells |\n|---|---|\n| 3 | Misty Step, Shocking Grasp, Sleep |\n| 5 | Lightning Bolt |\n| 7 | Freedom of Movement |\n| 9 | Tree Stride |\n\n**Tropical Land**\n\n| Druid Level | Circle Spells |\n|---|---|\n| 3 | Acid Splash, Ray of Sickness, Web |\n| 5 | Stinking Cloud |\n| 7 | Polymorph |\n| 9 | Insect Plague |",
+        "shortDescription": "Choose a land on each Long Rest; its spells are always prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "land-type",
+            "prompt": "Choose arid, polar, temperate, or tropical land.",
+            "count": 1,
+            "from": "srd-5.2:list/land-types",
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "long"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/land-types",
+          "items": [
+            {
+              "id": "arid",
+              "name": "Arid Land",
+              "description": "Always prepared (level 3: Blur, Burning Hands, Fire Bolt; level 5: Fireball; level 7: Blight; level 9: Wall Of Stone). Nature's Ward and Nature's Sanctuary Resistance: Fire.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/blur",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/burning-hands",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/fire-bolt",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/fireball",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 5
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/blight",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/wall-of-stone",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "fire",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 10
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "fire",
+                  "affects": "target",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 14
+                    },
+                    {
+                      "type": "inArea",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    },
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    },
+                    {
+                      "type": "selfState",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "polar",
+              "name": "Polar Land",
+              "description": "Always prepared (level 3: Fog Cloud, Hold Person, Ray Of Frost; level 5: Sleet Storm; level 7: Ice Storm; level 9: Cone Of Cold). Nature's Ward and Nature's Sanctuary Resistance: Cold.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/fog-cloud",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/hold-person",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/ray-of-frost",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/sleet-storm",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 5
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/ice-storm",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/cone-of-cold",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "cold",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 10
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "cold",
+                  "affects": "target",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 14
+                    },
+                    {
+                      "type": "inArea",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    },
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    },
+                    {
+                      "type": "selfState",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "temperate",
+              "name": "Temperate Land",
+              "description": "Always prepared (level 3: Misty Step, Shocking Grasp, Sleep; level 5: Lightning Bolt; level 7: Freedom Of Movement; level 9: Tree Stride). Nature's Ward and Nature's Sanctuary Resistance: Lightning.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/misty-step",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/shocking-grasp",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/sleep",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/lightning-bolt",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 5
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/freedom-of-movement",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/tree-stride",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "lightning",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 10
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "lightning",
+                  "affects": "target",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 14
+                    },
+                    {
+                      "type": "inArea",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    },
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    },
+                    {
+                      "type": "selfState",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "tropical",
+              "name": "Tropical Land",
+              "description": "Always prepared (level 3: Acid Splash, Ray Of Sickness, Web; level 5: Stinking Cloud; level 7: Polymorph; level 9: Insect Plague). Nature's Ward and Nature's Sanctuary Resistance: Poison.",
+              "effects": [
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/acid-splash",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/ray-of-sickness",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/web",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/stinking-cloud",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 5
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/polymorph",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "grantSpells",
+                  "target": "srd-5.2:spell/insect-plague",
+                  "castingOverrides": {
+                    "alwaysPrepared": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 9
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "poison",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 10
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "poison",
+                  "affects": "target",
+                  "qualifiers": [
+                    {
+                      "type": "classLevel",
+                      "atLeast": 14
+                    },
+                    {
+                      "type": "inArea",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    },
+                    {
+                      "type": "targetRelation",
+                      "relation": "ally"
+                    },
+                    {
+                      "type": "selfState",
+                      "featureId": "srd-5.2:feature/land-natures-sanctuary"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:land-type"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/land-lands-aid",
+        "name": "Land's Aid",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/circle-of-the-land",
+        "description": "As a Magic action, you can expend a use of your Wild Shape and choose a point within 60 feet of yourself. Vitality-giving flowers and life-draining thorns appear for a moment in a 10-foot-radius Sphere centered on that point. Each creature of your choice in the Sphere must make a Constitution saving throw against your spell save DC, taking 2d6 Necrotic damage on a failed save or half as much damage on a successful one. One creature of your choice in that area regains 2d6 Hit Points.\n\nThe damage and healing increase by 1d6 when you reach Druid levels 10 (3d6) and 14 (4d6).",
+        "shortDescription": "Magic action, one Wild Shape use: 2d6 Necrotic in a 10-foot Sphere (Constitution half), and one creature there heals 2d6.",
+        "activation": {
+          "type": "action",
+          "cost": {
+            "featureId": "srd-5.2:feature/druid-wild-shape",
+            "amount": 1
+          }
+        },
+        "scaling": [
+          {
+            "level": 3,
+            "value": {
+              "count": 2,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 10,
+            "value": {
+              "count": 3,
+              "die": "d6"
+            }
+          },
+          {
+            "level": 14,
+            "value": {
+              "count": 4,
+              "die": "d6"
+            }
+          }
+        ],
+        "tags": [
+          "damage",
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "necrotic",
+            "value": "$scaling",
+            "affects": "target",
+            "area": [
+              {
+                "shape": "sphere",
+                "size": 10
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "base": 8,
+                "ability": "WIS",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            }
+          },
+          {
+            "type": "heal",
+            "value": "$scaling",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/land-natural-recovery",
+        "name": "Natural Recovery",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/circle-of-the-land",
+        "description": "You can cast one of the level 1+ spells that you have prepared from your Circle Spells feature without expending a spell slot, and you must finish a Long Rest before you do so again.\n\nIn addition, when you finish a Short Rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your Druid level (round up), and none of them can be level 6+. For example, if you're a level 6 Druid, you can recover up to three levels' worth of spell slots. You can recover a level 3 spell slot, a level 2 and a level 1 spell slot, or three level 1 spell slots. Once you recover spell slots with this feature, you can't do so again until you finish a Long Rest.",
+        "shortDescription": "Cast one Circle spell free per Long Rest; recover slots totaling half your Druid level on a Short Rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "natural-recovery-spell",
+            "prompt": "Choose a level 1+ spell prepared by Circle of the Land Spells.",
+            "count": 1,
+            "fromTypes": [
+              "spell"
+            ],
+            "qualifiers": [
+              {
+                "type": "sourceFeature",
+                "featureId": "srd-5.2:feature/land-circle-of-the-land-spells"
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "recovery",
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:natural-recovery-spell",
+            "castingOverrides": {
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          },
+          {
+            "type": "restoreUses",
+            "target": "spellSlot",
+            "value": {
+              "totalLevels": "$derived:halfClassLevelRoundUp",
+              "maxSlotLevel": 5
+            },
+            "trigger": {
+              "event": "finishRest",
+              "rest": "short",
+              "optional": true
+            },
+            "uses": {
+              "max": 1,
+              "recharge": "long"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/land-natures-ward",
+        "name": "Nature's Ward",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/circle-of-the-land",
+        "description": "You are immune to the Poisoned condition, and you have Resistance to a damage type associated with your current land choice in the Circle Spells feature, as shown in the Nature's Ward table.\n\n| Land Type | Resistance |\n|---|---|\n| Arid | Fire |\n| Polar | Cold |\n| Temperate | Lightning |\n| Tropical | Poison |",
+        "shortDescription": "Immune to Poisoned; Resistance tied to your land.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/poisoned"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/land-natures-sanctuary",
+        "name": "Nature's Sanctuary",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/circle-of-the-land",
+        "description": "As a Magic action, you can expend a use of your Wild Shape and cause spectral trees and vines to appear in a 15-foot Cube on the ground within 120 feet of yourself. They last there for 1 minute or until you have the Incapacitated condition or die. You and your allies have Half Cover while in that area, and your allies gain the current Resistance of your Nature's Ward while there.\n\nAs a Bonus Action, you can move the Cube up to 60 feet to ground within 120 feet of yourself.",
+        "shortDescription": "Magic action, one Wild Shape use: a 15-foot Cube giving you and allies Half Cover and allies your Nature's Ward Resistance.",
+        "activation": {
+          "type": "action",
+          "cost": {
+            "featureId": "srd-5.2:feature/druid-wild-shape",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "endConditions": [
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/incapacitated"
+          },
+          {
+            "type": "selfState",
+            "conditionId": "srd-5.2:condition/dead"
+          }
+        ],
+        "tags": [
+          "aura",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 2,
+            "affects": "target",
+            "area": [
+              {
+                "shape": "cube",
+                "size": 15
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/land-natures-sanctuary"
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/land-natures-sanctuary"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "savingThrow",
+            "value": 2,
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/land-natures-sanctuary"
+              },
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/land-natures-sanctuary"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/champion",
+    "classId": "srd-5.2:class/fighter",
+    "name": "Champion",
+    "flavor": "Pursue Physical Excellence in Combat",
+    "description": "A Champion focuses on the development of martial prowess in a relentless pursuit of victory. Champions combine rigorous training with physical excellence to deal devastating blows, withstand peril, and garner glory. Whether in athletic contests or bloody battle, Champions strive for the crown of the victor.",
+    "subclassFeatureLevels": [
+      3,
+      7,
+      10,
+      15,
+      18
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/champion-improved-critical",
+        "name": "Improved Critical",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Your attack rolls with weapons and Unarmed Strikes can score a Critical Hit on a roll of 19 or 20 on the d20.",
+        "shortDescription": "Critical Hit on 19-20 with weapons and Unarmed Strikes.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setCritThreshold",
+            "target": "attackRoll",
+            "value": 19,
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-remarkable-athlete",
+        "name": "Remarkable Athlete",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Thanks to your athleticism, you have Advantage on Initiative rolls and Strength (Athletics) checks.\n\nIn addition, immediately after you score a Critical Hit, you can move up to half your Speed without provoking Opportunity Attacks.",
+        "shortDescription": "Advantage on Initiative and Athletics; move after a Critical Hit.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement",
+          "skill"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "initiative"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "skill",
+                "skills": [
+                  "srd-5.2:skill/athletics"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantMovement",
+            "value": {
+              "speedFraction": 0.5,
+              "provokesOpportunityAttacks": false
+            },
+            "trigger": {
+              "event": "criticalHit",
+              "roll": "attackRoll",
+              "optional": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-additional-fighting-style",
+        "name": "Additional Fighting Style",
+        "level": 7,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "You gain another Fighting Style feat of your choice.",
+        "shortDescription": "Gain another Fighting Style feat.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "champion-fighting-style",
+            "count": 1,
+            "fromTypes": [
+              "feat"
+            ],
+            "qualifiers": [
+              {
+                "type": "featCategory",
+                "featCategories": [
+                  "fightingStyle"
+                ]
+              }
+            ],
+            "prompt": "Choose another Fighting Style feat."
+          }
+        ],
+        "tags": [
+          "feat"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:champion-fighting-style"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-heroic-warrior",
+        "name": "Heroic Warrior",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "The thrill of battle drives you toward victory. During combat, you can give yourself Heroic Inspiration whenever you start your turn without it.",
+        "shortDescription": "In combat, gain Heroic Inspiration at the start of your turn if you lack it.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "inspiration"
+        ],
+        "effects": [
+          {
+            "type": "grantInspiration",
+            "trigger": {
+              "event": "startTurn",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "situationType",
+                "situationType": "combat"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-superior-critical",
+        "name": "Superior Critical",
+        "level": 15,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "Your attack rolls with weapons and Unarmed Strikes can now score a Critical Hit on a roll of 18–20 on the d20.",
+        "shortDescription": "Critical Hit on 18-20 with weapons and Unarmed Strikes.",
+        "activation": {
+          "type": "passive"
+        },
+        "supersedes": "srd-5.2:feature/champion-improved-critical",
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "setCritThreshold",
+            "target": "attackRoll",
+            "value": 18,
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon",
+                  "unarmed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/champion-survivor",
+        "name": "Survivor",
+        "level": 18,
+        "sourceId": "srd-5.2:subclass/champion",
+        "description": "You attain the pinnacle of resilience in battle, giving you these benefits.\n\n**Defy Death.** You have Advantage on Death Saving Throws. Moreover, when you roll 18–20 on a Death Saving Throw, you gain the benefit of rolling a 20 on it.\n\n**Heroic Rally.** At the start of each of your turns, you regain Hit Points equal to 5 plus your Constitution modifier if you are Bloodied and have at least 1 Hit Point.",
+        "shortDescription": "Better Death Saves; regain 5 + CON HP each turn while Bloodied.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "deathSave"
+          },
+          {
+            "type": "setCritThreshold",
+            "target": "deathSave",
+            "value": 18
+          },
+          {
+            "type": "heal",
+            "value": {
+              "base": 5,
+              "modifier": "$derived:CON"
+            },
+            "trigger": {
+              "event": "startTurn"
+            },
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true,
+                "minimum": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/warrior-of-the-open-hand",
+    "classId": "srd-5.2:class/monk",
+    "name": "Warrior of the Open Hand",
+    "flavor": "Master Unarmed Combat Techniques",
+    "description": "Warriors of the Open Hand are masters of unarmed combat. They learn techniques to push and trip their opponents and manipulate their own energy to protect themselves from harm.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      11,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/open-hand-open-hand-technique",
+        "name": "Open Hand Technique",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "Whenever you hit a creature with an attack granted by your Flurry of Blows, you can impose one of the following effects on that target.\n\n**Addle.** The target can't make Opportunity Attacks until the start of its next turn.\n\n**Push.** The target must succeed on a Strength saving throw or be pushed up to 15 feet away from you.\n\n**Topple.** The target must succeed on a Dexterity saving throw or have the Prone condition.",
+        "shortDescription": "Flurry of Blows hits can Addle, Push, or Topple.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/open-hand-technique",
+          "items": [
+            {
+              "id": "addle",
+              "name": "Addle",
+              "description": "The target can't make Opportunity Attacks until the start of its next turn.",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              },
+              "effects": [
+                {
+                  "type": "loseAction",
+                  "target": [
+                    "reaction"
+                  ],
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    },
+                    {
+                      "type": "opportunityAttack"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "push",
+              "name": "Push",
+              "description": "The target must succeed on a Strength saving throw or be pushed up to 15 feet away from you.",
+              "effects": [
+                {
+                  "type": "forcedMovement",
+                  "value": {
+                    "feet": 15,
+                    "direction": "away"
+                  },
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ],
+                  "save": {
+                    "ability": "STR",
+                    "dc": {
+                      "base": 8,
+                      "ability": "WIS",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "topple",
+              "name": "Topple",
+              "description": "The target must succeed on a Dexterity saving throw or have the Prone condition.",
+              "effects": [
+                {
+                  "type": "applyCondition",
+                  "target": "srd-5.2:condition/prone",
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "triggerCreature"
+                    }
+                  ],
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "base": 8,
+                      "ability": "WIS",
+                      "proficiency": true
+                    },
+                    "onSuccess": "negate"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "control"
+        ],
+        "effects": [
+          {
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/open-hand-technique",
+            "value": 1,
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "sourceFeature",
+                "featureId": "srd-5.2:feature/monk-flurry-of-blows"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-wholeness-of-body",
+        "name": "Wholeness of Body",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "You gain the ability to heal yourself. As a Bonus Action, you can roll your Martial Arts die. You regain a number of Hit Points equal to the number rolled plus your Wisdom modifier (minimum of 1 Hit Point regained).\n\nYou can use this feature a number of times equal to your Wisdom modifier (minimum of once), and you regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Bonus Action: heal Martial Arts die + WIS.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": "$derived:WIS",
+          "minimum": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 1,
+              "die": "$column:martialArts",
+              "modifier": "$derived:WIS",
+              "minimum": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-fleet-step",
+        "name": "Fleet Step",
+        "level": 11,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "When you take a Bonus Action other than Step of the Wind, you can also use Step of the Wind immediately after that Bonus Action.",
+        "shortDescription": "Use Step of the Wind right after another Bonus Action.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "triggerFeature",
+            "target": "srd-5.2:feature/monk-step-of-the-wind",
+            "trigger": {
+              "event": "takeAction",
+              "actionType": "bonusAction",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "sourceFeature",
+                "featureId": "srd-5.2:feature/monk-step-of-the-wind",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/open-hand-quivering-palm",
+        "name": "Quivering Palm",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/warrior-of-the-open-hand",
+        "description": "You gain the ability to set up lethal vibrations in someone's body. When you hit a creature with an Unarmed Strike, you can expend 4 Focus Points to start these imperceptible vibrations, which last for a number of days equal to your Monk level. The vibrations are harmless unless you take an action to end them. Alternatively, when you take the Attack action on your turn, you can forgo one of the attacks to end the vibrations. To end them, you and the target must be on the same plane of existence. When you end them, the target must make a Constitution saving throw, taking 10d12 Force damage on a failed save or half as much damage on a successful one.\n\nYou can have only one creature under the effect of this feature at a time. You can end the vibrations harmlessly (no action required).",
+        "shortDescription": "4 Focus Points on an Unarmed hit: later end the vibrations for 10d12 Force damage.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "resource": "focusPoints",
+            "amount": 4
+          }
+        },
+        "duration": {
+          "value": "$derived:classLevel",
+          "unit": "day"
+        },
+        "tags": [
+          "damage",
+          "focus"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 10,
+              "die": "d12"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "takeAction",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/open-hand-quivering-palm"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "base": 8,
+                "ability": "WIS",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/oath-of-devotion",
+    "classId": "srd-5.2:class/paladin",
+    "name": "Oath of Devotion",
+    "flavor": "Uphold the Ideals of Justice and Order",
+    "description": "The Oath of Devotion binds Paladins to the ideals of justice and order. These Paladins meet the archetype of the knight in shining armor. They hold themselves to the highest standards of conduct, and some—for better or worse—hold the rest of the world to the same standards.\n\nMany who swear this oath are devoted to gods of law and good and use their gods' tenets as the measure of personal devotion. Others hold angels as their ideals and incorporate images of angelic wings into their helmets or coats of arms.\n\nThese paladins share the following tenets:\n\n- Let your word be your promise.\n- Protect the weak and never fear to act.\n- Let your honorable deeds be an example.",
+    "subclassFeatureLevels": [
+      3,
+      7,
+      15,
+      20
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/devotion-oath-spells",
+        "name": "Oath of Devotion Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/oath-of-devotion",
+        "description": "The magic of your oath ensures you always have certain spells ready; when you reach a Paladin level specified in the Oath of Devotion Spells table, you thereafter always have the listed spells prepared.\n\n| Paladin Level | Spells |\n|---|---|\n| 3 | Protection from Evil and Good, Shield of Faith |\n| 5 | Aid, Zone of Truth |\n| 9 | Beacon of Hope, Dispel Magic |\n| 13 | Freedom of Movement, Guardian of Faith |\n| 17 | Commune, Flame Strike |",
+        "shortDescription": "Always have Oath of Devotion spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/protection-from-evil-and-good",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/shield-of-faith",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/aid",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/zone-of-truth",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/beacon-of-hope",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/dispel-magic",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/freedom-of-movement",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 13
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/guardian-of-faith",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 13
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/commune",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 17
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/flame-strike",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 17
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/devotion-sacred-weapon",
+        "name": "Sacred Weapon",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/oath-of-devotion",
+        "description": "When you take the Attack action, you can expend one use of your Channel Divinity to imbue one Melee weapon that you are holding with positive energy. For 10 minutes or until you use this feature again, you add your Charisma modifier to attack rolls you make with that weapon (minimum bonus of +1), and each time you hit with it, you cause it to deal its normal damage type or Radiant damage.\n\nThe weapon also emits Bright Light in a 20-foot radius and Dim Light 20 feet beyond that.\n\nYou can end this effect early (no action required). This effect also ends if you aren't carrying the weapon.",
+        "shortDescription": "Channel Divinity: add Charisma to attacks with a melee weapon that can deal Radiant damage.",
+        "activation": {
+          "type": "free",
+          "cost": {
+            "featureId": "srd-5.2:feature/paladin-channel-divinity",
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "channelDivinity",
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": {
+              "base": 0,
+              "modifier": "$derived:CHA",
+              "minimum": 1
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-sacred-weapon"
+              },
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon"
+                ]
+              },
+              {
+                "type": "attackRange",
+                "attackRange": "melee"
+              }
+            ]
+          },
+          {
+            "type": "changeDamageType",
+            "value": "radiant",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-sacred-weapon"
+              }
+            ]
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 20,
+              "dim": 20
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-sacred-weapon"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/devotion-aura-of-devotion",
+        "name": "Aura of Devotion",
+        "level": 7,
+        "sourceId": "srd-5.2:subclass/oath-of-devotion",
+        "description": "You and your allies have Immunity to the Charmed condition while in your Aura of Protection. If a Charmed ally enters the aura, that condition has no effect on that ally while there.",
+        "shortDescription": "You and allies in your aura are immune to Charmed.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "aura",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "srd-5.2:condition/charmed",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/paladin-aura-of-protection"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/devotion-smite-of-protection",
+        "name": "Smite of Protection",
+        "level": 15,
+        "sourceId": "srd-5.2:subclass/oath-of-devotion",
+        "description": "Your magical smite now radiates protective energy. Whenever you cast Divine Smite, you and your allies have Half Cover while in your Aura of Protection. The aura has this benefit until the start of your next turn.",
+        "shortDescription": "Casting Divine Smite gives Half Cover in your aura.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "aura",
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 2,
+            "affects": "target",
+            "trigger": {
+              "event": "castSpell",
+              "spellId": "srd-5.2:spell/divine-smite"
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/paladin-aura-of-protection"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "savingThrow",
+            "value": 2,
+            "affects": "target",
+            "trigger": {
+              "event": "castSpell",
+              "spellId": "srd-5.2:spell/divine-smite"
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/paladin-aura-of-protection"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              },
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/devotion-holy-nimbus",
+        "name": "Holy Nimbus",
+        "level": 20,
+        "sourceId": "srd-5.2:subclass/oath-of-devotion",
+        "description": "As a Bonus Action, you can imbue your Aura of Protection with holy power, granting the benefits below for 10 minutes or until you end them (no action required). Once you use this feature, you can't use it again until you finish a Long Rest. You can also restore your use of it by expending a level 5 spell slot (no action required).\n\n**Holy Ward.** You have Advantage on any saving throw you are forced to make by a Fiend or an Undead.\n\n**Radiant Damage.** Whenever an enemy starts its turn in the aura, that creature takes Radiant damage equal to your Charisma modifier plus your Proficiency Bonus.\n\n**Sunlight.** The aura is filled with Bright Light that is sunlight.",
+        "shortDescription": "Bonus Action: your aura burns enemies, shields you from Fiends and Undead, and sheds sunlight.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long",
+          "alternativeCost": {
+            "resource": "spellSlot",
+            "slotLevel": 5,
+            "amount": 1
+          }
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "tags": [
+          "aura",
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-holy-nimbus"
+              },
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "fiend",
+                  "undead"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "dealDamage",
+            "target": "radiant",
+            "value": {
+              "base": 0,
+              "modifier": [
+                "$derived:CHA",
+                "$derived:proficiencyBonus"
+              ]
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "startTurn"
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-holy-nimbus"
+              },
+              {
+                "type": "inArea",
+                "featureId": "srd-5.2:feature/paladin-aura-of-protection"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "enemy"
+              }
+            ]
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 30,
+              "dim": 0
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/devotion-holy-nimbus"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/hunter",
+    "classId": "srd-5.2:class/ranger",
+    "name": "Hunter",
+    "flavor": "Protect Nature and People from Destruction",
+    "description": "You stalk prey in the wilds and elsewhere, using your abilities as a Hunter to protect nature and people everywhere from forces that would destroy them.",
+    "subclassFeatureLevels": [
+      3,
+      7,
+      11,
+      15
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/hunter-hunters-lore",
+        "name": "Hunter's Lore",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You can call on the forces of nature to reveal certain strengths and weaknesses of your prey. While a creature is marked by your Hunter's Mark, you know whether that creature has any Immunities, Resistances, or Vulnerabilities, and if the creature has any, you know what they are.",
+        "shortDescription": "Know the Immunities, Resistances, and Vulnerabilities of your Hunter's Mark target.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "knowledge"
+        ],
+        "effects": [
+          {
+            "type": "detect",
+            "value": {
+              "within": 90,
+              "things": [
+                "damageDefenses"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "affectedBy",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-hunters-prey",
+        "name": "Hunter's Prey",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Colossus Slayer.** Your tenacity can wear down even the most resilient foes. When you hit a creature with a weapon, the weapon deals an extra 1d8 damage to the target if it's missing any of its Hit Points. You can deal this extra damage only once per turn.\n\n**Horde Breaker.** Once on each of your turns when you make an attack with a weapon, you can make another attack with the same weapon against a different creature that is within 5 feet of the original target, that is within the weapon's range, and that you haven't attacked this turn.",
+        "shortDescription": "Choose Colossus Slayer or Horde Breaker; swap on a rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "hunters-prey",
+            "prompt": "Choose Colossus Slayer or Horde Breaker.",
+            "count": 1,
+            "from": "srd-5.2:list/hunters-prey",
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "short"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/hunters-prey",
+          "items": [
+            {
+              "id": "colossus-slayer",
+              "name": "Colossus Slayer",
+              "description": "Once per turn, a weapon hit deals an extra 1d8 damage to a target missing any of its Hit Points.",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "$derived:attackDamageType",
+                  "value": {
+                    "count": 1,
+                    "die": "d8"
+                  },
+                  "frequency": "perTurn",
+                  "trigger": {
+                    "event": "hitWithAttack"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "attackSource",
+                      "attackSources": [
+                        "weapon"
+                      ]
+                    },
+                    {
+                      "type": "hitPoints",
+                      "subject": "target",
+                      "atMaximum": false
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "horde-breaker",
+              "name": "Horde Breaker",
+              "description": "Once per turn, make another weapon attack against a different creature within 5 feet of the original target.",
+              "effects": [
+                {
+                  "type": "grantAttack",
+                  "value": 1,
+                  "frequency": "perTurn",
+                  "trigger": {
+                    "event": "makeAttackRoll"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "attackSource",
+                      "attackSources": [
+                        "weapon"
+                      ]
+                    },
+                    {
+                      "type": "nearbyCreature",
+                      "relation": "enemy",
+                      "within": 5,
+                      "around": "target"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "attack"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:hunters-prey"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-defensive-tactics",
+        "name": "Defensive Tactics",
+        "level": 7,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Escape the Horde.** Opportunity Attacks have Disadvantage against you.\n\n**Multiattack Defense.** When a creature hits you with an attack roll, that creature has Disadvantage on all other attack rolls against you this turn.",
+        "shortDescription": "Choose Escape the Horde or Multiattack Defense; swap on a rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "defensive-tactics",
+            "prompt": "Choose Escape the Horde or Multiattack Defense.",
+            "count": 1,
+            "from": "srd-5.2:list/defensive-tactics",
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "short"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "options": {
+          "list": "srd-5.2:list/defensive-tactics",
+          "items": [
+            {
+              "id": "escape-the-horde",
+              "name": "Escape the Horde",
+              "description": "Opportunity Attacks have Disadvantage against you.",
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "attackRoll",
+                  "affects": "others",
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "self"
+                    },
+                    {
+                      "type": "opportunityAttack"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "multiattack-defense",
+              "name": "Multiattack Defense",
+              "description": "A creature that hits you has Disadvantage on its other attack rolls against you this turn.",
+              "effects": [
+                {
+                  "type": "grantDisadvantage",
+                  "target": "attackRoll",
+                  "affects": "affector",
+                  "trigger": {
+                    "event": "hitByAttack"
+                  },
+                  "duration": {
+                    "value": 1,
+                    "unit": "round"
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "targetRelation",
+                      "relation": "self"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantFeature",
+            "target": "$choice:defensive-tactics"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-superior-hunters-prey",
+        "name": "Superior Hunter's Prey",
+        "level": 11,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "Once per turn when you deal damage to a creature marked by your Hunter's Mark, you can also deal that spell's extra damage to a different creature that you can see within 30 feet of the first creature.",
+        "shortDescription": "Once per turn, spread Hunter's Mark damage to a second creature within 30 feet.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 1,
+              "die": "$derived:huntersMarkDie"
+            },
+            "frequency": "perTurn",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "affectedBy",
+                "spellIds": [
+                  "srd-5.2:spell/hunters-mark"
+                ]
+              },
+              {
+                "type": "nearbyCreature",
+                "relation": "enemy",
+                "within": 30,
+                "around": "target"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/hunter-superior-hunters-defense",
+        "name": "Superior Hunter's Defense",
+        "level": 15,
+        "sourceId": "srd-5.2:subclass/hunter",
+        "description": "When you take damage, you can take a Reaction to give yourself Resistance to that damage and any other damage of the same type until the end of the current turn.",
+        "shortDescription": "Reaction: Resistance to a damage type until the end of the turn.",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You take damage."
+        },
+        "tags": [
+          "defense",
+          "reaction"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$derived:triggerDamageType",
+            "trigger": {
+              "event": "takeDamage",
+              "optional": true
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/thief",
+    "classId": "srd-5.2:class/rogue",
+    "name": "Thief",
+    "flavor": "Hunt for Treasure as a Classic Adventurer",
+    "description": "A mix of burglar, treasure hunter, and explorer, you are the epitome of an adventurer. In addition to improving your agility and stealth, you gain abilities useful for delving into ruins and getting maximum benefit from the magic items you find there.",
+    "subclassFeatureLevels": [
+      3,
+      9,
+      13,
+      17
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/thief-fast-hands",
+        "name": "Fast Hands",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "As a Bonus Action, you can do one of the following.\n\n**Sleight of Hand.** Make a Dexterity (Sleight of Hand) check to pick a lock or disarm a trap with Thieves' Tools or to pick a pocket.\n\n**Use an Object.** Take the Utilize action, or take the Magic action to use a magic item that requires that action.",
+        "shortDescription": "Bonus Action: Sleight of Hand, Utilize, or use a magic item.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "actionEconomy"
+        ],
+        "effects": [
+          {
+            "type": "grantAction",
+            "target": "utilize",
+            "value": "bonusAction"
+          },
+          {
+            "type": "grantAction",
+            "target": "magic",
+            "value": "bonusAction"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-second-story-work",
+        "name": "Second-Story Work",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You've trained to get into especially hard-to-reach places, granting you these benefits.\n\n**Climber.** You gain a Climb Speed equal to your Speed.\n\n**Jumper.** You can determine your jump distance using your Dexterity rather than your Strength.",
+        "shortDescription": "Climb Speed equal to your Speed; jump using Dexterity.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "climb",
+            "value": "$derived:walkingSpeed"
+          },
+          {
+            "type": "substituteAbility",
+            "target": "jumpDistance",
+            "value": "DEX"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-supreme-sneak",
+        "name": "Supreme Sneak",
+        "level": 9,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You gain the following Cunning Strike option.\n\n**Stealth Attack (Cost: 1d6).** If you have the Hide action's Invisible condition, this attack doesn't end that condition on you if you end the turn behind Three-Quarters Cover or Total Cover.",
+        "shortDescription": "New Cunning Strike option: Stealth Attack.",
+        "activation": {
+          "type": "passive"
+        },
+        "options": {
+          "list": "srd-5.2:list/cunning-strike",
+          "items": [
+            {
+              "id": "stealth-attack",
+              "name": "Stealth Attack",
+              "description": "If you have the Hide action's Invisible condition, this attack doesn't end that condition on you if you end the turn behind Three-Quarters Cover or Total Cover.",
+              "cost": {
+                "featureId": "srd-5.2:feature/rogue-sneak-attack",
+                "amount": 1,
+                "unit": "dice"
+              },
+              "effects": [
+                {
+                  "type": "keepCondition",
+                  "target": "srd-5.2:condition/invisible",
+                  "qualifiers": [
+                    {
+                      "type": "selfState",
+                      "conditionId": "srd-5.2:condition/invisible"
+                    },
+                    {
+                      "type": "cover",
+                      "atLeast": "threeQuarters"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "tags": [
+          "stealth"
+        ],
+        "effects": []
+      },
+      {
+        "id": "srd-5.2:feature/thief-use-magic-device",
+        "name": "Use Magic Device",
+        "level": 13,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You've learned how to maximize use of magic items, granting you the following benefits.\n\n**Attunement.** You can attune to up to four magic items at once.\n\n**Charges.** Whenever you use a magic item property that expends charges, roll 1d6. On a roll of 6, you use the property without expending the charges.\n\n**Scrolls.** You can use any Spell Scroll, using Intelligence as your spellcasting ability for the spell. If the spell is a cantrip or a level 1 spell, you can cast it reliably. If the scroll contains a higher-level spell, you must first succeed on an Intelligence (Arcana) check (DC 10 plus the spell's level). On a successful check, you cast the spell from the scroll. On a failed check, the scroll disintegrates.",
+        "shortDescription": "Attune to four items; sometimes save charges; use any Spell Scroll.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "magicItem"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "attunementSlots",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/thief-thiefs-reflexes",
+        "name": "Thief's Reflexes",
+        "level": 17,
+        "sourceId": "srd-5.2:subclass/thief",
+        "description": "You are adept at laying ambushes and quickly escaping danger. You can take two turns during the first round of any combat. You take your first turn at your normal Initiative and your second turn at your Initiative minus 10.",
+        "shortDescription": "Take a second turn in the first round at Initiative minus 10.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "initiative"
+        ],
+        "effects": [
+          {
+            "type": "extraTurn",
+            "value": {
+              "round": 1,
+              "initiativeOffset": -10
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/draconic-sorcery",
+    "classId": "srd-5.2:class/sorcerer",
+    "name": "Draconic Sorcery",
+    "description": "Your innate magic comes from the gift of a dragon. Perhaps an ancient dragon facing death bequeathed some of its magical power to you or your ancestor. You might have absorbed magic from a site infused with dragons' power. Or perhaps you handled a treasure taken from a dragon's hoard that was steeped in draconic power. Or you might have a dragon for an ancestor.",
+    "flavor": "Breathe the Magic of Dragons",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      14,
+      18
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-draconic-resilience",
+        "name": "Draconic Resilience",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "The magic in your body manifests physical traits of your draconic gift. Your Hit Point maximum increases by 3, and it increases by 1 whenever you gain another Sorcerer level.\n\nParts of you are also covered by dragon-like scales. While you aren't wearing armor, your base Armor Class equals 10 plus your Dexterity and Charisma modifiers.",
+        "shortDescription": "+3 HP (+1 per Sorcerer level after), and unarmored AC = 10 + DEX + CHA.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense"
+        ],
+        "scaling": [
+          {
+            "level": 3,
+            "value": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "hitPointMaximum",
+            "value": "$derived:classLevel"
+          },
+          {
+            "type": "setBaseAc",
+            "value": {
+              "base": 10,
+              "abilities": [
+                "DEX",
+                "CHA"
+              ]
+            },
+            "qualifiers": [
+              {
+                "type": "equipment",
+                "equipment": "armor",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-draconic-spells",
+        "name": "Draconic Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "When you reach a Sorcerer level specified in the Draconic Spells table, you thereafter always have the listed spells prepared.\n\n| Sorcerer Level | Spells |\n|---|---|\n| 3 | Alter Self, Chromatic Orb, Command, Dragon's Breath |\n| 5 | Fear, Fly |\n| 7 | Arcane Eye, Charm Monster |\n| 9 | Legend Lore, Summon Dragon |",
+        "shortDescription": "Always have Draconic spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/alter-self",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/chromatic-orb",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/command",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/dragons-breath",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fear",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fly",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/arcane-eye",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/charm-monster",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/legend-lore",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/summon-dragon",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-elemental-affinity",
+        "name": "Elemental Affinity",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "Your draconic magic has an affinity with a damage type associated with dragons. Choose one of those types: Acid, Cold, Fire, Lightning, or Poison.\n\nYou have Resistance to that damage type, and when you cast a spell that deals damage of that type, you can add your Charisma modifier to one damage roll of that spell.",
+        "shortDescription": "Resistance to a chosen damage type, and add CHA to one damage roll of that type.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "defense",
+          "damage"
+        ],
+        "choices": [
+          {
+            "id": "elemental-affinity-damage-type",
+            "prompt": "Choose a damage type.",
+            "count": 1,
+            "from": [
+              "acid",
+              "cold",
+              "fire",
+              "lightning",
+              "poison"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$choice:elemental-affinity-damage-type"
+          },
+          {
+            "type": "modifier",
+            "target": "spellDamage",
+            "value": "$derived:CHA",
+            "qualifiers": [
+              {
+                "type": "damageType",
+                "damageTypes": [
+                  "$choice:elemental-affinity-damage-type"
+                ]
+              }
+            ],
+            "appliesOnce": true
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-dragon-wings",
+        "name": "Dragon Wings",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "As a Bonus Action, you can cause draconic wings to appear on your back. The wings last for 1 hour or until you dismiss them (no action required). For the duration, you have a Fly Speed of 60 feet.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you spend 3 Sorcery Points (no action required) to restore your use of it.",
+        "shortDescription": "Bonus Action: Fly Speed 60 feet for 1 hour.",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long",
+          "alternativeCost": {
+            "resource": "sorceryPoints",
+            "amount": 3
+          }
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "concentration": false,
+        "tags": [
+          "movement"
+        ],
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": 60,
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/draconic-sorcery-dragon-wings"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/draconic-sorcery-dragon-companion",
+        "name": "Dragon Companion",
+        "level": 18,
+        "sourceId": "srd-5.2:subclass/draconic-sorcery",
+        "description": "You can cast Summon Dragon without a Material component. You can also cast it once without a spell slot, and you regain the ability to cast it in this way when you finish a Long Rest.",
+        "shortDescription": "Cast Summon Dragon without materials, and once per Long Rest without a slot.",
+        "activation": {
+          "type": "special"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "spellcasting",
+          "summoning"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/summon-dragon",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "freeCasts": {
+                "count": 1,
+                "recharge": "long"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/fiend-patron",
+    "classId": "srd-5.2:class/warlock",
+    "name": "Fiend Patron",
+    "flavor": "Make a Deal with the Lower Planes",
+    "description": "Your pact draws on the Lower Planes, the realms of perdition. You might forge a bargain with a demon lord, an archdevil, or another fiend that is especially mighty. That patron's aims are evil—the corruption or destruction of all things, ultimately including you—and your path is defined by the extent to which you strive against those aims.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/fiend-dark-ones-blessing",
+        "name": "Dark One's Blessing",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/fiend-patron",
+        "description": "When you reduce an enemy to 0 Hit Points, you gain Temporary Hit Points equal to your Charisma modifier plus your Warlock level (minimum of 1 Temporary Hit Point). You also gain this benefit if someone else reduces an enemy within 10 feet of you to 0 Hit Points.",
+        "shortDescription": "Gain CHA + Warlock level Temporary Hit Points when an enemy near you drops.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "healing"
+        ],
+        "effects": [
+          {
+            "type": "grantTemporaryHitPoints",
+            "value": {
+              "base": 0,
+              "modifier": [
+                "$derived:CHA",
+                "$derived:classLevel"
+              ],
+              "minimum": 1
+            },
+            "trigger": {
+              "event": "reduceEnemyToZero"
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fiend-fiend-spells",
+        "name": "Fiend Spells",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/fiend-patron",
+        "description": "The magic of your patron ensures you always have certain spells ready; when you reach a Warlock level specified in the Fiend Spells table, you thereafter always have the listed spells prepared.\n\n| Warlock Level | Spells |\n|---|---|\n| 3 | Burning Hands, Command, Scorching Ray, Suggestion |\n| 5 | Fireball, Stinking Cloud |\n| 7 | Fire Shield, Wall of Fire |\n| 9 | Geas, Insect Plague |",
+        "shortDescription": "Always have Fiend spells prepared.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/burning-hands",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/command",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/scorching-ray",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/suggestion",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 3
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fireball",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/stinking-cloud",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 5
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fire-shield",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wall-of-fire",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 7
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/geas",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/insect-plague",
+            "castingOverrides": {
+              "alwaysPrepared": true
+            },
+            "qualifiers": [
+              {
+                "type": "classLevel",
+                "atLeast": 9
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fiend-dark-ones-own-luck",
+        "name": "Dark One's Own Luck",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/fiend-patron",
+        "description": "You can call on your fiendish patron to alter fate in your favor. When you make an ability check or a saving throw, you can use this feature to add 1d10 to your roll. You can do so after seeing the roll but before any of the roll's effects occur.\n\nYou can use this feature a number of times equal to your Charisma modifier (minimum of once), but you can use it no more than once per roll. You regain all expended uses when you finish a Long Rest.",
+        "shortDescription": "Add 1d10 to an ability check or save.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": "$derived:CHA",
+          "minimum": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "luck"
+        ],
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "appliesOnce": true
+          },
+          {
+            "type": "rollBonus",
+            "target": "savingThrow",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "appliesOnce": true
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fiend-fiendish-resilience",
+        "name": "Fiendish Resilience",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/fiend-patron",
+        "description": "Choose one damage type, other than Force, whenever you finish a Short or Long Rest. You have Resistance to that damage type until you choose a different one with this feature.",
+        "shortDescription": "Resistance to a damage type you choose on each rest.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "fiendish-resilience",
+            "prompt": "Choose a damage type other than Force.",
+            "count": 1,
+            "from": [
+              "acid",
+              "bludgeoning",
+              "cold",
+              "fire",
+              "lightning",
+              "necrotic",
+              "piercing",
+              "poison",
+              "psychic",
+              "radiant",
+              "slashing",
+              "thunder"
+            ],
+            "swap": {
+              "trigger": {
+                "event": "finishRest",
+                "rest": "short"
+              },
+              "count": 1
+            }
+          }
+        ],
+        "tags": [
+          "defense"
+        ],
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "$choice:fiendish-resilience"
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/fiend-hurl-through-hell",
+        "name": "Hurl Through Hell",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/fiend-patron",
+        "description": "Once per turn when you hit a creature with an attack roll, you can try to instantly transport the target through the Lower Planes. The target must succeed on a Charisma saving throw against your spell save DC, or the target disappears and hurtles through a nightmare landscape. The target takes 8d10 Psychic damage if it isn't a Fiend, and it has the Incapacitated condition until the end of your next turn, when it returns to the space it previously occupied or the nearest unoccupied space.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you expend a Pact Magic spell slot (no action required) to restore your use of it.",
+        "shortDescription": "On a hit: Charisma save or 8d10 Psychic damage and Incapacitated.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long",
+          "alternativeCost": {
+            "resource": "spellSlot",
+            "amount": 1
+          }
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "psychic",
+            "value": {
+              "count": 8,
+              "die": "d10"
+            },
+            "affects": "target",
+            "frequency": "perTurn",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "fiend"
+                ],
+                "negate": true
+              }
+            ],
+            "save": {
+              "ability": "CHA",
+              "dc": {
+                "base": 8,
+                "ability": "CHA",
+                "proficiency": true
+              },
+              "onSuccess": "negate"
+            }
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/incapacitated",
+            "affects": "target",
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:subclass/evoker",
+    "classId": "srd-5.2:class/wizard",
+    "name": "Evoker",
+    "flavor": "Create Explosive Elemental Effects",
+    "description": "Your studies focus on magic that creates powerful elemental effects such as bitter cold, searing flame, rolling thunder, crackling lightning, and burning acid. Some Evokers find employment in military forces, serving as artillery to blast armies from afar. Others use their power to protect others, while some seek their own gain.",
+    "subclassFeatureLevels": [
+      3,
+      6,
+      10,
+      14
+    ],
+    "features": [
+      {
+        "id": "srd-5.2:feature/evoker-evocation-savant",
+        "name": "Evocation Savant",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Choose two Wizard spells from the Evocation school, each of which must be no higher than level 2, and add them to your spellbook for free.\n\nIn addition, whenever you gain access to a new level of spell slots in this class, you can add one Wizard spell from the Evocation school to your spellbook for free. The chosen spell must be of a level for which you have spell slots.",
+        "shortDescription": "Two free Evocation spells, and one more per new slot level.",
+        "activation": {
+          "type": "passive"
+        },
+        "choices": [
+          {
+            "id": "evocation-savant",
+            "prompt": "Choose Wizard Evocation spells.",
+            "count": 2,
+            "from": "srd-5.2:class/wizard",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2
+                ]
+              }
+            ]
+          }
+        ],
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:evocation-savant",
+            "castingOverrides": {
+              "addToSpellbook": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-potent-cantrip",
+        "name": "Potent Cantrip",
+        "level": 3,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Your damaging cantrips affect even creatures that avoid the brunt of the effect. When you cast a cantrip at a creature and you miss with the attack roll or the target succeeds on a saving throw against the cantrip, the target takes half the cantrip's damage (if any) but suffers no additional effect from the cantrip.",
+        "shortDescription": "Cantrips deal half damage on a miss or a successful save.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "saveOutcome",
+            "value": {
+              "appliesTo": "negate",
+              "onSuccess": "half"
+            },
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "type": "dealDamage",
+            "target": "$derived:spellDamageType",
+            "value": "$derived:spellDamage",
+            "multiplier": 0.5,
+            "trigger": {
+              "event": "failRoll",
+              "roll": "attackRoll"
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-sculpt-spells",
+        "name": "Sculpt Spells",
+        "level": 6,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "You can create pockets of relative safety within the effects of your evocations. When you cast an Evocation spell that affects other creatures that you can see, you can choose a number of them equal to 1 plus the spell's level. The chosen creatures automatically succeed on their saving throws against the spell, and they take no damage if they would normally take half damage on a successful save.",
+        "shortDescription": "Shield 1 + spell level creatures from your Evocation spells.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "spellcasting"
+        ],
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "savingThrow",
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "ally"
+              }
+            ]
+          },
+          {
+            "type": "saveOutcome",
+            "value": {
+              "appliesTo": "half",
+              "onSuccess": "negate"
+            },
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "ally"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-empowered-evocation",
+        "name": "Empowered Evocation",
+        "level": 10,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "Whenever you cast a Wizard spell from the Evocation school, you can add your Intelligence modifier to one damage roll of that spell.",
+        "shortDescription": "Add Intelligence to one damage roll of your Wizard Evocation spells.",
+        "activation": {
+          "type": "passive"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellDamage",
+            "value": "$derived:INT",
+            "appliesOnce": true,
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "evocation"
+                ]
+              },
+              {
+                "type": "spellSource",
+                "sourceId": "srd-5.2:class/wizard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "srd-5.2:feature/evoker-overchannel",
+        "name": "Overchannel",
+        "level": 14,
+        "sourceId": "srd-5.2:subclass/evoker",
+        "description": "You can increase the power of your spells. When you cast a Wizard spell with a spell slot of levels 1–5 that deals damage, you can deal maximum damage with that spell on the turn you cast it.\n\nThe first time you do so, you suffer no adverse effect. If you use this feature again before you finish a Long Rest, you take 2d12 Necrotic damage for each level of the spell slot immediately after you cast it. This damage ignores Resistance and Immunity.\n\nEach time you use this feature again before finishing a Long Rest, the Necrotic damage per spell level increases by 1d12.",
+        "shortDescription": "Maximize a level 1-5 Wizard spell's damage; repeats cost Necrotic damage.",
+        "activation": {
+          "type": "free"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "tags": [
+          "damage"
+        ],
+        "effects": [
+          {
+            "type": "maximizeDice",
+            "target": "damageRoll",
+            "qualifiers": [
+              {
+                "type": "spellSource",
+                "sourceId": "srd-5.2:class/wizard"
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "type": "dealDamage",
+            "target": "necrotic",
+            "value": {
+              "count": "$derived:overchannelDice",
+              "die": "d12"
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/evoker-overchannel"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

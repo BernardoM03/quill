@@ -1,0 +1,3576 @@
+[
+  {
+    "id": "srd-5.2:equipment/club",
+    "name": "Club",
+    "category": "weapon",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "light"
+    ],
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/dagger",
+    "name": "Dagger",
+    "category": "weapon",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "finesse",
+      "light",
+      "thrown",
+      "range"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "mastery": "nick"
+  },
+  {
+    "id": "srd-5.2:equipment/greatclub",
+    "name": "Greatclub",
+    "category": "weapon",
+    "cost": {
+      "amount": 2,
+      "unit": "sp"
+    },
+    "weight": 10,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "twoHanded"
+    ],
+    "mastery": "push"
+  },
+  {
+    "id": "srd-5.2:equipment/handaxe",
+    "name": "Handaxe",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "light",
+      "thrown",
+      "range"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/javelin",
+    "name": "Javelin",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "thrown",
+      "range"
+    ],
+    "range": {
+      "normal": 30,
+      "long": 120
+    },
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/light-hammer",
+    "name": "Light Hammer",
+    "category": "weapon",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "light",
+      "thrown",
+      "range"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "mastery": "nick"
+  },
+  {
+    "id": "srd-5.2:equipment/mace",
+    "name": "Mace",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "bludgeoning",
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/quarterstaff",
+    "name": "Quarterstaff",
+    "category": "weapon",
+    "cost": {
+      "amount": 2,
+      "unit": "sp"
+    },
+    "weight": 4,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "versatile"
+    ],
+    "versatileDamage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "mastery": "topple"
+  },
+  {
+    "id": "srd-5.2:equipment/sickle",
+    "name": "Sickle",
+    "category": "weapon",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "light"
+    ],
+    "mastery": "nick"
+  },
+  {
+    "id": "srd-5.2:equipment/spear",
+    "name": "Spear",
+    "category": "weapon",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "simple",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "thrown",
+      "range",
+      "versatile"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "versatileDamage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/dart",
+    "name": "Dart",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "cp"
+    },
+    "weight": 0.25,
+    "weaponCategory": "simple",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "finesse",
+      "thrown",
+      "range"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/light-crossbow",
+    "name": "Light Crossbow",
+    "category": "weapon",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "weaponCategory": "simple",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "loading",
+      "twoHanded"
+    ],
+    "range": {
+      "normal": 80,
+      "long": 320
+    },
+    "ammunition": "srd-5.2:equipment/bolts",
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/shortbow",
+    "name": "Shortbow",
+    "category": "weapon",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "simple",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "twoHanded"
+    ],
+    "range": {
+      "normal": 80,
+      "long": 320
+    },
+    "ammunition": "srd-5.2:equipment/arrows",
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/sling",
+    "name": "Sling",
+    "category": "weapon",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "weaponCategory": "simple",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "ammunition",
+      "range"
+    ],
+    "range": {
+      "normal": 30,
+      "long": 120
+    },
+    "ammunition": "srd-5.2:equipment/bullets-sling",
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/battleaxe",
+    "name": "Battleaxe",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "versatile"
+    ],
+    "versatileDamage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "mastery": "topple"
+  },
+  {
+    "id": "srd-5.2:equipment/flail",
+    "name": "Flail",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "bludgeoning",
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/glaive",
+    "name": "Glaive",
+    "category": "weapon",
+    "cost": {
+      "amount": 20,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "heavy",
+      "reach",
+      "twoHanded"
+    ],
+    "mastery": "graze"
+  },
+  {
+    "id": "srd-5.2:equipment/greataxe",
+    "name": "Greataxe",
+    "category": "weapon",
+    "cost": {
+      "amount": 30,
+      "unit": "gp"
+    },
+    "weight": 7,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d12"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "heavy",
+      "twoHanded"
+    ],
+    "mastery": "cleave"
+  },
+  {
+    "id": "srd-5.2:equipment/greatsword",
+    "name": "Greatsword",
+    "category": "weapon",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 2,
+      "die": "d6"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "heavy",
+      "twoHanded"
+    ],
+    "mastery": "graze"
+  },
+  {
+    "id": "srd-5.2:equipment/halberd",
+    "name": "Halberd",
+    "category": "weapon",
+    "cost": {
+      "amount": 20,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "heavy",
+      "reach",
+      "twoHanded"
+    ],
+    "mastery": "cleave"
+  },
+  {
+    "id": "srd-5.2:equipment/lance",
+    "name": "Lance",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "heavy",
+      "reach",
+      "twoHanded"
+    ],
+    "mastery": "topple",
+    "description": "Two-Handed unless you are mounted."
+  },
+  {
+    "id": "srd-5.2:equipment/longsword",
+    "name": "Longsword",
+    "category": "weapon",
+    "cost": {
+      "amount": 15,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "versatile"
+    ],
+    "versatileDamage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/maul",
+    "name": "Maul",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 10,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 2,
+      "die": "d6"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "heavy",
+      "twoHanded"
+    ],
+    "mastery": "topple"
+  },
+  {
+    "id": "srd-5.2:equipment/morningstar",
+    "name": "Morningstar",
+    "category": "weapon",
+    "cost": {
+      "amount": 15,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/pike",
+    "name": "Pike",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 18,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "heavy",
+      "reach",
+      "twoHanded"
+    ],
+    "mastery": "push"
+  },
+  {
+    "id": "srd-5.2:equipment/rapier",
+    "name": "Rapier",
+    "category": "weapon",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "finesse"
+    ],
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/scimitar",
+    "name": "Scimitar",
+    "category": "weapon",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "finesse",
+      "light"
+    ],
+    "mastery": "nick"
+  },
+  {
+    "id": "srd-5.2:equipment/shortsword",
+    "name": "Shortsword",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "finesse",
+      "light"
+    ],
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/trident",
+    "name": "Trident",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "thrown",
+      "range",
+      "versatile"
+    ],
+    "range": {
+      "normal": 20,
+      "long": 60
+    },
+    "versatileDamage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "mastery": "topple"
+  },
+  {
+    "id": "srd-5.2:equipment/warhammer",
+    "name": "Warhammer",
+    "category": "weapon",
+    "cost": {
+      "amount": 15,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "bludgeoning",
+    "properties": [
+      "versatile"
+    ],
+    "versatileDamage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "mastery": "push"
+  },
+  {
+    "id": "srd-5.2:equipment/war-pick",
+    "name": "War Pick",
+    "category": "weapon",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "versatile"
+    ],
+    "versatileDamage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "mastery": "sap"
+  },
+  {
+    "id": "srd-5.2:equipment/whip",
+    "name": "Whip",
+    "category": "weapon",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "martial",
+    "attackRange": "melee",
+    "damage": {
+      "count": 1,
+      "die": "d4"
+    },
+    "damageType": "slashing",
+    "properties": [
+      "finesse",
+      "reach"
+    ],
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/blowgun",
+    "name": "Blowgun",
+    "category": "weapon",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": 1,
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "loading"
+    ],
+    "range": {
+      "normal": 25,
+      "long": 100
+    },
+    "ammunition": "srd-5.2:equipment/needles",
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/hand-crossbow",
+    "name": "Hand Crossbow",
+    "category": "weapon",
+    "cost": {
+      "amount": 75,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d6"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "light",
+      "loading"
+    ],
+    "range": {
+      "normal": 30,
+      "long": 120
+    },
+    "ammunition": "srd-5.2:equipment/bolts",
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/heavy-crossbow",
+    "name": "Heavy Crossbow",
+    "category": "weapon",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 18,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "heavy",
+      "loading",
+      "twoHanded"
+    ],
+    "range": {
+      "normal": 100,
+      "long": 400
+    },
+    "ammunition": "srd-5.2:equipment/bolts",
+    "mastery": "push"
+  },
+  {
+    "id": "srd-5.2:equipment/longbow",
+    "name": "Longbow",
+    "category": "weapon",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d8"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "heavy",
+      "twoHanded"
+    ],
+    "range": {
+      "normal": 150,
+      "long": 600
+    },
+    "ammunition": "srd-5.2:equipment/arrows",
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/musket",
+    "name": "Musket",
+    "category": "weapon",
+    "cost": {
+      "amount": 500,
+      "unit": "gp"
+    },
+    "weight": 10,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d12"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "loading",
+      "twoHanded"
+    ],
+    "range": {
+      "normal": 40,
+      "long": 120
+    },
+    "ammunition": "srd-5.2:equipment/bullets-firearm",
+    "mastery": "slow"
+  },
+  {
+    "id": "srd-5.2:equipment/pistol",
+    "name": "Pistol",
+    "category": "weapon",
+    "cost": {
+      "amount": 250,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "weaponCategory": "martial",
+    "attackRange": "ranged",
+    "damage": {
+      "count": 1,
+      "die": "d10"
+    },
+    "damageType": "piercing",
+    "properties": [
+      "ammunition",
+      "range",
+      "loading"
+    ],
+    "range": {
+      "normal": 30,
+      "long": 90
+    },
+    "ammunition": "srd-5.2:equipment/bullets-firearm",
+    "mastery": "vex"
+  },
+  {
+    "id": "srd-5.2:equipment/padded-armor",
+    "name": "Padded Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 8,
+    "armorCategory": "lightArmor",
+    "baseArmorClass": {
+      "base": 11,
+      "abilities": [
+        "DEX"
+      ]
+    },
+    "donTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/leather-armor",
+    "name": "Leather Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 10,
+    "armorCategory": "lightArmor",
+    "baseArmorClass": {
+      "base": 11,
+      "abilities": [
+        "DEX"
+      ]
+    },
+    "donTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/studded-leather-armor",
+    "name": "Studded Leather Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 45,
+      "unit": "gp"
+    },
+    "weight": 13,
+    "armorCategory": "lightArmor",
+    "baseArmorClass": {
+      "base": 12,
+      "abilities": [
+        "DEX"
+      ]
+    },
+    "donTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/hide-armor",
+    "name": "Hide Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 12,
+    "armorCategory": "mediumArmor",
+    "baseArmorClass": {
+      "base": 12,
+      "abilities": [
+        "DEX"
+      ],
+      "maxBonus": 2
+    },
+    "donTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/chain-shirt",
+    "name": "Chain Shirt",
+    "category": "armor",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 20,
+    "armorCategory": "mediumArmor",
+    "baseArmorClass": {
+      "base": 13,
+      "abilities": [
+        "DEX"
+      ],
+      "maxBonus": 2
+    },
+    "donTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/scale-mail",
+    "name": "Scale Mail",
+    "category": "armor",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 45,
+    "armorCategory": "mediumArmor",
+    "baseArmorClass": {
+      "base": 14,
+      "abilities": [
+        "DEX"
+      ],
+      "maxBonus": 2
+    },
+    "donTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/breastplate",
+    "name": "Breastplate",
+    "category": "armor",
+    "cost": {
+      "amount": 400,
+      "unit": "gp"
+    },
+    "weight": 20,
+    "armorCategory": "mediumArmor",
+    "baseArmorClass": {
+      "base": 14,
+      "abilities": [
+        "DEX"
+      ],
+      "maxBonus": 2
+    },
+    "donTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/half-plate-armor",
+    "name": "Half Plate Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 750,
+      "unit": "gp"
+    },
+    "weight": 40,
+    "armorCategory": "mediumArmor",
+    "baseArmorClass": {
+      "base": 15,
+      "abilities": [
+        "DEX"
+      ],
+      "maxBonus": 2
+    },
+    "donTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/ring-mail",
+    "name": "Ring Mail",
+    "category": "armor",
+    "cost": {
+      "amount": 30,
+      "unit": "gp"
+    },
+    "weight": 40,
+    "armorCategory": "heavyArmor",
+    "baseArmorClass": {
+      "base": 14,
+      "abilities": []
+    },
+    "donTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/chain-mail",
+    "name": "Chain Mail",
+    "category": "armor",
+    "cost": {
+      "amount": 75,
+      "unit": "gp"
+    },
+    "weight": 55,
+    "armorCategory": "heavyArmor",
+    "baseArmorClass": {
+      "base": 16,
+      "abilities": []
+    },
+    "donTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "strength": 13,
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/splint-armor",
+    "name": "Splint Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 200,
+      "unit": "gp"
+    },
+    "weight": 60,
+    "armorCategory": "heavyArmor",
+    "baseArmorClass": {
+      "base": 17,
+      "abilities": []
+    },
+    "donTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "strength": 15,
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/plate-armor",
+    "name": "Plate Armor",
+    "category": "armor",
+    "cost": {
+      "amount": 1500,
+      "unit": "gp"
+    },
+    "weight": 65,
+    "armorCategory": "heavyArmor",
+    "baseArmorClass": {
+      "base": 18,
+      "abilities": []
+    },
+    "donTime": {
+      "value": 10,
+      "unit": "minute"
+    },
+    "doffTime": {
+      "value": 5,
+      "unit": "minute"
+    },
+    "strength": 15,
+    "stealthDisadvantage": true
+  },
+  {
+    "id": "srd-5.2:equipment/shield",
+    "name": "Shield",
+    "category": "armor",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "armorCategory": "shield",
+    "acBonus": 2,
+    "description": "Donning or doffing a Shield takes the Utilize action."
+  },
+  {
+    "id": "srd-5.2:equipment/arrows",
+    "name": "Arrows",
+    "category": "ammunition",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "bundle": 20,
+    "storage": "srd-5.2:equipment/quiver"
+  },
+  {
+    "id": "srd-5.2:equipment/bolts",
+    "name": "Bolts",
+    "category": "ammunition",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1.5,
+    "bundle": 20,
+    "storage": "srd-5.2:equipment/case-crossbow-bolt"
+  },
+  {
+    "id": "srd-5.2:equipment/bullets-firearm",
+    "name": "Bullets, Firearm",
+    "category": "ammunition",
+    "cost": {
+      "amount": 3,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "bundle": 10,
+    "storage": "srd-5.2:equipment/pouch"
+  },
+  {
+    "id": "srd-5.2:equipment/bullets-sling",
+    "name": "Bullets, Sling",
+    "category": "ammunition",
+    "cost": {
+      "amount": 4,
+      "unit": "cp"
+    },
+    "weight": 1.5,
+    "bundle": 20,
+    "storage": "srd-5.2:equipment/pouch"
+  },
+  {
+    "id": "srd-5.2:equipment/needles",
+    "name": "Needles",
+    "category": "ammunition",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "bundle": 50,
+    "storage": "srd-5.2:equipment/pouch"
+  },
+  {
+    "id": "srd-5.2:equipment/arcane-focus",
+    "name": "Arcane Focus",
+    "category": "spellcastingFocus",
+    "focusType": "arcane",
+    "description": "An Arcane Focus takes one of the forms in the Arcane Focuses table and is bejeweled or carved to channel arcane magic. A Sorcerer, Warlock, or Wizard can use such an item as a Spellcasting Focus.",
+    "variants": [
+      {
+        "slug": "crystal",
+        "name": "Crystal",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        },
+        "weight": 1
+      },
+      {
+        "slug": "orb",
+        "name": "Orb",
+        "cost": {
+          "amount": 20,
+          "unit": "gp"
+        },
+        "weight": 3
+      },
+      {
+        "slug": "rod",
+        "name": "Rod",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        },
+        "weight": 2
+      },
+      {
+        "slug": "staff",
+        "name": "Staff (also a Quarterstaff)",
+        "cost": {
+          "amount": 5,
+          "unit": "gp"
+        },
+        "weight": 4,
+        "alsoWeapon": "srd-5.2:equipment/quarterstaff"
+      },
+      {
+        "slug": "wand",
+        "name": "Wand",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/druidic-focus",
+    "name": "Druidic Focus",
+    "category": "spellcastingFocus",
+    "focusType": "druidic",
+    "description": "A Druidic Focus takes one of the forms in the Druidic Focuses table and is carved, tied with ribbon, or painted to channel primal magic. A Druid or Ranger can use such an object as a Spellcasting Focus.",
+    "variants": [
+      {
+        "slug": "sprig-of-mistletoe",
+        "name": "Sprig of mistletoe",
+        "cost": {
+          "amount": 1,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "wooden-staff",
+        "name": "Wooden staff (also a Quarterstaff)",
+        "cost": {
+          "amount": 5,
+          "unit": "gp"
+        },
+        "weight": 4,
+        "alsoWeapon": "srd-5.2:equipment/quarterstaff"
+      },
+      {
+        "slug": "yew-wand",
+        "name": "Yew wand",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        },
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/holy-symbol",
+    "name": "Holy Symbol",
+    "category": "spellcastingFocus",
+    "focusType": "holy",
+    "description": "A Holy Symbol takes one of the forms in the Holy Symbol table and is bejeweled or painted to channel divine magic. A Cleric or Paladin can use a Holy Symbol as a Spellcasting Focus. The table indicates whether a Holy Symbol needs to be held, worn, or borne on fabric (such as a tabard or banner) or a Shield.",
+    "variants": [
+      {
+        "slug": "amulet",
+        "name": "Amulet (worn or held)",
+        "cost": {
+          "amount": 5,
+          "unit": "gp"
+        },
+        "weight": 1
+      },
+      {
+        "slug": "emblem",
+        "name": "Emblem (borne on fabric or a Shield)",
+        "cost": {
+          "amount": 5,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "reliquary",
+        "name": "Reliquary (held)",
+        "cost": {
+          "amount": 5,
+          "unit": "gp"
+        },
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/acid",
+    "name": "Acid",
+    "category": "gear",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "When you take the Attack action, you can replace one of your attacks with throwing a vial of Acid. Target one creature or object you can see within 20 feet of yourself. The target must succeed on a Dexterity saving throw (DC 8 plus your Dexterity modifier and Proficiency Bonus) or take 2d6 Acid damage.",
+    "activation": {
+      "type": "action",
+      "trigger": "Replaces one attack when you take the Attack action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 20,
+            "unit": "feet"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "DEX",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/alchemists-fire",
+    "name": "Alchemist's Fire",
+    "category": "gear",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "When you take the Attack action, you can replace one of your attacks with throwing a flask of Alchemist's Fire. Target one creature or object you can see within 20 feet of yourself. The target must succeed on a Dexterity saving throw (DC 8 plus your Dexterity modifier and Proficiency Bonus) or take 1d4 Fire damage and start burning.",
+    "activation": {
+      "type": "action",
+      "trigger": "Replaces one attack when you take the Attack action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 20,
+            "unit": "feet"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "DEX",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/antitoxin",
+    "name": "Antitoxin",
+    "category": "gear",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "description": "As a Bonus Action, you can drink a vial of Antitoxin to gain Advantage on saving throws to avoid or end the Poisoned condition for 1 hour.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "againstCondition",
+            "conditionId": "srd-5.2:condition/poisoned"
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/backpack",
+    "name": "Backpack",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "A Backpack holds up to 30 pounds within 1 cubic foot. It can also serve as a saddlebag."
+  },
+  {
+    "id": "srd-5.2:equipment/ball-bearings",
+    "name": "Ball Bearings",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "As a Utilize action, you can spill Ball Bearings from their pouch. They spread to cover a level, 10-foot-square area within 10 feet of yourself. A creature that enters this area for the first time on a turn must succeed on a DC 10 Dexterity saving throw or have the Prone condition. It takes 10 minutes to recover the Ball Bearings.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/prone",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cube",
+            "size": 10
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "enterArea"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 10
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/barrel",
+    "name": "Barrel",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 70,
+    "description": "A Barrel holds up to 40 gallons of liquid or up to 4 cubic feet of dry goods."
+  },
+  {
+    "id": "srd-5.2:equipment/basket",
+    "name": "Basket",
+    "category": "gear",
+    "cost": {
+      "amount": 4,
+      "unit": "sp"
+    },
+    "weight": 2,
+    "description": "A Basket holds up to 40 pounds within 2 cubic feet."
+  },
+  {
+    "id": "srd-5.2:equipment/bedroll",
+    "name": "Bedroll",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 7,
+    "description": "A Bedroll sleeps one Small or Medium creature. While in a Bedroll, you automatically succeed on saving throws against extreme cold.",
+    "effects": [
+      {
+        "type": "autoSucceed",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "environment",
+            "hazards": [
+              "extremeCold"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/bell",
+    "name": "Bell",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "description": "When rung as a Utilize action, a Bell produces a sound that can be heard up to 60 feet away."
+  },
+  {
+    "id": "srd-5.2:equipment/blanket",
+    "name": "Blanket",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 3,
+    "description": "While wrapped in a blanket, you have Advantage on saving throws against extreme cold.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "environment",
+            "hazards": [
+              "extremeCold"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/block-and-tackle",
+    "name": "Block and Tackle",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "A Block and Tackle allows you to hoist up to four times the weight you can normally lift."
+  },
+  {
+    "id": "srd-5.2:equipment/book",
+    "name": "Book",
+    "category": "gear",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "A Book contains fiction or nonfiction. If you consult an accurate nonfiction Book about its topic, you gain a +5 bonus to Intelligence (Arcana, History, Nature, or Religion) checks you make about that topic.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 5,
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/arcana",
+              "srd-5.2:skill/history",
+              "srd-5.2:skill/nature",
+              "srd-5.2:skill/religion"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/bottle-glass",
+    "name": "Bottle, Glass",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "A Glass Bottle holds up to 1½ pints."
+  },
+  {
+    "id": "srd-5.2:equipment/bucket",
+    "name": "Bucket",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "cp"
+    },
+    "weight": 2,
+    "description": "A Bucket holds up to half a cubic foot of contents."
+  },
+  {
+    "id": "srd-5.2:equipment/caltrops",
+    "name": "Caltrops",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "As a Utilize action, you can spread Caltrops from their bag to cover a 5-foot-square area within 5 feet of yourself. A creature that enters this area for the first time on a turn must succeed on a DC 15 Dexterity saving throw or take 1 Piercing damage and have its Speed reduced to 0 until the start of its next turn. It takes 10 minutes to recover the Caltrops.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": 1,
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cube",
+            "size": 5
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": {
+          "event": "enterArea"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "grantSpeed",
+        "target": "base",
+        "value": 0,
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/candle",
+    "name": "Candle",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "cp"
+    },
+    "description": "For 1 hour, a lit Candle sheds Bright Light in a 5-foot radius and Dim Light for an additional 5 feet.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 5,
+          "dim": 5
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/case-crossbow-bolt",
+    "name": "Case, Crossbow Bolt",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "A Crossbow Bolt Case holds up to 20 Bolts."
+  },
+  {
+    "id": "srd-5.2:equipment/case-map-or-scroll",
+    "name": "Case, Map or Scroll",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "A Map or Scroll Case holds up to 10 sheets of paper or 5 sheets of parchment."
+  },
+  {
+    "id": "srd-5.2:equipment/chain",
+    "name": "Chain",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 10,
+    "description": "As a Utilize action, you can wrap a Chain around an unwilling creature within 5 feet of yourself that has the Grappled, Incapacitated, or Restrained condition if you succeed on a DC 13 Strength (Athletics) check. If the creature's legs are bound, the creature has the Restrained condition until it escapes. Escaping the Chain requires the creature to make a successful DC 18 Dexterity (Acrobatics) check as an action. Bursting the Chain requires a successful DC 20 Strength (Athletics) check as an action.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 18
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "DEX",
+            "skills": [
+              "srd-5.2:skill/acrobatics"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/chest",
+    "name": "Chest",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 25,
+    "description": "A Chest holds up to 12 cubic feet of contents."
+  },
+  {
+    "id": "srd-5.2:equipment/climbers-kit",
+    "name": "Climber's Kit",
+    "category": "gear",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 12,
+    "description": "A Climber's Kit includes boot tips, gloves, pitons, and a harness. As a Utilize action, you can use the Climber's Kit to anchor yourself; when you do, you can't fall more than 25 feet from the anchor point, and you can't move more than 25 feet from there without undoing the anchor as a Bonus Action.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/clothes-fine",
+    "name": "Clothes, Fine",
+    "category": "gear",
+    "cost": {
+      "amount": 15,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "description": "Fine Clothes are made of expensive fabrics and adorned with expertly crafted details. Some events and locations admit only people wearing these clothes."
+  },
+  {
+    "id": "srd-5.2:equipment/clothes-travelers",
+    "name": "Clothes, Traveler's",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "description": "Traveler's Clothes are resilient garments designed for travel in various environments."
+  },
+  {
+    "id": "srd-5.2:equipment/component-pouch",
+    "name": "Component Pouch",
+    "category": "gear",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "A Component Pouch is watertight and filled with compartments that hold all the free Material components of your spells."
+  },
+  {
+    "id": "srd-5.2:equipment/costume",
+    "name": "Costume",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "description": "While wearing a Costume, you have Advantage on any ability check you make to impersonate the person or type of person it represents.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/deception",
+              "srd-5.2:skill/performance"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/crowbar",
+    "name": "Crowbar",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "Using a Crowbar gives you Advantage on Strength checks where the Crowbar's leverage can be applied.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/flask",
+    "name": "Flask",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "cp"
+    },
+    "weight": 1,
+    "description": "A Flask holds up to 1 pint."
+  },
+  {
+    "id": "srd-5.2:equipment/grappling-hook",
+    "name": "Grappling Hook",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "description": "As a Utilize action, you can throw the Grappling Hook at a railing, a ledge, or another catch within 50 feet of yourself, and the hook catches on if you succeed on a DC 13 Dexterity (Acrobatics) check. If you tied a Rope to the hook, you can then climb it.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/healers-kit",
+    "name": "Healer's Kit",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "description": "A Healer's Kit has ten uses. As a Utilize action, you can expend one of its uses to stabilize an Unconscious creature that has 0 Hit Points without needing to make a Wisdom (Medicine) check.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "uses": {
+      "max": 10,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "stabilize",
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/holy-water",
+    "name": "Holy Water",
+    "category": "gear",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "When you take the Attack action, you can replace one of your attacks with throwing a flask of Holy Water. Target one creature you can see within 20 feet of yourself. The target must succeed on a Dexterity saving throw (DC 8 plus your Dexterity modifier and Proficiency Bonus) or take 2d8 Radiant damage if it is a Fiend or an Undead.",
+    "activation": {
+      "type": "action",
+      "trigger": "Replaces one attack when you take the Attack action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 20,
+            "unit": "feet"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "fiend",
+              "undead"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "DEX",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/hunting-trap",
+    "name": "Hunting Trap",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 25,
+    "description": "As a Utilize action, you can set a Hunting Trap, which is a sawtooth steel ring that snaps shut when a creature steps on a pressure plate in the center. The trap is affixed by a heavy chain to an immobile object, such as a tree or a spike driven into the ground. A creature that steps on the plate must succeed on a DC 13 Dexterity saving throw or take 1d4 Piercing damage and have its Speed reduced to 0 until the start of its next turn. Thereafter, until the creature breaks free of the trap, its movement is limited by the length of the chain (typically 3 feet). A creature can use its action to make a DC 13 Strength (Athletics) check, freeing itself or another creature within its reach on a success. Each failed check deals 1 Piercing damage to the trapped creature.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "enterArea"
+        },
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 13
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "STR",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ],
+            "byOthers": true
+          }
+        }
+      },
+      {
+        "type": "grantSpeed",
+        "target": "base",
+        "value": 0,
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/ink",
+    "name": "Ink",
+    "category": "gear",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "description": "Ink comes in a 1-ounce bottle, which provides enough ink to write about 500 pages."
+  },
+  {
+    "id": "srd-5.2:equipment/ink-pen",
+    "name": "Ink Pen",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "cp"
+    },
+    "description": "Using Ink, an Ink Pen is used to write or draw."
+  },
+  {
+    "id": "srd-5.2:equipment/jug",
+    "name": "Jug",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "cp"
+    },
+    "weight": 4,
+    "description": "A Jug holds up to 1 gallon."
+  },
+  {
+    "id": "srd-5.2:equipment/ladder",
+    "name": "Ladder",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "weight": 25,
+    "description": "A Ladder is 10 feet tall. You must climb to move up or down it."
+  },
+  {
+    "id": "srd-5.2:equipment/lamp",
+    "name": "Lamp",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "description": "A Lamp burns Oil as fuel to cast Bright Light in a 15-foot radius and Dim Light for an additional 30 feet.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 15,
+          "dim": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/lantern-bullseye",
+    "name": "Lantern, Bullseye",
+    "category": "gear",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "A Bullseye Lantern burns Oil as fuel to cast Bright Light in a 60-foot Cone and Dim Light for an additional 60 feet.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 60,
+          "dim": 60,
+          "shape": "cone"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/lantern-hooded",
+    "name": "Lantern, Hooded",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 2,
+    "description": "A Hooded Lantern burns Oil as fuel to cast Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. As a Bonus Action, you can lower the hood, reducing the light to Dim Light in a 5-foot radius, or raise it again.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 30,
+          "dim": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/lock",
+    "name": "Lock",
+    "category": "gear",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "A Lock comes with a key. Without the key, a creature can use Thieves' Tools to pick this Lock with a successful DC 15 Dexterity (Sleight of Hand) check."
+  },
+  {
+    "id": "srd-5.2:equipment/magnifying-glass",
+    "name": "Magnifying Glass",
+    "category": "gear",
+    "cost": {
+      "amount": 100,
+      "unit": "gp"
+    },
+    "description": "A Magnifying Glass grants Advantage on any ability check made to appraise or inspect a highly detailed item. Lighting a fire with a Magnifying Glass requires light as bright as sunlight to focus, tinder to ignite, and about 5 minutes for the fire to ignite.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/investigation"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/manacles",
+    "name": "Manacles",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 6,
+    "description": "As a Utilize action, you can use Manacles to bind an unwilling Small or Medium creature within 5 feet of yourself that has the Grappled, Incapacitated, or Restrained condition if you succeed on a DC 13 Dexterity (Sleight of Hand) check. While bound, a creature has Disadvantage on attack rolls, and the creature is Restrained if the Manacles are attached to a chain or hook that is fixed in place. Escaping the Manacles requires a successful DC 20 Dexterity (Sleight of Hand) check as an action. Bursting them requires a successful DC 25 Strength (Athletics) check as an action. Each set of Manacles comes with a key. Without the key, a creature can use Thieves' Tools to pick the Manacles' lock with a successful DC 15 Dexterity (Sleight of Hand) check.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 20
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "DEX",
+            "skills": [
+              "srd-5.2:skill/sleight-of-hand"
+            ]
+          }
+        },
+        "qualifiers": [
+          {
+            "type": "creatureSize",
+            "maxSize": "medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/map",
+    "name": "Map",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "description": "If you consult an accurate Map, you gain a +5 bonus to Wisdom (Survival) checks you make to find your way in the place represented on it.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 5,
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/survival"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/mirror",
+    "name": "Mirror",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "weight": 0.5,
+    "description": "A handheld steel Mirror is useful for personal cosmetics but also for peeking around corners and reflecting light as a signal."
+  },
+  {
+    "id": "srd-5.2:equipment/net",
+    "name": "Net",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 3,
+    "description": "When you take the Attack action, you can replace one of your attacks with throwing a Net. Target a creature you can see within 15 feet of yourself. The target must succeed on a Dexterity saving throw (DC 8 plus your Dexterity modifier and Proficiency Bonus) or have the Restrained condition until it escapes. The target succeeds automatically if it is Huge or larger. To escape, the target or a creature within 5 feet of it must take an action to make a DC 10 Strength (Athletics) check, freeing the Restrained creature on a success. Destroying the Net (AC 10; 5 HP; Immunity to Bludgeoning, Poison, and Psychic damage) also frees the target, ending the effect.",
+    "activation": {
+      "type": "action",
+      "trigger": "Replaces one attack when you take the Attack action."
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 15,
+            "unit": "feet"
+          },
+          {
+            "type": "creatureSize",
+            "maxSize": "large"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "DEX",
+            "proficiency": true
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "STR",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ],
+            "byOthers": true
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/oil",
+    "name": "Oil",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "description": "You can douse a creature, object, or space with Oil or use it as fuel. Dousing a Creature or an Object: When you take the Attack action, you can replace one of your attacks with throwing an Oil flask. Target one creature or object within 20 feet of yourself. The target must succeed on a Dexterity saving throw (DC 8 plus your Dexterity modifier and Proficiency Bonus) or be covered in oil. If the target takes Fire damage before the oil dries (after 1 minute), the target takes an extra 5 Fire damage from burning oil. Dousing a Space: You can take the Utilize action to pour an Oil flask on level ground to cover a 5-foot-square area within 5 feet of yourself. If lit, the oil burns until the end of the turn 2 rounds from when the oil was lit (or 12 seconds) and deals 5 Fire damage to any creature that enters the area or ends its turn there. A creature can take this damage only once per turn. Fuel: Oil serves as fuel for Lamps and Lanterns. Once lit, a flask of Oil burns for 6 hours in a Lamp or Lantern. That duration doesn't need to be consecutive; you can extinguish the burning Oil (as a Utilize action) and rekindle it again until it has burned for a total of 6 hours.",
+    "activation": {
+      "type": "action",
+      "trigger": "Replaces one attack when you take the Attack action."
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": 5,
+        "affects": "target",
+        "trigger": {
+          "event": "takeDamage"
+        },
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 20,
+            "unit": "feet"
+          },
+          {
+            "type": "damageType",
+            "damageTypes": [
+              "fire"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "DEX",
+            "proficiency": true
+          },
+          "onSuccess": "negate"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "appliesOnce": true
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": 5,
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cube",
+            "size": 5
+          }
+        ],
+        "frequency": "perTurn",
+        "trigger": [
+          {
+            "event": "enterArea"
+          },
+          {
+            "event": "endTurnInArea"
+          }
+        ],
+        "duration": {
+          "value": 2,
+          "unit": "round"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/paper",
+    "name": "Paper",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "sp"
+    },
+    "description": "One sheet of Paper can hold about 250 handwritten words."
+  },
+  {
+    "id": "srd-5.2:equipment/parchment",
+    "name": "Parchment",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "description": "One sheet of Parchment can hold about 250 handwritten words."
+  },
+  {
+    "id": "srd-5.2:equipment/perfume",
+    "name": "Perfume",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "gp"
+    },
+    "description": "Perfume comes in a 4-ounce vial. For 1 hour after applying Perfume to yourself, you have Advantage on Charisma (Persuasion) checks made to influence an Indifferent Humanoid within 5 feet of yourself.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/persuasion"
+            ]
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "humanoid"
+            ]
+          },
+          {
+            "type": "range",
+            "within": 5,
+            "unit": "feet"
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/poison-basic",
+    "name": "Poison, Basic",
+    "category": "gear",
+    "cost": {
+      "amount": 100,
+      "unit": "gp"
+    },
+    "description": "As a Bonus Action, you can use a vial of Basic Poison to coat one weapon or up to three pieces of ammunition. A creature that takes Piercing or Slashing damage from the poisoned weapon or ammunition takes an extra 1d4 Poison damage. Once applied, the poison retains potency for 1 minute or until its damage is dealt, whichever comes first.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "poison",
+        "value": {
+          "count": 1,
+          "die": "d4"
+        },
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "appliesOnce": true,
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "qualifiers": [
+          {
+            "type": "damageType",
+            "damageTypes": [
+              "piercing",
+              "slashing"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/pole",
+    "name": "Pole",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "cp"
+    },
+    "weight": 7,
+    "description": "A Pole is 10 feet long. You can use it to touch something up to 10 feet away. If you must make a Strength (Athletics) check as part of a High or Long Jump, you can use the Pole to vault, giving yourself Advantage on the check.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/pot-iron",
+    "name": "Pot, Iron",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 10,
+    "description": "An Iron Pot holds up to 1 gallon."
+  },
+  {
+    "id": "srd-5.2:equipment/potion-of-healing",
+    "name": "Potion of Healing",
+    "category": "gear",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "weight": 0.5,
+    "description": "This potion is a magic item. As a Bonus Action, you can drink it or administer it to another creature within 5 feet of yourself. The creature that drinks the magical red fluid in this vial regains 2d4 + 2 Hit Points.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 2,
+          "die": "d4",
+          "modifier": 2
+        },
+        "affects": "target"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/pouch",
+    "name": "Pouch",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "description": "A Pouch holds up to 6 pounds within one-fifth of a cubic foot."
+  },
+  {
+    "id": "srd-5.2:equipment/quiver",
+    "name": "Quiver",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "A Quiver holds up to 20 Arrows."
+  },
+  {
+    "id": "srd-5.2:equipment/ram-portable",
+    "name": "Ram, Portable",
+    "category": "gear",
+    "cost": {
+      "amount": 4,
+      "unit": "gp"
+    },
+    "weight": 35,
+    "description": "You can use a Portable Ram to break down doors. When doing so, you gain a +4 bonus to the Strength check. One other character can help you use the ram, giving you Advantage on this check.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 4,
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/rations",
+    "name": "Rations",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 2,
+    "description": "Rations consist of travel-ready food, including jerky, dried fruit, hardtack, and nuts."
+  },
+  {
+    "id": "srd-5.2:equipment/robe",
+    "name": "Robe",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 4,
+    "description": "A Robe has vocational or ceremonial significance. Some events and locations admit only people wearing a Robe bearing certain colors or symbols."
+  },
+  {
+    "id": "srd-5.2:equipment/rope",
+    "name": "Rope",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "As a Utilize action, you can tie a knot with Rope if you succeed on a DC 10 Dexterity (Sleight of Hand) check. The Rope can be burst with a successful DC 20 Strength (Athletics) check. You can bind an unwilling creature with the Rope only if the creature has the Grappled, Incapacitated, or Restrained condition. If the creature's legs are bound, the creature has the Restrained condition until it escapes. Escaping the Rope requires the creature to make a successful DC 15 Dexterity (Acrobatics) check as an action.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "DEX",
+            "skills": [
+              "srd-5.2:skill/acrobatics"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/sack",
+    "name": "Sack",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "cp"
+    },
+    "weight": 0.5,
+    "description": "A Sack holds up to 30 pounds within 1 cubic foot."
+  },
+  {
+    "id": "srd-5.2:equipment/shovel",
+    "name": "Shovel",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "Working for 1 hour, you can use a Shovel to dig a hole that is 5 feet on each side in soil or similar material."
+  },
+  {
+    "id": "srd-5.2:equipment/signal-whistle",
+    "name": "Signal Whistle",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "cp"
+    },
+    "description": "When blown as a Utilize action, a Signal Whistle produces a sound that can be heard up to 600 feet away."
+  },
+  {
+    "id": "srd-5.2:equipment/spikes-iron",
+    "name": "Spikes, Iron",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "weight": 5,
+    "description": "Iron Spikes come in bundles of ten. As a Utilize action, you can use a blunt object, such as a Light Hammer, to hammer a spike into wood, earth, or a similar material. You can do so to jam a door shut or to then tie a Rope or Chain to the Spike."
+  },
+  {
+    "id": "srd-5.2:equipment/spyglass",
+    "name": "Spyglass",
+    "category": "gear",
+    "cost": {
+      "amount": 1000,
+      "unit": "gp"
+    },
+    "weight": 1,
+    "description": "Objects viewed through a Spyglass are magnified to twice their size."
+  },
+  {
+    "id": "srd-5.2:equipment/string",
+    "name": "String",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    },
+    "description": "String is 10 feet long. You can tie a knot in it as a Utilize action."
+  },
+  {
+    "id": "srd-5.2:equipment/tent",
+    "name": "Tent",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "weight": 20,
+    "description": "A Tent sleeps up to two Small or Medium creatures."
+  },
+  {
+    "id": "srd-5.2:equipment/tinderbox",
+    "name": "Tinderbox",
+    "category": "gear",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    },
+    "weight": 1,
+    "description": "A Tinderbox is a small container holding flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a Candle, Lamp, Lantern, or Torch—or anything else with exposed fuel—takes a Bonus Action. Lighting any other fire takes 1 minute."
+  },
+  {
+    "id": "srd-5.2:equipment/torch",
+    "name": "Torch",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "cp"
+    },
+    "weight": 1,
+    "description": "A Torch burns for 1 hour, casting Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. When you take the Attack action, you can attack with the Torch, using it as a Simple Melee weapon. On a hit, the target takes 1 Fire damage.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "fire",
+        "value": 1,
+        "trigger": {
+          "event": "hitWithAttack"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/vial",
+    "name": "Vial",
+    "category": "gear",
+    "cost": {
+      "amount": 1,
+      "unit": "gp"
+    },
+    "description": "A Vial holds up to 4 ounces."
+  },
+  {
+    "id": "srd-5.2:equipment/waterskin",
+    "name": "Waterskin",
+    "category": "gear",
+    "cost": {
+      "amount": 2,
+      "unit": "sp"
+    },
+    "weight": 5,
+    "description": "A Waterskin holds up to 4 pints. Its weight is listed full."
+  },
+  {
+    "id": "srd-5.2:equipment/spell-scroll",
+    "name": "Spell Scroll",
+    "category": "gear",
+    "description": "A Spell Scroll (Cantrip) or Spell Scroll (Level 1) is a magic item that bears the words of a cantrip or level 1 spell, respectively, determined by the scroll's creator. If the spell is on your class's spell list, you can read the scroll and cast the spell using its normal casting time and without providing any Material components. If the spell requires a saving throw or an attack roll, the spell save DC is 13, and the attack bonus is +5. The scroll disintegrates when the casting is completed.",
+    "variants": [
+      {
+        "slug": "cantrip",
+        "name": "Cantrip",
+        "cost": {
+          "amount": 30,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "level-1",
+        "name": "Level 1",
+        "cost": {
+          "amount": 50,
+          "unit": "gp"
+        }
+      }
+    ],
+    "activation": {
+      "type": "special",
+      "trigger": "The spell's normal casting time."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "$choice:spell-scroll-spell",
+        "castingOverrides": {
+          "ignoreMaterialComponent": true
+        }
+      }
+    ],
+    "choices": [
+      {
+        "id": "spell-scroll-spell",
+        "prompt": "The spell the scroll holds.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ],
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              0,
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/burglars-pack",
+    "name": "Burglar's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 16,
+      "unit": "gp"
+    },
+    "weight": 42,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/ball-bearings"
+      },
+      {
+        "id": "srd-5.2:equipment/bell"
+      },
+      {
+        "id": "srd-5.2:equipment/candle",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/crowbar"
+      },
+      {
+        "id": "srd-5.2:equipment/lantern-hooded"
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 7
+      },
+      {
+        "id": "srd-5.2:equipment/rations",
+        "quantity": 5
+      },
+      {
+        "id": "srd-5.2:equipment/rope"
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      },
+      {
+        "id": "srd-5.2:equipment/waterskin"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/diplomats-pack",
+    "name": "Diplomat's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 39,
+      "unit": "gp"
+    },
+    "weight": 39,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/chest"
+      },
+      {
+        "id": "srd-5.2:equipment/clothes-fine"
+      },
+      {
+        "id": "srd-5.2:equipment/ink"
+      },
+      {
+        "id": "srd-5.2:equipment/ink-pen",
+        "quantity": 5
+      },
+      {
+        "id": "srd-5.2:equipment/lamp"
+      },
+      {
+        "id": "srd-5.2:equipment/case-map-or-scroll",
+        "quantity": 2
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 4
+      },
+      {
+        "id": "srd-5.2:equipment/paper",
+        "quantity": 5
+      },
+      {
+        "id": "srd-5.2:equipment/parchment",
+        "quantity": 5
+      },
+      {
+        "id": "srd-5.2:equipment/perfume"
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/dungeoneers-pack",
+    "name": "Dungeoneer's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 12,
+      "unit": "gp"
+    },
+    "weight": 55,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/caltrops"
+      },
+      {
+        "id": "srd-5.2:equipment/crowbar"
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 2
+      },
+      {
+        "id": "srd-5.2:equipment/rations",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/rope"
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      },
+      {
+        "id": "srd-5.2:equipment/torch",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/waterskin"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/entertainers-pack",
+    "name": "Entertainer's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 40,
+      "unit": "gp"
+    },
+    "weight": 58.5,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/bedroll"
+      },
+      {
+        "id": "srd-5.2:equipment/bell"
+      },
+      {
+        "id": "srd-5.2:equipment/lantern-bullseye"
+      },
+      {
+        "id": "srd-5.2:equipment/costume",
+        "quantity": 3
+      },
+      {
+        "id": "srd-5.2:equipment/mirror"
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 8
+      },
+      {
+        "id": "srd-5.2:equipment/rations",
+        "quantity": 9
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      },
+      {
+        "id": "srd-5.2:equipment/waterskin"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/explorers-pack",
+    "name": "Explorer's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 10,
+      "unit": "gp"
+    },
+    "weight": 55,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/bedroll"
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 2
+      },
+      {
+        "id": "srd-5.2:equipment/rations",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/rope"
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      },
+      {
+        "id": "srd-5.2:equipment/torch",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/waterskin"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/priests-pack",
+    "name": "Priest's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 33,
+      "unit": "gp"
+    },
+    "weight": 29,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/blanket"
+      },
+      {
+        "id": "srd-5.2:equipment/holy-water"
+      },
+      {
+        "id": "srd-5.2:equipment/lamp"
+      },
+      {
+        "id": "srd-5.2:equipment/rations",
+        "quantity": 7
+      },
+      {
+        "id": "srd-5.2:equipment/robe"
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/scholars-pack",
+    "name": "Scholar's Pack",
+    "category": "pack",
+    "cost": {
+      "amount": 40,
+      "unit": "gp"
+    },
+    "weight": 22,
+    "contents": [
+      {
+        "id": "srd-5.2:equipment/backpack"
+      },
+      {
+        "id": "srd-5.2:equipment/book"
+      },
+      {
+        "id": "srd-5.2:equipment/ink"
+      },
+      {
+        "id": "srd-5.2:equipment/ink-pen"
+      },
+      {
+        "id": "srd-5.2:equipment/lamp"
+      },
+      {
+        "id": "srd-5.2:equipment/oil",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/parchment",
+        "quantity": 10
+      },
+      {
+        "id": "srd-5.2:equipment/tinderbox"
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/camel",
+    "name": "Camel",
+    "category": "mount",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "carryingCapacity": 450
+  },
+  {
+    "id": "srd-5.2:equipment/elephant",
+    "name": "Elephant",
+    "category": "mount",
+    "cost": {
+      "amount": 200,
+      "unit": "gp"
+    },
+    "carryingCapacity": 1320
+  },
+  {
+    "id": "srd-5.2:equipment/horse-draft",
+    "name": "Horse, Draft",
+    "category": "mount",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "carryingCapacity": 540
+  },
+  {
+    "id": "srd-5.2:equipment/horse-riding",
+    "name": "Horse, Riding",
+    "category": "mount",
+    "cost": {
+      "amount": 75,
+      "unit": "gp"
+    },
+    "carryingCapacity": 480
+  },
+  {
+    "id": "srd-5.2:equipment/mastiff",
+    "name": "Mastiff",
+    "category": "mount",
+    "cost": {
+      "amount": 25,
+      "unit": "gp"
+    },
+    "carryingCapacity": 195
+  },
+  {
+    "id": "srd-5.2:equipment/mule",
+    "name": "Mule",
+    "category": "mount",
+    "cost": {
+      "amount": 8,
+      "unit": "gp"
+    },
+    "carryingCapacity": 420
+  },
+  {
+    "id": "srd-5.2:equipment/pony",
+    "name": "Pony",
+    "category": "mount",
+    "cost": {
+      "amount": 30,
+      "unit": "gp"
+    },
+    "carryingCapacity": 225
+  },
+  {
+    "id": "srd-5.2:equipment/warhorse",
+    "name": "Warhorse",
+    "category": "mount",
+    "cost": {
+      "amount": 400,
+      "unit": "gp"
+    },
+    "carryingCapacity": 540
+  },
+  {
+    "id": "srd-5.2:equipment/carriage",
+    "name": "Carriage",
+    "category": "tack",
+    "cost": {
+      "amount": 100,
+      "unit": "gp"
+    },
+    "weight": 600
+  },
+  {
+    "id": "srd-5.2:equipment/cart",
+    "name": "Cart",
+    "category": "tack",
+    "cost": {
+      "amount": 15,
+      "unit": "gp"
+    },
+    "weight": 200
+  },
+  {
+    "id": "srd-5.2:equipment/chariot",
+    "name": "Chariot",
+    "category": "tack",
+    "cost": {
+      "amount": 250,
+      "unit": "gp"
+    },
+    "weight": 100
+  },
+  {
+    "id": "srd-5.2:equipment/feed-per-day",
+    "name": "Feed per day",
+    "category": "tack",
+    "cost": {
+      "amount": 5,
+      "unit": "cp"
+    },
+    "weight": 10
+  },
+  {
+    "id": "srd-5.2:equipment/sled",
+    "name": "Sled",
+    "category": "tack",
+    "cost": {
+      "amount": 20,
+      "unit": "gp"
+    },
+    "weight": 300
+  },
+  {
+    "id": "srd-5.2:equipment/stabling-per-day",
+    "name": "Stabling per day",
+    "category": "tack",
+    "cost": {
+      "amount": 5,
+      "unit": "sp"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/wagon",
+    "name": "Wagon",
+    "category": "tack",
+    "cost": {
+      "amount": 35,
+      "unit": "gp"
+    },
+    "weight": 400
+  },
+  {
+    "id": "srd-5.2:equipment/saddle",
+    "name": "Saddle",
+    "category": "tack",
+    "description": "A saddle comes with a bit, a bridle, reins, and any other equipment needed to use the saddle. A Military Saddle gives Advantage on any ability check you make to remain mounted. An Exotic Saddle is required for riding an aquatic or a flying mount.",
+    "variants": [
+      {
+        "slug": "exotic",
+        "name": "Exotic",
+        "cost": {
+          "amount": 60,
+          "unit": "gp"
+        },
+        "weight": 40
+      },
+      {
+        "slug": "military",
+        "name": "Military",
+        "cost": {
+          "amount": 20,
+          "unit": "gp"
+        },
+        "weight": 30,
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "situationType",
+                "situationType": "travel"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "riding",
+        "name": "Riding",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        },
+        "weight": 25
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/airship",
+    "name": "Airship",
+    "category": "vehicle",
+    "cost": {
+      "amount": 40000,
+      "unit": "gp"
+    },
+    "speedMph": 8,
+    "crew": 10,
+    "armorClass": 13,
+    "hitPoints": 300,
+    "passengers": 20,
+    "cargoTons": 1
+  },
+  {
+    "id": "srd-5.2:equipment/galley",
+    "name": "Galley",
+    "category": "vehicle",
+    "cost": {
+      "amount": 30000,
+      "unit": "gp"
+    },
+    "speedMph": 4,
+    "crew": 80,
+    "armorClass": 15,
+    "hitPoints": 500,
+    "cargoTons": 150,
+    "damageThreshold": 20
+  },
+  {
+    "id": "srd-5.2:equipment/keelboat",
+    "name": "Keelboat",
+    "category": "vehicle",
+    "cost": {
+      "amount": 3000,
+      "unit": "gp"
+    },
+    "speedMph": 1,
+    "crew": 1,
+    "armorClass": 15,
+    "hitPoints": 100,
+    "passengers": 6,
+    "cargoTons": 0.5,
+    "damageThreshold": 10
+  },
+  {
+    "id": "srd-5.2:equipment/longship",
+    "name": "Longship",
+    "category": "vehicle",
+    "cost": {
+      "amount": 10000,
+      "unit": "gp"
+    },
+    "speedMph": 3,
+    "crew": 40,
+    "armorClass": 15,
+    "hitPoints": 300,
+    "passengers": 150,
+    "cargoTons": 10,
+    "damageThreshold": 15
+  },
+  {
+    "id": "srd-5.2:equipment/rowboat",
+    "name": "Rowboat",
+    "category": "vehicle",
+    "cost": {
+      "amount": 50,
+      "unit": "gp"
+    },
+    "speedMph": 1.5,
+    "crew": 1,
+    "armorClass": 11,
+    "hitPoints": 50,
+    "passengers": 3,
+    "description": "A Rowboat can be carried and weighs 100 pounds."
+  },
+  {
+    "id": "srd-5.2:equipment/sailing-ship",
+    "name": "Sailing Ship",
+    "category": "vehicle",
+    "cost": {
+      "amount": 10000,
+      "unit": "gp"
+    },
+    "speedMph": 2,
+    "crew": 20,
+    "armorClass": 15,
+    "hitPoints": 300,
+    "passengers": 20,
+    "cargoTons": 100,
+    "damageThreshold": 15
+  },
+  {
+    "id": "srd-5.2:equipment/warship",
+    "name": "Warship",
+    "category": "vehicle",
+    "cost": {
+      "amount": 25000,
+      "unit": "gp"
+    },
+    "speedMph": 2.5,
+    "crew": 60,
+    "armorClass": 15,
+    "hitPoints": 500,
+    "passengers": 60,
+    "cargoTons": 200,
+    "damageThreshold": 20
+  },
+  {
+    "id": "srd-5.2:equipment/spellbook",
+    "name": "Spellbook",
+    "category": "gear",
+    "weight": 3,
+    "description": "A Wizard's spellbook is a Tiny object that weighs 3 pounds, contains 100 pages, and can be read only by its owner or someone casting Identify. It holds the level 1+ spells the Wizard knows, and it can serve as the Wizard's Spellcasting Focus."
+  }
+]

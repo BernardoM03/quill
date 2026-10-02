@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/pack.schema.json",
+  "title": "Content pack manifest",
+  "description": "Envelope for a body of importable game content.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Pack namespace prefix. Present in every content id this pack defines. i.e srd-5.2",
+      "pattern": "^[a-z0-9][a-z0-9.-]*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "description": "Semver. Campaigns pin this so an old campaign resolves the content it was built against.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX identifier for the terms this pack's content is under. Every pack must declare one so the UI can surface the right notice.",
+      "minLength": 1
+    },
+    "attribution": {
+      "type": "string",
+      "description": "Verbatim attribution notice required by the pack's license. Rendered to end users on the Legal page. Required for CC-BY-4.0 packs.",
+      "minLength": 1
+    },
+    "providesEffectTypes": {
+      "type": "array",
+      "description": "Namespaced effect types this pack introduces",
+      "items": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/id"
+      },
+      "uniqueItems": true
+    },
+    "provides": {
+      "type": "array",
+      "description": "Content packs this pack ships. Each entry maps to <name>.json in the pack directory.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "classes",
+          "subclasses",
+          "spells",
+          "species",
+          "origins",
+          "feats",
+          "equipment",
+          "skills",
+          "conditions",
+          "tools",
+          "languages",
+          "creatures"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "modifications": {
+      "type": "string",
+      "description": "How this pack's source material was changed. CC-BY-4.0 s. 3(a)(1)(B) requires indicating modification, and every pack here reformats prose into JSON, so this is required alongside attribution.",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "version",
+    "license",
+    "provides"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "license": {
+            "pattern": "^CC-BY"
+          }
+        },
+        "required": [
+          "license"
+        ]
+      },
+      "then": {
+        "required": [
+          "attribution",
+          "modifications"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}
