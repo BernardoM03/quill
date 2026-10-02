@@ -17,7 +17,8 @@
     "skills",
     "tools",
     "languages",
-    "creatures"
+    "creatures",
+    "rules"
   ],
   "characterCreation": {
     "languages": {
