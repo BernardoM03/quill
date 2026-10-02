@@ -18,7 +18,8 @@
     "tools",
     "languages",
     "creatures",
-    "rules"
+    "rules",
+    "magic-items"
   ],
   "characterCreation": {
     "languages": {
