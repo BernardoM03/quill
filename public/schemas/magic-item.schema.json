@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/magic-item.schema.json",
+  "title": "D&D 5.5e SRD Magic Items",
+  "description": "Top-level array of magic items. Category defaults from the rules: armor must be worn and rings worn on a digit; rods, staffs, and wands work as an Arcane Focus, and a staff as a Quarterstaff; potions and scrolls are consumed. Value comes from rarity (Common 100 GP, Uncommon 400, Rare 4,000, Very Rare 40,000, Legendary 200,000, Artifact priceless; halved for consumables other than Spell Scrolls), plus the cost of any base item.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/magicItemId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "category": {
+        "enum": [
+          "armor",
+          "potion",
+          "ring",
+          "rod",
+          "scroll",
+          "staff",
+          "wand",
+          "weapon",
+          "wondrousItem"
+        ]
+      },
+      "rarity": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/rarity"
+          }
+        ],
+        "description": "`varies` when each variant carries its own, as Potions of Healing."
+      },
+      "attunement": {
+        "oneOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "object",
+            "description": "Attunement with a prerequisite: a class, a species, any spellcaster, or a `note` for anything else, as the Dwarven Thrower's 'a Dwarf or a creature attuned to a Belt of Dwarvenkind'.",
+            "properties": {
+              "classes": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/classId"
+                },
+                "minItems": 1
+              },
+              "species": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/speciesId"
+                },
+                "minItems": 1
+              },
+              "spellcaster": {
+                "const": true
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          }
+        ]
+      },
+      "baseItem": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentFilter"
+      },
+      "variants": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/variant"
+        },
+        "minItems": 1
+      },
+      "charges": {
+        "$ref": "#/$defs/charges"
+      },
+      "consumable": {
+        "type": "boolean",
+        "description": "Used up when activated, as Potions, Scrolls, and Dust of Disappearance."
+      },
+      "cursed": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "string",
+        "description": "Markdown, as printed, without the type line."
+      },
+      "shortDescription": {
+        "type": "string"
+      },
+      "activation": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation"
+      },
+      "uses": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/uses"
+      },
+      "duration": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+      },
+      "concentration": {
+        "type": "boolean"
+      },
+      "endConditions": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/qualifier"
+        }
+      },
+      "choices": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+        }
+      },
+      "options": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/optionList"
+      },
+      "effects": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "category",
+      "rarity",
+      "description"
+    ],
+    "additionalProperties": false
+  },
+  "$defs": {
+    "rarity": {
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "veryRare",
+        "legendary",
+        "artifact",
+        "varies"
+      ]
+    },
+    "variant": {
+      "type": "object",
+      "description": "One form of the item, as +2 Armor or a Potion of Greater Healing. Effects here add to the item's own.",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rarity": {
+          "$ref": "#/$defs/rarity"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attunement": {
+          "type": "boolean"
+        },
+        "charges": {
+          "$ref": "#/$defs/charges"
+        },
+        "effects": {
+          "type": "array",
+          "items": {
+            "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+          }
+        }
+      },
+      "required": [
+        "slug",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "charges": {
+      "type": "object",
+      "description": "A pool of charges spent by `cost: {resource: \"charges\"}`. `regain` is how many come back and when; `destroyOn` is the roll made when the last one is spent, as a wand's d20 on a 1.",
+      "properties": {
+        "max": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+            },
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/deferredValue"
+            }
+          ]
+        },
+        "regain": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "oneOf": [
+                {
+                  "const": "all"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+                }
+              ]
+            },
+            "rest": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest"
+            }
+          },
+          "required": [
+            "amount",
+            "rest"
+          ],
+          "additionalProperties": false
+        },
+        "destroyOn": {
+          "type": "object",
+          "properties": {
+            "die": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rollType"
+            },
+            "atMost": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "die",
+            "atMost"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "max"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -38,7 +38,7 @@ const note = (ref, who) => missing.set(ref, (missing.get(ref) ?? new Set()).add(
 for (const e of entities) {
   const text = JSON.stringify(e);
   // Catalog ids (:list/) name a collection, not an entity, so they are skipped.
-  for (const ref of new Set(text.match(/srd-5\.2:[a-z]+\/[a-z0-9-]+/g) ?? [])) {
+  for (const ref of new Set(text.match(/srd-5\.2:[a-z-]+\/[a-z0-9-]+/g) ?? [])) {
     if (!defined.has(ref) && !ref.includes(':list/')) note(ref, e.name);
   }
   const all = [...objects(e)];

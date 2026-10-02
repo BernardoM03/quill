@@ -79,35 +79,7 @@
               "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
             },
             {
-              "type": "object",
-              "properties": {
-                "category": {
-                  "enum": [
-                    "weapon",
-                    "armor"
-                  ]
-                },
-                "attackRange": {
-                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/attackRange"
-                },
-                "armorCategory": {
-                  "enum": [
-                    "light",
-                    "medium",
-                    "heavy"
-                  ]
-                },
-                "except": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentId"
-                  }
-                }
-              },
-              "required": [
-                "category"
-              ],
-              "additionalProperties": false
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/equipmentFilter"
             }
           ]
         }

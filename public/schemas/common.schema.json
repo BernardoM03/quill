@@ -6050,7 +6050,8 @@
         "language",
         "equipment",
         "creature",
-        "rule"
+        "rule",
+        "magicItem"
       ]
     },
     "weaponProperty": {
@@ -6255,7 +6256,7 @@
         },
         "resource": {
           "type": "string",
-          "description": "A class resource id, `spellSlot` for an expended spell slot, `hitPointDice` for a spent Hit Point Die, as Lifedrinker, or `attack` for one attack forgone from the Attack action, as Quivering Palm."
+          "description": "A class resource id, `spellSlot` for an expended spell slot, `hitPointDice` for a spent Hit Point Die, as Lifedrinker, or `attack` for one attack forgone from the Attack action, as Quivering Palm. `charges` spends the magic item's own charges, as a Wand of Fireballs."
         },
         "amount": {
           "oneOf": [
@@ -6716,6 +6717,94 @@
       "type": "string",
       "description": "Namespaced content id for Rules Glossary entries: <packId>:rule/<slug>",
       "pattern": "^[a-z0-9][a-z0-9.-]*:rule/[a-z0-9-]+$"
+    },
+    "magicItemId": {
+      "type": "string",
+      "description": "Namespaced content id for magic items: <packId>:magic-item/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:magic-item/[a-z0-9-]+$"
+    },
+    "equipmentFilter": {
+      "type": "object",
+      "description": "A set of items from the Equipment chapter: named by `ids`, or described by category with optional narrowing and exceptions. A magic item's base ('Armor (Any Medium or Heavy, Except Hide Armor)') and a tool's craft group ('any Melee weapon except Club') use it.",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/equipmentId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "category": {
+          "enum": [
+            "weapon",
+            "armor",
+            "ammunition"
+          ]
+        },
+        "weaponCategories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "simple",
+              "martial"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "attackRanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/attackRange"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "armorCategories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "lightArmor",
+              "mediumArmor",
+              "heavyArmor",
+              "shield"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "damageTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/damageType"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The weapon deals any listed type, as a Sword of Sharpness's 'any weapon that deals Slashing damage'."
+        },
+        "except": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/equipmentId"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "ids"
+          ]
+        },
+        {
+          "required": [
+            "category"
+          ]
+        }
+      ],
+      "additionalProperties": false
     }
   }
 }

@@ -21,6 +21,7 @@ PAIRS=(
   "language:languages"
   "creature:creatures"
   "rule:rules"
+  "magic-item:magic-items"
   "conditions:conditions"
   "pack:pack"
 )
