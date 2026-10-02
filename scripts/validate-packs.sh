@@ -20,6 +20,7 @@ PAIRS=(
   "equipment:equipment"
   "language:languages"
   "creature:creatures"
+  "rule:rules"
   "conditions:conditions"
   "pack:pack"
 )

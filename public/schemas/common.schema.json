@@ -143,6 +143,11 @@
           "type": "integer",
           "minimum": 1,
           "description": "Floor on a deferred `count`, as Sear Undead's 'minimum of 1d8'."
+        },
+        "maximumCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Cap on a deferred `count`, as Falling's 20d6."
         }
       },
       "required": [
@@ -470,21 +475,28 @@
       ]
     },
     "namedAction": {
-      "type": "string",
-      "description": "An action named by the rules, as opposed to `actionType` which is what such an action COSTS. Adrenaline Rush needs both at once - the Dash action (this) taken as a Bonus Action (that) - which is why they cannot be one enum.",
-      "enum": [
-        "attack",
-        "dash",
-        "disengage",
-        "dodge",
-        "help",
-        "hide",
-        "influence",
-        "magic",
-        "ready",
-        "search",
-        "study",
-        "utilize"
+      "description": "An action named by the rules, as opposed to `actionType` which is what such an action COSTS. Adrenaline Rush needs both at once - the Dash action (this) taken as a Bonus Action (that) - which is why they cannot be one enum. A pack adding an action names it by `ruleId`; the core actions keep their short names, and each is defined by the rule whose `term` matches.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "attack",
+            "dash",
+            "disengage",
+            "dodge",
+            "help",
+            "hide",
+            "influence",
+            "magic",
+            "ready",
+            "search",
+            "study",
+            "utilize"
+          ]
+        },
+        {
+          "$ref": "#/$defs/ruleId"
+        }
       ]
     },
     "specialImmunity": {
@@ -502,7 +514,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing. `dealDamage` fires when you deal damage, as Sanctuary ending. `expendCharges` fires when you use a magic item property that spends charges, as Use Magic Device.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing. `dealDamage` fires when you deal damage, as Sanctuary ending. `expendCharges` fires when you use a magic item property that spends charges, as Use Magic Device. `dayEnds` fires at the end of each day, as Dehydration and Malnutrition. `leaveReach` fires when a creature you can see leaves your reach, as an Opportunity Attack.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -528,7 +540,9 @@
         "restoreHitPoints",
         "reduceEnemyToZero",
         "dealDamage",
-        "expendCharges"
+        "expendCharges",
+        "dayEnds",
+        "leaveReach"
       ]
     },
     "trigger": {
@@ -6035,7 +6049,8 @@
         "condition",
         "language",
         "equipment",
-        "creature"
+        "creature",
+        "rule"
       ]
     },
     "weaponProperty": {
@@ -6696,6 +6711,11 @@
         "name",
         "description"
       ]
+    },
+    "ruleId": {
+      "type": "string",
+      "description": "Namespaced content id for Rules Glossary entries: <packId>:rule/<slug>",
+      "pattern": "^[a-z0-9][a-z0-9.-]*:rule/[a-z0-9-]+$"
     }
   }
 }

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/rule.schema.json",
+  "title": "D&D 5.5e SRD Rules Glossary",
+  "description": "Top-level array of Rules Glossary entries. Entries tagged Condition live in conditions.json; everything else is here. A rule that names a core enum value (an action, an area shape, an attitude) records it in `term`, tying the short name effects use to its definition.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ruleId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "category": {
+        "enum": [
+          "action",
+          "areaOfEffect",
+          "attitude",
+          "hazard",
+          "definition"
+        ],
+        "description": "The entry's tag in brackets, or `definition` when it has none."
+      },
+      "term": {
+        "type": "string",
+        "description": "The core enum value this rule defines, as `dash` for Dash [Action] or `cone` for Cone [Area of Effect]."
+      },
+      "description": {
+        "type": "string",
+        "description": "Markdown, as printed."
+      },
+      "seeAlso": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ruleId"
+            },
+            {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/conditionId"
+            }
+          ]
+        },
+        "uniqueItems": true,
+        "description": "Entries the rule's 'See also' points at."
+      },
+      "activation": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/activation"
+      },
+      "duration": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/duration"
+      },
+      "endConditions": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/qualifier"
+        }
+      },
+      "choices": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
+        }
+      },
+      "options": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/optionList"
+      },
+      "effects": {
+        "type": "array",
+        "items": {
+          "$ref": "https://quill.local/schemas/common.schema.json#/$defs/effect"
+        }
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "category",
+      "description"
+    ],
+    "additionalProperties": false
+  }
+}
