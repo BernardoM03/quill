@@ -175,8 +175,25 @@
       ]
     },
     "toolProficiencies": {
-      "items": [
-        "srd-5.2:tool/gaming-set"
+      "id": "soldier-gaming-set",
+      "count": 1,
+      "from": [
+        {
+          "id": "srd-5.2:tool/gaming-set",
+          "variant": "dice"
+        },
+        {
+          "id": "srd-5.2:tool/gaming-set",
+          "variant": "dragonchess"
+        },
+        {
+          "id": "srd-5.2:tool/gaming-set",
+          "variant": "playing-cards"
+        },
+        {
+          "id": "srd-5.2:tool/gaming-set",
+          "variant": "three-dragon-ante"
+        }
       ]
     },
     "startingEquipment": {
@@ -196,7 +213,7 @@
             },
             {
               "id": "srd-5.2:tool/gaming-set",
-              "note": "same kind as the tool proficiency"
+              "variant": "$choice:soldier-gaming-set"
             },
             {
               "id": "srd-5.2:equipment/healers-kit"

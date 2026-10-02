@@ -80,8 +80,12 @@
         "armor": [
           "shields"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -355,8 +359,10 @@
           "requires": [
             {
               "type": "equipment",
-              "equipment": "heavyArmor",
-              "negate": true
+              "negate": true,
+              "equipment": [
+                "heavyArmor"
+              ]
             }
           ]
         },
@@ -396,7 +402,9 @@
         "endConditions": [
           {
             "type": "equipment",
-            "equipment": "heavyArmor"
+            "equipment": [
+              "heavyArmor"
+            ]
           },
           {
             "type": "selfState",
@@ -540,8 +548,10 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               }
             ]
           }
@@ -568,11 +578,15 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "weapon"
+                "equipment": [
+                  "weapon"
+                ]
               },
               {
                 "type": "attackRange",
-                "attackRange": "melee"
+                "attackRanges": [
+                  "melee"
+                ]
               }
             ],
             "swap": {
@@ -829,8 +843,10 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "heavyArmor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "heavyArmor"
+                ]
               }
             ]
           }
@@ -1189,7 +1205,9 @@
               "endConditions": [
                 {
                   "type": "equipment",
-                  "equipment": "heavyArmor"
+                  "equipment": [
+                    "heavyArmor"
+                  ]
                 },
                 {
                   "type": "selfState",
@@ -1338,25 +1356,8 @@
     ],
     "skillProficiencies": {
       "count": 3,
-      "from": [
-        "srd-5.2:skill/acrobatics",
-        "srd-5.2:skill/animal-handling",
-        "srd-5.2:skill/arcana",
-        "srd-5.2:skill/athletics",
-        "srd-5.2:skill/deception",
-        "srd-5.2:skill/history",
-        "srd-5.2:skill/insight",
-        "srd-5.2:skill/intimidation",
-        "srd-5.2:skill/investigation",
-        "srd-5.2:skill/medicine",
-        "srd-5.2:skill/nature",
-        "srd-5.2:skill/perception",
-        "srd-5.2:skill/performance",
-        "srd-5.2:skill/persuasion",
-        "srd-5.2:skill/religion",
-        "srd-5.2:skill/sleight-of-hand",
-        "srd-5.2:skill/stealth",
-        "srd-5.2:skill/survival"
+      "fromTypes": [
+        "skill"
       ]
     },
     "weaponProficiencies": {
@@ -1372,7 +1373,46 @@
     "toolProficiencies": {
       "count": 3,
       "from": [
-        "srd-5.2:tool/musical-instrument"
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "bagpipes"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "drum"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "dulcimer"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "flute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "horn"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "lute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "lyre"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "pan-flute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "shawm"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "viol"
+        }
       ]
     },
     "weaponMastery": null,
@@ -1419,12 +1459,57 @@
         "armor": [
           "lightArmor"
         ],
-        "tools": [
-          "One Musical Instrument"
-        ],
-        "skills": [
-          "One skill of your choice"
-        ]
+        "tools": {
+          "count": 1,
+          "from": [
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "bagpipes"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "drum"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "dulcimer"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "flute"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "horn"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "lute"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "lyre"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "pan-flute"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "shawm"
+            },
+            {
+              "id": "srd-5.2:tool/musical-instrument",
+              "variant": "viol"
+            }
+          ]
+        },
+        "skills": {
+          "count": 1,
+          "fromTypes": [
+            "skill"
+          ]
+        }
       }
     },
     "subclassLevel": 3,
@@ -1446,7 +1531,10 @@
       "preparationType": "prepared",
       "ritualCasting": false,
       "focus": "srd-5.2:tool/musical-instrument",
-      "swapOnLevelUp": 1
+      "swapOnLevelUp": 1,
+      "cantripSwap": {
+        "onLevelUp": 1
+      }
     },
     "resources": [],
     "progression": [
@@ -2437,8 +2525,12 @@
           "mediumArmor",
           "shields"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -2461,7 +2553,10 @@
       "ritualCasting": false,
       "focus": "srd-5.2:equipment/holy-symbol",
       "swapOnLevelUp": 1,
-      "swapOnLongRest": "all"
+      "swapOnLongRest": "all",
+      "cantripSwap": {
+        "onLevelUp": 1
+      }
     },
     "resources": [],
     "progression": [
@@ -3197,7 +3292,8 @@
                   "target": "radiant",
                   "value": {
                     "count": "$derived:WIS",
-                    "die": "d8"
+                    "die": "d8",
+                    "minimumCount": 1
                   },
                   "affects": "target",
                   "qualifiers": [
@@ -3564,7 +3660,14 @@
             },
             "cost": {
               "featureId": "srd-5.2:feature/cleric-divine-intervention",
-              "amount": 1
+              "amount": 1,
+              "recoverAfter": {
+                "rests": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "rest": "long"
+              }
             }
           }
         ]
@@ -3662,8 +3765,12 @@
           "lightArmor",
           "shields"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -3687,7 +3794,10 @@
       "ritualCasting": false,
       "focus": "srd-5.2:equipment/druidic-focus",
       "swapOnLevelUp": 1,
-      "swapOnLongRest": "all"
+      "swapOnLongRest": "all",
+      "cantripSwap": {
+        "onLevelUp": 1
+      }
     },
     "resources": [],
     "progression": [
@@ -4421,6 +4531,15 @@
                 "savingThrowProficiencies",
                 "speech",
                 "concentration"
+              ],
+              "keepHigher": [
+                "skills",
+                "savingThrows"
+              ],
+              "equipment": [
+                "fall",
+                "merge",
+                "worn"
               ]
             },
             "qualifiers": [
@@ -4470,6 +4589,11 @@
             "target": "srd-5.2:spell/find-familiar",
             "castingOverrides": {
               "ignoreMaterialComponent": true
+            },
+            "duration": {
+              "value": 0,
+              "unit": "untilRest",
+              "rest": "long"
             }
           },
           {
@@ -4485,6 +4609,11 @@
             "cost": {
               "featureId": "srd-5.2:feature/druid-wild-shape",
               "amount": 1
+            },
+            "duration": {
+              "value": 0,
+              "unit": "untilRest",
+              "rest": "long"
             }
           }
         ]
@@ -4618,7 +4747,8 @@
               "fire",
               "lightning",
               "thunder"
-            ]
+            ],
+            "when": "use"
           }
         ],
         "options": {
@@ -4760,7 +4890,26 @@
           "spellcasting",
           "transformation"
         ],
-        "effects": []
+        "effects": [
+          {
+            "type": "preventSpellcasting",
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/druid-wild-shape"
+              },
+              {
+                "type": "classLevel",
+                "atLeast": 18
+              },
+              {
+                "type": "spellMaterial",
+                "costly": true,
+                "consumed": true
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "srd-5.2:feature/druid-epic-boon",
@@ -5062,8 +5211,12 @@
           "mediumArmor",
           "shields"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -5404,7 +5557,9 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "weapon"
+                "equipment": [
+                  "weapon"
+                ]
               }
             ],
             "swap": {
@@ -5855,7 +6010,46 @@
         "srd-5.2:tool/tinkers-tools",
         "srd-5.2:tool/weavers-tools",
         "srd-5.2:tool/woodcarvers-tools",
-        "srd-5.2:tool/musical-instrument"
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "bagpipes"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "drum"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "dulcimer"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "flute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "horn"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "lute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "lyre"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "pan-flute"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "shawm"
+        },
+        {
+          "id": "srd-5.2:tool/musical-instrument",
+          "variant": "viol"
+        }
       ]
     },
     "weaponMastery": null,
@@ -5907,8 +6101,12 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -6206,13 +6404,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               },
               {
                 "type": "attackSource",
@@ -6231,13 +6433,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               },
               {
                 "type": "anyOf",
@@ -6259,7 +6465,9 @@
                       },
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       },
                       {
                         "type": "anyOf",
@@ -6291,13 +6499,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               },
               {
                 "type": "anyOf",
@@ -6319,7 +6531,9 @@
                       },
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       },
                       {
                         "type": "anyOf",
@@ -6351,13 +6565,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               },
               {
                 "type": "anyOf",
@@ -6379,7 +6597,9 @@
                       },
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       },
                       {
                         "type": "anyOf",
@@ -6411,13 +6631,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               }
             ]
           }
@@ -6449,13 +6673,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               }
             ]
           }
@@ -6646,10 +6874,10 @@
                   "value": "$derived:jumpDistance"
                 },
                 {
-                  "type": "forcedMovement",
+                  "type": "grantMovement",
                   "value": {
-                    "feet": "$derived:walkingSpeed",
-                    "direction": "any"
+                    "withYou": true,
+                    "provokesOpportunityAttacks": false
                   },
                   "affects": "others",
                   "qualifiers": [
@@ -6709,13 +6937,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               }
             ]
           }
@@ -6837,6 +7069,10 @@
             },
             "qualifiers": [
               {
+                "type": "damageRemaining",
+                "atMost": 0
+              },
+              {
                 "type": "perceives",
                 "perceiver": "self",
                 "perceived": "others",
@@ -6850,7 +7086,9 @@
                     "qualifiers": [
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       },
                       {
                         "type": "range",
@@ -6864,7 +7102,9 @@
                     "qualifiers": [
                       {
                         "type": "attackRange",
-                        "attackRange": "ranged"
+                        "attackRanges": [
+                          "ranged"
+                        ]
                       },
                       {
                         "type": "range",
@@ -7039,7 +7279,9 @@
                       },
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       },
                       {
                         "type": "anyOf",
@@ -7200,13 +7442,17 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               },
               {
                 "type": "equipment",
-                "equipment": "shield",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "shield"
+                ]
               }
             ]
           }
@@ -7347,7 +7593,7 @@
             },
             "qualifiers": [
               {
-                "type": "selfState",
+                "type": "usedFeature",
                 "featureId": "srd-5.2:feature/monk-uncanny-metabolism",
                 "negate": true
               }
@@ -7571,8 +7817,12 @@
           "mediumArmor",
           "shields"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -8117,7 +8367,9 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "weapon"
+                "equipment": [
+                  "weapon"
+                ]
               },
               {
                 "type": "proficient"
@@ -8615,7 +8867,9 @@
                       },
                       {
                         "type": "attackRange",
-                        "attackRange": "melee"
+                        "attackRanges": [
+                          "melee"
+                        ]
                       }
                     ]
                   }
@@ -8826,10 +9080,22 @@
           "mediumArmor",
           "shields"
         ],
-        "tools": [],
-        "skills": [
-          "One skill from the Ranger's skill list"
-        ]
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "count": 1,
+          "from": [
+            "srd-5.2:skill/animal-handling",
+            "srd-5.2:skill/athletics",
+            "srd-5.2:skill/insight",
+            "srd-5.2:skill/investigation",
+            "srd-5.2:skill/nature",
+            "srd-5.2:skill/perception",
+            "srd-5.2:skill/stealth",
+            "srd-5.2:skill/survival"
+          ]
+        }
       }
     },
     "subclassLevel": 3,
@@ -9363,7 +9629,9 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "weapon"
+                "equipment": [
+                  "weapon"
+                ]
               },
               {
                 "type": "proficient"
@@ -9621,8 +9889,10 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "heavyArmor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "heavyArmor"
+                ]
               }
             ]
           },
@@ -9995,12 +10265,26 @@
         "armor": [
           "lightArmor"
         ],
-        "tools": [
-          "srd-5.2:tool/thieves-tools"
-        ],
-        "skills": [
-          "One skill from the Rogue's skill list"
-        ]
+        "tools": {
+          "items": [
+            "srd-5.2:tool/thieves-tools"
+          ]
+        },
+        "skills": {
+          "count": 1,
+          "from": [
+            "srd-5.2:skill/acrobatics",
+            "srd-5.2:skill/athletics",
+            "srd-5.2:skill/deception",
+            "srd-5.2:skill/insight",
+            "srd-5.2:skill/intimidation",
+            "srd-5.2:skill/investigation",
+            "srd-5.2:skill/perception",
+            "srd-5.2:skill/persuasion",
+            "srd-5.2:skill/sleight-of-hand",
+            "srd-5.2:skill/stealth"
+          ]
+        }
       }
     },
     "subclassLevel": 3,
@@ -10303,7 +10587,9 @@
                   },
                   {
                     "type": "attackRange",
-                    "attackRange": "ranged"
+                    "attackRanges": [
+                      "ranged"
+                    ]
                   }
                 ]
               },
@@ -10392,7 +10678,9 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "weapon"
+                "equipment": [
+                  "weapon"
+                ]
               },
               {
                 "type": "proficient"
@@ -11158,8 +11446,12 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -11182,7 +11474,10 @@
       "preparationType": "prepared",
       "ritualCasting": false,
       "focus": "srd-5.2:equipment/arcane-focus",
-      "swapOnLevelUp": 1
+      "swapOnLevelUp": 1,
+      "cantripSwap": {
+        "onLevelUp": 1
+      }
     },
     "resources": [
       {
@@ -11783,7 +12078,12 @@
                         1
                       ]
                     }
-                  ]
+                  ],
+                  "duration": {
+                    "value": 0,
+                    "unit": "untilRest",
+                    "rest": "long"
+                  }
                 }
               ]
             },
@@ -11813,7 +12113,12 @@
                         2
                       ]
                     }
-                  ]
+                  ],
+                  "duration": {
+                    "value": 0,
+                    "unit": "untilRest",
+                    "rest": "long"
+                  }
                 }
               ]
             },
@@ -11843,7 +12148,12 @@
                         3
                       ]
                     }
-                  ]
+                  ],
+                  "duration": {
+                    "value": 0,
+                    "unit": "untilRest",
+                    "rest": "long"
+                  }
                 }
               ]
             },
@@ -11873,7 +12183,12 @@
                         4
                       ]
                     }
-                  ]
+                  ],
+                  "duration": {
+                    "value": 0,
+                    "unit": "untilRest",
+                    "rest": "long"
+                  }
                 }
               ]
             },
@@ -11903,7 +12218,12 @@
                         5
                       ]
                     }
-                  ]
+                  ],
+                  "duration": {
+                    "value": 0,
+                    "unit": "untilRest",
+                    "rest": "long"
+                  }
                 }
               ]
             }
@@ -12492,8 +12812,12 @@
         "armor": [
           "lightArmor"
         ],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -12517,7 +12841,10 @@
       "ritualCasting": false,
       "focus": "srd-5.2:equipment/arcane-focus",
       "swapOnLevelUp": 1,
-      "slotRecharge": "short"
+      "slotRecharge": "short",
+      "cantripSwap": {
+        "onLevelUp": 1
+      }
     },
     "resources": [],
     "progression": [
@@ -12854,74 +13181,6 @@
               },
               "count": 1
             }
-          },
-          {
-            "id": "lessons-origin-feat",
-            "prompt": "Choose an Origin feat (Lessons of the First Ones).",
-            "count": 1,
-            "fromTypes": [
-              "feat"
-            ],
-            "qualifiers": [
-              {
-                "type": "featCategory",
-                "featCategories": [
-                  "origin"
-                ]
-              }
-            ]
-          },
-          {
-            "id": "pact-blade-damage",
-            "prompt": "Necrotic, Psychic, or Radiant (Pact of the Blade).",
-            "count": 1,
-            "from": [
-              "necrotic",
-              "psychic",
-              "radiant"
-            ]
-          },
-          {
-            "id": "lifedrinker-damage",
-            "prompt": "Necrotic, Psychic, or Radiant (Lifedrinker).",
-            "count": 1,
-            "from": [
-              "necrotic",
-              "psychic",
-              "radiant"
-            ]
-          },
-          {
-            "id": "tome-cantrips",
-            "prompt": "Choose three cantrips from any class (Pact of the Tome).",
-            "count": 3,
-            "fromTypes": [
-              "spell"
-            ],
-            "qualifiers": [
-              {
-                "type": "spellLevel",
-                "spellLevels": [
-                  0
-                ]
-              }
-            ]
-          },
-          {
-            "id": "tome-rituals",
-            "prompt": "Choose two level 1 Ritual spells from any class (Pact of the Tome).",
-            "count": 2,
-            "fromTypes": [
-              "spell"
-            ],
-            "qualifiers": [
-              {
-                "type": "spellLevel",
-                "spellLevels": [
-                  1
-                ]
-              }
-            ]
           }
         ],
         "options": {
@@ -12938,13 +13197,9 @@
                   "value": "$derived:CHA",
                   "qualifiers": [
                     {
-                      "type": "spellSource",
-                      "sourceId": "srd-5.2:class/warlock"
-                    },
-                    {
-                      "type": "spellLevel",
-                      "spellLevels": [
-                        0
+                      "type": "spell",
+                      "spellIds": [
+                        "$choice:agonizing-blast-cantrip"
                       ]
                     }
                   ]
@@ -12956,7 +13211,23 @@
                   "atLeast": 2
                 }
               ],
-              "repeatable": true
+              "repeatable": true,
+              "choices": [
+                {
+                  "id": "agonizing-blast-cantrip",
+                  "prompt": "Choose a Warlock cantrip that deals damage.",
+                  "count": 1,
+                  "from": "srd-5.2:class/warlock",
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "id": "armor-of-shadows",
@@ -13006,7 +13277,10 @@
                 {
                   "type": "grantSense",
                   "target": "darkvision",
-                  "value": 120
+                  "value": {
+                    "range": 120,
+                    "magicalDarkness": true
+                  }
                 }
               ],
               "requires": [
@@ -13122,13 +13396,9 @@
                   "multiplier": 30,
                   "qualifiers": [
                     {
-                      "type": "spellSource",
-                      "sourceId": "srd-5.2:class/warlock"
-                    },
-                    {
-                      "type": "spellLevel",
-                      "spellLevels": [
-                        0
+                      "type": "spell",
+                      "spellIds": [
+                        "$choice:eldritch-spear-cantrip"
                       ]
                     }
                   ]
@@ -13140,7 +13410,23 @@
                   "atLeast": 2
                 }
               ],
-              "repeatable": true
+              "repeatable": true,
+              "choices": [
+                {
+                  "id": "eldritch-spear-cantrip",
+                  "prompt": "Choose a Warlock cantrip that deals damage.",
+                  "count": 1,
+                  "from": "srd-5.2:class/warlock",
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "id": "fiendish-vigor",
@@ -13181,7 +13467,16 @@
               "id": "gaze-of-two-minds",
               "name": "Gaze of Two Minds",
               "description": "Prerequisite: Level 5+ Warlock. As a Bonus Action, touch a willing creature and perceive through its senses until the end of your next turn, extendable each turn with a Bonus Action; you can cast spells from its space if it's within 60 feet.",
-              "effects": [],
+              "effects": [
+                {
+                  "type": "shareSenses",
+                  "value": {
+                    "within": 60,
+                    "castFrom": true
+                  },
+                  "affects": "target"
+                }
+              ],
               "requires": [
                 {
                   "type": "classLevel",
@@ -13249,7 +13544,89 @@
               "id": "investment-of-the-chain-master",
               "name": "Investment of the Chain Master",
               "description": "Prerequisite: Level 5+ Warlock, Pact of the Chain Invocation. Your Find Familiar familiar gains a 40-foot Fly or Swim Speed, attacks as a Bonus Action command, can deal Necrotic or Radiant damage, uses your spell save DC, and can gain Resistance through your Reaction.",
-              "effects": [],
+              "effects": [
+                {
+                  "type": "grantSpeed",
+                  "target": "$choice:chain-master-speed",
+                  "value": 40,
+                  "affects": "summon",
+                  "qualifiers": [
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "srd-5.2:spell/find-familiar"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "grantAction",
+                  "target": "attack",
+                  "value": "bonusAction",
+                  "affects": "summon",
+                  "qualifiers": [
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "srd-5.2:spell/find-familiar"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "changeDamageType",
+                  "value": "$choice:chain-master-damage",
+                  "affects": "summon",
+                  "qualifiers": [
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "srd-5.2:spell/find-familiar"
+                      ]
+                    },
+                    {
+                      "type": "damageType",
+                      "damageTypes": [
+                        "bludgeoning",
+                        "piercing",
+                        "slashing"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "substituteAbility",
+                  "target": "saveDc",
+                  "value": "$derived:spellSaveDc",
+                  "affects": "summon",
+                  "qualifiers": [
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "srd-5.2:spell/find-familiar"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "grantResistance",
+                  "target": "$derived:triggerDamageType",
+                  "affects": "summon",
+                  "trigger": {
+                    "event": "takeDamage",
+                    "subject": "summon",
+                    "optional": true
+                  },
+                  "qualifiers": [
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "srd-5.2:spell/find-familiar"
+                      ]
+                    }
+                  ]
+                }
+              ],
               "requires": [
                 {
                   "type": "classLevel",
@@ -13258,6 +13635,28 @@
                 {
                   "type": "knowsOption",
                   "optionId": "pact-of-the-chain"
+                }
+              ],
+              "choices": [
+                {
+                  "id": "chain-master-speed",
+                  "prompt": "Fly or Swim Speed for the familiar.",
+                  "count": 1,
+                  "from": [
+                    "fly",
+                    "swim"
+                  ],
+                  "when": "use"
+                },
+                {
+                  "id": "chain-master-damage",
+                  "prompt": "Necrotic or Radiant.",
+                  "count": 1,
+                  "from": [
+                    "necrotic",
+                    "radiant"
+                  ],
+                  "when": "use"
                 }
               ]
             },
@@ -13277,7 +13676,25 @@
                   "atLeast": 2
                 }
               ],
-              "repeatable": true
+              "repeatable": true,
+              "choices": [
+                {
+                  "id": "lessons-origin-feat",
+                  "prompt": "Choose an Origin feat (Lessons of the First Ones).",
+                  "count": 1,
+                  "fromTypes": [
+                    "feat"
+                  ],
+                  "qualifiers": [
+                    {
+                      "type": "featCategory",
+                      "featCategories": [
+                        "origin"
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "id": "lifedrinker",
@@ -13333,6 +13750,18 @@
                 {
                   "type": "knowsOption",
                   "optionId": "pact-of-the-blade"
+                }
+              ],
+              "choices": [
+                {
+                  "id": "lifedrinker-damage",
+                  "prompt": "Necrotic, Psychic, or Radiant (Lifedrinker).",
+                  "count": 1,
+                  "from": [
+                    "necrotic",
+                    "psychic",
+                    "radiant"
+                  ]
                 }
               ]
             },
@@ -13503,6 +13932,18 @@
                     }
                   ]
                 }
+              ],
+              "choices": [
+                {
+                  "id": "pact-blade-damage",
+                  "prompt": "Necrotic, Psychic, or Radiant (Pact of the Blade).",
+                  "count": 1,
+                  "from": [
+                    "necrotic",
+                    "psychic",
+                    "radiant"
+                  ]
+                }
               ]
             },
             {
@@ -13555,6 +13996,40 @@
                     "alwaysPrepared": true
                   }
                 }
+              ],
+              "choices": [
+                {
+                  "id": "tome-cantrips",
+                  "prompt": "Choose three cantrips from any class (Pact of the Tome).",
+                  "count": 3,
+                  "fromTypes": [
+                    "spell"
+                  ],
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "tome-rituals",
+                  "prompt": "Choose two level 1 Ritual spells from any class (Pact of the Tome).",
+                  "count": 2,
+                  "fromTypes": [
+                    "spell"
+                  ],
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        1
+                      ]
+                    }
+                  ]
+                }
               ]
             },
             {
@@ -13575,18 +14050,14 @@
                   },
                   "qualifiers": [
                     {
-                      "type": "spellSource",
-                      "sourceId": "srd-5.2:class/warlock"
-                    },
-                    {
-                      "type": "spellLevel",
-                      "spellLevels": [
-                        0
-                      ]
-                    },
-                    {
                       "type": "creatureSize",
                       "maxSize": "large"
+                    },
+                    {
+                      "type": "spell",
+                      "spellIds": [
+                        "$choice:repelling-blast-cantrip"
+                      ]
                     }
                   ]
                 }
@@ -13597,7 +14068,23 @@
                   "atLeast": 2
                 }
               ],
-              "repeatable": true
+              "repeatable": true,
+              "choices": [
+                {
+                  "id": "repelling-blast-cantrip",
+                  "prompt": "Choose a Warlock cantrip that deals damage.",
+                  "count": 1,
+                  "from": "srd-5.2:class/warlock",
+                  "qualifiers": [
+                    {
+                      "type": "spellLevel",
+                      "spellLevels": [
+                        0
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "id": "thirsting-blade",
@@ -14148,8 +14635,12 @@
       "proficienciesGained": {
         "weapons": [],
         "armor": [],
-        "tools": [],
-        "skills": []
+        "tools": {
+          "items": []
+        },
+        "skills": {
+          "items": []
+        }
       }
     },
     "subclassLevel": 3,
@@ -14184,6 +14675,9 @@
           "unit": "gp"
         },
         "copyHoursPerLevel": 2
+      },
+      "cantripSwap": {
+        "onLongRest": 1
       }
     },
     "resources": [],

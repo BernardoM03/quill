@@ -1910,7 +1910,16 @@
     "activation": {
       "type": "action",
       "trigger": "Utilize action."
-    }
+    },
+    "effects": [
+      {
+        "type": "restrictMovement",
+        "value": {
+          "maxFeetFromAnchor": 25,
+          "maxFallFeet": 25
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:equipment/clothes-fine",
@@ -3439,8 +3448,10 @@
             "target": "abilityCheck",
             "qualifiers": [
               {
-                "type": "situationType",
-                "situationType": "travel"
+                "type": "rollPurpose",
+                "purposes": [
+                  "remainMounted"
+                ]
               }
             ]
           }
@@ -3572,5 +3583,340 @@
     "category": "gear",
     "weight": 3,
     "description": "A Wizard's spellbook is a Tiny object that weighs 3 pounds, contains 100 pages, and can be read only by its owner or someone casting Identify. It holds the level 1+ spells the Wizard knows, and it can serve as the Wizard's Spellcasting Focus."
+  },
+  {
+    "id": "srd-5.2:equipment/lifestyle",
+    "name": "Lifestyle",
+    "category": "service",
+    "per": "day",
+    "description": "Lifestyle expenses cover lodging, food, equipment maintenance, and other necessities. At the start of each week or month (GM's choice), choose a lifestyle and pay the price to sustain it. Lifestyles have no inherent consequences.",
+    "variants": [
+      {
+        "slug": "wretched",
+        "name": "Wretched",
+        "cost": {
+          "amount": 0,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "squalid",
+        "name": "Squalid",
+        "cost": {
+          "amount": 1,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "poor",
+        "name": "Poor",
+        "cost": {
+          "amount": 2,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "modest",
+        "name": "Modest",
+        "cost": {
+          "amount": 1,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "comfortable",
+        "name": "Comfortable",
+        "cost": {
+          "amount": 2,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "wealthy",
+        "name": "Wealthy",
+        "cost": {
+          "amount": 4,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "aristocratic",
+        "name": "Aristocratic",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/ale",
+    "name": "Ale (mug)",
+    "category": "service",
+    "per": "item",
+    "cost": {
+      "amount": 4,
+      "unit": "cp"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/bread",
+    "name": "Bread (loaf)",
+    "category": "service",
+    "per": "item",
+    "cost": {
+      "amount": 2,
+      "unit": "cp"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/cheese",
+    "name": "Cheese (wedge)",
+    "category": "service",
+    "per": "item",
+    "cost": {
+      "amount": 1,
+      "unit": "sp"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/inn-stay",
+    "name": "Inn Stay",
+    "category": "service",
+    "per": "night",
+    "variants": [
+      {
+        "slug": "squalid",
+        "name": "Squalid",
+        "cost": {
+          "amount": 7,
+          "unit": "cp"
+        }
+      },
+      {
+        "slug": "poor",
+        "name": "Poor",
+        "cost": {
+          "amount": 1,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "modest",
+        "name": "Modest",
+        "cost": {
+          "amount": 5,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "comfortable",
+        "name": "Comfortable",
+        "cost": {
+          "amount": 8,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "wealthy",
+        "name": "Wealthy",
+        "cost": {
+          "amount": 2,
+          "unit": "gp"
+        }
+      },
+      {
+        "slug": "aristocratic",
+        "name": "Aristocratic",
+        "cost": {
+          "amount": 4,
+          "unit": "gp"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/meal",
+    "name": "Meal",
+    "category": "service",
+    "per": "meal",
+    "variants": [
+      {
+        "slug": "squalid",
+        "name": "Squalid",
+        "cost": {
+          "amount": 1,
+          "unit": "cp"
+        }
+      },
+      {
+        "slug": "poor",
+        "name": "Poor",
+        "cost": {
+          "amount": 2,
+          "unit": "cp"
+        }
+      },
+      {
+        "slug": "modest",
+        "name": "Modest",
+        "cost": {
+          "amount": 1,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "comfortable",
+        "name": "Comfortable",
+        "cost": {
+          "amount": 2,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "wealthy",
+        "name": "Wealthy",
+        "cost": {
+          "amount": 3,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "aristocratic",
+        "name": "Aristocratic",
+        "cost": {
+          "amount": 6,
+          "unit": "sp"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/wine",
+    "name": "Wine (bottle)",
+    "category": "service",
+    "per": "item",
+    "variants": [
+      {
+        "slug": "common",
+        "name": "Common",
+        "cost": {
+          "amount": 2,
+          "unit": "sp"
+        }
+      },
+      {
+        "slug": "fine",
+        "name": "Fine",
+        "cost": {
+          "amount": 10,
+          "unit": "gp"
+        }
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:equipment/skilled-hireling",
+    "name": "Skilled Hireling",
+    "category": "service",
+    "per": "day",
+    "cost": {
+      "amount": 2,
+      "unit": "gp"
+    },
+    "description": "Anyone hired for work involving a proficiency (weapon, tool, or skill), such as a mercenary, artisan, or scribe. The pay is a minimum; experts may require more."
+  },
+  {
+    "id": "srd-5.2:equipment/untrained-hireling",
+    "name": "Untrained Hireling",
+    "category": "service",
+    "per": "day",
+    "cost": {
+      "amount": 2,
+      "unit": "sp"
+    },
+    "description": "Laborers, porters, and others hired for work that needs no proficiency."
+  },
+  {
+    "id": "srd-5.2:equipment/messenger",
+    "name": "Messenger",
+    "category": "service",
+    "per": "mile",
+    "cost": {
+      "amount": 2,
+      "unit": "cp"
+    }
+  },
+  {
+    "id": "srd-5.2:equipment/spellcasting-service",
+    "name": "Spellcasting Service",
+    "category": "service",
+    "per": "cast",
+    "description": "A spell cast for payment. Add the cost of any expensive components. The higher the spell's level, the harder it is to find someone to cast it.",
+    "variants": [
+      {
+        "slug": "cantrip",
+        "name": "Cantrip",
+        "cost": {
+          "amount": 30,
+          "unit": "gp"
+        },
+        "availability": "Village, town, or city"
+      },
+      {
+        "slug": "level-1",
+        "name": "Level 1",
+        "cost": {
+          "amount": 50,
+          "unit": "gp"
+        },
+        "availability": "Village, town, or city"
+      },
+      {
+        "slug": "level-2",
+        "name": "Level 2",
+        "cost": {
+          "amount": 200,
+          "unit": "gp"
+        },
+        "availability": "Village, town, or city"
+      },
+      {
+        "slug": "level-3",
+        "name": "Level 3",
+        "cost": {
+          "amount": 300,
+          "unit": "gp"
+        },
+        "availability": "Town or city only"
+      },
+      {
+        "slug": "levels-4-5",
+        "name": "Levels 4-5",
+        "cost": {
+          "amount": 2000,
+          "unit": "gp"
+        },
+        "availability": "Town or city only"
+      },
+      {
+        "slug": "levels-6-8",
+        "name": "Levels 6-8",
+        "cost": {
+          "amount": 20000,
+          "unit": "gp"
+        },
+        "availability": "City only"
+      },
+      {
+        "slug": "level-9",
+        "name": "Level 9",
+        "cost": {
+          "amount": 100000,
+          "unit": "gp"
+        },
+        "availability": "City only"
+      }
+    ]
   }
 ]

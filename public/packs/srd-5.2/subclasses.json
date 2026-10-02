@@ -137,7 +137,9 @@
               },
               {
                 "type": "attackRange",
-                "attackRange": "melee"
+                "attackRanges": [
+                  "melee"
+                ]
               },
               {
                 "type": "attackSource",
@@ -684,7 +686,10 @@
                 "subject": "target",
                 "bloodied": true
               }
-            ]
+            ],
+            "hitPointCap": {
+              "fraction": 0.5
+            }
           }
         ]
       },
@@ -1428,7 +1433,8 @@
                   9
                 ]
               }
-            ]
+            ],
+            "when": "use"
           }
         ],
         "tags": [
@@ -1519,9 +1525,8 @@
         ],
         "effects": [
           {
-            "type": "modifier",
-            "target": "armorClass",
-            "value": 2,
+            "type": "grantCover",
+            "value": "half",
             "affects": "target",
             "area": [
               {
@@ -1530,32 +1535,6 @@
               }
             ],
             "qualifiers": [
-              {
-                "type": "targetRelation",
-                "relation": "selfOrAlly"
-              },
-              {
-                "type": "inArea",
-                "featureId": "srd-5.2:feature/land-natures-sanctuary"
-              },
-              {
-                "type": "selfState",
-                "featureId": "srd-5.2:feature/land-natures-sanctuary"
-              }
-            ]
-          },
-          {
-            "type": "rollBonus",
-            "target": "savingThrow",
-            "value": 2,
-            "affects": "target",
-            "qualifiers": [
-              {
-                "type": "ability",
-                "abilities": [
-                  "DEX"
-                ]
-              },
               {
                 "type": "targetRelation",
                 "relation": "selfOrAlly"
@@ -1724,7 +1703,9 @@
             "qualifiers": [
               {
                 "type": "situationType",
-                "situationType": "combat"
+                "situationTypes": [
+                  "combat"
+                ]
               }
             ]
           }
@@ -2034,6 +2015,7 @@
             "affects": "others",
             "trigger": {
               "event": "takeAction",
+              "actionType": "action",
               "optional": true
             },
             "qualifiers": [
@@ -2050,6 +2032,39 @@
                 "proficiency": true
               },
               "onSuccess": "half"
+            }
+          },
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 10,
+              "die": "d12"
+            },
+            "affects": "others",
+            "trigger": {
+              "event": "takeAction",
+              "action": "attack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "featureId": "srd-5.2:feature/open-hand-quivering-palm"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "base": 8,
+                "ability": "WIS",
+                "proficiency": true
+              },
+              "onSuccess": "half"
+            },
+            "cost": {
+              "resource": "attack",
+              "amount": 1
             }
           }
         ]
@@ -2259,7 +2274,9 @@
               },
               {
                 "type": "attackRange",
-                "attackRange": "melee"
+                "attackRanges": [
+                  "melee"
+                ]
               }
             ]
           },
@@ -2830,7 +2847,15 @@
           {
             "type": "grantAction",
             "target": "magic",
-            "value": "bonusAction"
+            "value": "bonusAction",
+            "qualifiers": [
+              {
+                "type": "usingItem",
+                "kinds": [
+                  "magicItem"
+                ]
+              }
+            ]
           }
         ]
       },
@@ -2924,6 +2949,76 @@
             "type": "modifier",
             "target": "attunementSlots",
             "value": 1
+          },
+          {
+            "type": "restoreUses",
+            "target": "itemCharges",
+            "value": "$derived:chargesSpent",
+            "trigger": {
+              "event": "expendCharges"
+            },
+            "qualifiers": [
+              {
+                "type": "roll",
+                "die": "d6",
+                "atLeast": 6
+              }
+            ]
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "INT",
+            "qualifiers": [
+              {
+                "type": "usingItem",
+                "kinds": [
+                  "spellScroll"
+                ]
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0,
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "type": "setSpellcastingAbility",
+            "value": "INT",
+            "qualifiers": [
+              {
+                "type": "usingItem",
+                "kinds": [
+                  "spellScroll"
+                ]
+              },
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ]
+              }
+            ],
+            "check": {
+              "ability": "INT",
+              "skills": [
+                "srd-5.2:skill/arcana"
+              ],
+              "dc": {
+                "base": 10,
+                "modifier": "$derived:spellLevel"
+              },
+              "onFailure": "consume"
+            }
           }
         ]
       },
@@ -3002,8 +3097,10 @@
             "qualifiers": [
               {
                 "type": "equipment",
-                "equipment": "armor",
-                "negate": true
+                "negate": true,
+                "equipment": [
+                  "armor"
+                ]
               }
             ]
           }
@@ -3271,6 +3368,17 @@
               "freeCasts": {
                 "count": 1,
                 "recharge": "long"
+              }
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/summon-dragon",
+            "castingOverrides": {
+              "ignoreConcentration": true,
+              "duration": {
+                "value": 1,
+                "unit": "minute"
               }
             }
           }
@@ -3833,10 +3941,6 @@
         "activation": {
           "type": "free"
         },
-        "uses": {
-          "max": 1,
-          "recharge": "long"
-        },
         "tags": [
           "damage"
         ],
@@ -3865,7 +3969,7 @@
             "type": "dealDamage",
             "target": "necrotic",
             "value": {
-              "count": "$derived:overchannelDice",
+              "count": "$derived:slotLevel",
               "die": "d12"
             },
             "qualifiers": [
@@ -3873,6 +3977,19 @@
                 "type": "selfState",
                 "featureId": "srd-5.2:feature/evoker-overchannel"
               }
+            ],
+            "multiplier": 2,
+            "increasePerUse": {
+              "amount": {
+                "count": "$derived:slotLevel",
+                "die": "d12"
+              },
+              "resetOn": "long",
+              "freeUses": 1
+            },
+            "ignores": [
+              "resistance",
+              "immunity"
             ]
           }
         ]

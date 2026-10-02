@@ -18,5 +18,26 @@
     "tools",
     "languages",
     "creatures"
-  ]
+  ],
+  "characterCreation": {
+    "languages": {
+      "items": [
+        "srd-5.2:language/common"
+      ],
+      "choose": {
+        "count": 2,
+        "from": [
+          "srd-5.2:language/common-sign-language",
+          "srd-5.2:language/draconic",
+          "srd-5.2:language/dwarvish",
+          "srd-5.2:language/elvish",
+          "srd-5.2:language/giant",
+          "srd-5.2:language/gnomish",
+          "srd-5.2:language/goblin",
+          "srd-5.2:language/halfling",
+          "srd-5.2:language/orc"
+        ]
+      }
+    }
+  }
 }

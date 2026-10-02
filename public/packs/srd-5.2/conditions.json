@@ -19,7 +19,9 @@
             "qualifiers": [
               {
                 "type": "sense",
-                "sense": "sight"
+                "senses": [
+                  "sight"
+                ]
               }
             ]
           }
@@ -84,7 +86,9 @@
               },
               {
                 "type": "situationType",
-                "situationType": "social"
+                "situationTypes": [
+                  "social"
+                ]
               }
             ]
           }
@@ -128,7 +132,9 @@
             "qualifiers": [
               {
                 "type": "sense",
-                "sense": "hearing"
+                "senses": [
+                  "hearing"
+                ]
               }
             ]
           }
@@ -601,7 +607,17 @@
       {
         "name": "Restricted Movement",
         "description": "Your only movement options are to crawl or spend an amount of movement equal to half your Speed (round down) to right yourself and thereby end the condition. If your Speed is 0, you can't right yourself.",
-        "effects": []
+        "effects": [
+          {
+            "type": "restrictMovement",
+            "value": {
+              "modes": [
+                "crawl",
+                "standUp"
+              ]
+            }
+          }
+        ]
       },
       {
         "name": "Attacks Affected",

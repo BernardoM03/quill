@@ -1875,7 +1875,9 @@
               "qualifiers": [
                 {
                   "type": "situationType",
-                  "situationType": "combat"
+                  "situationTypes": [
+                    "combat"
+                  ]
                 }
               ],
               "save": {
@@ -2467,6 +2469,16 @@
           {
             "type": "targetRelation",
             "relation": "self"
+          },
+          {
+            "type": "perceives",
+            "perceiver": "others",
+            "perceived": "self",
+            "specialSenses": [
+              "blindsight",
+              "truesight"
+            ],
+            "negate": true
           }
         ]
       }
@@ -2841,7 +2853,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -2922,7 +2936,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -3854,8 +3870,101 @@
         "upcast": {
           "area": 5
         }
+      },
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/confusion-behavior",
+        "value": 1,
+        "affects": "target",
+        "trigger": {
+          "event": "startTurn",
+          "subject": "target"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
       }
-    ]
+    ],
+    "options": {
+      "list": "srd-5.2:list/confusion-behavior",
+      "die": "d10",
+      "items": [
+        {
+          "id": "wander",
+          "name": "Wander",
+          "description": "The target doesn't take an action and uses all its movement to move in a random direction (1d4: north, east, south, west).",
+          "roll": {
+            "min": 1,
+            "max": 1
+          },
+          "effects": [
+            {
+              "type": "loseAction",
+              "target": [
+                "action"
+              ],
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "stand-still",
+          "name": "Stand Still",
+          "description": "The target doesn't move or take actions.",
+          "roll": {
+            "min": 2,
+            "max": 6
+          },
+          "effects": [
+            {
+              "type": "loseAction",
+              "target": [
+                "action"
+              ],
+              "affects": "target"
+            },
+            {
+              "type": "modifier",
+              "target": "baseSpeed",
+              "value": "$derived:walkingSpeed",
+              "multiplier": -1,
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "lash-out",
+          "name": "Lash Out",
+          "description": "The target doesn't move, and it takes the Attack action to make one melee attack against a random creature within reach. If none are within reach, it takes no action.",
+          "roll": {
+            "min": 7,
+            "max": 8
+          },
+          "effects": [
+            {
+              "type": "modifier",
+              "target": "baseSpeed",
+              "value": "$derived:walkingSpeed",
+              "multiplier": -1,
+              "affects": "target"
+            }
+          ]
+        },
+        {
+          "id": "act-normally",
+          "name": "Act Normally",
+          "description": "The target chooses its behavior.",
+          "roll": {
+            "min": 9,
+            "max": 10
+          },
+          "effects": []
+        }
+      ]
+    }
   },
   {
     "id": "srd-5.2:spell/conjure-animals",
@@ -6318,7 +6427,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -6396,7 +6507,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -6495,7 +6608,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -7981,6 +8096,21 @@
             "fiend"
           ]
         }
+      },
+      {
+        "type": "shareSenses",
+        "value": {
+          "within": 100
+        },
+        "affects": "summon",
+        "qualifiers": [
+          {
+            "type": "spell",
+            "spellIds": [
+              "srd-5.2:spell/find-familiar"
+            ]
+          }
+        ]
       }
     ]
   },
@@ -8366,7 +8496,9 @@
                 },
                 {
                   "type": "attackRange",
-                  "attackRange": "melee"
+                  "attackRanges": [
+                    "melee"
+                  ]
                 },
                 {
                   "type": "range",
@@ -8403,7 +8535,9 @@
                 },
                 {
                   "type": "attackRange",
-                  "attackRange": "melee"
+                  "attackRanges": [
+                    "melee"
+                  ]
                 },
                 {
                   "type": "range",
@@ -9444,8 +9578,8 @@
         {
           "minSlot": 7,
           "duration": {
-            "value": 365,
-            "unit": "day"
+            "value": 1,
+            "unit": "year"
           }
         },
         {
@@ -9639,14 +9773,24 @@
     "shortDescription": "10-foot Emanation that spells of level 5 or lower can't affect.",
     "effects": [
       {
-        "type": "dispel",
+        "type": "grantImmunity",
+        "target": "spells",
         "value": {
           "upToLevel": 5
         },
+        "affects": "target",
         "area": [
           {
             "shape": "emanation",
             "size": 10
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "inArea",
+            "spellId": "srd-5.2:spell/globe-of-invulnerability",
+            "subject": "affector",
+            "negate": true
           }
         ],
         "upcast": {
@@ -11466,7 +11610,9 @@
           },
           {
             "type": "attackRange",
-            "attackRange": "melee"
+            "attackRanges": [
+              "melee"
+            ]
           }
         ],
         "save": {
@@ -13017,7 +13163,9 @@
     "endConditions": [
       {
         "type": "equipment",
-        "equipment": "armor"
+        "equipment": [
+          "armor"
+        ]
       }
     ],
     "effects": [
@@ -14165,10 +14313,46 @@
     "ritual": false,
     "description": "Three illusory duplicates of yourself appear in your space. Until the spell ends, the duplicates move with you and mimic your actions, shifting position so it’s impossible to track which image is real. Each time a creature hits you with an attack roll during the spell’s duration, roll a d6 for each of your remaining duplicates. If any of the d6s rolls a 3 or higher, one of the duplicates is hit instead of you, and the duplicate is destroyed. The duplicates otherwise ignore all other damage and effects. The spell ends when all three duplicates are destroyed. A creature is unaffected by this spell if it has the Blinded condition, Blindsight, or Truesight.",
     "shortDescription": "Three illusory duplicates may take hits meant for you.",
-    "tags": [
-      "narrative"
-    ],
-    "effects": []
+    "tags": [],
+    "effects": [
+      {
+        "type": "autoFail",
+        "target": "attackRoll",
+        "affects": "others",
+        "uses": {
+          "max": 3,
+          "recharge": "none"
+        },
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          },
+          {
+            "type": "roll",
+            "die": "d6",
+            "count": "$derived:usesRemaining",
+            "atLeast": 3
+          },
+          {
+            "type": "perceives",
+            "perceiver": "others",
+            "perceived": "self",
+            "sense": "sight"
+          },
+          {
+            "type": "perceives",
+            "perceiver": "others",
+            "perceived": "self",
+            "specialSenses": [
+              "blindsight",
+              "truesight"
+            ],
+            "negate": true
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:spell/mislead",
@@ -14322,7 +14506,9 @@
         "qualifiers": [
           {
             "type": "situationType",
-            "situationType": "combat"
+            "situationTypes": [
+              "combat"
+            ]
           }
         ]
       }
@@ -15533,7 +15719,11 @@
                 "onSuccess": "half"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 1,
+            "max": 1
+          }
         },
         {
           "id": "orange",
@@ -15557,7 +15747,11 @@
                 "onSuccess": "half"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 2,
+            "max": 2
+          }
         },
         {
           "id": "yellow",
@@ -15581,7 +15775,11 @@
                 "onSuccess": "half"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 3,
+            "max": 3
+          }
         },
         {
           "id": "green",
@@ -15605,7 +15803,11 @@
                 "onSuccess": "half"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 4,
+            "max": 4
+          }
         },
         {
           "id": "blue",
@@ -15629,7 +15831,11 @@
                 "onSuccess": "half"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 5,
+            "max": 5
+          }
         },
         {
           "id": "indigo",
@@ -15650,7 +15856,11 @@
                 "onSuccess": "negate"
               }
             }
-          ]
+          ],
+          "roll": {
+            "min": 6,
+            "max": 6
+          }
         },
         {
           "id": "violet",
@@ -15671,9 +15881,30 @@
                 "onSuccess": "negate"
               }
             }
+          ],
+          "roll": {
+            "min": 7,
+            "max": 7
+          }
+        },
+        {
+          "id": "special",
+          "name": "Special",
+          "description": "The target is struck by two rays. Roll twice, rerolling any 8.",
+          "roll": {
+            "min": 8,
+            "max": 8
+          },
+          "effects": [
+            {
+              "type": "chooseOptions",
+              "target": "srd-5.2:list/prismatic-rays",
+              "value": 2
+            }
           ]
         }
-      ]
+      ],
+      "die": "d8"
     },
     "effects": [
       {
@@ -16650,8 +16881,126 @@
             ]
           }
         ]
+      },
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/reincarnate-species",
+        "value": 1,
+        "affects": "target"
       }
-    ]
+    ],
+    "options": {
+      "list": "srd-5.2:list/reincarnate-species",
+      "die": "d10",
+      "items": [
+        {
+          "id": "roll-again",
+          "name": "Roll again",
+          "description": "Roll again.",
+          "roll": {
+            "min": 1,
+            "max": 1
+          },
+          "effects": [
+            {
+              "type": "chooseOptions",
+              "target": "srd-5.2:list/reincarnate-species",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "dragonborn",
+          "name": "Dragonborn",
+          "description": "The new body is a Dragonborn.",
+          "roll": {
+            "min": 2,
+            "max": 2
+          },
+          "effects": []
+        },
+        {
+          "id": "dwarf",
+          "name": "Dwarf",
+          "description": "The new body is a Dwarf.",
+          "roll": {
+            "min": 3,
+            "max": 3
+          },
+          "effects": []
+        },
+        {
+          "id": "elf",
+          "name": "Elf",
+          "description": "The new body is a Elf.",
+          "roll": {
+            "min": 4,
+            "max": 4
+          },
+          "effects": []
+        },
+        {
+          "id": "gnome",
+          "name": "Gnome",
+          "description": "The new body is a Gnome.",
+          "roll": {
+            "min": 5,
+            "max": 5
+          },
+          "effects": []
+        },
+        {
+          "id": "goliath",
+          "name": "Goliath",
+          "description": "The new body is a Goliath.",
+          "roll": {
+            "min": 6,
+            "max": 6
+          },
+          "effects": []
+        },
+        {
+          "id": "halfling",
+          "name": "Halfling",
+          "description": "The new body is a Halfling.",
+          "roll": {
+            "min": 7,
+            "max": 7
+          },
+          "effects": []
+        },
+        {
+          "id": "human",
+          "name": "Human",
+          "description": "The new body is a Human.",
+          "roll": {
+            "min": 8,
+            "max": 8
+          },
+          "effects": []
+        },
+        {
+          "id": "orc",
+          "name": "Orc",
+          "description": "The new body is a Orc.",
+          "roll": {
+            "min": 9,
+            "max": 9
+          },
+          "effects": []
+        },
+        {
+          "id": "tiefling",
+          "name": "Tiefling",
+          "description": "The new body is a Tiefling.",
+          "roll": {
+            "min": 10,
+            "max": 10
+          },
+          "effects": []
+        }
+      ]
+    }
   },
   {
     "id": "srd-5.2:spell/remove-curse",
@@ -16871,8 +17220,8 @@
         "value": {
           "hitPoints": "max",
           "within": {
-            "value": 36500,
-            "unit": "day"
+            "value": 100,
+            "unit": "year"
           }
         },
         "affects": "target"
@@ -17153,11 +17502,10 @@
         "event": "makeAttackRoll"
       },
       {
-        "event": "takeAction",
-        "action": "magic"
+        "event": "castSpell"
       },
       {
-        "event": "hitWithAttack"
+        "event": "dealDamage"
       }
     ],
     "effects": [
@@ -17819,7 +18167,9 @@
           },
           {
             "type": "attackRange",
-            "attackRange": "melee"
+            "attackRanges": [
+              "melee"
+            ]
           }
         ]
       },
@@ -17837,7 +18187,9 @@
           },
           {
             "type": "attackRange",
-            "attackRange": "melee"
+            "attackRanges": [
+              "melee"
+            ]
           }
         ]
       },
@@ -18632,7 +18984,25 @@
     "range": {
       "type": "ranged",
       "distance": 15,
-      "unit": "feet"
+      "unit": "feet",
+      "scaling": [
+        {
+          "level": 1,
+          "value": 15
+        },
+        {
+          "level": 5,
+          "value": 30
+        },
+        {
+          "level": 11,
+          "value": 60
+        },
+        {
+          "level": 17,
+          "value": 120
+        }
+      ]
     },
     "components": [
       "verbal",
@@ -19398,8 +19768,168 @@
             "height": 0
           }
         ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "acid",
+        "value": {
+          "count": 4,
+          "die": "d6"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 300,
+            "height": 0
+          }
+        ],
+        "trigger": {
+          "event": "startTurn"
+        },
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 2,
+            "atMost": 2
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "lightning",
+        "value": {
+          "count": 10,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "startTurn"
+        },
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 3,
+            "atMost": 3
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "base": 8,
+            "ability": "$derived:spellcastingAbility",
+            "proficiency": true
+          },
+          "onSuccess": "half"
+        }
+      },
+      {
+        "type": "dealDamage",
+        "target": "bludgeoning",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 300,
+            "height": 0
+          }
+        ],
+        "trigger": {
+          "event": "startTurn"
+        },
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 4,
+            "atMost": 4
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "cold",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 300,
+            "height": 0
+          }
+        ],
+        "trigger": {
+          "event": "startTurn"
+        },
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 5,
+            "atMost": 10
+          }
+        ]
+      },
+      {
+        "type": "createZone",
+        "value": {
+          "difficultTerrain": true,
+          "obscured": "heavy"
+        },
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 300,
+            "height": 0
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 5
+          }
+        ]
+      },
+      {
+        "type": "autoFail",
+        "target": "attackRoll",
+        "affects": "others",
+        "area": [
+          {
+            "shape": "cylinder",
+            "size": 300,
+            "height": 0
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "elapsedRounds",
+            "atLeast": 5
+          },
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "weapon"
+            ]
+          },
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "ranged"
+            ]
+          }
+        ]
       }
-    ]
+    ],
+    "targets": {
+      "count": 6,
+      "kind": "creatureOrObject"
+    }
   },
   {
     "id": "srd-5.2:spell/suggestion",
@@ -20085,10 +20615,182 @@
     "ritual": false,
     "description": "This spell instantly transports you and up to eight willing creatures that you can see within range, or a single object that you can see within range, to a destination you select. If you target an object, it must be Large or smaller, and it can’t be held or carried by an unwilling creature. The destination you choose must be known to you, and it must be on the same plane of existence as you. Your familiarity with the destination determines whether you arrive there successfully. The GM rolls 1d100 and consults the Teleportation Outcome table and the explanations after it.\n\nTeleportation Outcome Mishap Similar Area Off Target On Target Permanent circle — — — 01–00 Linked object — — — 01–00 Very familiar 01–05 06–13 14–24 25–00 Seen casually 01–33 34–43 44–53 54–00 Viewed once or described 01–43 44–53 54–73 74–00 False destination 01–50 51–00 — — Familiarity Familiarity. Here are the meanings of the terms in the table’s Familiarity column:\n\n• “Permanent circle” means a permanent teleportation circle whose sigil sequence you know. • “Linked object” means you possess an object taken from the desired destination within the last six months, such as a book from a wizard’s library. • “Very familiar” is a place you have visited often, a place you have carefully studied, or a place you can see when you cast the spell. • “Seen casually” is a place you have seen more than once but with which you aren’t very familiar. • “Viewed once or described” is a place you have seen once, possibly using magic, or a place you know through someone else’s description, perhaps from a map. • “False destination” is a place that doesn’t exist. Perhaps you tried to scry an enemy’s sanctum but instead viewed an illusion, or you are attempting to teleport to a location that no longer exists. Mishap. The spell’s unpredictable magic results in a difficult journey. Each teleporting creature (or the target object) takes 3d10 Force damage, and the GM rerolls on the table to see where you wind up (multiple mishaps can occur, dealing damage each time). Similar Area. You and your group (or the target object) appear in a different area that’s visually or thematically similar to the target area. You appear in the closest similar place. If you are heading for your home laboratory, for example, you might appear in another person’s laboratory in the same city. Off Target. You and your group (or the target object) appear 2d12 miles away from the destination in a random direction. Roll 1d8 for the direction: 1, east; 2, southeast; 3, south; 4, southwest; 5, west; 6, northwest; 7, north; or 8, northeast. On Target. You and your group (or the target object) appear where you intended.",
     "shortDescription": "Teleport you and up to eight creatures to a known destination, rolling for accuracy.",
-    "tags": [
-      "narrative"
+    "tags": [],
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/teleport-outcome",
+        "value": 1
+      }
     ],
-    "effects": []
+    "choices": [
+      {
+        "id": "teleport-familiarity",
+        "prompt": "How familiar is the destination?",
+        "count": 1,
+        "from": [
+          {
+            "value": "permanent-circle",
+            "label": "Permanent circle"
+          },
+          {
+            "value": "linked-object",
+            "label": "Linked object"
+          },
+          {
+            "value": "very-familiar",
+            "label": "Very familiar"
+          },
+          {
+            "value": "seen-casually",
+            "label": "Seen casually"
+          },
+          {
+            "value": "viewed-once",
+            "label": "Viewed once or described"
+          },
+          {
+            "value": "false-destination",
+            "label": "False destination"
+          }
+        ],
+        "when": "use"
+      }
+    ],
+    "options": {
+      "list": "srd-5.2:list/teleport-outcome",
+      "die": "d100",
+      "row": "$choice:teleport-familiarity",
+      "items": [
+        {
+          "id": "mishap",
+          "name": "Mishap",
+          "description": "Each teleporting creature or object takes 3d10 Force damage, and the GM rerolls on the table. Multiple mishaps can occur.",
+          "roll": [
+            {
+              "row": "very-familiar",
+              "min": 1,
+              "max": 5
+            },
+            {
+              "row": "seen-casually",
+              "min": 1,
+              "max": 33
+            },
+            {
+              "row": "viewed-once",
+              "min": 1,
+              "max": 43
+            },
+            {
+              "row": "false-destination",
+              "min": 1,
+              "max": 50
+            }
+          ],
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": "force",
+              "value": {
+                "count": 3,
+                "die": "d10"
+              },
+              "affects": "target"
+            },
+            {
+              "type": "chooseOptions",
+              "target": "srd-5.2:list/teleport-outcome",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "similar-area",
+          "name": "Similar Area",
+          "description": "You arrive in the closest place that is visually or thematically similar to the target area.",
+          "roll": [
+            {
+              "row": "very-familiar",
+              "min": 6,
+              "max": 13
+            },
+            {
+              "row": "seen-casually",
+              "min": 34,
+              "max": 43
+            },
+            {
+              "row": "viewed-once",
+              "min": 44,
+              "max": 53
+            },
+            {
+              "row": "false-destination",
+              "min": 51,
+              "max": 100
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "off-target",
+          "name": "Off Target",
+          "description": "You arrive 2d12 miles from the destination in a random direction (1d8).",
+          "roll": [
+            {
+              "row": "very-familiar",
+              "min": 14,
+              "max": 24
+            },
+            {
+              "row": "seen-casually",
+              "min": 44,
+              "max": 53
+            },
+            {
+              "row": "viewed-once",
+              "min": 54,
+              "max": 73
+            }
+          ],
+          "effects": []
+        },
+        {
+          "id": "on-target",
+          "name": "On Target",
+          "description": "You arrive where you want to go.",
+          "roll": [
+            {
+              "row": "permanent-circle",
+              "min": 1,
+              "max": 100
+            },
+            {
+              "row": "linked-object",
+              "min": 1,
+              "max": 100
+            },
+            {
+              "row": "very-familiar",
+              "min": 25,
+              "max": 100
+            },
+            {
+              "row": "seen-casually",
+              "min": 54,
+              "max": 100
+            },
+            {
+              "row": "viewed-once",
+              "min": 74,
+              "max": 100
+            }
+          ],
+          "effects": []
+        }
+      ]
+    }
   },
   {
     "id": "srd-5.2:spell/teleportation-circle",
@@ -20544,8 +21246,8 @@
         "value": {
           "hitPoints": "max",
           "within": {
-            "value": 73000,
-            "unit": "day"
+            "value": 200,
+            "unit": "year"
           }
         },
         "affects": "target"
@@ -21510,7 +22212,8 @@
         "target": "$derived:triggerDamageType",
         "value": "$derived:triggerDamage",
         "trigger": {
-          "event": "takeDamage"
+          "event": "takeDamage",
+          "subject": "target"
         }
       }
     ]
@@ -21993,17 +22696,455 @@
             ]
           }
         ]
+      },
+      {
+        "id": "wish-resistance",
+        "prompt": "Choose a damage type.",
+        "count": 1,
+        "from": [
+          "acid",
+          "bludgeoning",
+          "cold",
+          "fire",
+          "force",
+          "lightning",
+          "necrotic",
+          "piercing",
+          "poison",
+          "psychic",
+          "radiant",
+          "slashing",
+          "thunder"
+        ]
+      },
+      {
+        "id": "wish-spell-immunity",
+        "prompt": "Choose a spell to grant immunity to.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ]
+      },
+      {
+        "id": "wish-new-feat",
+        "prompt": "Choose a feat to replace one of yours.",
+        "count": 1,
+        "fromTypes": [
+          "feat"
+        ]
       }
     ],
     "effects": [
       {
-        "type": "grantSpells",
-        "target": "$choice:wish-spell",
-        "castingOverrides": {
-          "ignoreMaterialComponent": true
-        }
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/wish-effects",
+        "value": 1
       }
-    ]
+    ],
+    "options": {
+      "list": "srd-5.2:list/wish-effects",
+      "items": [
+        {
+          "id": "duplicate-spell",
+          "name": "Duplicate a Spell",
+          "description": "Cast any spell of level 8 or lower without meeting its requirements, including costly components.",
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "$choice:wish-spell",
+              "castingOverrides": {
+                "ignoreMaterialComponent": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "object-creation",
+          "name": "Object Creation",
+          "description": "Create one nonmagical object worth up to 25,000 GP, no more than 300 feet in any dimension, in an unoccupied space you can see on the ground.",
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "instant-health",
+          "name": "Instant Health",
+          "description": "You and up to twenty creatures you can see regain all Hit Points, and every effect listed in Greater Restoration ends on them.",
+          "effects": [
+            {
+              "type": "heal",
+              "value": "$derived:hitPointMaximum",
+              "affects": "target"
+            },
+            {
+              "type": "endCondition",
+              "target": [
+                "srd-5.2:condition/charmed",
+                "srd-5.2:condition/petrified"
+              ],
+              "affects": "target"
+            },
+            {
+              "type": "removeCurse",
+              "affects": "target"
+            },
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "resistance",
+          "name": "Resistance",
+          "description": "Up to ten creatures you can see gain permanent Resistance to one damage type you choose.",
+          "effects": [
+            {
+              "type": "grantResistance",
+              "target": "$choice:wish-resistance",
+              "affects": "target",
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "spell-immunity",
+          "name": "Spell Immunity",
+          "description": "Up to ten creatures you can see gain immunity to a single spell or other magical effect for 8 hours.",
+          "effects": [
+            {
+              "type": "grantImmunity",
+              "target": "$choice:wish-spell-immunity",
+              "affects": "target",
+              "duration": {
+                "value": 8,
+                "unit": "hour"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sudden-learning",
+          "name": "Sudden Learning",
+          "description": "Replace one of your feats with another you're eligible for. You can't replace a feat that is a prerequisite for another of your feats or features.",
+          "effects": [
+            {
+              "type": "grantFeature",
+              "target": "$choice:wish-new-feat"
+            },
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "roll-redo",
+          "name": "Roll Redo",
+          "description": "Force a reroll of any die roll made within the last round, with Advantage or Disadvantage if you choose, and pick which result stands.",
+          "effects": [
+            {
+              "type": "rerollD20",
+              "target": "d20Test",
+              "affects": "others",
+              "reroll": {
+                "mode": "reroll",
+                "dice": 1,
+                "keep": "either"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        },
+        {
+          "id": "reshape-reality",
+          "name": "Reshape Reality",
+          "description": "Wish for anything else. The GM rules what happens, and the greater the wish, the likelier it goes wrong.",
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": "necrotic",
+              "value": {
+                "count": "$derived:spellLevel",
+                "die": "d10"
+              },
+              "ignores": [
+                "reduction",
+                "resistance",
+                "immunity"
+              ],
+              "trigger": {
+                "event": "castSpell"
+              },
+              "duration": {
+                "value": 0,
+                "unit": "untilRest",
+                "rest": "long"
+              }
+            },
+            {
+              "type": "preventSpellcasting",
+              "qualifiers": [
+                {
+                  "type": "spell",
+                  "spellIds": [
+                    "srd-5.2:spell/wish"
+                  ]
+                },
+                {
+                  "type": "roll",
+                  "die": "d100",
+                  "atLeast": 68
+                }
+              ],
+              "duration": {
+                "value": 0,
+                "unit": "permanent"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "srd-5.2:spell/word-of-recall",

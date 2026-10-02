@@ -106,6 +106,19 @@
             },
             "damageType": "slashing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
         ]
       }
     ]
@@ -194,6 +207,19 @@
               "modifier": 4
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
+              }
+            ]
           }
         ]
       }
@@ -1144,6 +1170,13 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
         ]
       }
     ]
@@ -1262,6 +1295,19 @@
               "modifier": 3
             },
             "damageType": "slashing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -1561,7 +1607,25 @@
         "save": {
           "ability": "STR",
           "dc": 12
-        }
+        },
+        "escapeDc": 12,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              },
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -1745,6 +1809,31 @@
               "modifier": 2
             },
             "damageType": "piercing"
+          }
+        ],
+        "escapeDc": 12,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -1947,6 +2036,19 @@
               "modifier": 3
             },
             "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -2204,6 +2306,19 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
+              }
+            ]
+          }
         ]
       }
     ],
@@ -2225,7 +2340,14 @@
         "save": {
           "ability": "DEX",
           "dc": 16
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
+        ]
       }
     ]
   },
@@ -2325,6 +2447,13 @@
               "die": "d6"
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
           }
         ]
       }
@@ -2553,6 +2682,23 @@
             },
             "damageType": "slashing"
           }
+        ],
+        "save": {
+          "ability": "CON",
+          "dc": 10
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/paralyzed",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
         ]
       }
     ]
@@ -2667,6 +2813,27 @@
               "die": "d6"
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": 17
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              },
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
           }
         ]
       }
@@ -2958,6 +3125,13 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
         ]
       }
     ]
@@ -3046,6 +3220,13 @@
               "modifier": 2
             },
             "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/poisoned",
+            "affects": "target"
           }
         ]
       }
@@ -3165,7 +3346,25 @@
         "save": {
           "ability": "STR",
           "dc": 14
-        }
+        },
+        "escapeDc": 14,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              },
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -3264,6 +3463,20 @@
               "modifier": 1
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "escapeDc": 11,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -3364,6 +3577,31 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "escapeDc": 15,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
         ]
       },
       {
@@ -3383,6 +3621,19 @@
               "modifier": 5
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -3581,6 +3832,20 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "escapeDc": 11,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          }
         ]
       },
       {
@@ -3594,6 +3859,30 @@
               "die": "d4"
             },
             "damageType": "acid"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/blinded",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "small"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "small"
+              }
+            ]
           }
         ]
       }
@@ -3697,6 +3986,13 @@
               "die": "d4"
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
           }
         ]
       }
@@ -3998,6 +4294,25 @@
             },
             "damageType": "bludgeoning"
           }
+        ],
+        "escapeDc": 13,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target"
+          }
         ]
       }
     ],
@@ -4194,6 +4509,20 @@
               "modifier": 3
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "escapeDc": 13,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       },
@@ -4551,7 +4880,20 @@
         "save": {
           "ability": "DEX",
           "dc": 13
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -4658,6 +5000,20 @@
             },
             "damageType": "poison"
           }
+        ],
+        "escapeDc": 12,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          }
         ]
       },
       {
@@ -4671,6 +5027,30 @@
               "die": "d6"
             },
             "damageType": "acid"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/blinded",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -6007,7 +6387,20 @@
         "save": {
           "ability": "WIS",
           "dc": 11
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -6176,6 +6569,19 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
+              }
+            ]
+          }
         ]
       }
     ],
@@ -6197,7 +6603,14 @@
         "save": {
           "ability": "DEX",
           "dc": 18
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
+        ]
       }
     ]
   },
@@ -6290,6 +6703,19 @@
               "modifier": 1
             },
             "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -7182,7 +7608,31 @@
         "save": {
           "ability": "CON",
           "dc": 12
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/poisoned",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/unconscious",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -7396,6 +7846,13 @@
             },
             "damageType": "slashing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/poisoned",
+            "affects": "target"
+          }
         ]
       },
       {
@@ -7408,7 +7865,20 @@
         "save": {
           "ability": "WIS",
           "dc": 10
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Shape-Shift",
@@ -7779,6 +8249,13 @@
               "die": "d8"
             },
             "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
           }
         ]
       }
@@ -8236,7 +8713,20 @@
         "save": {
           "ability": "CON",
           "dc": 25
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/blinded",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Radiant Teleport",
@@ -8250,7 +8740,11 @@
             },
             "damageType": "radiant"
           }
-        ]
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": 25
+        }
       }
     ]
   },
@@ -8588,7 +9082,14 @@
             "normal": 40,
             "long": 160
           }
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/charmed",
+            "affects": "target"
+          }
+        ]
       },
       {
         "name": "Heart Sight",
@@ -9234,7 +9735,20 @@
         "save": {
           "ability": "WIS",
           "dc": 10
-        }
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/deafened",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -9465,6 +9979,19 @@
             },
             "damageType": "slashing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
         ]
       }
     ],
@@ -9568,6 +10095,13 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
         ]
       }
     ]
@@ -9663,6 +10197,31 @@
             },
             "damageType": "piercing"
           }
+        ],
+        "escapeDc": 17,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
         ]
       },
       {
@@ -9682,6 +10241,19 @@
               "modifier": 7
             },
             "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
+              }
+            ]
           }
         ]
       }
@@ -9963,6 +10535,13 @@
             },
             "damageType": "bludgeoning"
           }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target"
+          }
         ]
       }
     ]
@@ -10158,6 +10737,19 @@
               "modifier": 2
             },
             "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
