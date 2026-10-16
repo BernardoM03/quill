@@ -501,7 +501,7 @@
     },
     "specialImmunity": {
       "type": "string",
-      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes. `instantDeath` is Death Ward's protection from effects that kill without damage. `speedReduction` and `hitPointMaximumReduction` stop those numbers being lowered, as Freedom of Movement and Aura of Life. `spells` is immunity to spells, narrowed by `spellLevel` and `inArea` qualifiers, as Globe of Invulnerability.",
+      "description": "Something a creature can be immune to that is neither a damage type nor a condition - Trance's 'magic can't put you to sleep'. Held to what SRD content actually names rather than opened up speculatively. `foodAndWater` is immunity to the Exhaustion that forgoing food and drink causes. `instantDeath` is Death Ward's protection from effects that kill without damage. `speedReduction` and `hitPointMaximumReduction` stop those numbers being lowered, as Freedom of Movement and Aura of Life. `spells` is immunity to spells, narrowed by `spellLevel` and `inArea` qualifiers, as Globe of Invulnerability. `criticalHits` turns a Critical Hit against you into a normal hit, as Adamantine Armor.",
       "enum": [
         "magicalSleep",
         "disease",
@@ -509,7 +509,8 @@
         "instantDeath",
         "speedReduction",
         "hitPointMaximumReduction",
-        "spells"
+        "spells",
+        "criticalHits"
       ]
     },
     "triggerEvent": {
@@ -730,6 +731,44 @@
             }
           ],
           "description": "The spell's duration when cast this way, as Dragon Companion's 1 minute."
+        },
+        "castLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9,
+          "description": "The level the spell is cast at, as a Wand of Fireballs' level 3 version."
+        },
+        "saveDc": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "A fixed save DC, as a Crystal Ball's 'Scrying (save DC 17)'."
+        },
+        "attackBonus": {
+          "type": "integer",
+          "description": "A fixed spell attack bonus, as a Circlet of Blasting's '+5 to hit'."
+        },
+        "useOwnAbility": {
+          "type": "boolean",
+          "description": "Cast with your own spellcasting ability and save DC, as a Staff of Power."
+        },
+        "upcastCost": {
+          "type": "object",
+          "description": "Each spell level above `castLevel` costs this much more, up to `maxLevel`, as a Wand of Fireballs' 1 charge per level.",
+          "properties": {
+            "perLevel": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "maxLevel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            }
+          },
+          "required": [
+            "perLevel"
+          ],
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -874,9 +913,12 @@
             },
             {
               "$ref": "#/$defs/deferredValue"
+            },
+            {
+              "$ref": "#/$defs/diceExpression"
             }
           ],
-          "description": "A deferred value where the length scales, as Quivering Palm's days equal to your Monk level."
+          "description": "A deferred value where the length scales, as Quivering Palm's days equal to your Monk level. Dice where the length is rolled, as Dust of Disappearance's 2d4 minutes."
         },
         "unit": {
           "type": "string",
@@ -1157,7 +1199,8 @@
         "swapPreparedSpells",
         "grantCover",
         "restrictMovement",
-        "shareSenses"
+        "shareSenses",
+        "setAbilityScore"
       ]
     },
     "effect": {
@@ -2682,6 +2725,9 @@
                   },
                   {
                     "const": "armorClass"
+                  },
+                  {
+                    "const": "baseSpeed"
                   }
                 ],
                 "description": "A roll, or Armor Class, as Barkskin's 'an Armor Class of 17 if its AC is lower than that'."
@@ -4131,6 +4177,64 @@
                   }
                 },
                 "additionalProperties": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setAbilityScore"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target",
+              "value"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/ability"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ]
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 30
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "score": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 30
+                      },
+                      "lower": {
+                        "const": true
+                      }
+                    },
+                    "required": [
+                      "score",
+                      "lower"
+                    ],
+                    "additionalProperties": false
+                  }
+                ],
+                "description": "The score. A plain number only raises the score, as an Amulet of Health's Constitution 19 doing nothing for a 20. `{score, lower: true}` sets it even when lower, as Wish's stress setting Strength to 3."
               }
             }
           }
@@ -5825,6 +5929,45 @@
           ],
           "additionalProperties": false,
           "description": "The action or spell uses an item of this kind, as Fast Hands' Magic action with a magic item or Use Magic Device's scrolls."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "thisItem"
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": false,
+          "description": "The roll or attack uses the magic item carrying the effect, as a +1 Weapon's bonus to its own attack rolls."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "species"
+            },
+            "speciesIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/speciesId"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "speciesIds"
+          ],
+          "additionalProperties": false,
+          "description": "You are any listed species. Negated, a Belt of Dwarvenkind's benefits for a wearer who isn't a dwarf."
         }
       ]
     },
@@ -6687,7 +6830,10 @@
         "spellDamage",
         "spellDuration",
         "spellRange",
-        "spellSaveDC"
+        "spellSaveDC",
+        "proficiencyBonus",
+        "spellAttackBonus",
+        "charges"
       ]
     },
     "effectGroupCore": {
