@@ -22803,6 +22803,21 @@
                 "value": 0,
                 "unit": "permanent"
               }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
+              }
             }
           ]
         },
@@ -22868,6 +22883,21 @@
                 "value": 0,
                 "unit": "permanent"
               }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
+              }
             }
           ]
         },
@@ -22924,6 +22954,21 @@
               "duration": {
                 "value": 0,
                 "unit": "permanent"
+              }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
               }
             }
           ]
@@ -22982,6 +23027,21 @@
                 "value": 0,
                 "unit": "permanent"
               }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
+              }
             }
           ]
         },
@@ -23033,6 +23093,21 @@
               "duration": {
                 "value": 0,
                 "unit": "permanent"
+              }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
               }
             }
           ]
@@ -23092,6 +23167,21 @@
                 "value": 0,
                 "unit": "permanent"
               }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
+              }
             }
           ]
         },
@@ -23139,6 +23229,21 @@
               "duration": {
                 "value": 0,
                 "unit": "permanent"
+              }
+            },
+            {
+              "type": "setAbilityScore",
+              "target": "STR",
+              "value": {
+                "score": 3,
+                "lower": true
+              },
+              "duration": {
+                "value": {
+                  "count": 2,
+                  "die": "d4"
+                },
+                "unit": "day"
               }
             }
           ]

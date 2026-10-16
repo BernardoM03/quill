@@ -2453,7 +2453,13 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -3632,6 +3638,135 @@
               {
                 "type": "creatureSize",
                 "maxSize": "large"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/giant-elk",
+    "name": "Giant Elk",
+    "size": "huge",
+    "creatureType": "celestial",
+    "alignment": "Neutral Good",
+    "armorClass": 14,
+    "hitPoints": {
+      "average": 42,
+      "dice": {
+        "count": 5,
+        "die": "d12",
+        "modifier": 10
+      }
+    },
+    "speed": {
+      "walk": 60
+    },
+    "initiative": {
+      "modifier": 6,
+      "score": 16
+    },
+    "abilities": {
+      "STR": {
+        "score": 19,
+        "modifier": 4,
+        "save": 6
+      },
+      "DEX": {
+        "score": 18,
+        "modifier": 4,
+        "save": 6
+      },
+      "CON": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "INT": {
+        "score": 7,
+        "modifier": -2,
+        "save": -2
+      },
+      "WIS": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "CHA": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      }
+    },
+    "skills": [
+      {
+        "skillId": "srd-5.2:skill/perception",
+        "bonus": 4
+      }
+    ],
+    "resistances": {
+      "damage": [
+        "necrotic",
+        "radiant"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 90
+      }
+    ],
+    "passivePerception": 14,
+    "languages": "Celestial; understands Common, Elvish, and Sylvan but can’t speak them",
+    "challengeRating": 2,
+    "xp": 450,
+    "proficiencyBonus": 2,
+    "actions": [
+      {
+        "name": "Ram",
+        "description": "Melee Attack Roll: +6, reach 10 ft. Hit: 11 (2d6 + 4) Bludgeoning damage plus 5 (2d4) Radiant damage. If the target is a Huge or smaller creature and the elk moved 20+ feet straight toward it immediately before the hit, the target takes an extra 5 (2d4) Bludgeoning damage and has the Prone condition.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 6,
+          "reach": 10
+        },
+        "damage": [
+          {
+            "average": 11,
+            "dice": {
+              "count": 2,
+              "die": "d6",
+              "modifier": 4
+            },
+            "damageType": "bludgeoning"
+          },
+          {
+            "average": 5,
+            "dice": {
+              "count": 2,
+              "die": "d4"
+            },
+            "damageType": "radiant"
+          },
+          {
+            "average": 5,
+            "dice": {
+              "count": 2,
+              "die": "d4"
+            },
+            "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
               }
             ]
           }
