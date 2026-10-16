@@ -72,6 +72,23 @@
             "$ref": "https://quill.local/schemas/common.schema.json#/$defs/choice"
           },
           "description": "Decisions fixed when the item is made or bought, as the spell a Spell Scroll holds."
+        },
+        "magicItem": {
+          "type": "object",
+          "description": "The magic item this Equipment chapter entry is, when the chapter prices one, as the Potion of Healing. The full rules live on the magic item.",
+          "properties": {
+            "id": {
+              "$ref": "https://quill.local/schemas/common.schema.json#/$defs/magicItemId"
+            },
+            "variant": {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+$"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
