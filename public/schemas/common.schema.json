@@ -793,8 +793,10 @@
         "short",
         "long",
         "dawn",
-        "none"
-      ]
+        "none",
+        "dusk"
+      ],
+      "description": " `dusk` is the Robe of Stars' daily return of stars."
     },
     "activation": {
       "type": "object",
