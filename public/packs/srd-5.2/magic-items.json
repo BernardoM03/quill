@@ -5785,7 +5785,31 @@
     "attunement": {
       "spellcaster": true
     },
-    "description": "While this pearl is on your person, you can take a Magic action to regain one expended spell slot of level 3 or lower. Once you use the pearl, it can’t be used again until the next dawn."
+    "description": "While this pearl is on your person, you can take a Magic action to regain one expended spell slot of level 3 or lower. Once you use the pearl, it can’t be used again until the next dawn.",
+    "activation": {
+      "type": "action"
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "dawn"
+    },
+    "effects": [
+      {
+        "type": "restoreUses",
+        "target": "spellSlot",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/periapt-of-health",
@@ -5793,7 +5817,41 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this pendant, you can take a Magic action to regain 2d4 + 2 Hit Points. Once used, this property can’t be used again until the next dawn.\n\nIn addition, you have Advantage on saving throws to avoid or end the Poisoned condition while you wear this pendant."
+    "description": "While wearing this pendant, you can take a Magic action to regain 2d4 + 2 Hit Points. Once used, this property can’t be used again until the next dawn.\n\nIn addition, you have Advantage on saving throws to avoid or end the Poisoned condition while you wear this pendant.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "againstCondition",
+            "conditionId": "srd-5.2:condition/poisoned"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Healing",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 2,
+              "die": "d4",
+              "modifier": 2
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/periapt-of-proof-against-poison",
@@ -5801,7 +5859,17 @@
     "category": "wondrousItem",
     "rarity": "rare",
     "attunement": true,
-    "description": "This delicate silver chain has a brilliant-cut black gem pendant. While you wear it, you have Immunity to the Poisoned condition and Poison damage."
+    "description": "This delicate silver chain has a brilliant-cut black gem pendant. While you wear it, you have Immunity to the Poisoned condition and Poison damage.",
+    "effects": [
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:condition/poisoned"
+      },
+      {
+        "type": "grantImmunity",
+        "target": "poison"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/periapt-of-wound-closure",
@@ -5809,7 +5877,14 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this pendant, you gain the following benefits.\n\n**Life Preservation.** Whenever you make a Death Saving Throw, you can change a roll of 9 or lower to a 10, turning a failed save into a successful one.\n\n**Natural Healing Boost.** Whenever you roll a Hit Point Die to regain Hit Points, double the number of Hit Points it restores."
+    "description": "While wearing this pendant, you gain the following benefits.\n\n**Life Preservation.** Whenever you make a Death Saving Throw, you can change a roll of 9 or lower to a 10, turning a failed save into a successful one.\n\n**Natural Healing Boost.** Whenever you roll a Hit Point Die to regain Hit Points, double the number of Hit Points it restores.",
+    "effects": [
+      {
+        "type": "rollFloor",
+        "target": "deathSave",
+        "value": 10
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/philter-of-love",
@@ -5817,7 +5892,20 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "The next time you see a creature within 10 minutes after drinking this philter, you are charmed by that creature and have the Charmed condition for 1 hour.\n\nThis rose-hued, effervescent liquid contains one easy-to-miss bubble shaped like a heart."
+    "description": "The next time you see a creature within 10 minutes after drinking this philter, you are charmed by that creature and have the Charmed condition for 1 hour.\n\nThis rose-hued, effervescent liquid contains one easy-to-miss bubble shaped like a heart.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/pipes-of-haunting",
@@ -5834,7 +5922,46 @@
         "rest": "dawn"
       }
     },
-    "description": "These pipes have 3 charges and regain 1d3 expended charges daily at dawn. You can take a Magic action to play them and expend 1 charge to create an eerie, spellbinding tune. Each creature of your choice within 30 feet of you must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute. A creature that fails the save repeats it at the end of each of its turns, ending the effect on itself on a success. A creature that succeeds on its save is immune to the effect of these pipes for 24 hours."
+    "description": "These pipes have 3 charges and regain 1d3 expended charges daily at dawn. You can take a Magic action to play them and expend 1 charge to create an eerie, spellbinding tune. Each creature of your choice within 30 feet of you must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute. A creature that fails the save repeats it at the end of each of its turns, ending the effect on itself on a success. A creature that succeeds on its save is immune to the effect of these pipes for 24 hours.",
+    "properties": [
+      {
+        "name": "Haunting Tune",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/pipes-of-the-sewers",
@@ -5852,7 +5979,29 @@
         "rest": "dawn"
       }
     },
-    "description": "While these pipes are on your person, ordinary rats and giant rats are Indifferent toward you and won’t attack you unless you threaten or harm them.\n\nThe pipes have 3 charges and regain 1d3 expended charges daily at dawn. If you play the pipes as a Magic action, you can take a Bonus Action to expend 1 to 3 charges, calling forth one **Swarm of Rats** with each expended charge if enough rats are within half a mile of you to be called in this fashion (as determined by the GM). If there aren’t enough rats to form a swarm, the charge is wasted. Called swarms move toward the music by the shortest available route but aren’t under your control otherwise.\n\nWhenever a **Swarm of Rats** that isn’t under another creature’s control comes within 30 feet of you while you are playing the pipes, the swarm makes a DC 15 Wisdom saving throw. On a successful save, the swarm behaves as it normally would and can’t be swayed by the pipes’ music for the next 24 hours. On a failed save, the swarm is swayed by the pipes’ music and becomes Friendly to you and your allies for as long as you continue to play the pipes each round as a Magic action. A Friendly swarm obeys your commands. If you issue no commands to a Friendly swarm, it defends itself but otherwise takes no actions. If a Friendly swarm starts its turn more than 30 feet away from you, your control over that swarm ends, and the swarm behaves as it normally would and can’t be swayed by the pipes’ music for the next 24 hours."
+    "description": "While these pipes are on your person, ordinary rats and giant rats are Indifferent toward you and won’t attack you unless you threaten or harm them.\n\nThe pipes have 3 charges and regain 1d3 expended charges daily at dawn. If you play the pipes as a Magic action, you can take a Bonus Action to expend 1 to 3 charges, calling forth one **Swarm of Rats** with each expended charge if enough rats are within half a mile of you to be called in this fashion (as determined by the GM). If there aren’t enough rats to form a swarm, the charge is wasted. Called swarms move toward the music by the shortest available route but aren’t under your control otherwise.\n\nWhenever a **Swarm of Rats** that isn’t under another creature’s control comes within 30 feet of you while you are playing the pipes, the swarm makes a DC 15 Wisdom saving throw. On a successful save, the swarm behaves as it normally would and can’t be swayed by the pipes’ music for the next 24 hours. On a failed save, the swarm is swayed by the pipes’ music and becomes Friendly to you and your allies for as long as you continue to play the pipes each round as a Magic action. A Friendly swarm obeys your commands. If you issue no commands to a Friendly swarm, it defends itself but otherwise takes no actions. If a Friendly swarm starts its turn more than 30 feet away from you, your control over that swarm ends, and the swarm behaves as it normally would and can’t be swayed by the pipes’ music for the next 24 hours.",
+    "properties": [
+      {
+        "name": "Call Swarms",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/swarm-of-rats"
+              ]
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/plate-armor-of-etherealness",
@@ -5866,7 +6015,20 @@
         "srd-5.2:equipment/plate-armor"
       ]
     },
-    "description": "While you’re wearing this armor, you can take a Magic action and use a command word to gain the effect of the *Etherealness* spell. The spell ends immediately if you remove the armor or take a Magic action to repeat the command word. This property of the armor can’t be used again until the next dawn."
+    "description": "While you’re wearing this armor, you can take a Magic action and use a command word to gain the effect of the *Etherealness* spell. The spell ends immediately if you remove the armor or take a Magic action to repeat the command word. This property of the armor can’t be used again until the next dawn.",
+    "activation": {
+      "type": "action"
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "dawn"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/etherealness"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/portable-hole",
@@ -5881,7 +6043,20 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "When you drink this potion, you can cast the level 3 version of the *Animal Friendship* spell (save DC 13).\n\nAgitating this potion’s muddy liquid brings little bits into view: a fish scale, a hummingbird feather, a cat claw, or a squirrel hair."
+    "description": "When you drink this potion, you can cast the level 3 version of the *Animal Friendship* spell (save DC 13).\n\nAgitating this potion’s muddy liquid brings little bits into view: a fish scale, a hummingbird feather, a cat claw, or a squirrel hair.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/animal-friendship",
+        "castingOverrides": {
+          "castLevel": 3,
+          "saveDc": 13
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-clairvoyance",
@@ -5889,7 +6064,19 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you gain the effect of the *Clairvoyance* spell (no Concentration required).\n\nAn eyeball bobs in this potion’s yellowish liquid but vanishes when the potion is opened."
+    "description": "When you drink this potion, you gain the effect of the *Clairvoyance* spell (no Concentration required).\n\nAn eyeball bobs in this potion’s yellowish liquid but vanishes when the potion is opened.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/clairvoyance",
+        "castingOverrides": {
+          "ignoreConcentration": true
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-climbing",
@@ -5897,7 +6084,33 @@
     "category": "potion",
     "rarity": "common",
     "consumable": true,
-    "description": "When you drink this potion, you gain a Climb Speed equal to your Speed for 1 hour. During this time, you have Advantage on Strength (Athletics) checks to climb.\n\nThis potion is separated into brown, silver, and gray layers resembling bands of stone. Shaking the bottle fails to mix the colors."
+    "description": "When you drink this potion, you gain a Climb Speed equal to your Speed for 1 hour. During this time, you have Advantage on Strength (Athletics) checks to climb.\n\nThis potion is separated into brown, silver, and gray layers resembling bands of stone. Shaking the bottle fails to mix the colors.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "climb",
+        "value": "$derived:walkingSpeed"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-diminution",
@@ -5905,7 +6118,26 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you gain the “reduce” effect of the *Enlarge/Reduce* spell for 1d4 hours (no Concentration required).\n\nThe red in the potion’s liquid continuously contracts to a tiny bead and then expands to color the clear liquid around it. Shaking the bottle fails to interrupt this process."
+    "description": "When you drink this potion, you gain the “reduce” effect of the *Enlarge/Reduce* spell for 1d4 hours (no Concentration required).\n\nThe red in the potion’s liquid continuously contracts to a tiny bead and then expands to color the clear liquid around it. Shaking the bottle fails to interrupt this process.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/enlarge-reduce",
+        "castingOverrides": {
+          "ignoreConcentration": true,
+          "duration": {
+            "value": {
+              "count": 1,
+              "die": "d4"
+            },
+            "unit": "hour"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-flying",
@@ -5913,7 +6145,21 @@
     "category": "potion",
     "rarity": "veryRare",
     "consumable": true,
-    "description": "When you drink this potion, you gain a Fly Speed equal to your Speed for 1 hour and can hover. If you’re in the air when the potion wears off, you fall unless you have some other means of staying aloft.\n\nThis potion’s clear liquid floats at the top of its container and has cloudy white impurities drifting in it."
+    "description": "When you drink this potion, you gain a Fly Speed equal to your Speed for 1 hour and can hover. If you’re in the air when the potion wears off, you fall unless you have some other means of staying aloft.\n\nThis potion’s clear liquid floats at the top of its container and has cloudy white impurities drifting in it.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "fly",
+        "value": "$derived:walkingSpeed"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-gaseous-form",
@@ -5921,7 +6167,23 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you gain the effect of the *Gaseous Form* spell for 1 hour (no Concentration required) or until you end the effect as a Bonus Action.\n\nThis potion’s container seems to hold fog that moves and pours like water."
+    "description": "When you drink this potion, you gain the effect of the *Gaseous Form* spell for 1 hour (no Concentration required) or until you end the effect as a Bonus Action.\n\nThis potion’s container seems to hold fog that moves and pours like water.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/gaseous-form",
+        "castingOverrides": {
+          "ignoreConcentration": true,
+          "duration": {
+            "value": 1,
+            "unit": "hour"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-giant-strength",
@@ -5932,31 +6194,73 @@
       {
         "slug": "hill",
         "name": "Potion of Giant Strength (Hill)",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "setAbilityScore",
+            "target": "STR",
+            "value": 21
+          }
+        ]
       },
       {
         "slug": "frost-or-stone",
         "name": "Potion of Giant Strength (Frost or Stone)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "setAbilityScore",
+            "target": "STR",
+            "value": 23
+          }
+        ]
       },
       {
         "slug": "fire",
         "name": "Potion of Giant Strength (Fire)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "setAbilityScore",
+            "target": "STR",
+            "value": 25
+          }
+        ]
       },
       {
         "slug": "cloud",
         "name": "Potion of Giant Strength (Cloud)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "setAbilityScore",
+            "target": "STR",
+            "value": 27
+          }
+        ]
       },
       {
         "slug": "storm",
         "name": "Potion of Giant Strength (Storm)",
-        "rarity": "legendary"
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "setAbilityScore",
+            "target": "STR",
+            "value": 29
+          }
+        ]
       }
     ],
     "consumable": true,
-    "description": "When you drink this potion, your Strength score changes for 1 hour. The type of giant determines the score (see the table below). The potion has no effect on you if your Strength is equal to or greater than that score.\n\nThis potion’s transparent liquid has floating in it a sliver of light resembling a giant’s fingernail.\n\n| Potion | Str. | Rarity |\n|---|---|---|\n| *Potion of Giant Strength* (hill) | 21 | Uncommon |\n| *Potion of Giant Strength* (frost or stone) | 23 | Rare |\n| *Potion of Giant Strength* (fire) | 25 | Rare |\n| *Potion of Giant Strength* (cloud) | 27 | Very Rare |\n| *Potion of Giant Strength* (storm) | 29 | Legendary |"
+    "description": "When you drink this potion, your Strength score changes for 1 hour. The type of giant determines the score (see the table below). The potion has no effect on you if your Strength is equal to or greater than that score.\n\nThis potion’s transparent liquid has floating in it a sliver of light resembling a giant’s fingernail.\n\n| Potion | Str. | Rarity |\n|---|---|---|\n| *Potion of Giant Strength* (hill) | 21 | Uncommon |\n| *Potion of Giant Strength* (frost or stone) | 23 | Rare |\n| *Potion of Giant Strength* (fire) | 25 | Rare |\n| *Potion of Giant Strength* (cloud) | 27 | Very Rare |\n| *Potion of Giant Strength* (storm) | 29 | Legendary |",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    }
   },
   {
     "id": "srd-5.2:magic-item/potion-of-growth",
@@ -5964,7 +6268,23 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "When you drink this potion, you gain the “enlarge” effect of the *Enlarge/Reduce* spell for 10 minutes (no Concentration required).\n\nThe red in the potion’s liquid continuously expands from a tiny bead to color the clear liquid around it and then contracts. Shaking the bottle fails to interrupt this process."
+    "description": "When you drink this potion, you gain the “enlarge” effect of the *Enlarge/Reduce* spell for 10 minutes (no Concentration required).\n\nThe red in the potion’s liquid continuously expands from a tiny bead to color the clear liquid around it and then contracts. Shaking the bottle fails to interrupt this process.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/enlarge-reduce",
+        "castingOverrides": {
+          "ignoreConcentration": true,
+          "duration": {
+            "value": 10,
+            "unit": "minute"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potions-of-healing",
@@ -5975,26 +6295,69 @@
       {
         "slug": "healing",
         "name": "Potion of Healing",
-        "rarity": "common"
+        "rarity": "common",
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 2,
+              "die": "d4",
+              "modifier": 2
+            }
+          }
+        ]
       },
       {
         "slug": "greater",
         "name": "Potion of Greater Healing",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 4,
+              "die": "d4",
+              "modifier": 4
+            }
+          }
+        ]
       },
       {
         "slug": "superior",
         "name": "Potion of Superior Healing",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 8,
+              "die": "d4",
+              "modifier": 8
+            }
+          }
+        ]
       },
       {
         "slug": "supreme",
         "name": "Potion of Supreme Healing",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "heal",
+            "value": {
+              "count": 10,
+              "die": "d4",
+              "modifier": 20
+            }
+          }
+        ]
       }
     ],
     "consumable": true,
-    "description": "You regain Hit Points when you drink this potion. The number of Hit Points depends on the potion’s rarity, as shown in the table below.\n\nWhatever its potency, the potion’s red liquid glimmers when agitated.\n\n| Potion | HP Regained | Rarity |\n|---|---|---|\n| *Potion of Healing* | 2d4 + 2 | Common |\n| *Potion of Healing* (greater) | 4d4 + 4 | Uncommon |\n| *Potion of Healing* (superior) | 8d4 + 8 | Rare |\n| *Potion of Healing* (supreme) | 10d4 + 20 | Very Rare |"
+    "description": "You regain Hit Points when you drink this potion. The number of Hit Points depends on the potion’s rarity, as shown in the table below.\n\nWhatever its potency, the potion’s red liquid glimmers when agitated.\n\n| Potion | HP Regained | Rarity |\n|---|---|---|\n| *Potion of Healing* | 2d4 + 2 | Common |\n| *Potion of Healing* (greater) | 4d4 + 4 | Uncommon |\n| *Potion of Healing* (superior) | 8d4 + 8 | Rare |\n| *Potion of Healing* (supreme) | 10d4 + 20 | Very Rare |",
+    "activation": {
+      "type": "bonusAction"
+    }
   },
   {
     "id": "srd-5.2:magic-item/potion-of-heroism",
@@ -6002,7 +6365,31 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you gain 10 Temporary Hit Points that last for 1 hour. For the same duration, you are under the effect of the *Bless* spell (no Concentration required).\n\nThis potion’s blue liquid bubbles and steams as if boiling."
+    "description": "When you drink this potion, you gain 10 Temporary Hit Points that last for 1 hour. For the same duration, you are under the effect of the *Bless* spell (no Concentration required).\n\nThis potion’s blue liquid bubbles and steams as if boiling.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "grantTemporaryHitPoints",
+        "value": 10
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/bless",
+        "castingOverrides": {
+          "ignoreConcentration": true,
+          "duration": {
+            "value": 1,
+            "unit": "hour"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-invisibility",
@@ -6010,7 +6397,20 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "This potion’s container looks empty but feels as though it holds liquid. When you drink the potion, you have the Invisible condition for 1 hour. The effect ends early if you make an attack roll, deal damage, or cast a spell."
+    "description": "This potion’s container looks empty but feels as though it holds liquid. When you drink the potion, you have the Invisible condition for 1 hour. The effect ends early if you make an attack roll, deal damage, or cast a spell.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/invisible"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-invulnerability",
@@ -6018,7 +6418,20 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "For 1 minute after you drink this potion, you have Resistance to all damage.\n\nThis potion’s syrupy liquid looks like liquefied iron."
+    "description": "For 1 minute after you drink this potion, you have Resistance to all damage.\n\nThis potion’s syrupy liquid looks like liquefied iron.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "minute"
+    },
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "allDamage"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-longevity",
@@ -6026,7 +6439,10 @@
     "category": "potion",
     "rarity": "veryRare",
     "consumable": true,
-    "description": "When you drink this potion, your physical age is reduced by 1d6 + 6 years, to a minimum of 13 years. Each time you subsequently drink a *Potion of Lon-* *gevity*, there is 10 percent cumulative chance that you instead age by 1d6 + 6 years.\n\nSuspended in this amber liquid is a tiny heart that, against all reason, is still beating. These ingredients vanish when the potion is opened."
+    "description": "When you drink this potion, your physical age is reduced by 1d6 + 6 years, to a minimum of 13 years. Each time you subsequently drink a *Potion of Lon-* *gevity*, there is 10 percent cumulative chance that you instead age by 1d6 + 6 years.\n\nSuspended in this amber liquid is a tiny heart that, against all reason, is still beating. These ingredients vanish when the potion is opened.",
+    "activation": {
+      "type": "bonusAction"
+    }
   },
   {
     "id": "srd-5.2:magic-item/potion-of-mind-reading",
@@ -6034,7 +6450,24 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you gain the effect of the *Detect Thoughts* spell (save DC 13) for 10 minutes (no Concentration required).\n\nThis potion’s dense, purple liquid has an ovoid cloud of pink floating in it."
+    "description": "When you drink this potion, you gain the effect of the *Detect Thoughts* spell (save DC 13) for 10 minutes (no Concentration required).\n\nThis potion’s dense, purple liquid has an ovoid cloud of pink floating in it.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-thoughts",
+        "castingOverrides": {
+          "saveDc": 13,
+          "ignoreConcentration": true,
+          "duration": {
+            "value": 10,
+            "unit": "minute"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-poison",
@@ -6042,7 +6475,35 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "This concoction looks, smells, and tastes like a *Potion of Healing* or another beneficial potion. However, it is actually poison masked by illusion magic. *Identify* reveals its true nature.\n\nIf you drink this potion, you take 4d6 Poison damage and must succeed on a DC 13 Constitution saving throw or have the Poisoned condition for 1 hour."
+    "description": "This concoction looks, smells, and tastes like a *Potion of Healing* or another beneficial potion. However, it is actually poison masked by illusion magic. *Identify* reveals its true nature.\n\nIf you drink this potion, you take 4d6 Poison damage and must succeed on a DC 13 Constitution saving throw or have the Poisoned condition for 1 hour.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "poison",
+        "value": {
+          "count": 4,
+          "die": "d6"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/poisoned",
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "fixed": 13
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-resistance",
@@ -6050,7 +6511,39 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "When you drink this potion, you have Resistance to one type of damage for 1 hour. The GM chooses the type or determines it randomly by rolling on the following table.\n\n| 1d10 Damage Type | 1d10 Damage Type |  |  |\n|---|---|---|---|\n| 1 | Acid | 6 | Necrotic |\n| 2 | Cold | 7 | Poison |\n| 3 | Fire | 8 | Psychic |\n| 4 | Force | 9 | Radiant |\n| 5 | Lightning | 10 | Thunder |"
+    "description": "When you drink this potion, you have Resistance to one type of damage for 1 hour. The GM chooses the type or determines it randomly by rolling on the following table.\n\n| 1d10 | Damage Type | 1d10 | Damage Type |\n|---|---|---|---|\n| 1 | Acid | 6 | Necrotic |\n| 2 | Cold | 7 | Poison |\n| 3 | Fire | 8 | Psychic |\n| 4 | Force | 9 | Radiant |\n| 5 | Lightning | 10 | Thunder |",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "choices": [
+      {
+        "id": "potion-resistance",
+        "prompt": "The damage type (GM's choice or 1d10).",
+        "count": 1,
+        "from": [
+          "acid",
+          "cold",
+          "fire",
+          "force",
+          "lightning",
+          "necrotic",
+          "poison",
+          "psychic",
+          "radiant",
+          "thunder"
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "$choice:potion-resistance"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-speed",
@@ -6058,7 +6551,23 @@
     "category": "potion",
     "rarity": "veryRare",
     "consumable": true,
-    "description": "When you drink this potion, you gain the effect of the *Haste* spell for 1 minute (no Concentration required) without suffering the wave of lethargy that typically occurs when the effect ends.\n\nThis potion’s yellow fluid is streaked with black and swirls on its own."
+    "description": "When you drink this potion, you gain the effect of the *Haste* spell for 1 minute (no Concentration required) without suffering the wave of lethargy that typically occurs when the effect ends.\n\nThis potion’s yellow fluid is streaked with black and swirls on its own.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/haste",
+        "castingOverrides": {
+          "ignoreConcentration": true,
+          "duration": {
+            "value": 1,
+            "unit": "minute"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-vitality",
@@ -6066,7 +6575,27 @@
     "category": "potion",
     "rarity": "veryRare",
     "consumable": true,
-    "description": "When you drink this potion, it removes any Exhaustion levels you have and ends the Poisoned condition on you. For the next 24 hours, you regain the maximum number of Hit Points for any Hit Point Die you spend.\n\nThis potion’s crimson liquid regularly pulses with dull light, calling to mind a heartbeat."
+    "description": "When you drink this potion, it removes any Exhaustion levels you have and ends the Poisoned condition on you. For the next 24 hours, you regain the maximum number of Hit Points for any Hit Point Die you spend.\n\nThis potion’s crimson liquid regularly pulses with dull light, calling to mind a heartbeat.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "endCondition",
+        "target": [
+          "srd-5.2:condition/exhaustion",
+          "srd-5.2:condition/poisoned"
+        ]
+      },
+      {
+        "type": "maximizeDice",
+        "target": "healing",
+        "duration": {
+          "value": 24,
+          "unit": "hour"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/potion-of-water-breathing",
@@ -6074,7 +6603,19 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "You can breathe underwater for 24 hours after drinking this potion.\n\nThis potion’s cloudy green fluid smells of the sea and has a jellyfish-like bubble floating in it."
+    "description": "You can breathe underwater for 24 hours after drinking this potion.\n\nThis potion’s cloudy green fluid smells of the sea and has a jellyfish-like bubble floating in it.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "duration": {
+      "value": 24,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "waterBreathing"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/quarterstaff-of-the-acrobat",
@@ -6087,7 +6628,76 @@
         "srd-5.2:equipment/quarterstaff"
       ]
     },
-    "description": "You have a +2 bonus to attack rolls and damage rolls made with this magic weapon.\n\nWhile holding this weapon, you can cause it to emit green Dim Light out to 10 feet, either as a Bonus Action or after you roll Initiative, or you can extinguish the light as a Bonus Action.\n\nWhile holding this weapon, you can take a Bonus Action to alter its form, turning it into a 6-inch rod (for ease of storage) or a 10-foot pole, or reverting it a Quarterstaff; the weapon will elongate only as far as the surrounding space allows.\n\nIn certain forms, the weapon has the following additional properties.\n\n**Acrobatic Assist (Quarterstaff and 10-Foot Pole**\n\n**Forms Only).** While holding this weapon, you have Advantage on Dexterity (Acrobatics) checks.\n\n**Attack Deflection (Quarterstaff Form Only).** When you are hit by an attack while holding the weapon, you can take a Reaction to twirl the weapon around you, gaining a +5 bonus to your Armor Class against the triggering attack, potentially causing the attack to miss you. You can’t use this property again until you finish a Short or Long Rest.\n\n**Ranged Weapon (Quarterstaff Form Only).** This weapon has the Thrown property with a normal range of 30 feet and a long range of 120 feet. Immediately after you make a ranged attack with the weapon, it flies back to your hand."
+    "description": "You have a +2 bonus to attack rolls and damage rolls made with this magic weapon.\n\nWhile holding this weapon, you can cause it to emit green Dim Light out to 10 feet, either as a Bonus Action or after you roll Initiative, or you can extinguish the light as a Bonus Action.\n\nWhile holding this weapon, you can take a Bonus Action to alter its form, turning it into a 6-inch rod (for ease of storage) or a 10-foot pole, or reverting it a Quarterstaff; the weapon will elongate only as far as the surrounding space allows.\n\nIn certain forms, the weapon has the following additional properties.\n\n**Acrobatic Assist (Quarterstaff and 10-Foot Pole**\n\n**Forms Only).** While holding this weapon, you have Advantage on Dexterity (Acrobatics) checks.\n\n**Attack Deflection (Quarterstaff Form Only).** When you are hit by an attack while holding the weapon, you can take a Reaction to twirl the weapon around you, gaining a +5 bonus to your Armor Class against the triggering attack, potentially causing the attack to miss you. You can’t use this property again until you finish a Short or Long Rest.\n\n**Ranged Weapon (Quarterstaff Form Only).** This weapon has the Thrown property with a normal range of 30 feet and a long range of 120 feet. Immediately after you make a ranged attack with the weapon, it flies back to your hand.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/acrobatics"
+            ]
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Light",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": [
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 0,
+              "dim": 10
+            }
+          }
+        ]
+      },
+      {
+        "name": "Attack Deflection",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You're hit by an attack."
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "short"
+        },
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 5
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-animal-influence",
@@ -6104,7 +6714,47 @@
         "rest": "dawn"
       }
     },
-    "description": "This ring has 3 charges, and it regains 1d3 expended charges daily at dawn. While wearing the ring, you can expend 1 charge to cast one of the following spells (save DC 13) from it: • *Animal Friendship* • *Fear* (affects Beasts only) • *Speak with Animals*"
+    "description": "This ring has 3 charges, and it regains 1d3 expended charges daily at dawn. While wearing the ring, you can expend 1 charge to cast one of the following spells (save DC 13) from it: • *Animal Friendship* • *Fear* (affects Beasts only) • *Speak with Animals*",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/animal-friendship",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fear",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        },
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "beast"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/speak-with-animals",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-djinni-summoning",
@@ -6112,7 +6762,23 @@
     "category": "ring",
     "rarity": "legendary",
     "attunement": true,
-    "description": "While wearing this ring, you can take a Magic action to summon a particular **Djinni** from the Elemental Plane of Air. The djinni appears in an unoccupied space you choose within 120 feet of yourself. It remains as long as you maintain Concentration, to a maximum of 1 hour, or until it drops to 0 Hit Points.\n\nWhile summoned, the djinni is Friendly to you and your allies, and it obeys your commands. If you fail to command it, the djinni defends itself against attackers but takes no other actions.\n\nAfter the djinni departs, it can’t be summoned again for 24 hours, and the ring becomes nonmagical if the djinni dies.\n\n*Rings of Djinni Summoning* are often created by the djinn they summon and given to mortals as gifts of friendship or tokens of esteem."
+    "description": "While wearing this ring, you can take a Magic action to summon a particular **Djinni** from the Elemental Plane of Air. The djinni appears in an unoccupied space you choose within 120 feet of yourself. It remains as long as you maintain Concentration, to a maximum of 1 hour, or until it drops to 0 Hit Points.\n\nWhile summoned, the djinni is Friendly to you and your allies, and it obeys your commands. If you fail to command it, the djinni defends itself against attackers but takes no other actions.\n\nAfter the djinni departs, it can’t be summoned again for 24 hours, and the ring becomes nonmagical if the djinni dies.\n\n*Rings of Djinni Summoning* are often created by the djinn they summon and given to mortals as gifts of friendship or tokens of esteem.",
+    "activation": {
+      "type": "action"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "concentration": true,
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "statBlock": "Djinni"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-elemental-command",
@@ -6120,6 +6786,285 @@
     "category": "ring",
     "rarity": "legendary",
     "attunement": true,
+    "variants": [
+      {
+        "slug": "air",
+        "name": "Ring of Elemental Command (Air)",
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/primordial"
+          },
+          {
+            "type": "grantResistance",
+            "target": "lightning"
+          },
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": "$derived:walkingSpeed"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/chain-lightning",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 3
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/feather-fall",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 0
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/gust-of-wind",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wind-wall",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      },
+      {
+        "slug": "earth",
+        "name": "Ring of Elemental Command (Earth)",
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/primordial"
+          },
+          {
+            "type": "grantResistance",
+            "target": "acid"
+          },
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "difficultTerrain"
+            ],
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "terrain",
+                    "material": "earth"
+                  },
+                  {
+                    "type": "terrain",
+                    "material": "stone"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/earthquake",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 5
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/stone-shape",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/stoneskin",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 3
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wall-of-stone",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 3
+            }
+          }
+        ]
+      },
+      {
+        "slug": "fire",
+        "name": "Ring of Elemental Command (Fire)",
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/primordial"
+          },
+          {
+            "type": "grantImmunity",
+            "target": "fire"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/burning-hands",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fireball",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fire-storm",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 4
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wall-of-fire",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 3
+            }
+          }
+        ]
+      },
+      {
+        "slug": "water",
+        "name": "Ring of Elemental Command (Water)",
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "grantLanguage",
+            "target": "srd-5.2:language/primordial"
+          },
+          {
+            "type": "grantSpeed",
+            "target": "swim",
+            "value": 60
+          },
+          {
+            "type": "waterBreathing"
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/create-or-destroy-water",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/ice-storm",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/tsunami",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 5
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wall-of-ice",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 3
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/water-walk",
+            "castingOverrides": {
+              "saveDc": 18
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            }
+          }
+        ]
+      }
+    ],
     "charges": {
       "max": 5,
       "regain": {
@@ -6131,7 +7076,60 @@
         "rest": "dawn"
       }
     },
-    "description": "Each *Ring of Elemental Command* is linked to one of the four Elemental Planes. The GM chooses or randomly determines the linked plane. For example, a *Ring of Elemental Command* (air) is linked to the Elemental Plane of Air. Every *Ring of Elemental Command* has the following two properties: **Elemental Bane.** While wearing the ring, you have Advantage on attack rolls against Elementals and they have Disadvantage on attack rolls against you. **Elemental Compulsion.** While wearing the ring, you can take a Magic action to try to compel an Elemental you see within 60 feet of yourself. The Elemental makes a DC 18 Wisdom saving throw. On a failed save, the Elemental has the Charmed condition until the start your next turn, and you determine what it does with its move and action on its next turn.\n\n**Elemental Focus.** While wearing the ring, you benefit from additional properties corresponding to the ring’s linked Elemental Plane: **Air.** You know Auran, you have Resistance to Lightning damage, and you have a Fly Speed equal to your Speed and can hover. **Earth.** You know Terran, and you have Resistance to Acid damage. Terrain composed of rubble, rocks, or dirt isn’t Difficult Terrain for you. In addition, you can move through solid earth or rock as if those areas were Difficult Terrain without disturbing the matter through which you pass. If you end your turn in solid earth or rock, you are shunted out to the nearest unoccupied space you last occupied. **Fire.** You know Ignan, and you have Immunity to Fire damage. **Water.** You know Aquan, you gain a Swim Speed of 60 feet, and you can breathe underwater.\n\n**Spellcasting.** The ring has 5 charges and regains 1d4 + 1 expended charges daily at dawn. While wearing the ring, you can cast a spell from it. Choose the spell from the list of available spells based on the Elemental Plane the ring is linked to, as shown in the following table. The table indicates how many charges you must expend to cast the spell, which has a save DC of 18.\n\n| Plane | Spells (Charges) |\n|---|---|\n| Air | *Chain Lightning* (3 charges), *Feather Fall* (0 charges), *Gust of Wind* (2 charges), *Wind* *Wall* (1 charge) |\n| Earth | *Earthquake* (5 charges), *Stone Shape* (2 charges), *Stoneskin* (3 charges), *Wall of Stone* (3 charges) |\n| Fire | *Burning Hands* (1 charge), *Fireball* (2 charges), *Fire Storm* (4 charges), *Wall of Fire* (3 charges) |\n| Water | *Create or Destroy Water* (1 charge), *Ice Storm* (2 charges), *Tsunami* (5 charges), *Wall of Ice* (3 charges), *Water Walk* (2 charges) |"
+    "description": "Each *Ring of Elemental Command* is linked to one of the four Elemental Planes. The GM chooses or randomly determines the linked plane. For example, a *Ring of Elemental Command* (air) is linked to the Elemental Plane of Air. Every *Ring of Elemental Command* has the following two properties: **Elemental Bane.** While wearing the ring, you have Advantage on attack rolls against Elementals and they have Disadvantage on attack rolls against you. **Elemental Compulsion.** While wearing the ring, you can take a Magic action to try to compel an Elemental you see within 60 feet of yourself. The Elemental makes a DC 18 Wisdom saving throw. On a failed save, the Elemental has the Charmed condition until the start your next turn, and you determine what it does with its move and action on its next turn.\n\n**Elemental Focus.** While wearing the ring, you benefit from additional properties corresponding to the ring’s linked Elemental Plane: **Air.** You know Auran, you have Resistance to Lightning damage, and you have a Fly Speed equal to your Speed and can hover. **Earth.** You know Terran, and you have Resistance to Acid damage. Terrain composed of rubble, rocks, or dirt isn’t Difficult Terrain for you. In addition, you can move through solid earth or rock as if those areas were Difficult Terrain without disturbing the matter through which you pass. If you end your turn in solid earth or rock, you are shunted out to the nearest unoccupied space you last occupied. **Fire.** You know Ignan, and you have Immunity to Fire damage. **Water.** You know Aquan, you gain a Swim Speed of 60 feet, and you can breathe underwater.\n\n**Spellcasting.** The ring has 5 charges and regains 1d4 + 1 expended charges daily at dawn. While wearing the ring, you can cast a spell from it. Choose the spell from the list of available spells based on the Elemental Plane the ring is linked to, as shown in the following table. The table indicates how many charges you must expend to cast the spell, which has a save DC of 18.\n\n| Plane | Spells (Charges) |\n|---|---|\n| Air | *Chain Lightning* (3 charges), *Feather Fall* (0 charges), *Gust of Wind* (2 charges), *Wind* *Wall* (1 charge) |\n| Earth | *Earthquake* (5 charges), *Stone Shape* (2 charges), *Stoneskin* (3 charges), *Wall of Stone* (3 charges) |\n| Fire | *Burning Hands* (1 charge), *Fireball* (2 charges), *Fire Storm* (4 charges), *Wall of Fire* (3 charges) |\n| Water | *Create or Destroy Water* (1 charge), *Ice Storm* (2 charges), *Tsunami* (5 charges), *Wall of Ice* (3 charges), *Water Walk* (2 charges) |",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "attackRoll",
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "elemental"
+            ]
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Elemental Compulsion",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/charmed",
+            "affects": "target",
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "elemental"
+                ]
+              },
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "fixed": 18
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-evasion",
@@ -6149,7 +7147,39 @@
         "rest": "dawn"
       }
     },
-    "description": "This ring has 3 charges, and it regains 1d3 expended charges daily at dawn. When you fail a Dexterity saving throw while wearing the ring, you can take a Reaction to expend 1 charge to succeed on that save instead."
+    "description": "This ring has 3 charges, and it regains 1d3 expended charges daily at dawn. When you fail a Dexterity saving throw while wearing the ring, you can take a Reaction to expend 1 charge to succeed on that save instead.",
+    "properties": [
+      {
+        "name": "Evade",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You fail a Dexterity saving throw."
+        },
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "savingThrow",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "trigger": {
+              "event": "failRoll",
+              "roll": "savingThrow",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "ability",
+                "abilities": [
+                  "DEX"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-feather-falling",
@@ -6157,7 +7187,18 @@
     "category": "ring",
     "rarity": "rare",
     "attunement": true,
-    "description": "When you fall while wearing this ring, you descend 60 feet per round and take no damage from falling."
+    "description": "When you fall while wearing this ring, you descend 60 feet per round and take no damage from falling.",
+    "effects": [
+      {
+        "type": "reduceDamage",
+        "value": {
+          "fraction": 1
+        },
+        "trigger": {
+          "event": "fall"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-free-action",
@@ -6165,7 +7206,45 @@
     "category": "ring",
     "rarity": "rare",
     "attunement": true,
-    "description": "While you wear this ring, Difficult Terrain doesn’t cost you extra movement. In addition, magic can neither reduce any of your Speeds nor cause you to have the Paralyzed or Restrained condition."
+    "description": "While you wear this ring, Difficult Terrain doesn’t cost you extra movement. In addition, magic can neither reduce any of your Speeds nor cause you to have the Paralyzed or Restrained condition.",
+    "effects": [
+      {
+        "type": "traverseTerrain",
+        "target": [
+          "difficultTerrain"
+        ]
+      },
+      {
+        "type": "grantImmunity",
+        "target": "speedReduction"
+      },
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:condition/paralyzed",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell",
+              "magicalEffect"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:condition/restrained",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell",
+              "magicalEffect"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-invisibility",
@@ -6173,7 +7252,21 @@
     "category": "ring",
     "rarity": "legendary",
     "attunement": true,
-    "description": "While wearing this ring, you can take a Magic action to give yourself the Invisible condition. You remain Invisible until the ring is removed or until you take a Bonus Action to become visible again."
+    "description": "While wearing this ring, you can take a Magic action to give yourself the Invisible condition. You remain Invisible until the ring is removed or until you take a Bonus Action to become visible again.",
+    "properties": [
+      {
+        "name": "Vanish",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/invisible"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-jumping",
@@ -6181,7 +7274,13 @@
     "category": "ring",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this ring, you can cast *Jump* from it, but can target only yourself when you do so."
+    "description": "While wearing this ring, you can cast *Jump* from it, but can target only yourself when you do so.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/jump"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-mind-shielding",
@@ -6189,7 +7288,22 @@
     "category": "ring",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this ring, you are immune to magic that allows other creatures to read your thoughts, determine whether you are lying, know your alignment, or know your creature type. Creatures can telepathically communicate with you only if you allow it.\n\nYou can take a Magic action to cause the ring to become imperceptible until you take another Magic action to make it perceptible, until you remove the ring, or until you die.\n\nIf you die while wearing the ring, your soul enters it, unless it already houses a soul. You can remain in the ring or depart for the afterlife. As long as your soul is in the ring, you can telepathically communicate with any creature wearing it. A wearer can’t prevent this telepathic communication."
+    "description": "While wearing this ring, you are immune to magic that allows other creatures to read your thoughts, determine whether you are lying, know your alignment, or know your creature type. Creatures can telepathically communicate with you only if you allow it.\n\nYou can take a Magic action to cause the ring to become imperceptible until you take another Magic action to make it perceptible, until you remove the ring, or until you die.\n\nIf you die while wearing the ring, your soul enters it, unless it already houses a soul. You can remain in the ring or depart for the afterlife. As long as your soul is in the ring, you can telepathically communicate with any creature wearing it. A wearer can’t prevent this telepathic communication.",
+    "effects": [
+      {
+        "type": "grantImmunity",
+        "target": "srd-5.2:spell/detect-thoughts"
+      }
+    ],
+    "properties": [
+      {
+        "name": "Imperceptible",
+        "activation": {
+          "type": "action"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-protection",
@@ -6197,7 +7311,19 @@
     "category": "ring",
     "rarity": "rare",
     "attunement": true,
-    "description": "You gain a +1 bonus to Armor Class and saving throws while wearing this ring."
+    "description": "You gain a +1 bonus to Armor Class and saving throws while wearing this ring.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 1
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 1
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-regeneration",
@@ -6205,14 +7331,84 @@
     "category": "ring",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "While wearing this ring, you regain 1d6 Hit Points every 10 minutes if you have at least 1 Hit Point. If you lose a body part, the ring causes the missing part to regrow and return to full functionality after 1d6 + 1 days if you have at least 1 Hit Point the whole time."
+    "description": "While wearing this ring, you regain 1d6 Hit Points every 10 minutes if you have at least 1 Hit Point. If you lose a body part, the ring causes the missing part to regrow and return to full functionality after 1d6 + 1 days if you have at least 1 Hit Point the whole time.",
+    "effects": [
+      {
+        "type": "heal",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "qualifiers": [
+          {
+            "type": "hitPoints",
+            "minimum": 1
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-resistance",
     "name": "Ring of Resistance",
     "category": "ring",
     "rarity": "rare",
-    "description": "You have Resistance to one damage type while wearing this ring. The gemstone in the ring indicates the type, which the GM chooses or determines randomly by rolling on the following table.\n\n| 1d10 Damage Type | Gemstone |  |\n|---|---|---|\n| 1 | Acid | Pearl |\n| 2 | Cold | Tourmaline |\n| 3 | Fire | Garnet |\n| 4 | Force | Sapphire |\n| 5 | Lightning | Citrine |\n| 6 | Necrotic | Jet |\n| 7 | Poison | Amethyst |\n| 8 | Psychic | Jade |\n| 9 | Radiant | Topaz |\n| 10 | Thunder | Spinel |"
+    "description": "You have Resistance to one damage type while wearing this ring. The gemstone in the ring indicates the type, which the GM chooses or determines randomly by rolling on the following table.\n\n| 1d10 | Damage Type | Gemstone |\n|---|---|---|\n| 1 | Acid | Pearl |\n| 2 | Cold | Tourmaline |\n| 3 | Fire | Garnet |\n| 4 | Force | Sapphire |\n| 5 | Lightning | Citrine |\n| 6 | Necrotic | Jet |\n| 7 | Poison | Amethyst |\n| 8 | Psychic | Jade |\n| 9 | Radiant | Topaz |\n| 10 | Thunder | Spinel |",
+    "choices": [
+      {
+        "id": "ring-resistance",
+        "prompt": "The ring's gemstone (GM's choice or 1d10).",
+        "count": 1,
+        "from": [
+          {
+            "value": "acid",
+            "label": "Pearl"
+          },
+          {
+            "value": "cold",
+            "label": "Tourmaline"
+          },
+          {
+            "value": "fire",
+            "label": "Garnet"
+          },
+          {
+            "value": "force",
+            "label": "Sapphire"
+          },
+          {
+            "value": "lightning",
+            "label": "Citrine"
+          },
+          {
+            "value": "necrotic",
+            "label": "Jet"
+          },
+          {
+            "value": "poison",
+            "label": "Amethyst"
+          },
+          {
+            "value": "psychic",
+            "label": "Jade"
+          },
+          {
+            "value": "radiant",
+            "label": "Topaz"
+          },
+          {
+            "value": "thunder",
+            "label": "Spinel"
+          }
+        ]
+      }
+    ],
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "$choice:ring-resistance"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-shooting-stars",
@@ -6230,7 +7426,93 @@
         "rest": "dawn"
       }
     },
-    "description": "You can cast *Dancing Lights* or *Light* from the ring.\n\nThe ring has 6 charges and regains 1d6 expended charges daily at dawn. You can expend its charges to use the properties below.\n\n**Faerie Fire.** You can expend 1 charge to cast *Fa-* *erie Fire* from the ring.\n\n**Lightning Spheres.** You can expend 2 charges as a Magic action to create up to four 3-foot-diameter spheres of lightning.\n\nEach sphere appears in an unoccupied space you can see within 120 feet of yourself. The spheres last as long as you maintain Concentration, up to 1 minute. Each sphere sheds Dim Light in a 30-foot radius.\n\nAs a Bonus Action, you can move each sphere up to 30 feet, but no farther than 120 feet away from yourself. The first time the sphere comes within 5 feet of a creature other than you that isn’t behind Total Cover, the sphere discharges lightning at that creature and disappears. That creature makes a DC 15 Dexterity saving throw. On a failed save, the creature takes Lightning damage based on the number of spheres you created, as shown in the following table. On a successful save, the creature takes half as much damage.\n\n| Number of | Lightning | Number of | Lightning |\n|---|---|---|---|\n| 1 | 4d12 | 3 | 2d6 |\n| 2 | 5d4 | 4 | 2d4 |\n\n**Shooting Stars.** You can expend 1 to 3 charges as a Magic action. For every charge you expend, you launch a glowing mote of light from the ring at a point you can see within 60 feet of yourself. Each creature in a 15-foot Cube originating from that point is showered in sparks and makes a DC 15 Dexterity saving throw, taking 5d4 Radiant damage on a failed save or half as much damage on a successful one."
+    "description": "You can cast *Dancing Lights* or *Light* from the ring.\n\nThe ring has 6 charges and regains 1d6 expended charges daily at dawn. You can expend its charges to use the properties below.\n\n**Faerie Fire.** You can expend 1 charge to cast *Fa-* *erie Fire* from the ring.\n\n**Lightning Spheres.** You can expend 2 charges as a Magic action to create up to four 3-foot-diameter spheres of lightning.\n\nEach sphere appears in an unoccupied space you can see within 120 feet of yourself. The spheres last as long as you maintain Concentration, up to 1 minute. Each sphere sheds Dim Light in a 30-foot radius.\n\nAs a Bonus Action, you can move each sphere up to 30 feet, but no farther than 120 feet away from yourself. The first time the sphere comes within 5 feet of a creature other than you that isn’t behind Total Cover, the sphere discharges lightning at that creature and disappears. That creature makes a DC 15 Dexterity saving throw. On a failed save, the creature takes Lightning damage based on the number of spheres you created, as shown in the following table. On a successful save, the creature takes half as much damage.\n\n| Number of Spheres | Lightning Damage | Number of Spheres | Lightning Damage |\n|---|---|---|---|\n| 1 | 4d12 | 3 | 2d6 |\n| 2 | 5d4 | 4 | 2d4 |\n\n**Shooting Stars.** You can expend 1 to 3 charges as a Magic action. For every charge you expend, you launch a glowing mote of light from the ring at a point you can see within 60 feet of yourself. Each creature in a 15-foot Cube originating from that point is showered in sparks and makes a DC 15 Dexterity saving throw, taking 5d4 Radiant damage on a failed save or half as much damage on a successful one.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/dancing-lights"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/light"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/faerie-fire",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Lightning Spheres",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "lightning",
+            "value": {
+              "count": 4,
+              "die": "d12"
+            },
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 2
+            },
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Shooting Stars",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "radiant",
+            "value": {
+              "count": 5,
+              "die": "d4"
+            },
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "area": [
+              {
+                "shape": "cube",
+                "size": 15
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-spell-storing",
@@ -6246,14 +7528,48 @@
     "category": "ring",
     "rarity": "legendary",
     "attunement": true,
-    "description": "While wearing this ring, you have Advantage on saving throws against spells. If you succeed on the save for a spell of level 7 or lower, the spell has no effect on you. If that spell targeted only you and didn’t create an area of effect, you can take a Reaction to deflect the spell back at the spell’s caster; the caster must make a saving throw against the spell using their own spell save DC."
+    "description": "While wearing this ring, you have Advantage on saving throws against spells. If you succeed on the save for a spell of level 7 or lower, the spell has no effect on you. If that spell targeted only you and didn’t create an area of effect, you can take a Reaction to deflect the spell back at the spell’s caster; the caster must make a saving throw against the spell using their own spell save DC.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantImmunity",
+        "target": "spells",
+        "value": {
+          "upToLevel": 7
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "success"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-swimming",
     "name": "Ring of Swimming",
     "category": "ring",
     "rarity": "uncommon",
-    "description": "You have a Swim Speed of 40 feet while wearing this ring."
+    "description": "You have a Swim Speed of 40 feet while wearing this ring.",
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "swim",
+        "value": 40
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-telekinesis",
@@ -6261,7 +7577,13 @@
     "category": "ring",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "While wearing this ring, you can cast *Telekinesis* from it."
+    "description": "While wearing this ring, you can cast *Telekinesis* from it.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/telekinesis"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-the-ram",
@@ -6279,7 +7601,44 @@
         "rest": "dawn"
       }
     },
-    "description": "This ring has 3 charges and regains 1d3 expended charges daily at dawn. While wearing the ring, you can take a Magic action to expend 1 to 3 charges to make a ranged spell attack against one creature you can see within 60 feet of yourself. The ring produces a spectral ram’s head and makes its attack roll with a +7 bonus. On a hit, for each charge you spend, the target takes 2d10 Force damage and is pushed 5 feet away from you.\n\nAlternatively, you can expend 1 to 3 of the ring’s charges as a Magic action to try to break a nonmagical object you can see within 60 feet of yourself that isn’t being worn or carried. The ring makes a Strength check with a +5 bonus for each charge you spend."
+    "description": "This ring has 3 charges and regains 1d3 expended charges daily at dawn. While wearing the ring, you can take a Magic action to expend 1 to 3 charges to make a ranged spell attack against one creature you can see within 60 feet of yourself. The ring produces a spectral ram’s head and makes its attack roll with a +7 bonus. On a hit, for each charge you spend, the target takes 2d10 Force damage and is pushed 5 feet away from you.\n\nAlternatively, you can expend 1 to 3 of the ring’s charges as a Magic action to try to break a nonmagical object you can see within 60 feet of yourself that isn’t being worn or carried. The ring makes a Strength check with a +5 bonus for each charge you spend.",
+    "properties": [
+      {
+        "name": "Ram",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 2,
+              "die": "d10"
+            },
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "trigger": {
+              "event": "hitWithAttack"
+            }
+          },
+          {
+            "type": "forcedMovement",
+            "value": {
+              "feet": 5,
+              "direction": "away"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-three-wishes",
@@ -6289,7 +7648,17 @@
     "charges": {
       "max": 3
     },
-    "description": "While wearing this ring, you can expend 1 of its 3 charges to cast *Wish* from it. The ring becomes nonmagical when you use the last charge."
+    "description": "While wearing this ring, you can expend 1 of its 3 charges to cast *Wish* from it. The ring becomes nonmagical when you use the last charge.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wish",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-warmth",
@@ -6297,14 +7666,37 @@
     "category": "ring",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "If you take Cold damage while wearing this ring, the ring reduces the damage you take by 2d8.\n\nIn addition, while wearing this ring, you and everything you wear and carry are unharmed by temperatures of 0 degrees Fahrenheit or lower."
+    "description": "If you take Cold damage while wearing this ring, the ring reduces the damage you take by 2d8.\n\nIn addition, while wearing this ring, you and everything you wear and carry are unharmed by temperatures of 0 degrees Fahrenheit or lower.",
+    "effects": [
+      {
+        "type": "reduceDamage",
+        "value": {
+          "count": 2,
+          "die": "d8"
+        },
+        "qualifiers": [
+          {
+            "type": "damageType",
+            "damageTypes": [
+              "cold"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-water-walking",
     "name": "Ring of Water Walking",
     "category": "ring",
     "rarity": "uncommon",
-    "description": "While wearing this ring, you cast *Water Walk* from it, targeting only yourself."
+    "description": "While wearing this ring, you cast *Water Walk* from it, targeting only yourself.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/water-walk"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-x-ray-vision",
@@ -6312,7 +7704,20 @@
     "category": "ring",
     "rarity": "rare",
     "attunement": true,
-    "description": "While wearing this ring, you can take a Magic action to gain X-ray vision with a range of 30 feet for 1 minute. To you, solid objects within that radius appear transparent and don’t prevent light from passing through them. The vision can penetrate 1 foot of stone, 1 inch of common metal, or up to 3 feet of wood or dirt. Thicker substances or a thin sheet of lead block the vision.\n\nWhenever you use the ring again before taking a Long Rest, you must succeed on a DC 15 Constitution saving throw or gain 1 Exhaustion level."
+    "description": "While wearing this ring, you can take a Magic action to gain X-ray vision with a range of 30 feet for 1 minute. To you, solid objects within that radius appear transparent and don’t prevent light from passing through them. The vision can penetrate 1 foot of stone, 1 inch of common metal, or up to 3 feet of wood or dirt. Thicker substances or a thin sheet of lead block the vision.\n\nWhenever you use the ring again before taking a Long Rest, you must succeed on a DC 15 Constitution saving throw or gain 1 Exhaustion level.",
+    "properties": [
+      {
+        "name": "X-Ray Vision",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/robe-of-eyes",
@@ -6320,7 +7725,37 @@
     "category": "wondrousItem",
     "rarity": "rare",
     "attunement": true,
-    "description": "This robe is adorned with eyelike patterns. While you wear the robe, you gain the following benefits: **All-Around Vision.** The robe gives you Advantage on Wisdom (Perception) checks that rely on sight. **Special Senses.** You have Darkvision and Truesight, both with a range of 120 feet.\n\n**Drawbacks.** A *Light* spell cast on the robe or a *Daylight* spell cast within 5 feet of the robe gives you the Blinded condition for 1 minute. At the end of each of your turns, you make a Constitution saving throw (DC 11 for *Light* or DC 15 for *Daylight*), ending the condition on yourself on a success."
+    "description": "This robe is adorned with eyelike patterns. While you wear the robe, you gain the following benefits: **All-Around Vision.** The robe gives you Advantage on Wisdom (Perception) checks that rely on sight. **Special Senses.** You have Darkvision and Truesight, both with a range of 120 feet.\n\n**Drawbacks.** A *Light* spell cast on the robe or a *Daylight* spell cast within 5 feet of the robe gives you the Blinded condition for 1 minute. At the end of each of your turns, you make a Constitution saving throw (DC 11 for *Light* or DC 15 for *Daylight*), ending the condition on yourself on a success.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception"
+            ]
+          },
+          {
+            "type": "sense",
+            "senses": [
+              "sight"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantSense",
+        "target": "darkvision",
+        "value": 120
+      },
+      {
+        "type": "grantSense",
+        "target": "truesight",
+        "value": 120
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/robe-of-scintillating-colors",
@@ -6338,7 +7773,57 @@
         "rest": "dawn"
       }
     },
-    "description": "This robe has 3 charges, and it regains 1d3 expended charges daily at dawn. While you wear it, you can take a Magic action and expend 1 charge to cause the garment to display a shifting pattern of dazzling hues until the end of your next turn. During this time, the robe sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet, and creatures that can see you have Disadvantage on attack rolls against you. Any creature in the Bright Light that can see you when the robe’s power is activated must succeed on a DC 15 Wisdom saving throw or have the Stunned condition until the effect ends."
+    "description": "This robe has 3 charges, and it regains 1d3 expended charges daily at dawn. While you wear it, you can take a Magic action and expend 1 charge to cause the garment to display a shifting pattern of dazzling hues until the end of your next turn. During this time, the robe sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet, and creatures that can see you have Disadvantage on attack rolls against you. Any creature in the Bright Light that can see you when the robe’s power is activated must succeed on a DC 15 Wisdom saving throw or have the Stunned condition until the effect ends.",
+    "properties": [
+      {
+        "name": "Dazzle",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "round"
+        },
+        "effects": [
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 30,
+              "dim": 30
+            }
+          },
+          {
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ],
+            "affects": "others"
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/stunned",
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/robe-of-stars",
@@ -6346,7 +7831,52 @@
     "category": "wondrousItem",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "This black or dark-blue robe is embroidered with small white or silver stars. You gain a +1 bonus to saving throws while you wear it.\n\nSix stars, located on the robe’s upper-front portion, are particularly large. While wearing this robe, you can take a Magic action to remove one of the stars and expend it to cast the level 5 version of *Magic Missile*. Daily at dusk, 1d6 removed stars reappear on the robe.\n\nWhile you wear the robe, you can take a Magic action to enter the Astral Plane along with everything you are wearing and carrying. You remain there until you take a Magic action to return to the plane you were on. You reappear in the last space you occupied or, if that space is occupied, the nearest unoccupied space."
+    "charges": {
+      "max": 6,
+      "regain": {
+        "amount": {
+          "count": 1,
+          "die": "d6"
+        },
+        "rest": "dusk"
+      }
+    },
+    "description": "This black or dark-blue robe is embroidered with small white or silver stars. You gain a +1 bonus to saving throws while you wear it.\n\nSix stars, located on the robe’s upper-front portion, are particularly large. While wearing this robe, you can take a Magic action to remove one of the stars and expend it to cast the level 5 version of *Magic Missile*. Daily at dusk, 1d6 removed stars reappear on the robe.\n\nWhile you wear the robe, you can take a Magic action to enter the Astral Plane along with everything you are wearing and carrying. You remain there until you take a Magic action to return to the plane you were on. You reappear in the last space you occupied or, if that space is occupied, the nearest unoccupied space.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 1
+      }
+    ],
+    "properties": [
+      {
+        "name": "Star",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/magic-missile",
+            "castingOverrides": {
+              "castLevel": 5
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      },
+      {
+        "name": "Astral Travel",
+        "activation": {
+          "type": "action"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/robe-of-the-archmagi",
@@ -6360,14 +7890,60 @@
         "srd-5.2:class/wizard"
       ]
     },
-    "description": "This elegant garment is made from exquisite cloth and adorned with runes.\n\nYou gain these benefits while wearing the robe.\n\n**Armor.** If you aren’t wearing armor, your base Armor Class is 15 plus your Dexterity modifier.\n\n**Magic Resistance.** You have Advantage on saving throws against spells and other magical effects.\n\n**War Mage.** Your spell save DC and spell attack bonus each increase by 2."
+    "description": "This elegant garment is made from exquisite cloth and adorned with runes.\n\nYou gain these benefits while wearing the robe.\n\n**Armor.** If you aren’t wearing armor, your base Armor Class is 15 plus your Dexterity modifier.\n\n**Magic Resistance.** You have Advantage on saving throws against spells and other magical effects.\n\n**War Mage.** Your spell save DC and spell attack bonus each increase by 2.",
+    "effects": [
+      {
+        "type": "setBaseAc",
+        "value": {
+          "base": 15,
+          "abilities": [
+            "DEX"
+          ]
+        },
+        "qualifiers": [
+          {
+            "type": "equipment",
+            "equipment": [
+              "armor"
+            ],
+            "negate": true
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell",
+              "magicalEffect"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "modifier",
+        "target": "spellSaveDC",
+        "value": 2
+      },
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/robe-of-useful-items",
     "name": "Robe of Useful Items",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "This robe has cloth patches of various shapes and colors covering it. While wearing the robe, you can take a Magic action to detach one of the patches, causing it to become the object or creature it represents. Once the last patch is removed, the robe becomes an ordinary garment.\n\nThe robe has two of each of the following patches: • Bullseye Lantern (filled and lit) • Dagger • Mirror • Pole • Rope (coiled) • Sack In addition, the robe has 4d4 other patches. The GM chooses the patches or determines them randomly by rolling on the following table.\n\n**1d100 Patch**\n\n| 01–08 | Bag of 100 GP |\n|---|---|\n| 09–15 | Silver coffer (1 foot long, 6 inches wide and deep) worth 500 GP |\n| 16–22 | Iron door (up to 10 feet wide and 10 feet high, barred on one side of your choice), which you can place in an opening you can reach; it conforms to fit the opening, attaching and hinging itself |\n| 23–30 | 10 gems worth 100 GP each |\n| 31–44 | Wooden ladder (24 feet long) |\n| 45–51 | **Riding Horse** with a Riding Saddle |\n| 52–59 | Open pit (a 10-foot Cube), which you can place on the ground within 10 feet of yourself |\n| 60–68 | 4 *Potions of Healing* |\n| 69–75 | Rowboat (12 feet long) |\n| 76–83 | *Spell Scroll* containing one spell of level 1, 2, or 3 (your choice) |\n\n**1d100 Patch**\n\n| 84–90 | 2 Mastiffs |\n|---|---|\n| 91–96 which you can place on a vertical surface you can reach | Window (2 feet by 4 feet, up to 2 feet deep), |\n| 97–00 | Portable Ram |"
+    "description": "This robe has cloth patches of various shapes and colors covering it. While wearing the robe, you can take a Magic action to detach one of the patches, causing it to become the object or creature it represents. Once the last patch is removed, the robe becomes an ordinary garment.\n\nThe robe has two of each of the following patches: • Bullseye Lantern (filled and lit) • Dagger • Mirror • Pole • Rope (coiled) • Sack In addition, the robe has 4d4 other patches. The GM chooses the patches or determines them randomly by rolling on the following table.\n\n| 1d100 | Patch |\n|---|---|\n| 01–08 | Bag of 100 GP |\n| 09–15 | Silver coffer (1 foot long, 6 inches wide and deep) worth 500 GP |\n| 16–22 | Iron door (up to 10 feet wide and 10 feet high, barred on one side of your choice), which you can place in an opening you can reach; it conforms to fit the opening, attaching and hinging itself |\n| 23–30 | 10 gems worth 100 GP each |\n| 31–44 | Wooden ladder (24 feet long) |\n| 45–51 | **Riding Horse** with a Riding Saddle |\n| 52–59 | Open pit (a 10-foot Cube), which you can place on the ground within 10 feet of yourself |\n| 60–68 | 4 *Potions of Healing* |\n| 69–75 | Rowboat (12 feet long) |\n| 76–83 | *Spell Scroll* containing one spell of level 1, 2, or 3 (your choice) |\n| 84–90 | 2 Mastiffs |\n| 91–96 | Window (2 feet by 4 feet, up to 2 feet deep), which you can place on a vertical surface you can reach |\n| 97–00 | Portable Ram |",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/rod-of-absorption",
@@ -6375,7 +7951,27 @@
     "category": "rod",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "While holding this rod, you can take a Reaction to absorb a spell that is targeting only you and doesn’t create an area of effect. The absorbed spell’s effect is canceled, and the spell’s energy—not the spell itself—is stored in the rod. The energy has the same level as the spell when it was cast. A canceled spell dissipates with no effect, and any resources used to cast it are wasted. The rod can absorb and store up to 50 levels of energy over the course of its existence. Once the rod absorbs 50 levels of energy, it can’t absorb more. If you are targeted by a spell that the rod can’t store, the rod has no effect on that spell.\n\nWhen you become attuned to the rod, you know how many levels of energy the rod has absorbed over the course of its existence and how many levels of spell energy it currently has stored.\n\nIf you are a spellcaster holding the rod, you can convert energy stored in it into spell slots to cast spells you have prepared or know. You can create spell slots only of a level equal to or lower than your own spell slots, up to a maximum of level 5. You use the stored levels in place of your slots but otherwise cast the spell as normal. For example, you can use 3 levels stored in the rod as a level 3 spell slot.\n\nA newly found rod typically has 1d10 levels of spell energy stored in it. A rod that can no longer absorb spell energy and has no energy remaining becomes nonmagical."
+    "description": "While holding this rod, you can take a Reaction to absorb a spell that is targeting only you and doesn’t create an area of effect. The absorbed spell’s effect is canceled, and the spell’s energy—not the spell itself—is stored in the rod. The energy has the same level as the spell when it was cast. A canceled spell dissipates with no effect, and any resources used to cast it are wasted. The rod can absorb and store up to 50 levels of energy over the course of its existence. Once the rod absorbs 50 levels of energy, it can’t absorb more. If you are targeted by a spell that the rod can’t store, the rod has no effect on that spell.\n\nWhen you become attuned to the rod, you know how many levels of energy the rod has absorbed over the course of its existence and how many levels of spell energy it currently has stored.\n\nIf you are a spellcaster holding the rod, you can convert energy stored in it into spell slots to cast spells you have prepared or know. You can create spell slots only of a level equal to or lower than your own spell slots, up to a maximum of level 5. You use the stored levels in place of your slots but otherwise cast the spell as normal. For example, you can use 3 levels stored in the rod as a level 3 spell slot.\n\nA newly found rod typically has 1d10 levels of spell energy stored in it. A rod that can no longer absorb spell energy and has no energy remaining becomes nonmagical.",
+    "properties": [
+      {
+        "name": "Absorb",
+        "activation": {
+          "type": "reaction",
+          "trigger": "A spell targets only you and creates no area of effect."
+        },
+        "effects": [
+          {
+            "type": "interruptSpell",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/rod-of-alertness",
@@ -6383,7 +7979,88 @@
     "category": "rod",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "This rod has the following properties.\n\n**Alertness.** While holding the rod, you have Advantage on Wisdom (Perception) checks and on Initiative rolls.\n\n**Spells.** While holding the rod, you can cast the following spells from it: • *Detect Evil and Good* • *Detect Magic* • *Detect Poison and Disease* • *See Invisibility*\n\n**Protective Aura.** As a Magic action, you can plant the haft end of the rod in the ground, whereupon the rod’s head sheds Bright Light in a 60-foot radius and Dim Light for an additional 60 feet. While in that Bright Light, you and your allies gain a +1 bonus to Armor Class and saving throws and can sense the location of any Invisible creature that is also in the Bright Light.\n\nThe rod’s head stops glowing and the effect ends after 10 minutes or when a creature takes a Magic action to pull the rod from the ground. Once used, this property can’t be used again until the next dawn."
+    "description": "This rod has the following properties.\n\n**Alertness.** While holding the rod, you have Advantage on Wisdom (Perception) checks and on Initiative rolls.\n\n**Spells.** While holding the rod, you can cast the following spells from it: • *Detect Evil and Good* • *Detect Magic* • *Detect Poison and Disease* • *See Invisibility*\n\n**Protective Aura.** As a Magic action, you can plant the haft end of the rod in the ground, whereupon the rod’s head sheds Bright Light in a 60-foot radius and Dim Light for an additional 60 feet. While in that Bright Light, you and your allies gain a +1 bonus to Armor Class and saving throws and can sense the location of any Invisible creature that is also in the Bright Light.\n\nThe rod’s head stops glowing and the effect ends after 10 minutes or when a creature takes a Magic action to pull the rod from the ground. Once used, this property can’t be used again until the next dawn.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "initiative"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-evil-and-good"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-magic"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-poison-and-disease"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/see-invisibility"
+      }
+    ],
+    "properties": [
+      {
+        "name": "Protective Aura",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "savingThrow",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "selfOrAlly"
+              }
+            ]
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 60,
+              "dim": 60
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/rod-of-lordly-might",
@@ -6391,7 +8068,205 @@
     "category": "rod",
     "rarity": "legendary",
     "attunement": true,
-    "description": "This rod has a flanged head, and it functions as a magic Mace that grants a +3 bonus to attack rolls and damage rolls made with it. The rod has properties associated with six different buttons that are set in a row along the haft. It has three other properties as well, detailed below.\n\n**Buttons.** You can press one of the following buttons as a Bonus Action; a button’s effect lasts until you push a different button or until you push the same button again, which causes the rod to revert to its normal form: **Button 1.** A fiery blade sprouts from the end opposite the rod’s flanged head. The flames shed Bright Light in a 40-foot radius and Dim Light for an additional 40 feet, and the blade functions as a magic Longsword or Shortsword (your choice) that deals an extra 2d6 Fire damage on a hit. **Button 2.** The rod’s flanged head folds down and two crescent-shaped blades spring out, transforming the rod into a magic Battleaxe that grants a +3 bonus to attack rolls and damage rolls made with it. **Button 3.** The rod’s flanged head folds down, a spear point springs from the rod’s tip, and the rod’s handle lengthens into a 6-foot haft, transforming the rod into a magic Spear that grants a +3 bonus to attack rolls and damage rolls made with it. **Button 4.** The rod transforms into a climbing pole up to 50 feet long (you specify the length), though the rod’s buttons remain within your reach. In surfaces as hard as granite, a spike at the bottom and three hooks at the top anchor the pole. Horizontal bars 3 inches long fold out from the sides, 1 foot apart, forming a ladder. The pole can bear up to 4,000 pounds. More weight or lack of solid anchoring causes the rod to revert to its normal form. **Button 5.** The rod transforms into a handheld battering ram and grants its user a +10 bonus to Strength (Athletics) checks made to break through doors, barricades, and other barriers. **Button 6.** The rod assumes or remains in its normal form and indicates magnetic north. (Nothing happens if this function of the rod is used in a location that has no magnetic north.) The rod also gives you knowledge of your approximate depth beneath the ground or your height above it.\n\n**Drain Life.** When you hit a creature with a melee attack using the rod, you can force the target to make a DC 17 Constitution saving throw. On a failed save, the target takes an extra 4d6 Necrotic damage, and you regain a number of Hit Points equal to half that Necrotic damage. Once used, this property can’t be used again until the next dawn.\n\n**Paralyze.** When you hit a creature with a melee attack using the rod, you can force the target to make a DC 17 Constitution saving throw. On a failed save, the target has the Paralyzed condition for 1 minute. The target repeats the save at the end of each of its turns, ending the effect on a success. Once used, this property can’t be used again until the next dawn.\n\n**Terrify.** While holding the rod, you can take a Magic action to force each creature you can see within 30 feet of yourself to make a DC 17 Wisdom saving throw. On a failed save, a target has the Frightened condition for 1 minute. A Frightened target repeats the save at the end of each of its turns, ending the effect on itself on a success. Once used, this property can’t be used again until the next dawn."
+    "description": "This rod has a flanged head, and it functions as a magic Mace that grants a +3 bonus to attack rolls and damage rolls made with it. The rod has properties associated with six different buttons that are set in a row along the haft. It has three other properties as well, detailed below.\n\n**Buttons.** You can press one of the following buttons as a Bonus Action; a button’s effect lasts until you push a different button or until you push the same button again, which causes the rod to revert to its normal form: **Button 1.** A fiery blade sprouts from the end opposite the rod’s flanged head. The flames shed Bright Light in a 40-foot radius and Dim Light for an additional 40 feet, and the blade functions as a magic Longsword or Shortsword (your choice) that deals an extra 2d6 Fire damage on a hit. **Button 2.** The rod’s flanged head folds down and two crescent-shaped blades spring out, transforming the rod into a magic Battleaxe that grants a +3 bonus to attack rolls and damage rolls made with it. **Button 3.** The rod’s flanged head folds down, a spear point springs from the rod’s tip, and the rod’s handle lengthens into a 6-foot haft, transforming the rod into a magic Spear that grants a +3 bonus to attack rolls and damage rolls made with it. **Button 4.** The rod transforms into a climbing pole up to 50 feet long (you specify the length), though the rod’s buttons remain within your reach. In surfaces as hard as granite, a spike at the bottom and three hooks at the top anchor the pole. Horizontal bars 3 inches long fold out from the sides, 1 foot apart, forming a ladder. The pole can bear up to 4,000 pounds. More weight or lack of solid anchoring causes the rod to revert to its normal form. **Button 5.** The rod transforms into a handheld battering ram and grants its user a +10 bonus to Strength (Athletics) checks made to break through doors, barricades, and other barriers. **Button 6.** The rod assumes or remains in its normal form and indicates magnetic north. (Nothing happens if this function of the rod is used in a location that has no magnetic north.) The rod also gives you knowledge of your approximate depth beneath the ground or your height above it.\n\n**Drain Life.** When you hit a creature with a melee attack using the rod, you can force the target to make a DC 17 Constitution saving throw. On a failed save, the target takes an extra 4d6 Necrotic damage, and you regain a number of Hit Points equal to half that Necrotic damage. Once used, this property can’t be used again until the next dawn.\n\n**Paralyze.** When you hit a creature with a melee attack using the rod, you can force the target to make a DC 17 Constitution saving throw. On a failed save, the target has the Paralyzed condition for 1 minute. The target repeats the save at the end of each of its turns, ending the effect on a success. Once used, this property can’t be used again until the next dawn.\n\n**Terrify.** While holding the rod, you can take a Magic action to force each creature you can see within 30 feet of yourself to make a DC 17 Wisdom saving throw. On a failed save, a target has the Frightened condition for 1 minute. A Frightened target repeats the save at the end of each of its turns, ending the effect on itself on a success. Once used, this property can’t be used again until the next dawn.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Button 1",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "fire",
+            "value": {
+              "count": 2,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 40,
+              "dim": 40
+            }
+          }
+        ]
+      },
+      {
+        "name": "Button 5",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "abilityCheck",
+            "value": 10,
+            "qualifiers": [
+              {
+                "type": "skill",
+                "skills": [
+                  "srd-5.2:skill/athletics"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Drain Life",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "necrotic",
+            "value": {
+              "count": 4,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "melee"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Paralyze",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/paralyzed",
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "melee"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Terrify",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/rod-of-resurrection",
@@ -6410,7 +8285,25 @@
         "atMost": 1
       }
     },
-    "description": "The rod has 5 charges. While you hold it, you can cast one of the following spells from it: *Heal* (expends 1 charge) or *Resurrection* (expends 5 charges).\n\nThe rod regains 1 expended charge daily at dawn. If you expend the last charge, roll 1d20. On a 1, the rod disappears in a harmless burst of radiance."
+    "description": "The rod has 5 charges. While you hold it, you can cast one of the following spells from it: *Heal* (expends 1 charge) or *Resurrection* (expends 5 charges).\n\nThe rod regains 1 expended charge daily at dawn. If you expend the last charge, roll 1d20. On a 1, the rod disappears in a harmless burst of radiance.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/heal",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/resurrection",
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/rod-of-rulership",
@@ -6418,28 +8311,96 @@
     "category": "rod",
     "rarity": "rare",
     "attunement": true,
-    "description": "You can take a Magic action to present the rod and command obedience from each creature of your choice that you can see within 120 feet of yourself. Each target must succeed on a DC 15 Wisdom saving throw or have the Charmed condition for 8 hours. While Charmed in this way, the creature regards you as its trusted leader. If harmed by you or your allies or commanded to do something contrary to its nature, a target ceases to be Charmed in this way. Once used, this property can’t be used again until the next dawn."
+    "description": "You can take a Magic action to present the rod and command obedience from each creature of your choice that you can see within 120 feet of yourself. Each target must succeed on a DC 15 Wisdom saving throw or have the Charmed condition for 8 hours. While Charmed in this way, the creature regards you as its trusted leader. If harmed by you or your allies or commanded to do something contrary to its nature, a target ceases to be Charmed in this way. Once used, this property can’t be used again until the next dawn.",
+    "activation": {
+      "type": "action"
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "dawn"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/charmed",
+        "affects": "target",
+        "duration": {
+          "value": 8,
+          "unit": "hour"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 120
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/rod-of-security",
     "name": "Rod of Security",
     "category": "rod",
     "rarity": "veryRare",
-    "description": "While holding this rod, you can take a Magic action to activate it. The rod then instantly transports you and up to 199 other willing creatures you can see to a demiplane. You choose the form the demiplane takes. It could be a tranquil garden, a cheery tavern, an immense palace, a tropical island, a fantastic carnival, or whatever else you can imagine. Regardless of its nature, the demiplane contains enough water and food to sustain its visitors, and the demiplane’s environment can’t harm its occupants. Everything else that can be interacted with there can exist only there. For example, a flower picked from a garden there disappears if it is taken outside the demiplane.\n\nFor each hour spent in the demiplane, a visitor regains Hit Points as if it had spent 1 Hit Point Die. Also, creatures don’t age while there, although time passes normally. Visitors can remain there for up to 200 days divided by the number of creatures present (round down).\n\nWhen the time runs out or you take a Magic action to end the effect, all visitors reappear in the location they occupied when you activated the rod or an unoccupied space nearest that location. Once used, this property can’t be used again until 10 days have passed."
+    "description": "While holding this rod, you can take a Magic action to activate it. The rod then instantly transports you and up to 199 other willing creatures you can see to a demiplane. You choose the form the demiplane takes. It could be a tranquil garden, a cheery tavern, an immense palace, a tropical island, a fantastic carnival, or whatever else you can imagine. Regardless of its nature, the demiplane contains enough water and food to sustain its visitors, and the demiplane’s environment can’t harm its occupants. Everything else that can be interacted with there can exist only there. For example, a flower picked from a garden there disappears if it is taken outside the demiplane.\n\nFor each hour spent in the demiplane, a visitor regains Hit Points as if it had spent 1 Hit Point Die. Also, creatures don’t age while there, although time passes normally. Visitors can remain there for up to 200 days divided by the number of creatures present (round down).\n\nWhen the time runs out or you take a Magic action to end the effect, all visitors reappear in the location they occupied when you activated the rod or an unoccupied space nearest that location. Once used, this property can’t be used again until 10 days have passed.",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/rope-of-climbing",
     "name": "Rope of Climbing",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "This 60-foot length of rope can hold up to 3,000 pounds. While holding one end of the rope, you can take a Magic action to command the other end of the rope to animate and move toward a destination you choose, up to the rope’s length away from you. That end moves 10 feet on your turn when you first command it and 10 feet at the start of each of your subsequent turns until reaching its destination or until you tell it to stop. You can also tell the rope to fasten itself securely to an object or to unfasten itself, to knot or unknot itself, or to coil itself for carrying.\n\nIf you tell the rope to knot, large knots appear at 1-foot intervals along the rope. While knotted, the rope shortens to a 50-foot length and grants Advantage on ability checks made to climb using the rope.\n\nThe rope has AC 20, HP 20, and Immunity to Poison and Psychic damage. It regains 1 Hit Point every 5 minutes as long as it has at least 1 Hit Point. If the rope drops to 0 Hit Points, it is destroyed."
+    "description": "This 60-foot length of rope can hold up to 3,000 pounds. While holding one end of the rope, you can take a Magic action to command the other end of the rope to animate and move toward a destination you choose, up to the rope’s length away from you. That end moves 10 feet on your turn when you first command it and 10 feet at the start of each of your subsequent turns until reaching its destination or until you tell it to stop. You can also tell the rope to fasten itself securely to an object or to unfasten itself, to knot or unknot itself, or to coil itself for carrying.\n\nIf you tell the rope to knot, large knots appear at 1-foot intervals along the rope. While knotted, the rope shortens to a 50-foot length and grants Advantage on ability checks made to climb using the rope.\n\nThe rope has AC 20, HP 20, and Immunity to Poison and Psychic damage. It regains 1 Hit Point every 5 minutes as long as it has at least 1 Hit Point. If the rope drops to 0 Hit Points, it is destroyed.",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/rope-of-entanglement",
     "name": "Rope of Entanglement",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "This rope is 30 feet long. While holding one end of the rope, you can take a Magic action to command the other end to dart forward and entangle one creature you can see within 20 feet of yourself. The target must succeed on a DC 15 Dexterity saving throw or have the Restrained condition. You can release the target by letting go of your end of the rope (causing the rope to coil up in the target’s space) or by using a Bonus Action to repeat the command (causing the rope to coil up in your hand).\n\nA target Restrained by the rope can take an action to make its choice of a DC 15 Strength (Athletics) or Dexterity (Acrobatics) check. On a successful check, the target is no longer Restrained by the rope. If you’re still holding onto the rope when a target escapes from it, you can take a Reaction to command the rope to coil up in your hand; otherwise, the rope coils up in the target’s space.\n\nThe rope has AC 20, HP 20, and Immunity to Poison and Psychic damage. It regains 1 Hit Point every 5 minutes as long as it has at least 1 Hit Point. If the rope drops to 0 Hit Points, it is destroyed."
+    "description": "This rope is 30 feet long. While holding one end of the rope, you can take a Magic action to command the other end to dart forward and entangle one creature you can see within 20 feet of yourself. The target must succeed on a DC 15 Dexterity saving throw or have the Restrained condition. You can release the target by letting go of your end of the rope (causing the rope to coil up in the target’s space) or by using a Bonus Action to repeat the command (causing the rope to coil up in your hand).\n\nA target Restrained by the rope can take an action to make its choice of a DC 15 Strength (Athletics) or Dexterity (Acrobatics) check. On a successful check, the target is no longer Restrained by the rope. If you’re still holding onto the rope when a target escapes from it, you can take a Reaction to command the rope to coil up in your hand; otherwise, the rope coils up in the target’s space.\n\nThe rope has AC 20, HP 20, and Immunity to Poison and Psychic damage. It regains 1 Hit Point every 5 minutes as long as it has at least 1 Hit Point. If the rope drops to 0 Hit Points, it is destroyed.",
+    "activation": {
+      "type": "action"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "range",
+            "within": 20,
+            "unit": "feet"
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate",
+          "escape": {
+            "ability": "STR",
+            "skills": [
+              "srd-5.2:skill/athletics",
+              "srd-5.2:skill/acrobatics"
+            ]
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/scarab-of-protection",
