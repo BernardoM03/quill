@@ -2668,7 +2668,11 @@
         },
         "affects": "target"
       }
-    ]
+    ],
+    "magicItem": {
+      "id": "srd-5.2:magic-item/potions-of-healing",
+      "variant": "healing"
+    }
   },
   {
     "id": "srd-5.2:equipment/pouch",
@@ -2972,7 +2976,10 @@
           }
         ]
       }
-    ]
+    ],
+    "magicItem": {
+      "id": "srd-5.2:magic-item/spell-scroll"
+    }
   },
   {
     "id": "srd-5.2:equipment/burglars-pack",

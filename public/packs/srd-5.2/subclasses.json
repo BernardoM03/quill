@@ -2952,7 +2952,7 @@
           },
           {
             "type": "restoreUses",
-            "target": "itemCharges",
+            "target": "charges",
             "value": "$derived:chargesSpent",
             "trigger": {
               "event": "expendCharges"
