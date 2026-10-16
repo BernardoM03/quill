@@ -5968,6 +5968,33 @@
           ],
           "additionalProperties": false,
           "description": "You are any listed species. Negated, a Belt of Dwarvenkind's benefits for a wearer who isn't a dwarf."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "magicalSource"
+            },
+            "kinds": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "kinds"
+          ],
+          "additionalProperties": false,
+          "description": "The roll is against a spell, or any magical effect, as a Mantle of Spell Resistance's saves against spells."
         }
       ]
     },
