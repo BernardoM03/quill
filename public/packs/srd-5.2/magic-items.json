@@ -2638,14 +2638,138 @@
     "name": "Efreeti Bottle",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "When you take a Magic action to remove the stopper of this painted brass bottle, a cloud of thick smoke flows out of it. At the end of your turn, the smoke disappears with a flash of harmless fire, and an **Efreeti** appears in an unoccupied space within 30 feet of you.\n\nThe first time the bottle is opened, the GM rolls on the following table to determine what happens.\n\n**1d10 Effect**\n\n| 1 | The efreeti attacks you. After fighting for 5 rounds, the efreeti disappears, and the bottle loses its magic. |\n|---|---|\n| 2–9 | The efreeti understands your languages and obeys your commands for 1 hour, after which it returns to the bottle, and a new stopper contains it. The stopper can’t be removed for 24 hours. The next two times the bottle is opened, the same effect occurs. If the bottle is opened a fourth time, the efreeti escapes and disappears, and the bottle loses its magic. |\n| 10 | The efreeti understands your languages and can cast *Wish* once for you. It disappears when it grants the wish or after 1 hour, and the bottle loses its magic. |"
+    "description": "When you take a Magic action to remove the stopper of this painted brass bottle, a cloud of thick smoke flows out of it. At the end of your turn, the smoke disappears with a flash of harmless fire, and an **Efreeti** appears in an unoccupied space within 30 feet of you.\n\nThe first time the bottle is opened, the GM rolls on the following table to determine what happens.\n\n| 1d10 | Effect |\n|---|---|\n| 1 | The efreeti attacks you. After fighting for 5 rounds, the efreeti disappears, and the bottle loses its magic. |\n| 2–9 | The efreeti understands your languages and obeys your commands for 1 hour, after which it returns to the bottle, and a new stopper contains it. The stopper can’t be removed for 24 hours. The next two times the bottle is opened, the same effect occurs. If the bottle is opened a fourth time, the efreeti escapes and disappears, and the bottle loses its magic. |\n| 10 | The efreeti understands your languages and can cast *Wish* once for you. It disappears when it grants the wish or after 1 hour, and the bottle loses its magic. |",
+    "activation": {
+      "type": "action"
+    },
+    "options": {
+      "list": "srd-5.2:list/efreeti-bottle",
+      "die": "d10",
+      "items": [
+        {
+          "id": "attacks",
+          "name": "Attacks",
+          "description": "The efreeti attacks you for 5 rounds, then disappears, and the bottle loses its magic.",
+          "roll": {
+            "min": 1,
+            "max": 1
+          },
+          "effects": []
+        },
+        {
+          "id": "obeys",
+          "name": "Obeys",
+          "description": "The efreeti obeys your commands for 1 hour, then returns to the bottle. This happens the next two times the bottle is opened; the fourth time, it escapes.",
+          "roll": {
+            "min": 2,
+            "max": 9
+          },
+          "duration": {
+            "value": 1,
+            "unit": "hour"
+          },
+          "effects": []
+        },
+        {
+          "id": "wish",
+          "name": "Wish",
+          "description": "The efreeti casts Wish once for you, then disappears, and the bottle loses its magic.",
+          "roll": {
+            "min": 10,
+            "max": 10
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/wish"
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "statBlock": "Efreeti"
+        }
+      },
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/efreeti-bottle",
+        "value": 1
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/elemental-gem",
     "name": "Elemental Gem",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "This gem contains a mote of elemental energy. When you take a Utilize action to break the gem, an elemental is summoned (see “Monsters” for its stat block), and the gem ceases to be magical. The elemental appears in an unoccupied space as close to the broken gem as possible, understands your languages, obeys your commands, and takes its turn immediately after you on your Initiative count. The elemental disappears after 1 hour, when it dies, or when you dismiss it as a Bonus Action. The type of gem determines the elemental, as shown in the following table.\n\n| Gem | Summoned Elemental |\n|---|---|\n| Blue sapphire | Air Elemental |\n| Emerald | Water Elemental |\n| Red corundum | Fire Elemental |\n| Yellow diamond | Earth Elemental |"
+    "variants": [
+      {
+        "slug": "blue-sapphire",
+        "name": "Elemental Gem (Blue Sapphire)",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Air Elemental"
+            }
+          }
+        ]
+      },
+      {
+        "slug": "emerald",
+        "name": "Elemental Gem (Emerald)",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Water Elemental"
+            }
+          }
+        ]
+      },
+      {
+        "slug": "red-corundum",
+        "name": "Elemental Gem (Red Corundum)",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Fire Elemental"
+            }
+          }
+        ]
+      },
+      {
+        "slug": "yellow-diamond",
+        "name": "Elemental Gem (Yellow Diamond)",
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Earth Elemental"
+            }
+          }
+        ]
+      }
+    ],
+    "consumable": true,
+    "description": "This gem contains a mote of elemental energy. When you take a Utilize action to break the gem, an elemental is summoned (see “Monsters” for its stat block), and the gem ceases to be magical. The elemental appears in an unoccupied space as close to the broken gem as possible, understands your languages, obeys your commands, and takes its turn immediately after you on your Initiative count. The elemental disappears after 1 hour, when it dies, or when you dismiss it as a Bonus Action. The type of gem determines the elemental, as shown in the following table.\n\n| Gem | Summoned Elemental |\n|---|---|\n| Blue sapphire | Air Elemental |\n| Emerald | Water Elemental |\n| Red corundum | Fire Elemental |\n| Yellow diamond | Earth Elemental |",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    }
   },
   {
     "id": "srd-5.2:magic-item/elixir-of-health",
@@ -2653,7 +2777,21 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "When you drink this potion, you are cured of all magical contagions. In addition, the following conditions end on you: Blinded, Deafened, Paralyzed, and Poisoned.\n\nThe clear, red liquid has tiny bubbles of light in it."
+    "description": "When you drink this potion, you are cured of all magical contagions. In addition, the following conditions end on you: Blinded, Deafened, Paralyzed, and Poisoned.\n\nThe clear, red liquid has tiny bubbles of light in it.",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "effects": [
+      {
+        "type": "endCondition",
+        "target": [
+          "srd-5.2:condition/blinded",
+          "srd-5.2:condition/deafened",
+          "srd-5.2:condition/paralyzed",
+          "srd-5.2:condition/poisoned"
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/elven-chain",
@@ -2666,7 +2804,32 @@
         "srd-5.2:equipment/chain-shirt"
       ]
     },
-    "description": "You gain a +1 bonus to Armor Class while you wear this armor. You are considered trained with this armor even if you lack training with Medium or Heavy armor."
+    "description": "You gain a +1 bonus to Armor Class while you wear this armor. You are considered trained with this armor even if you lack training with Medium or Heavy armor.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 1
+      },
+      {
+        "type": "grantProficiency",
+        "target": "mediumArmor",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "grantProficiency",
+        "target": "heavyArmor",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/energy-bow",
@@ -2680,14 +2843,142 @@
         "srd-5.2:equipment/shortbow"
       ]
     },
-    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon, which has no string. Each time you pull your arm back in a firing motion, a magical arrow made of golden energy appears nocked and ready to fire. An arrow produced by this weapon deals Force damage instead of Piercing damage on a hit, and it disappears after it hits or misses its target. Until it disappears, the arrow emits Bright Light in a 20-foot radius and Dim Light for an additional 20 feet.\n\nThis weapon has the following additional properties.\n\n**Arrow of Restraint.** Whenever you use this weapon to make a ranged attack against a creature, you can try to restrain the target instead of dealing damage to it. If the arrow hits, the target must succeed on a DC 15 Strength saving throw or have the Restrained condition for 1 minute. As an action, a creature Restrained by an arrow can make a DC 20 Strength (Athletics) check to try to break the restraint, ending the effect on itself on a successful check.\n\n**Arrow of Transport.** As a Magic action, you can fire one energy arrow from this weapon at a target you can see within 60 feet of yourself. The target can be either a willing Medium or smaller creature or an object that isn’t being worn or carried, provided the object is small enough to fit inside a 5-foot Cube. The arrow teleports the target to an unoccupied space you can see within 10 feet of you.\n\n**Energy Ladder.** As a Magic action, you can loose a flurry of energy arrows from this weapon at a wall up to 60 feet away from yourself. The arrows become glowing rungs that stick out of the wall, forming a magical ladder up to 60 feet long on the wall. This ladder lasts for 1 minute before disappearing."
+    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon, which has no string. Each time you pull your arm back in a firing motion, a magical arrow made of golden energy appears nocked and ready to fire. An arrow produced by this weapon deals Force damage instead of Piercing damage on a hit, and it disappears after it hits or misses its target. Until it disappears, the arrow emits Bright Light in a 20-foot radius and Dim Light for an additional 20 feet.\n\nThis weapon has the following additional properties.\n\n**Arrow of Restraint.** Whenever you use this weapon to make a ranged attack against a creature, you can try to restrain the target instead of dealing damage to it. If the arrow hits, the target must succeed on a DC 15 Strength saving throw or have the Restrained condition for 1 minute. As an action, a creature Restrained by an arrow can make a DC 20 Strength (Athletics) check to try to break the restraint, ending the effect on itself on a successful check.\n\n**Arrow of Transport.** As a Magic action, you can fire one energy arrow from this weapon at a target you can see within 60 feet of yourself. The target can be either a willing Medium or smaller creature or an object that isn’t being worn or carried, provided the object is small enough to fit inside a 5-foot Cube. The arrow teleports the target to an unoccupied space you can see within 10 feet of you.\n\n**Energy Ladder.** As a Magic action, you can loose a flurry of energy arrows from this weapon at a wall up to 60 feet away from yourself. The arrows become glowing rungs that stick out of the wall, forming a magical ladder up to 60 feet long on the wall. This ladder lasts for 1 minute before disappearing.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "changeDamageType",
+        "value": "force",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Arrow of Restraint",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "ranged"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "STR",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Arrow of Transport",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "teleport",
+            "value": 10,
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Energy Ladder",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/eversmoking-bottle",
     "name": "Eversmoking Bottle",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "As a Magic action, you can open or close this bottle.\n\nOpening the bottle causes thick smoke to billow out, forming a cloud that fills a 60-foot Emanation originating from the bottle. The area within the smoke is Heavily Obscured.\n\nEach minute the bottle remains open, the size of the Emanation increases by 10 feet until it reaches its maximum size of 120 feet.\n\nClosing the bottle causes the cloud to become fixed in place until it disperses after 10 minutes. A strong wind (such as that created by the *Gust of* *Wind* spell) disperses the cloud after 1 minute."
+    "description": "As a Magic action, you can open or close this bottle.\n\nOpening the bottle causes thick smoke to billow out, forming a cloud that fills a 60-foot Emanation originating from the bottle. The area within the smoke is Heavily Obscured.\n\nEach minute the bottle remains open, the size of the Emanation increases by 10 feet until it reaches its maximum size of 120 feet.\n\nClosing the bottle causes the cloud to become fixed in place until it disperses after 10 minutes. A strong wind (such as that created by the *Gust of* *Wind* spell) disperses the cloud after 1 minute.",
+    "properties": [
+      {
+        "name": "Open",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "createZone",
+            "value": {
+              "obscured": "heavy"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 60
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/eyes-of-charming",
@@ -2702,21 +2993,83 @@
         "rest": "dawn"
       }
     },
-    "description": "These crystal lenses fit over the eyes. They have 3 charges. While wearing them, you can expend 1 or more charges to cast *Charm Person* (save DC 13). For 1 charge, you cast the level 1 version of the spell. You increase the spell’s level by one for each additional charge you expend. The lenses regain all expended charges daily at dawn."
+    "description": "These crystal lenses fit over the eyes. They have 3 charges. While wearing them, you can expend 1 or more charges to cast *Charm Person* (save DC 13). For 1 charge, you cast the level 1 version of the spell. You increase the spell’s level by one for each additional charge you expend. The lenses regain all expended charges daily at dawn.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/charm-person",
+        "castingOverrides": {
+          "saveDc": 13,
+          "castLevel": 1,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 3
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/eyes-of-minute-seeing",
     "name": "Eyes of Minute Seeing",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "These crystal lenses fit over the eyes. While wearing them, your vision improves significantly out to a range of 1 foot, granting you Darkvision within that range and Advantage on Intelligence (Investigation) checks made to examine something within that range."
+    "description": "These crystal lenses fit over the eyes. While wearing them, your vision improves significantly out to a range of 1 foot, granting you Darkvision within that range and Advantage on Intelligence (Investigation) checks made to examine something within that range.",
+    "effects": [
+      {
+        "type": "grantSense",
+        "target": "darkvision",
+        "value": 1
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/investigation"
+            ]
+          },
+          {
+            "type": "range",
+            "within": 1,
+            "unit": "feet"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/eyes-of-the-eagle",
     "name": "Eyes of the Eagle",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "These crystal lenses fit over the eyes. While wearing them, you have Advantage on Wisdom (Perception) checks that rely on sight. In conditions of clear visibility, you can make out details of even extremely distant creatures and objects as small as 2 feet across."
+    "description": "These crystal lenses fit over the eyes. While wearing them, you have Advantage on Wisdom (Perception) checks that rely on sight. In conditions of clear visibility, you can make out details of even extremely distant creatures and objects as small as 2 feet across.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception"
+            ]
+          },
+          {
+            "type": "sense",
+            "senses": [
+              "sight"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/feather-token",
@@ -2752,10 +3105,36 @@
       {
         "slug": "whip",
         "name": "Feather Token (Whip)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "grantAttack",
+            "value": {
+              "count": 1,
+              "actionType": "bonusAction"
+            }
+          },
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 1,
+              "die": "d6",
+              "modifier": 5
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack"
+            }
+          }
+        ]
       }
     ],
-    "description": "This object looks like a feather. Different types of feather tokens exist, each with a different single-use effect. The GM chooses the kind of token or determines it randomly by rolling on the Feather Tokens table. The type of token determines its rarity.\n\n**Anchor (Uncommon).** You can take a Magic action to touch the token to a boat or ship. For the next 24 hours, the vessel can’t be moved by any means. Touching the token to the vessel again ends the effect. When the effect ends, the token disappears.\n\n**Bird (Rare).** You can take a Magic action to toss the token 5 feet into the air. The token disappears and an enormous, multicolored bird takes its place. The bird has the statistics of a **Roc**, but it can’t attack. It obeys your simple commands and can carry up to 500 pounds while flying at its maximum speed (16 miles per hour for a maximum of 144 miles per day, with a 1-hour rest for every 3 hours of flying) or 1,000 pounds at half that speed. The bird disappears after flying its maximum distance for a day or if it drops to 0 Hit Points. You can dismiss the bird as a Magic action.\n\n**Fan (Uncommon).** If you are on a boat or ship, you can take a Magic action to toss the token up to 10 feet in the air. The token disappears, and a giant flapping fan takes its place. The fan floats and creates a strong wind. This wind can fill the sails of one ship, increasing its speed by 5 miles per hour for 8 hours. You can dismiss the fan as a Magic action.\n\n**Swan Boat (Rare).** You can take a Magic action to touch the token to a body of water at least 60 feet in diameter. The token disappears, and a 50-footlong, 20-foot-wide boat shaped like a swan takes its place. The boat is self-propelled and moves across water at a speed of 6 miles per hour. You can take a Magic action while on the boat to command it to move or to turn up to 90 degrees. The boat remains for 24 hours and then disappears. You can dismiss the boat as a Magic action.\n\n**Tree (Uncommon).** You must be outdoors to use this token. You can take a Magic action to touch it to an unoccupied space on the ground. The token disappears, and in its place a nonmagical oak tree springs into existence. The tree is 60 feet tall and has a 5-foot-diameter trunk, and its branches at the top spread out in a 20-foot radius.\n\n**Whip (Rare).** You can take a Magic action to throw the token to a point within 10 feet of yourself. The token disappears, and a floating whip takes its place. You can then take a Bonus Action to make a melee spell attack against a creature within 10 feet of the whip, with an attack bonus of +9. On a hit, the target takes 1d6 + 5 Force damage.\n\nAs a Bonus Action, you can direct the whip to fly up to 20 feet and repeat the attack against a creature within 10 feet of the whip. The whip disappears after 1 hour, when you take a Magic action to dismiss it, or when you die or have the Incapacitated condition.\n\n**Feather Tokens**\n\n| 1d100 | Token | Rarity |\n|---|---|---|\n| 01–20 | Anchor | Uncommon |\n| 21–35 | Bird | Rare |\n| 36–50 | Fan | Uncommon |\n| 51–65 | Swan boat | Rare |\n| 66–90 | Tree | Uncommon |\n| 91–00 | Whip | Rare |"
+    "consumable": true,
+    "description": "This object looks like a feather. Different types of feather tokens exist, each with a different single-use effect. The GM chooses the kind of token or determines it randomly by rolling on the Feather Tokens table. The type of token determines its rarity.\n\n**Anchor (Uncommon).** You can take a Magic action to touch the token to a boat or ship. For the next 24 hours, the vessel can’t be moved by any means. Touching the token to the vessel again ends the effect. When the effect ends, the token disappears.\n\n**Bird (Rare).** You can take a Magic action to toss the token 5 feet into the air. The token disappears and an enormous, multicolored bird takes its place. The bird has the statistics of a **Roc**, but it can’t attack. It obeys your simple commands and can carry up to 500 pounds while flying at its maximum speed (16 miles per hour for a maximum of 144 miles per day, with a 1-hour rest for every 3 hours of flying) or 1,000 pounds at half that speed. The bird disappears after flying its maximum distance for a day or if it drops to 0 Hit Points. You can dismiss the bird as a Magic action.\n\n**Fan (Uncommon).** If you are on a boat or ship, you can take a Magic action to toss the token up to 10 feet in the air. The token disappears, and a giant flapping fan takes its place. The fan floats and creates a strong wind. This wind can fill the sails of one ship, increasing its speed by 5 miles per hour for 8 hours. You can dismiss the fan as a Magic action.\n\n**Swan Boat (Rare).** You can take a Magic action to touch the token to a body of water at least 60 feet in diameter. The token disappears, and a 50-footlong, 20-foot-wide boat shaped like a swan takes its place. The boat is self-propelled and moves across water at a speed of 6 miles per hour. You can take a Magic action while on the boat to command it to move or to turn up to 90 degrees. The boat remains for 24 hours and then disappears. You can dismiss the boat as a Magic action.\n\n**Tree (Uncommon).** You must be outdoors to use this token. You can take a Magic action to touch it to an unoccupied space on the ground. The token disappears, and in its place a nonmagical oak tree springs into existence. The tree is 60 feet tall and has a 5-foot-diameter trunk, and its branches at the top spread out in a 20-foot radius.\n\n**Whip (Rare).** You can take a Magic action to throw the token to a point within 10 feet of yourself. The token disappears, and a floating whip takes its place. You can then take a Bonus Action to make a melee spell attack against a creature within 10 feet of the whip, with an attack bonus of +9. On a hit, the target takes 1d6 + 5 Force damage.\n\nAs a Bonus Action, you can direct the whip to fly up to 20 feet and repeat the attack against a creature within 10 feet of the whip. The whip disappears after 1 hour, when you take a Magic action to dismiss it, or when you die or have the Incapacitated condition.\n\n**Feather Tokens**\n\n| 1d100 | Token | Rarity |\n|---|---|---|\n| 01–20 | Anchor | Uncommon |\n| 21–35 | Bird | Rare |\n| 36–50 | Fan | Uncommon |\n| 51–65 | Swan boat | Rare |\n| 66–90 | Tree | Uncommon |\n| 91–00 | Whip | Rare |",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/figurine-of-wondrous-power",
@@ -2766,53 +3145,146 @@
       {
         "slug": "bronze-griffon",
         "name": "Figurine of Wondrous Power (Bronze Griffon)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Griffon"
+            }
+          }
+        ]
       },
       {
         "slug": "ebony-fly",
         "name": "Figurine of Wondrous Power (Ebony Fly)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Giant Fly"
+            }
+          }
+        ]
       },
       {
         "slug": "golden-lions",
         "name": "Figurine of Wondrous Power (Golden Lions)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/lion"
+              ],
+              "count": 2
+            }
+          }
+        ]
       },
       {
         "slug": "ivory-goats",
         "name": "Figurine of Wondrous Power (Ivory Goats)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/giant-goat"
+              ],
+              "count": 3
+            }
+          }
+        ]
       },
       {
         "slug": "marble-elephant",
         "name": "Figurine of Wondrous Power (Marble Elephant)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/elephant"
+              ]
+            }
+          }
+        ]
       },
       {
         "slug": "obsidian-steed",
         "name": "Figurine of Wondrous Power (Obsidian Steed)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Nightmare"
+            }
+          }
+        ]
       },
       {
         "slug": "onyx-dog",
         "name": "Figurine of Wondrous Power (Onyx Dog)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/mastiff"
+              ]
+            }
+          }
+        ]
       },
       {
         "slug": "serpentine-owl",
         "name": "Figurine of Wondrous Power (Serpentine Owl)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/giant-owl"
+              ]
+            }
+          }
+        ]
       },
       {
         "slug": "silver-raven",
         "name": "Figurine of Wondrous Power (Silver Raven)",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "forms": [
+                "srd-5.2:creature/raven"
+              ]
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/animal-messenger"
+          }
+        ]
       }
     ],
     "charges": {
       "max": 24
     },
-    "description": "A *Figurine of Wondrous Power* is a statuette small enough to fit in a pocket. If you take a Magic action to throw the figurine to a point on the ground within 60 feet of yourself, the figurine becomes a living creature specified in the figurine’s description below. If the space where the creature would appear is occupied by other creatures or objects, or if there isn’t enough space for the creature, the figurine doesn’t become a creature.\n\nThe creature is Friendly to you and your allies. It understands your languages, obeys your commands, and takes its turn immediately after you on your Initiative count. If you issue no commands, the creature defends itself but takes no other actions.\n\nThe creature exists for a duration specific to each figurine. At the end of the duration, the creature reverts to its figurine form. It reverts to a figurine early if its creature form drops to 0 Hit Points or if you take a Magic action while touching the creature to make it revert to figurine form. When the creature becomes a figurine again, its property can’t be used again until a certain amount of time has passed, as specified in the figurine’s description.\n\n**Bronze Griffon (Rare).** This bronze statuette is of a griffon rampant. It can become a **Griffon** for up to 6 hours. Once it has been used, it can’t be used again until 5 days have passed.\n\n**Ebony Fly (Rare).** This ebony statuette, carved in the likeness of a horsefly, can become a **Giant Fly** (see the accompanying stat block) for up to 12 hours and can be ridden as a mount. Once it has been used, it can’t be used again until 2 days have passed.\n\n**Giant Fly**\n\n*Large Beast, Unaligned* **AC** 11 **Initiative** +1 (11) **HP** 19 (3d10 + 3) **Speed** 30 ft., Fly 60 ft.\n\n| MOD SAVE | MOD SAVE | MOD SAVE |  |  |  |  |  |  |\n|---|---|---|---|---|---|---|---|---|\n| **S** | 14 | +2 +2 | **D** | 13 | +1 +1 | **C** | 13 | +1 +1 |\n| **tr** |  |  | **ex** |  |  | **on** |  |  |\n| **I** | 2 | −4 −4 | **W** | 10 | +0 +0 | **C** | 3 | −4 −4 |\n| **nt** |  |  |  | **IS** |  | **ha** |  |  |\n\n**Senses** Darkvision 60 ft., Passive Perception 10 **Languages** None **CR** 0 (XP 0; PB +2)\n\n**Golden Lions (Rare).** These gold statuettes of lions are always created in pairs. You can use one figurine or both simultaneously. Each can become a **Lion** for up to 1 hour. Once a lion has been used, it can’t be used again until 7 days have passed.\n\n**Ivory Goats (Rare).** These ivory statuettes of goats are always created in sets of three. Each goat looks unique and functions differently from the others. Their properties are as follows: **Goat of Terror.** This figurine can become a **Giant Goat** for up to 3 hours. The goat can’t attack, but you can (harmlessly) remove its horns and use them as weapons. One horn becomes a *+1 Lance*, and the other becomes a *+2 Longsword*. Removing a horn requires a Magic action, and the weapons disappear and the horns return when the goat reverts to figurine form. While you ride the goat, any Hostile creature that starts its turn within a 30-foot Emanation originating from the goat must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute, until you are no longer riding the goat, or until the goat reverts to figurine form. The Frightened creature repeats the save at the end of each of its turns, ending the effect on itself on a success. Once it succeeds on the save, a creature is immune to this effect for the next 24 hours. Once the figurine has been used, it can’t be used again until 15 days have passed. **Goat of Traveling.** This figurine can become a Large goat with the same statistics as a **Riding Horse**. It has 24 charges, and each hour or portion thereof it spends in goat form costs 1 charge. While it has charges, you can use it as often as you wish. When it runs out of charges, it reverts to a figurine and can’t be used again until 7 days have passed, when it regains all expended charges. **Goat of Travail.** This figurine can become a **Giant Goat** for up to 3 hours. Once it has been used, it can’t be used again until 30 days have passed.\n\n**Marble Elephant (Rare).** This marble statuette resembles a trumpeting elephant. It can become an **Elephant** for up to 24 hours. Once it has been used, it can’t be used again until 7 days have passed.\n\n**Obsidian Steed (Very Rare).** This polished obsidian horse can become a **Nightmare** for up to 24 hours. The nightmare fights only to defend itself. Once it has been used, it can’t be used again until 5 days have passed.\n\nThe figurine has a 10 percent chance each time you use it to ignore your orders, including a command to revert to figurine form. If you mount the nightmare while it is ignoring your orders, you and the nightmare are instantly transported to a random location on the plane of Hades, where the nightmare reverts to figurine form.\n\n**Onyx Dog (Rare).** This onyx statuette of a dog can become a **Mastiff** for up to 6 hours. The mastiff has an Intelligence of 8 and can speak Common. It also has Blindsight with a range of 60 feet. Once it has been used, it can’t be used again until 7 days have passed.\n\n**Serpentine Owl (Rare).** This serpentine statuette of an owl can become a **Giant Owl** for up to 8 hours. The owl can communicate telepathically with you at any range if you and it are on the same plane of existence. Once it has been used, it can’t be used again until 2 days have passed.\n\n**Silver Raven (Uncommon).** This silver statuette of a raven can become a **Raven** for up to 12 hours. Once it has been used, it can’t be used again until 2 days have passed. While in raven form, the figurine grants you the ability to cast *Animal Messenger* on it."
+    "description": "A *Figurine of Wondrous Power* is a statuette small enough to fit in a pocket. If you take a Magic action to throw the figurine to a point on the ground within 60 feet of yourself, the figurine becomes a living creature specified in the figurine’s description below. If the space where the creature would appear is occupied by other creatures or objects, or if there isn’t enough space for the creature, the figurine doesn’t become a creature.\n\nThe creature is Friendly to you and your allies. It understands your languages, obeys your commands, and takes its turn immediately after you on your Initiative count. If you issue no commands, the creature defends itself but takes no other actions.\n\nThe creature exists for a duration specific to each figurine. At the end of the duration, the creature reverts to its figurine form. It reverts to a figurine early if its creature form drops to 0 Hit Points or if you take a Magic action while touching the creature to make it revert to figurine form. When the creature becomes a figurine again, its property can’t be used again until a certain amount of time has passed, as specified in the figurine’s description.\n\n**Bronze Griffon (Rare).** This bronze statuette is of a griffon rampant. It can become a **Griffon** for up to 6 hours. Once it has been used, it can’t be used again until 5 days have passed.\n\n**Ebony Fly (Rare).** This ebony statuette, carved in the likeness of a horsefly, can become a **Giant Fly** (see the accompanying stat block) for up to 12 hours and can be ridden as a mount. Once it has been used, it can’t be used again until 2 days have passed.\n\n**Giant Fly**\n\n*Large Beast, Unaligned* **AC** 11 **Initiative** +1 (11) **HP** 19 (3d10 + 3) **Speed** 30 ft., Fly 60 ft.\n\n| MOD SAVE | MOD SAVE | MOD SAVE |  |  |  |  |  |  |\n|---|---|---|---|---|---|---|---|---|\n| **S** | 14 | +2 +2 | **D** | 13 | +1 +1 | **C** | 13 | +1 +1 |\n| **tr** |  |  | **ex** |  |  | **on** |  |  |\n| **I** | 2 | −4 −4 | **W** | 10 | +0 +0 | **C** | 3 | −4 −4 |\n| **nt** |  |  |  | **IS** |  | **ha** |  |  |\n\n**Senses** Darkvision 60 ft., Passive Perception 10 **Languages** None **CR** 0 (XP 0; PB +2)\n\n**Golden Lions (Rare).** These gold statuettes of lions are always created in pairs. You can use one figurine or both simultaneously. Each can become a **Lion** for up to 1 hour. Once a lion has been used, it can’t be used again until 7 days have passed.\n\n**Ivory Goats (Rare).** These ivory statuettes of goats are always created in sets of three. Each goat looks unique and functions differently from the others. Their properties are as follows: **Goat of Terror.** This figurine can become a **Giant Goat** for up to 3 hours. The goat can’t attack, but you can (harmlessly) remove its horns and use them as weapons. One horn becomes a *+1 Lance*, and the other becomes a *+2 Longsword*. Removing a horn requires a Magic action, and the weapons disappear and the horns return when the goat reverts to figurine form. While you ride the goat, any Hostile creature that starts its turn within a 30-foot Emanation originating from the goat must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute, until you are no longer riding the goat, or until the goat reverts to figurine form. The Frightened creature repeats the save at the end of each of its turns, ending the effect on itself on a success. Once it succeeds on the save, a creature is immune to this effect for the next 24 hours. Once the figurine has been used, it can’t be used again until 15 days have passed. **Goat of Traveling.** This figurine can become a Large goat with the same statistics as a **Riding Horse**. It has 24 charges, and each hour or portion thereof it spends in goat form costs 1 charge. While it has charges, you can use it as often as you wish. When it runs out of charges, it reverts to a figurine and can’t be used again until 7 days have passed, when it regains all expended charges. **Goat of Travail.** This figurine can become a **Giant Goat** for up to 3 hours. Once it has been used, it can’t be used again until 30 days have passed.\n\n**Marble Elephant (Rare).** This marble statuette resembles a trumpeting elephant. It can become an **Elephant** for up to 24 hours. Once it has been used, it can’t be used again until 7 days have passed.\n\n**Obsidian Steed (Very Rare).** This polished obsidian horse can become a **Nightmare** for up to 24 hours. The nightmare fights only to defend itself. Once it has been used, it can’t be used again until 5 days have passed.\n\nThe figurine has a 10 percent chance each time you use it to ignore your orders, including a command to revert to figurine form. If you mount the nightmare while it is ignoring your orders, you and the nightmare are instantly transported to a random location on the plane of Hades, where the nightmare reverts to figurine form.\n\n**Onyx Dog (Rare).** This onyx statuette of a dog can become a **Mastiff** for up to 6 hours. The mastiff has an Intelligence of 8 and can speak Common. It also has Blindsight with a range of 60 feet. Once it has been used, it can’t be used again until 7 days have passed.\n\n**Serpentine Owl (Rare).** This serpentine statuette of an owl can become a **Giant Owl** for up to 8 hours. The owl can communicate telepathically with you at any range if you and it are on the same plane of existence. Once it has been used, it can’t be used again until 2 days have passed.\n\n**Silver Raven (Uncommon).** This silver statuette of a raven can become a **Raven** for up to 12 hours. Once it has been used, it can’t be used again until 2 days have passed. While in raven form, the figurine grants you the ability to cast *Animal Messenger* on it.",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/flame-tongue",
@@ -2826,7 +3298,42 @@
         "melee"
       ]
     },
-    "description": "While holding this magic weapon, you can take a Bonus Action and use a command word to cause flames to engulf the damage-dealing part of the weapon. These flames shed Bright Light in a 40foot radius and Dim Light for an additional 40 feet. While the weapon is ablaze, it deals an extra 2d6 Fire damage on a hit. The flames last until you take a Bonus Action to issue the command again or until you drop, stow, or sheathe the weapon."
+    "description": "While holding this magic weapon, you can take a Bonus Action and use a command word to cause flames to engulf the damage-dealing part of the weapon. These flames shed Bright Light in a 40foot radius and Dim Light for an additional 40 feet. While the weapon is ablaze, it deals an extra 2d6 Fire damage on a hit. The flames last until you take a Bonus Action to issue the command again or until you drop, stow, or sheathe the weapon.",
+    "properties": [
+      {
+        "name": "Ignite",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "fire",
+            "value": {
+              "count": 2,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 40,
+              "dim": 40
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/folding-boat",
@@ -2851,7 +3358,41 @@
         "srd-5.2:equipment/shortsword"
       ]
     },
-    "description": "When you hit with an attack roll using this magic weapon, the target takes an extra 1d6 Cold damage. In addition, while you hold the weapon, you have Resistance to Fire damage.\n\nIn freezing temperatures, the weapon sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet.\n\nWhen you draw this weapon, you can extinguish all nonmagical flames within 30 feet of yourself. Once used, this property can’t be used again for 1 hour."
+    "description": "When you hit with an attack roll using this magic weapon, the target takes an extra 1d6 Cold damage. In addition, while you hold the weapon, you have Resistance to Fire damage.\n\nIn freezing temperatures, the weapon sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet.\n\nWhen you draw this weapon, you can extinguish all nonmagical flames within 30 feet of yourself. Once used, this property can’t be used again for 1 hour.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "cold",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "grantResistance",
+        "target": "fire"
+      }
+    ],
+    "properties": [
+      {
+        "name": "Extinguish",
+        "uses": {
+          "max": 1,
+          "recharge": "none"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gauntlets-of-ogre-power",
@@ -2859,7 +3400,14 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "Your Strength is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them."
+    "description": "Your Strength is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them.",
+    "effects": [
+      {
+        "type": "setAbilityScore",
+        "target": "STR",
+        "value": 19
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gem-of-brightness",
@@ -2869,7 +3417,93 @@
     "charges": {
       "max": 50
     },
-    "description": "This prism has 50 charges. While you are holding it, you can take a Magic action and use one of three command words to cause one of the following effects: **First Command Word.** The gem sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. This effect doesn’t expend a charge. It lasts until you take a Bonus Action to repeat the command word or until you use another function of the gem. **Second Command Word.** You expend 1 charge and cause the gem to fire a brilliant beam of light at one creature you can see within 60 feet of yourself. The creature must succeed on a DC 15 Constitution saving throw or have the Blinded condition for 1 minute. The creature repeats the save at the end of each of its turns, ending the effect on itself on a success. **Third Command Word.** You expend 5 charges and cause the gem to flare with intense light in a 30foot Cone. Each creature in the Cone makes a saving throw as if struck by the beam created with the second command word. When all of the gem’s charges are expended, the gem becomes a nonmagical jewel worth 50 GP."
+    "description": "This prism has 50 charges. While you are holding it, you can take a Magic action and use one of three command words to cause one of the following effects: **First Command Word.** The gem sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. This effect doesn’t expend a charge. It lasts until you take a Bonus Action to repeat the command word or until you use another function of the gem. **Second Command Word.** You expend 1 charge and cause the gem to fire a brilliant beam of light at one creature you can see within 60 feet of yourself. The creature must succeed on a DC 15 Constitution saving throw or have the Blinded condition for 1 minute. The creature repeats the save at the end of each of its turns, ending the effect on itself on a success. **Third Command Word.** You expend 5 charges and cause the gem to flare with intense light in a 30foot Cone. Each creature in the Cone makes a saving throw as if struck by the beam created with the second command word. When all of the gem’s charges are expended, the gem becomes a nonmagical jewel worth 50 GP.",
+    "activation": {
+      "type": "action"
+    },
+    "properties": [
+      {
+        "name": "First Command Word",
+        "effects": [
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 30,
+              "dim": 30
+            }
+          }
+        ]
+      },
+      {
+        "name": "Second Command Word",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/blinded",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Third Command Word",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/blinded",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 5
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "area": [
+              {
+                "shape": "cone",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gem-of-seeing",
@@ -2887,7 +3521,30 @@
         "rest": "dawn"
       }
     },
-    "description": "This gem has 3 charges. As a Magic action, you can expend 1 charge. For the next 10 minutes, you have Truesight out to 120 feet when you peer through the gem.\n\nThe gem regains 1d3 expended charges daily at dawn."
+    "description": "This gem has 3 charges. As a Magic action, you can expend 1 charge. For the next 10 minutes, you have Truesight out to 120 feet when you peer through the gem.\n\nThe gem regains 1d3 expended charges daily at dawn.",
+    "properties": [
+      {
+        "name": "Peer",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "effects": [
+          {
+            "type": "grantSense",
+            "target": "truesight",
+            "value": 120,
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/giant-slayer",
@@ -2901,7 +3558,80 @@
         "martial"
       ]
     },
-    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon.\n\nWhen you hit a Giant with this weapon, the Giant takes an extra 2d6 damage of the weapon’s type and must succeed on a DC 15 Strength saving throw or have the Prone condition."
+    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon.\n\nWhen you hit a Giant with this weapon, the Giant takes an extra 2d6 damage of the weapon’s type and must succeed on a DC 15 Strength saving throw or have the Prone condition.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "$derived:attackDamageType",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "giant"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/prone",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "giant"
+            ]
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/glamoured-studded-leather",
@@ -2913,7 +3643,23 @@
         "srd-5.2:equipment/studded-leather-armor"
       ]
     },
-    "description": "While wearing this armor, you gain a +1 bonus to Armor Class. You can also take a Bonus Action to cause the armor to assume the appearance of a normal set of clothing or some other kind of armor. You decide what it looks like—including color, style, and accessories—but the armor retains its normal bulk and weight. The illusory appearance lasts until you use this property again or doff the armor."
+    "description": "While wearing this armor, you gain a +1 bonus to Armor Class. You can also take a Bonus Action to cause the armor to assume the appearance of a normal set of clothing or some other kind of armor. You decide what it looks like—including color, style, and accessories—but the armor retains its normal bulk and weight. The illusory appearance lasts until you use this property again or doff the armor.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 1
+      }
+    ],
+    "properties": [
+      {
+        "name": "Glamour",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gloves-of-missile-snaring",
@@ -2921,7 +3667,49 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "If you’re hit by an attack roll made with a Ranged or Thrown weapon while wearing these gloves, you can take a Reaction to reduce the damage by 1d10 plus your Dexterity modifier if you have a free hand. If you reduce the damage to 0, you can catch the ammunition or weapon if it is small enough for you to hold in that hand."
+    "description": "If you’re hit by an attack roll made with a Ranged or Thrown weapon while wearing these gloves, you can take a Reaction to reduce the damage by 1d10 plus your Dexterity modifier if you have a free hand. If you reduce the damage to 0, you can catch the ammunition or weapon if it is small enough for you to hold in that hand.",
+    "properties": [
+      {
+        "name": "Snare",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You're hit by a Ranged or Thrown weapon attack."
+        },
+        "effects": [
+          {
+            "type": "reduceDamage",
+            "value": {
+              "count": 1,
+              "die": "d10",
+              "modifier": "$derived:DEX"
+            },
+            "trigger": {
+              "event": "hitByAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "anyOf",
+                "qualifiers": [
+                  {
+                    "type": "attackRange",
+                    "attackRanges": [
+                      "ranged"
+                    ]
+                  },
+                  {
+                    "type": "weaponProperty",
+                    "weaponProperties": [
+                      "thrown"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gloves-of-swimming-and-climbing",
@@ -2929,21 +3717,68 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing these gloves, you have a Climb Speed and a Swim Speed equal to your Speed, and you gain a +5 bonus to Strength (Athletics) checks made to climb or swim."
+    "description": "While wearing these gloves, you have a Climb Speed and a Swim Speed equal to your Speed, and you gain a +5 bonus to Strength (Athletics) checks made to climb or swim.",
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "climb",
+        "value": "$derived:walkingSpeed"
+      },
+      {
+        "type": "grantSpeed",
+        "target": "swim",
+        "value": "$derived:walkingSpeed"
+      },
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 5,
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/athletics"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/gloves-of-thievery",
     "name": "Gloves of Thievery",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "These gloves are imperceptible while worn. While wearing them, you gain a +5 bonus to Dexterity (Sleight of Hand) checks."
+    "description": "These gloves are imperceptible while worn. While wearing them, you gain a +5 bonus to Dexterity (Sleight of Hand) checks.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 5,
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/sleight-of-hand"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/goggles-of-night",
     "name": "Goggles of Night",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "While wearing these dark lenses, you have Darkvision out to 60 feet. If you already have Darkvision, wearing the goggles increases its range by 60 feet."
+    "description": "While wearing these dark lenses, you have Darkvision out to 60 feet. If you already have Darkvision, wearing the goggles increases its range by 60 feet.",
+    "effects": [
+      {
+        "type": "grantSense",
+        "target": "darkvision",
+        "value": 60
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/hammer-of-thunderbolts",
@@ -2968,7 +3803,108 @@
         "rest": "dawn"
       }
     },
-    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon.\n\nThe weapon has 5 charges. You can expend 1 charge and make a ranged attack with the weapon, hurling it as if it had the Thrown property with a normal range of 20 feet and a long range of 60 feet. If the attack hits, the weapon unleashes a thunderclap audible out to 300 feet. The target and every creature within 30 feet of it other than you must succeed on a DC 17 Constitution saving throw or have the Stunned condition until the end of your next turn. Immediately after hitting or missing, the weapon flies back to your hand. The weapon regains 1d4 + 1 expended charges daily at dawn.\n\n**Giant’s Bane.** While you are attuned to the weapon and wearing either a *Belt of Giant Strength* or *Gauntlets of Ogre Power* to which you are also attuned, you gain the following benefits: **Giants’ Bane.** When you roll a 20 on the d20 for an attack roll made with this weapon against a Giant, the creature must succeed on a DC 17 Constitution saving throw or die. **Might of Giants.** The Strength score bestowed by your *Belt of Giant Strength* or *Gauntlets of Ogre* *Power* increases by 4, to a maximum of 30."
+    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon.\n\nThe weapon has 5 charges. You can expend 1 charge and make a ranged attack with the weapon, hurling it as if it had the Thrown property with a normal range of 20 feet and a long range of 60 feet. If the attack hits, the weapon unleashes a thunderclap audible out to 300 feet. The target and every creature within 30 feet of it other than you must succeed on a DC 17 Constitution saving throw or have the Stunned condition until the end of your next turn. Immediately after hitting or missing, the weapon flies back to your hand. The weapon regains 1d4 + 1 expended charges daily at dawn.\n\n**Giant’s Bane.** While you are attuned to the weapon and wearing either a *Belt of Giant Strength* or *Gauntlets of Ogre Power* to which you are also attuned, you gain the following benefits: **Giants’ Bane.** When you roll a 20 on the d20 for an attack roll made with this weapon against a Giant, the creature must succeed on a DC 17 Constitution saving throw or die. **Might of Giants.** The Strength score bestowed by your *Belt of Giant Strength* or *Gauntlets of Ogre* *Power* increases by 4, to a maximum of 30.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Thunderbolt",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/stunned",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "ranged"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Giants' Bane",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/dead",
+            "affects": "target",
+            "trigger": {
+              "event": "criticalHit",
+              "roll": "attackRoll"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "giant"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/handy-haversack",
@@ -2983,7 +3919,13 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this hat, you can cast the *Disguise* *Self* spell. The spell ends if the hat is removed."
+    "description": "While wearing this hat, you can cast the *Disguise* *Self* spell. The spell ends if the hat is removed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/disguise-self"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/hat-of-many-spells",
@@ -2995,7 +3937,33 @@
         "srd-5.2:class/wizard"
       ]
     },
-    "description": "This pointed hat has the following properties.\n\n**Spellcasting Focus.** While holding the hat, you can use it as a Spellcasting Focus for your Wizard spells. Any spell you cast using the hat gains a special Somatic component: you must reach into the hat and “pull” the spell out of it.\n\n**Unknown Spell.** While holding the hat, you can try to cast a level 1+ spell you don’t know. The spell must be on the Wizard spell list, it must be of a level you can cast, and it can’t have Material components costing more than 1,000 GP. Once you decide on the spell, you must expend a spell slot of the spell’s level. Then, to determine whether you cast the spell, make an Intelligence (Arcana) check (DC 10 plus the spell’s level). On a successful check, you cast the spell using its normal casting time, and you can’t use this property again until you finish a Short or Long Rest. On a failed check, you fail to cast the spell and a random effect occurs instead, determined by rolling on the following table.\n\nAny spell you cast from the hat uses your spell save DC and spell attack bonus.\n\n| 1d100 | Effect |\n|---|---|\n| 01–50 | You cast a random spell determined by rolling 1d10: on a **1**, *Enlarge/Reduce* (enlarge effect); on a **2**, *Enlarge/Reduce* (reduce effect); on a **3**, *Faerie Fire*; on a **4**, *Fireball*; on a **5**, *Gust of* *Wind*; on a **6**, *Invisibility* (cast on yourself); on a **7**, *Lightning Bolt*; on an **8**, *Phantasmal Force*; on a **9**, *Polymorph*; on a **10**, *Stinking Cloud*. |\n| 51–55 | You have the Stunned condition until the end of your next turn, believing something awesome just happened. |\n| 56–60 | A harmless swarm of butterflies fills a 10-foot Cube within 30 feet of yourself. The swarm disperses after 1 minute. |\n| 61–65 | You pull a nonmagical object out of the hat. Roll 1d4 to determine the object: on a **1**, a vial of Acid; on a **2**, a flask of Alchemist’s Fire; on a **3**, a Crowbar; on a **4**, a lit Torch. |\n| 66–70 | You suffer a bout of “magic sickness” and have the Poisoned condition for 1 hour. |\n| 71–75 | You have the Petrified condition until the end of your next turn. |\n| 76–80 | You pull a nonmagical object out of the hat. Roll 1d4 to determine the object: on a **1**, a Dagger; on a **2**, a Rope with a Grappling Hook tied to one end; on a **3**, a bag of Caltrops; on a **4**, a gem worth 50 GP. |\n| 81–85 | A creature appears in an unoccupied space as close to you as possible. The creature isn’t under your control and acts as it normally would, and it disappears after 1 hour or when it drops to 0 Hit Points. Roll 1d4 to determine the creature: on a **1**, a **Camel**; on a **2**, a **Constrictor Snake**; on a **3**, an **Elephant**; on a **4**, a **Mule**. **1d100** **Effect** 86–90 A Hostile **Swarm of Bats** flies out of the hat, occupies your space, and attacks you. 91–95 A vertical, 10-foot-diameter, two-way portal to another plane of existence opens in an unoccupied space within 30 feet of you and remains open until the end of your next turn. The GM determines where it leads. 96–00 You pull a magic item out of the hat. Roll 1d6 to determine the item’s rarity: on a **1–3**, Common; on a **4–5**, Uncommon; on a **6**, Rare. The GM chooses the item, which disappears after 1 hour if it’s not consumed or destroyed before then. |"
+    "description": "This pointed hat has the following properties.\n\n**Spellcasting Focus.** While holding the hat, you can use it as a Spellcasting Focus for your Wizard spells. Any spell you cast using the hat gains a special Somatic component: you must reach into the hat and “pull” the spell out of it.\n\n**Unknown Spell.** While holding the hat, you can try to cast a level 1+ spell you don’t know. The spell must be on the Wizard spell list, it must be of a level you can cast, and it can’t have Material components costing more than 1,000 GP. Once you decide on the spell, you must expend a spell slot of the spell’s level. Then, to determine whether you cast the spell, make an Intelligence (Arcana) check (DC 10 plus the spell’s level). On a successful check, you cast the spell using its normal casting time, and you can’t use this property again until you finish a Short or Long Rest. On a failed check, you fail to cast the spell and a random effect occurs instead, determined by rolling on the following table.\n\nAny spell you cast from the hat uses your spell save DC and spell attack bonus.\n\n| 1d100 | Effect |\n|---|---|\n| 01–50 | You cast a random spell determined by rolling 1d10: on a **1**, *Enlarge/Reduce* (enlarge effect); on a **2**, *Enlarge/Reduce* (reduce effect); on a **3**, *Faerie Fire*; on a **4**, *Fireball*; on a **5**, *Gust of* *Wind*; on a **6**, *Invisibility* (cast on yourself); on a **7**, *Lightning Bolt*; on an **8**, *Phantasmal Force*; on a **9**, *Polymorph*; on a **10**, *Stinking Cloud*. |\n| 51–55 | You have the Stunned condition until the end of your next turn, believing something awesome just happened. |\n| 56–60 | A harmless swarm of butterflies fills a 10-foot Cube within 30 feet of yourself. The swarm disperses after 1 minute. |\n| 61–65 | You pull a nonmagical object out of the hat. Roll 1d4 to determine the object: on a **1**, a vial of Acid; on a **2**, a flask of Alchemist’s Fire; on a **3**, a Crowbar; on a **4**, a lit Torch. |\n| 66–70 | You suffer a bout of “magic sickness” and have the Poisoned condition for 1 hour. |\n| 71–75 | You have the Petrified condition until the end of your next turn. |\n| 76–80 | You pull a nonmagical object out of the hat. Roll 1d4 to determine the object: on a **1**, a Dagger; on a **2**, a Rope with a Grappling Hook tied to one end; on a **3**, a bag of Caltrops; on a **4**, a gem worth 50 GP. |\n| 81–85 | A creature appears in an unoccupied space as close to you as possible. The creature isn’t under your control and acts as it normally would, and it disappears after 1 hour or when it drops to 0 Hit Points. Roll 1d4 to determine the creature: on a **1**, a **Camel**; on a **2**, a **Constrictor Snake**; on a **3**, an **Elephant**; on a **4**, a **Mule**. **1d100** **Effect** 86–90 A Hostile **Swarm of Bats** flies out of the hat, occupies your space, and attacks you. 91–95 A vertical, 10-foot-diameter, two-way portal to another plane of existence opens in an unoccupied space within 30 feet of you and remains open until the end of your next turn. The GM determines where it leads. 96–00 You pull a magic item out of the hat. Roll 1d6 to determine the item’s rarity: on a **1–3**, Common; on a **4–5**, Uncommon; on a **6**, Rare. The GM chooses the item, which disappears after 1 hour if it’s not consumed or destroyed before then. |",
+    "properties": [
+      {
+        "name": "Unknown Spell",
+        "uses": {
+          "max": 1,
+          "recharge": "long"
+        },
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:class/wizard",
+            "check": {
+              "ability": "INT",
+              "skills": [
+                "srd-5.2:skill/arcana"
+              ],
+              "dc": {
+                "base": 10,
+                "modifier": "$derived:spellLevel"
+              },
+              "onFailure": "fail"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/headband-of-intellect",
@@ -3003,7 +3971,14 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "Your Intelligence is 19 while you wear this headband. It has no effect on you if your Intelligence is 19 or higher without it."
+    "description": "Your Intelligence is 19 while you wear this headband. It has no effect on you if your Intelligence is 19 or higher without it.",
+    "effects": [
+      {
+        "type": "setAbilityScore",
+        "target": "INT",
+        "value": 19
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/helm-of-brilliance",
@@ -3011,14 +3986,116 @@
     "category": "wondrousItem",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "This helm is set with 1d10 diamonds, 2d10 rubies, 3d10 fire opals, and 4d10 opals. Any gem pried from the helm crumbles to dust. When all the gems are removed or destroyed, the helm loses its magic.\n\nYou gain the following benefits while wearing the helm.\n\n**Diamond Light.** As long as it has at least one diamond, the helm emits a 30-foot Emanation. When at least one Undead is within that area, the Emanation is filled with Dim Light. Any Undead that starts its turn in that area takes 1d6 Radiant damage.\n\n**Fire Opal Flames.** As long as the helm has at least one fire opal, you can take a Magic action to cause one weapon you are holding to burst into flames. The flames emit Bright Light in a 10-foot radius and Dim Light for an additional 10 feet. The flames are harmless to you and the weapon. When you hit with an attack using the blazing weapon, the target takes an extra 1d6 Fire damage. The flames last until you take a Bonus Action to extinguish them or until you drop or stow the weapon.\n\n**Ruby Resistance.** As long as the helm has at least one ruby, you have Resistance to Fire damage.\n\n**Spells.** You can cast one of the following spells (save DC 18), using one of the helm’s gems of the specified type as a component: *Daylight* (opal), *Fire-* *ball* (fire opal), *Prismatic Spray* (diamond), or *Wall of* *Fire* (ruby). The gem is destroyed when the spell is cast and disappears from the helm.\n\n**Taking Fire Damage.** Roll 1d20 if you are wearing the helm and take Fire damage as a result of failing a saving throw against a spell. On a roll of 1, the helm emits beams of light from its remaining gems and is then destroyed. Each creature within a 60foot Emanation originating from you must succeed on a DC 17 Dexterity saving throw or be struck by a beam, taking Radiant damage equal to the number of gems in the helm."
+    "description": "This helm is set with 1d10 diamonds, 2d10 rubies, 3d10 fire opals, and 4d10 opals. Any gem pried from the helm crumbles to dust. When all the gems are removed or destroyed, the helm loses its magic.\n\nYou gain the following benefits while wearing the helm.\n\n**Diamond Light.** As long as it has at least one diamond, the helm emits a 30-foot Emanation. When at least one Undead is within that area, the Emanation is filled with Dim Light. Any Undead that starts its turn in that area takes 1d6 Radiant damage.\n\n**Fire Opal Flames.** As long as the helm has at least one fire opal, you can take a Magic action to cause one weapon you are holding to burst into flames. The flames emit Bright Light in a 10-foot radius and Dim Light for an additional 10 feet. The flames are harmless to you and the weapon. When you hit with an attack using the blazing weapon, the target takes an extra 1d6 Fire damage. The flames last until you take a Bonus Action to extinguish them or until you drop or stow the weapon.\n\n**Ruby Resistance.** As long as the helm has at least one ruby, you have Resistance to Fire damage.\n\n**Spells.** You can cast one of the following spells (save DC 18), using one of the helm’s gems of the specified type as a component: *Daylight* (opal), *Fire-* *ball* (fire opal), *Prismatic Spray* (diamond), or *Wall of* *Fire* (ruby). The gem is destroyed when the spell is cast and disappears from the helm.\n\n**Taking Fire Damage.** Roll 1d20 if you are wearing the helm and take Fire damage as a result of failing a saving throw against a spell. On a roll of 1, the helm emits beams of light from its remaining gems and is then destroyed. Each creature within a 60foot Emanation originating from you must succeed on a DC 17 Dexterity saving throw or be struck by a beam, taking Radiant damage equal to the number of gems in the helm.",
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "fire"
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "startTurn",
+          "subject": "target"
+        },
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 30
+          }
+        ],
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "undead"
+            ]
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Fire Opal Flames",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "fire",
+            "value": {
+              "count": 1,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            }
+          },
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 10,
+              "dim": 10
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spells",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/daylight",
+            "castingOverrides": {
+              "saveDc": 18
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/fireball",
+            "castingOverrides": {
+              "saveDc": 18
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/prismatic-spray",
+            "castingOverrides": {
+              "saveDc": 18
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wall-of-fire",
+            "castingOverrides": {
+              "saveDc": 18
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/helm-of-comprehending-languages",
     "name": "Helm of Comprehending Languages",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "While wearing this helm, you can cast *Comprehend* *Languages* from it."
+    "description": "While wearing this helm, you can cast *Comprehend* *Languages* from it.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/comprehend-languages"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/helm-of-telepathy",
@@ -3026,7 +4103,31 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this helm, you have telepathy with a range of 30 feet, and you can cast *Detect Thoughts* or *Suggestion* (save DC 13) from the helm. Once either spell is cast from the helm, that spell can’t be cast from it again until the next dawn."
+    "description": "While wearing this helm, you have telepathy with a range of 30 feet, and you can cast *Detect Thoughts* or *Suggestion* (save DC 13) from the helm. Once either spell is cast from the helm, that spell can’t be cast from it again until the next dawn.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-thoughts",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/suggestion",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/helm-of-teleportation",
@@ -3044,7 +4145,17 @@
         "rest": "dawn"
       }
     },
-    "description": "This helm has 3 charges. While wearing it, you can expend 1 charge to cast *Teleport* from it. The helm regains 1d3 expended charges daily at dawn."
+    "description": "This helm has 3 charges. While wearing it, you can expend 1 charge to cast *Teleport* from it. The helm regains 1d3 expended charges daily at dawn.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/teleport",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/holy-avenger",
@@ -3063,35 +4174,248 @@
         "martial"
       ]
     },
-    "description": "You gain a +3 bonus to attack rolls and damage rolls made with this magic weapon. When you hit a Fiend or an Undead with it, that creature takes an extra 2d10 Radiant damage.\n\nWhile you hold the drawn weapon, it creates a 10-foot Emanation originating from you. You and all creatures Friendly to you in the Emanation have Advantage on saving throws against spells and other magical effects. If you have 17 or more levels in the Paladin class, the size of the Emanation increases to 30 feet."
+    "description": "You gain a +3 bonus to attack rolls and damage rolls made with this magic weapon. When you hit a Fiend or an Undead with it, that creature takes an extra 2d10 Radiant damage.\n\nWhile you hold the drawn weapon, it creates a 10-foot Emanation originating from you. You and all creatures Friendly to you in the Emanation have Advantage on saving throws against spells and other magical effects. If you have 17 or more levels in the Paladin class, the size of the Emanation increases to 30 feet.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d10"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "fiend",
+              "undead"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "selfOrAlly"
+          },
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell",
+              "magicalEffect"
+            ]
+          }
+        ],
+        "affects": "target",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 10
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/horn-of-blasting",
     "name": "Horn of Blasting",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "You can take a Magic action to blow the horn, which emits a thunderous blast in a 30-foot Cone that is audible out to 600 feet. Each creature in the Cone makes a DC 15 Constitution saving throw. On a failed save, a creature takes 5d8 Thunder damage and has the Deafened condition for 1 minute. On a successful save, a creature takes half as much damage only. Glass or crystal objects in the Cone that aren’t being worn or carried take 10d8 Thunder damage.\n\nEach use of the horn’s magic has a 20 percent chance of causing the horn to explode. The explosion deals 10d6 Force damage to the user and destroys the horn."
+    "description": "You can take a Magic action to blow the horn, which emits a thunderous blast in a 30-foot Cone that is audible out to 600 feet. Each creature in the Cone makes a DC 15 Constitution saving throw. On a failed save, a creature takes 5d8 Thunder damage and has the Deafened condition for 1 minute. On a successful save, a creature takes half as much damage only. Glass or crystal objects in the Cone that aren’t being worn or carried take 10d8 Thunder damage.\n\nEach use of the horn’s magic has a 20 percent chance of causing the horn to explode. The explosion deals 10d6 Force damage to the user and destroys the horn.",
+    "activation": {
+      "type": "action"
+    },
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "thunder",
+        "value": {
+          "count": 5,
+          "die": "d8"
+        },
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cone",
+            "size": 30
+          }
+        ],
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "half"
+        }
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/deafened",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "cone",
+            "size": 30
+          }
+        ],
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "qualifiers": [
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "force",
+        "value": {
+          "count": 10,
+          "die": "d6"
+        },
+        "qualifiers": [
+          {
+            "type": "roll",
+            "die": "d100",
+            "atLeast": 81
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/horn-of-valhalla",
     "name": "Horn of Valhalla",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "You can take a Magic action to blow this horn. In response, warrior spirits from the plane of Ysgard appear in unoccupied spaces within 60 feet of you. Each spirit uses the **Berserker** stat block and returns to Ysgard after 1 hour or when it drops to 0 Hit Points. The spirits look like living, breathing warriors, and they have Immunity to the Charmed and Frightened conditions. Once you use the horn, it can’t be used again until 7 days have passed.\n\nFour types of *Horn of Valhalla* are known to exist, each made of a different metal. The horn’s type determines how many spirits it summons, as well as the requirement for its use. The GM chooses the horn’s type or determines it randomly by rolling on the following table.\n\nIf you blow the horn without meeting its requirement, the summoned spirits attack you. If you meet the requirement, they are Friendly to you and your allies and follow your commands.\n\n| 1d100 | Horn Type | Spirits | Requirement |\n|---|---|---|---|\n| 01–40 | Silver | 2 | None |\n| 41–75 | Brass | 3 | Proficiency with all Simple weapons |\n| 76–90 | Bronze | 4 | Training with all Medium armor |\n| 91–00 | Iron | 5 | Proficiency with all Martial weapons |"
+    "variants": [
+      {
+        "slug": "silver",
+        "name": "Horn of Valhalla (Silver)",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Berserker",
+              "count": 2
+            }
+          }
+        ]
+      },
+      {
+        "slug": "brass",
+        "name": "Horn of Valhalla (Brass)",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Berserker",
+              "count": 3
+            }
+          }
+        ]
+      },
+      {
+        "slug": "bronze",
+        "name": "Horn of Valhalla (Bronze)",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Berserker",
+              "count": 4
+            }
+          }
+        ]
+      },
+      {
+        "slug": "iron",
+        "name": "Horn of Valhalla (Iron)",
+        "effects": [
+          {
+            "type": "summon",
+            "value": {
+              "statBlock": "Berserker",
+              "count": 5
+            }
+          }
+        ]
+      }
+    ],
+    "description": "You can take a Magic action to blow this horn. In response, warrior spirits from the plane of Ysgard appear in unoccupied spaces within 60 feet of you. Each spirit uses the **Berserker** stat block and returns to Ysgard after 1 hour or when it drops to 0 Hit Points. The spirits look like living, breathing warriors, and they have Immunity to the Charmed and Frightened conditions. Once you use the horn, it can’t be used again until 7 days have passed.\n\nFour types of *Horn of Valhalla* are known to exist, each made of a different metal. The horn’s type determines how many spirits it summons, as well as the requirement for its use. The GM chooses the horn’s type or determines it randomly by rolling on the following table.\n\nIf you blow the horn without meeting its requirement, the summoned spirits attack you. If you meet the requirement, they are Friendly to you and your allies and follow your commands.\n\n| 1d100 | Horn Type | Spirits | Requirement |\n|---|---|---|---|\n| 01–40 | Silver | 2 | None |\n| 41–75 | Brass | 3 | Proficiency with all Simple weapons |\n| 76–90 | Bronze | 4 | Training with all Medium armor |\n| 91–00 | Iron | 5 | Proficiency with all Martial weapons |",
+    "activation": {
+      "type": "action"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    }
   },
   {
     "id": "srd-5.2:magic-item/horseshoes-of-a-zephyr",
     "name": "Horseshoes of a Zephyr",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "These horseshoes come in a set of four. As a Magic action, you can touch one of the horseshoes to the hoof of a horse or similar creature, whereupon the horseshoe affixes itself to the hoof. Removing a horseshoe also takes a Magic action.\n\nWhile all four shoes are affixed to the hooves of a horse or similar creature, they allow the creature to move normally while floating 4 inches above a surface. This effect means the creature can cross or stand above nonsolid or unstable surfaces, such as water or lava. The creature leaves no tracks and ignores Difficult Terrain. In addition, the creature can travel for up to 12 hours a day without gaining Exhaustion levels from extended travel."
+    "description": "These horseshoes come in a set of four. As a Magic action, you can touch one of the horseshoes to the hoof of a horse or similar creature, whereupon the horseshoe affixes itself to the hoof. Removing a horseshoe also takes a Magic action.\n\nWhile all four shoes are affixed to the hooves of a horse or similar creature, they allow the creature to move normally while floating 4 inches above a surface. This effect means the creature can cross or stand above nonsolid or unstable surfaces, such as water or lava. The creature leaves no tracks and ignores Difficult Terrain. In addition, the creature can travel for up to 12 hours a day without gaining Exhaustion levels from extended travel.",
+    "effects": [
+      {
+        "type": "traverseTerrain",
+        "target": [
+          "liquids",
+          "difficultTerrain"
+        ],
+        "affects": "target"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/horseshoes-of-speed",
     "name": "Horseshoes of Speed",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "These horseshoes come in a set of four. As a Magic action, you can touch one of the horseshoes to the hoof of a horse or similar creature, whereupon the horseshoe affixes itself to the hoof. Removing a horseshoe also takes a Magic action.\n\nWhile all four horseshoes are attached to the same creature, its Speed is increased by 30 feet."
+    "description": "These horseshoes come in a set of four. As a Magic action, you can touch one of the horseshoes to the hoof of a horse or similar creature, whereupon the horseshoe affixes itself to the hoof. Removing a horseshoe also takes a Magic action.\n\nWhile all four horseshoes are attached to the same creature, its Speed is increased by 30 feet.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "baseSpeed",
+        "value": 30,
+        "affects": "target"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/immovable-rod",
@@ -3118,82 +4442,270 @@
       {
         "slug": "absorption",
         "name": "Ioun Stone (Absorption)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "interruptSpell",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "agility",
         "name": "Ioun Stone (Agility)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "DEX"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "awareness",
         "name": "Ioun Stone (Awareness)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "initiative"
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "abilityCheck",
+            "qualifiers": [
+              {
+                "type": "skill",
+                "skills": [
+                  "srd-5.2:skill/perception"
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "fortitude",
         "name": "Ioun Stone (Fortitude)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "CON"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "greater-absorption",
         "name": "Ioun Stone (Greater Absorption)",
-        "rarity": "legendary"
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "interruptSpell",
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "insight",
         "name": "Ioun Stone (Insight)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "WIS"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "intellect",
         "name": "Ioun Stone (Intellect)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "INT"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "leadership",
         "name": "Ioun Stone (Leadership)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "CHA"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "mastery",
         "name": "Ioun Stone (Mastery)",
-        "rarity": "legendary"
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "proficiencyBonus",
+            "value": 1
+          }
+        ]
       },
       {
         "slug": "protection",
         "name": "Ioun Stone (Protection)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 1
+          }
+        ]
       },
       {
         "slug": "regeneration",
         "name": "Ioun Stone (Regeneration)",
-        "rarity": "legendary"
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "heal",
+            "value": 15,
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "minimum": 1
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "reserve",
         "name": "Ioun Stone (Reserve)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": []
       },
       {
         "slug": "strength",
         "name": "Ioun Stone (Strength)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "STR"
+            ],
+            "value": {
+              "amount": 2,
+              "maximum": 20
+            }
+          }
+        ]
       },
       {
         "slug": "sustenance",
         "name": "Ioun Stone (Sustenance)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "grantImmunity",
+            "target": "foodAndWater"
+          }
+        ]
       }
     ],
-    "description": "Roughly marble sized, *Ioun Stones* are named after Ioun, a god of knowledge and prophecy revered on some worlds. Many types of *Ioun Stones* exist, each type a distinct combination of shape and color.\n\nWhen you take a Magic action to toss an *Ioun* *Stone* into the air, the stone orbits your head at a distance of 1d3 feet, conferring its benefit to you while doing so. You can have up to three *Ioun Stones* orbiting your head at the same time. Each *Ioun Stone* orbiting your head is considered to be an object you are wearing. The orbiting stone avoids contact with other creatures and objects, adjusting its orbit to avoid collisions and thwarting all attempts by other creatures to attack or snatch it.\n\nAs a Utilize action, you can seize and stow any number of *Ioun Stones* orbiting your head. If your Attunement to an *Ioun Stone* ends while it’s orbiting your head, the stone falls as though you had dropped it.\n\nThe type of stone determines its rarity and effects.\n\n**Absorption (Very Rare).** While this pale lavender ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 4 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Agility (Very Rare).** Your Dexterity increases by 2, to a maximum of 20, while this deep-red sphere orbits your head.\n\n**Awareness (Rare).** While this dark-blue rhomboid orbits your head, you have Advantage on Initiative rolls and Wisdom (Perception) checks.\n\n**Fortitude (Very Rare).** Your Constitution increases by 2, to a maximum of 20, while this pink rhomboid orbits your head.\n\n**Greater Absorption (Legendary).** While this marbled lavender and green ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 8 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Insight (Very Rare).** Your Wisdom increases by 2, to a maximum of 20, while this incandescent blue sphere orbits your head.\n\n**Intellect (Very Rare).** Your Intelligence increases by 2, to a maximum of 20, while this marbled scarlet and blue sphere orbits your head.\n\n**Leadership (Very Rare).** Your Charisma increases by 2, to a maximum of 20, while this marbled pink and green sphere orbits your head.\n\n**Mastery (Legendary).** Your Proficiency Bonus increases by 1 while this pale green prism orbits your head.\n\n**Protection (Rare).** You gain a +1 bonus to Armor Class while this dusty-rose prism orbits your head.\n\n**Regeneration (Legendary).** You regain 15 Hit Points at the end of each hour this pearly white spindle orbits your head if you have at least 1 Hit Point.\n\n**Reserve (Rare).** This vibrant purple prism stores spells cast into it, holding them until you use them. The stone can store up to 4 levels of spells at a time. When found, it contains 1d4 levels of stored spells chosen by the GM.\n\nAny creature can cast a spell of level 1 through 4 into the stone by touching it as the spell is cast. The spell has no effect, other than to be stored in the stone. If the stone can’t hold the spell, the spell is expended without effect. The level of the slot used to cast the spell determines how much space it uses.\n\nWhile this stone orbits your head, you can cast any spell stored in it. The spell uses the slot level, spell save DC, spell attack bonus, and spellcasting ability of the original caster but is otherwise treated as if you cast the spell. The spell cast from the stone is no longer stored in it, freeing up space.\n\n**Strength (Very Rare).** Your Strength increases by 2, to a maximum of 20, while this pale blue rhomboid orbits your head.\n\n**Sustenance (Rare).** You don’t need to eat or drink while this clear spindle orbits your head."
+    "description": "Roughly marble sized, *Ioun Stones* are named after Ioun, a god of knowledge and prophecy revered on some worlds. Many types of *Ioun Stones* exist, each type a distinct combination of shape and color.\n\nWhen you take a Magic action to toss an *Ioun* *Stone* into the air, the stone orbits your head at a distance of 1d3 feet, conferring its benefit to you while doing so. You can have up to three *Ioun Stones* orbiting your head at the same time. Each *Ioun Stone* orbiting your head is considered to be an object you are wearing. The orbiting stone avoids contact with other creatures and objects, adjusting its orbit to avoid collisions and thwarting all attempts by other creatures to attack or snatch it.\n\nAs a Utilize action, you can seize and stow any number of *Ioun Stones* orbiting your head. If your Attunement to an *Ioun Stone* ends while it’s orbiting your head, the stone falls as though you had dropped it.\n\nThe type of stone determines its rarity and effects.\n\n**Absorption (Very Rare).** While this pale lavender ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 4 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Agility (Very Rare).** Your Dexterity increases by 2, to a maximum of 20, while this deep-red sphere orbits your head.\n\n**Awareness (Rare).** While this dark-blue rhomboid orbits your head, you have Advantage on Initiative rolls and Wisdom (Perception) checks.\n\n**Fortitude (Very Rare).** Your Constitution increases by 2, to a maximum of 20, while this pink rhomboid orbits your head.\n\n**Greater Absorption (Legendary).** While this marbled lavender and green ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 8 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Insight (Very Rare).** Your Wisdom increases by 2, to a maximum of 20, while this incandescent blue sphere orbits your head.\n\n**Intellect (Very Rare).** Your Intelligence increases by 2, to a maximum of 20, while this marbled scarlet and blue sphere orbits your head.\n\n**Leadership (Very Rare).** Your Charisma increases by 2, to a maximum of 20, while this marbled pink and green sphere orbits your head.\n\n**Mastery (Legendary).** Your Proficiency Bonus increases by 1 while this pale green prism orbits your head.\n\n**Protection (Rare).** You gain a +1 bonus to Armor Class while this dusty-rose prism orbits your head.\n\n**Regeneration (Legendary).** You regain 15 Hit Points at the end of each hour this pearly white spindle orbits your head if you have at least 1 Hit Point.\n\n**Reserve (Rare).** This vibrant purple prism stores spells cast into it, holding them until you use them. The stone can store up to 4 levels of spells at a time. When found, it contains 1d4 levels of stored spells chosen by the GM.\n\nAny creature can cast a spell of level 1 through 4 into the stone by touching it as the spell is cast. The spell has no effect, other than to be stored in the stone. If the stone can’t hold the spell, the spell is expended without effect. The level of the slot used to cast the spell determines how much space it uses.\n\nWhile this stone orbits your head, you can cast any spell stored in it. The spell uses the slot level, spell save DC, spell attack bonus, and spellcasting ability of the original caster but is otherwise treated as if you cast the spell. The spell cast from the stone is no longer stored in it, freeing up space.\n\n**Strength (Very Rare).** Your Strength increases by 2, to a maximum of 20, while this pale blue rhomboid orbits your head.\n\n**Sustenance (Rare).** You don’t need to eat or drink while this clear spindle orbits your head.",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/iron-bands",
     "name": "Iron Bands",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "This rusty iron sphere measures 3 inches in diameter and weighs 1 pound. You can take a Magic action to throw the sphere at a Huge or smaller creature you can see within 60 feet of yourself. As the sphere moves through the air, it opens into a tangle of metal bands.\n\nMake a ranged attack roll with an attack bonus equal to your Dexterity modifier plus your Proficiency Bonus. On a hit, the target has the Restrained condition until you take a Bonus Action to issue a command that releases it. Doing so or missing with the attack causes the bands to contract and become a sphere once more.\n\nA creature that can touch the bands, including the one Restrained, can take an action to make a DC 20 Strength (Athletics) check to break the iron bands. On a successful check, the item is destroyed, and the Restrained creature is freed. On a failed check, any further attempts made by that creature automatically fail until 24 hours have elapsed.\n\nOnce the bands are used, they can’t be used again until the next dawn."
+    "description": "This rusty iron sphere measures 3 inches in diameter and weighs 1 pound. You can take a Magic action to throw the sphere at a Huge or smaller creature you can see within 60 feet of yourself. As the sphere moves through the air, it opens into a tangle of metal bands.\n\nMake a ranged attack roll with an attack bonus equal to your Dexterity modifier plus your Proficiency Bonus. On a hit, the target has the Restrained condition until you take a Bonus Action to issue a command that releases it. Doing so or missing with the attack causes the bands to contract and become a sphere once more.\n\nA creature that can touch the bands, including the one Restrained, can take an action to make a DC 20 Strength (Athletics) check to break the iron bands. On a successful check, the item is destroyed, and the Restrained creature is freed. On a failed check, any further attempts made by that creature automatically fail until 24 hours have elapsed.\n\nOnce the bands are used, they can’t be used again until the next dawn.",
+    "activation": {
+      "type": "action"
+    },
+    "effects": [
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/restrained",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "qualifiers": [
+          {
+            "type": "creatureSize",
+            "maxSize": "huge"
+          },
+          {
+            "type": "range",
+            "within": 60,
+            "unit": "feet"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/iron-flask",
@@ -3212,14 +4724,79 @@
         "srd-5.2:equipment/javelin"
       ]
     },
-    "description": "Each time you make an attack roll with this magic weapon and hit, you can have it deal Lightning damage instead of Piercing damage.\n\n**Lightning Bolt.** When you throw this weapon at a target no farther than 120 feet from you, you can forgo making a ranged attack roll and instead turn the weapon into a bolt of lightning. This bolt forms a 5-foot-wide Line between you and the target. The target and each other creature in the Line (excluding you) makes a DC 13 Dexterity saving throw, taking 4d6 Lightning damage on a failed save or half as much damage on a successful one. Immediately after dealing this damage, the weapon reappears in your hand. This property can’t be used again until the next dawn."
+    "description": "Each time you make an attack roll with this magic weapon and hit, you can have it deal Lightning damage instead of Piercing damage.\n\n**Lightning Bolt.** When you throw this weapon at a target no farther than 120 feet from you, you can forgo making a ranged attack roll and instead turn the weapon into a bolt of lightning. This bolt forms a 5-foot-wide Line between you and the target. The target and each other creature in the Line (excluding you) makes a DC 13 Dexterity saving throw, taking 4d6 Lightning damage on a failed save or half as much damage on a successful one. Immediately after dealing this damage, the weapon reappears in your hand. This property can’t be used again until the next dawn.",
+    "effects": [
+      {
+        "type": "changeDamageType",
+        "value": "lightning",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Lightning Bolt",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "lightning",
+            "value": {
+              "count": 4,
+              "die": "d6"
+            },
+            "affects": "target",
+            "area": [
+              {
+                "shape": "line",
+                "size": 120,
+                "width": 5
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 13
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/lantern-of-revealing",
     "name": "Lantern of Revealing",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "While lit, this hooded lantern burns for 6 hours on 1 pint of oil, shedding Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. Invisible creatures and objects are visible as long as they are in the lantern’s Bright Light. You can take a Utilize action to lower the hood, reducing the lantern’s light to Dim Light in a 5-foot radius."
+    "description": "While lit, this hooded lantern burns for 6 hours on 1 pint of oil, shedding Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. Invisible creatures and objects are visible as long as they are in the lantern’s Bright Light. You can take a Utilize action to lower the hood, reducing the lantern’s light to Dim Light in a 5-foot radius.",
+    "effects": [
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 30,
+          "dim": 30
+        }
+      },
+      {
+        "type": "suppressCondition",
+        "target": "srd-5.2:condition/invisible",
+        "affects": "others",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 30
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/luck-blade",
@@ -3244,7 +4821,83 @@
         "die": "d3"
       }
     },
-    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon. While the weapon is on your person, you also gain a +1 bonus to saving throws.\n\n**Luck.** If the weapon is on your person, you can call on its luck (no action required) to reroll one failed D20 Test if you don’t have the Incapacitated condition. You must use the second roll. Once used, this property can’t be used again until the next dawn.\n\n**Wish.** The weapon has 1d3 charges. While holding it, you can expend 1 charge and cast *Wish* from it. Once used, this property can’t be used again until the next dawn. The weapon loses this property if it has no charges."
+    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon. While the weapon is on your person, you also gain a +1 bonus to saving throws.\n\n**Luck.** If the weapon is on your person, you can call on its luck (no action required) to reroll one failed D20 Test if you don’t have the Incapacitated condition. You must use the second roll. Once used, this property can’t be used again until the next dawn.\n\n**Wish.** The weapon has 1d3 charges. While holding it, you can expend 1 charge and cast *Wish* from it. Once used, this property can’t be used again until the next dawn. The weapon loses this property if it has no charges.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 1
+      }
+    ],
+    "properties": [
+      {
+        "name": "Luck",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "rerollD20",
+            "target": "d20Test",
+            "reroll": {
+              "mode": "reroll",
+              "dice": 1,
+              "keep": "new"
+            },
+            "trigger": {
+              "event": "failRoll",
+              "roll": "d20Test",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "selfState",
+                "conditionId": "srd-5.2:condition/incapacitated",
+                "negate": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Wish",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/wish",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mace-of-disruption",
@@ -3257,7 +4910,75 @@
         "srd-5.2:equipment/mace"
       ]
     },
-    "description": "When you hit a Fiend or an Undead with this magic weapon, that creature takes an extra 2d6 Radiant damage. If the target has 25 Hit Points or fewer after taking this damage, it must succeed on a DC 15 Wisdom saving throw or be destroyed. On a successful save, the creature has the Frightened condition until the end of your next turn.\n\n**Light.** While you hold this weapon, it sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet."
+    "description": "When you hit a Fiend or an Undead with this magic weapon, that creature takes an extra 2d6 Radiant damage. If the target has 25 Hit Points or fewer after taking this damage, it must succeed on a DC 15 Wisdom saving throw or be destroyed. On a successful save, the creature has the Frightened condition until the end of your next turn.\n\n**Light.** While you hold this weapon, it sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "fiend",
+              "undead"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/dead",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "fiend",
+              "undead"
+            ]
+          },
+          {
+            "type": "hitPoints",
+            "subject": "target",
+            "minimum": 26,
+            "negate": true
+          }
+        ],
+        "save": {
+          "ability": "WIS",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 20,
+          "dim": 20
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mace-of-smiting",
@@ -3269,7 +4990,97 @@
         "srd-5.2:equipment/mace"
       ]
     },
-    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon. The bonus increases to +3 when you use the weapon to attack a Construct.\n\nWhen you roll a 20 on an attack roll made with this weapon, the target takes an extra 7 Bludgeoning damage, or 14 Bludgeoning damage if it’s a Construct. If a Construct has 25 Hit Points or fewer after taking this damage, it is destroyed."
+    "description": "You gain a +1 bonus to attack rolls and damage rolls made with this magic weapon. The bonus increases to +3 when you use the weapon to attack a Construct.\n\nWhen you roll a 20 on an attack roll made with this weapon, the target takes an extra 7 Bludgeoning damage, or 14 Bludgeoning damage if it’s a Construct. If a Construct has 25 Hit Points or fewer after taking this damage, it is destroyed.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 1,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "bludgeoning",
+        "value": 7,
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "bludgeoning",
+        "value": 7,
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mace-of-terror",
@@ -3292,7 +5103,46 @@
         "rest": "dawn"
       }
     },
-    "description": "This magic weapon has 3 charges and regains 1d3 expended charges daily at dawn. While holding the weapon, you can take a Magic action and expend 1 charge to release a wave of terror from it. Each creature of your choice within 30 feet of you must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute. While Frightened in this way, a creature must spend its turns trying to move as far away from you as it can, and it can’t make Opportunity Attacks. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If it has nowhere it can move, the creature can take the Dodge action. At the end of each of its turns, a creature repeats the save, ending the effect on itself on a success."
+    "description": "This magic weapon has 3 charges and regains 1d3 expended charges daily at dawn. While holding the weapon, you can take a Magic action and expend 1 charge to release a wave of terror from it. Each creature of your choice within 30 feet of you must succeed on a DC 15 Wisdom saving throw or have the Frightened condition for 1 minute. While Frightened in this way, a creature must spend its turns trying to move as far away from you as it can, and it can’t make Opportunity Attacks. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If it has nowhere it can move, the creature can take the Dodge action. At the end of each of its turns, a creature repeats the save, ending the effect on itself on a success.",
+    "properties": [
+      {
+        "name": "Wave of Terror",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/frightened",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "WIS",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mantle-of-spell-resistance",
@@ -3300,41 +5150,122 @@
     "category": "wondrousItem",
     "rarity": "rare",
     "attunement": true,
-    "description": "You have Advantage on saving throws against spells while you wear this cloak."
+    "description": "You have Advantage on saving throws against spells while you wear this cloak.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/manual-of-bodily-health",
     "name": "Manual of Bodily Health",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book contains health and nutrition tips, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Constitution increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century."
+    "description": "This book contains health and nutrition tips, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Constitution increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "CON"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/manual-of-gainful-exercise",
     "name": "Manual of Gainful Exercise",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book describes fitness exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Strength increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century."
+    "description": "This book describes fitness exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Strength increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "STR"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/manual-of-golems",
     "name": "Manual of Golems",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This tome contains information and incantations necessary to make a particular type of golem. The GM chooses the type or determines it randomly by rolling on the accompanying table. To decipher and use the manual, you must be a spellcaster with at least two level 5 spell slots. A creature that can’t use a *Manual of Golems* and attempts to read it takes 6d6 Psychic damage.\n\nTo create a golem, you must spend the time shown on the table, working without interruption with the manual at hand and resting no more than 8 hours per day. You must also pay the specified cost to purchase supplies.\n\nOnce you finish creating the golem, the book is consumed in eldritch flames. The golem becomes animate when the ashes of the manual are sprinkled on it. See “Monsters” for the golem’s stat block. The golem is under your control, and it understands and obeys your commands.\n\n| 1d20 | Golem | Time | Cost |\n|---|---|---|---|\n| 1–5 | Clay Golem | 30 days 65,000 GP |  |\n| 6–17 | Flesh Golem | 60 days 50,000 GP |  |\n| 18 | Iron Golem | 120 days 100,000 GP |  |\n| 19–20 | Stone Golem | 90 days 80,000 GP |  |"
+    "description": "This tome contains information and incantations necessary to make a particular type of golem. The GM chooses the type or determines it randomly by rolling on the accompanying table. To decipher and use the manual, you must be a spellcaster with at least two level 5 spell slots. A creature that can’t use a *Manual of Golems* and attempts to read it takes 6d6 Psychic damage.\n\nTo create a golem, you must spend the time shown on the table, working without interruption with the manual at hand and resting no more than 8 hours per day. You must also pay the specified cost to purchase supplies.\n\nOnce you finish creating the golem, the book is consumed in eldritch flames. The golem becomes animate when the ashes of the manual are sprinkled on it. See “Monsters” for the golem’s stat block. The golem is under your control, and it understands and obeys your commands.\n\n| 1d20 | Golem | Time | Cost |\n|---|---|---|---|\n| 1–5 | Clay Golem | 30 days | 65,000 GP |\n| 6–17 | Flesh Golem | 60 days | 50,000 GP |\n| 18 | Iron Golem | 120 days | 100,000 GP |\n| 19–20 | Stone Golem | 90 days | 80,000 GP |"
   },
   {
     "id": "srd-5.2:magic-item/manual-of-quickness-of-action",
     "name": "Manual of Quickness of Action",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book contains coordination and balance exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Dexterity increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century."
+    "description": "This book contains coordination and balance exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Dexterity increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "DEX"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/marvelous-pigments",
     "name": "Marvelous Pigments",
     "category": "wondrousItem",
     "rarity": "veryRare",
+    "charges": {
+      "max": {
+        "count": 1,
+        "die": "d4"
+      }
+    },
+    "consumable": true,
     "description": "This fine wooden box contains 1d4 pots of pigment and a brush (weighing 1 pound in total).\n\nUsing the brush and expending 1 pot of pigment, you can paint any number of three-dimensional objects and terrain features (such as walls, doors, trees, flowers, weapons, webs, and pits), provided these elements are all confined to a 20-foot Cube. The effort takes 10 minutes (regardless of the number of elements you create), during which time you must remain in the Cube, and requires Concentration. If your Concentration is broken or you leave the Cube before the work is done, all the painted elements vanish, and the pot of pigment is wasted.\n\nWhen the work is done, all the painted objects and terrain features become real. Thus, painting a door on a wall creates an actual door, which can be opened to whatever is beyond. Painting a pit creates a real pit, the entire depth of which must lie within the 20-foot Cube.\n\nNo object created by a pot of pigment can have a value greater than 25 GP, and the total value of all objects created by a pot of pigment can’t exceed 500 GP. If you paint objects of greater value (such as a large pile of gold), they look authentic, but close inspection reveals they’re made from paste, cookies, or some other worthless material.\n\nIf you paint a form of energy such as fire or lightning, the energy dissipates as soon as you complete the painting, doing no harm."
   },
   {
@@ -3353,7 +5284,20 @@
         "rest": "dawn"
       }
     },
-    "description": "The medallion has 5 charges. While wearing it, you can expend 1 charge to cast *Detect Thoughts* (save DC 13) from it. The medallion regains 1d4 expended charges daily at dawn."
+    "description": "The medallion has 5 charges. While wearing it, you can expend 1 charge to cast *Detect Thoughts* (save DC 13) from it. The medallion regains 1d4 expended charges daily at dawn.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-thoughts",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mirror-of-life-trapping",
@@ -3392,14 +5336,57 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While wearing this necklace, you can breathe normally in any environment, and you have Advantage on saving throws made to avoid or end the Poisoned condition."
+    "description": "While wearing this necklace, you can breathe normally in any environment, and you have Advantage on saving throws made to avoid or end the Poisoned condition.",
+    "effects": [
+      {
+        "type": "waterBreathing"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "againstCondition",
+            "conditionId": "srd-5.2:condition/poisoned"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/necklace-of-fireballs",
     "name": "Necklace of Fireballs",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "This necklace has 1d6 + 3 beads hanging from it. You can take a Magic action to detach a bead and throw it up to 60 feet away. When it reaches the end of its trajectory, the bead detonates as a level 3 *Fire-* *ball* (save DC 15).\n\nYou can hurl multiple beads, or even the whole necklace, at one time. When you do so, increase the damage of the *Fireball* by 1d6 for each bead after the first (maximum 12d6)."
+    "charges": {
+      "max": {
+        "count": 1,
+        "die": "d6",
+        "modifier": 3
+      }
+    },
+    "description": "This necklace has 1d6 + 3 beads hanging from it. You can take a Magic action to detach a bead and throw it up to 60 feet away. When it reaches the end of its trajectory, the bead detonates as a level 3 *Fire-* *ball* (save DC 15).\n\nYou can hurl multiple beads, or even the whole necklace, at one time. When you do so, increase the damage of the *Fireball* by 1d6 for each bead after the first (maximum 12d6).",
+    "activation": {
+      "type": "action"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fireball",
+        "castingOverrides": {
+          "castLevel": 3,
+          "saveDc": 15,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 7
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/necklace-of-prayer-beads",
@@ -3413,7 +5400,156 @@
         "srd-5.2:class/paladin"
       ]
     },
-    "description": "This necklace has 1d4 + 2 magic beads made from aquamarine, black pearl, or topaz. It also has many nonmagical beads made from stones such as amber, bloodstone, citrine, coral, jade, pearl, or quartz. If a magic bead is removed from the necklace, that bead loses its magic.\n\nSix types of magic beads exist. The GM decides the type of each bead on the necklace or determines it randomly by rolling on the table below. A necklace can have more than one bead of the same type. To use one, you must be wearing the necklace. Each bead contains a spell that you can cast from it as a Bonus Action (using your spell save DC if a save is necessary). Once a magic bead’s spell is cast, that bead can’t be used again until the next dawn.\n\n| 1d20 | Bead | Spell |\n|---|---|---|\n| 1–6 | Bead of Blessing | *Bless* |\n| 7–12 | Bead of Curing | *Cure Wounds* (level 2 version) |\n| 13–16 | Bead of Favor | *Greater Restoration* |\n| 17–18 | Bead of Smiting | *Shining Smite* |\n| 19 | Bead of Summons | *Guardian of Faith* |\n| 20 | Bead of Wind Walking | *Wind Walk* |"
+    "description": "This necklace has 1d4 + 2 magic beads made from aquamarine, black pearl, or topaz. It also has many nonmagical beads made from stones such as amber, bloodstone, citrine, coral, jade, pearl, or quartz. If a magic bead is removed from the necklace, that bead loses its magic.\n\nSix types of magic beads exist. The GM decides the type of each bead on the necklace or determines it randomly by rolling on the table below. A necklace can have more than one bead of the same type. To use one, you must be wearing the necklace. Each bead contains a spell that you can cast from it as a Bonus Action (using your spell save DC if a save is necessary). Once a magic bead’s spell is cast, that bead can’t be used again until the next dawn.\n\n| 1d20 | Bead | Spell |\n|---|---|---|\n| 1–6 | Bead of Blessing | *Bless* |\n| 7–12 | Bead of Curing | *Cure Wounds* (level 2 version) |\n| 13–16 | Bead of Favor | *Greater Restoration* |\n| 17–18 | Bead of Smiting | *Shining Smite* |\n| 19 | Bead of Summons | *Guardian of Faith* |\n| 20 | Bead of Wind Walking | *Wind Walk* |",
+    "activation": {
+      "type": "bonusAction"
+    },
+    "options": {
+      "list": "srd-5.2:list/prayer-beads",
+      "die": "d20",
+      "items": [
+        {
+          "id": "blessing",
+          "name": "Bead of Blessing",
+          "description": "Cast Bless from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 1,
+            "max": 6
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/bless",
+              "castingOverrides": {
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        },
+        {
+          "id": "curing",
+          "name": "Bead of Curing",
+          "description": "Cast Cure Wounds from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 7,
+            "max": 12
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/cure-wounds",
+              "castingOverrides": {
+                "castLevel": 2,
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        },
+        {
+          "id": "favor",
+          "name": "Bead of Favor",
+          "description": "Cast Greater Restoration from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 13,
+            "max": 16
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/greater-restoration",
+              "castingOverrides": {
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        },
+        {
+          "id": "smiting",
+          "name": "Bead of Smiting",
+          "description": "Cast Shining Smite from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 17,
+            "max": 18
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/shining-smite",
+              "castingOverrides": {
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        },
+        {
+          "id": "summons",
+          "name": "Bead of Summons",
+          "description": "Cast Guardian Of Faith from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 19,
+            "max": 19
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/guardian-of-faith",
+              "castingOverrides": {
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        },
+        {
+          "id": "wind-walking",
+          "name": "Bead of Wind Walking",
+          "description": "Cast Wind Walk from the bead; it recharges at dawn.",
+          "roll": {
+            "min": 20,
+            "max": 20
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/wind-walk",
+              "castingOverrides": {
+                "useOwnAbility": true
+              },
+              "uses": {
+                "max": 1,
+                "recharge": "dawn"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/prayer-beads",
+        "value": 1
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/nine-lives-stealer",
@@ -3435,7 +5571,75 @@
         "modifier": 1
       }
     },
-    "description": "You gain a +2 bonus to attack rolls and damage rolls made with this magic weapon.\n\n**Life Stealing.** The weapon has 1d8 + 1 charges. When you attack a creature that has fewer than 100 Hit Points with this weapon and roll a 20 on the d20 for the attack roll, the creature must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body. Constructs and Undead succeed on the save automatically. The weapon loses 1 charge if the creature is slain. When the weapon has no charges remaining, it loses this property."
+    "description": "You gain a +2 bonus to attack rolls and damage rolls made with this magic weapon.\n\n**Life Stealing.** The weapon has 1d8 + 1 charges. When you attack a creature that has fewer than 100 Hit Points with this weapon and roll a 20 on the d20 for the attack roll, the creature must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body. Constructs and Undead succeed on the save automatically. The weapon loses 1 charge if the creature is slain. When the weapon has no charges remaining, it loses this property.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Life Stealing",
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/dead",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "trigger": {
+              "event": "criticalHit",
+              "roll": "attackRoll"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "hitPoints",
+                "subject": "target",
+                "minimum": 100,
+                "negate": true
+              },
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "construct",
+                  "undead"
+                ],
+                "negate": true
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/oathbow",
@@ -3449,7 +5653,50 @@
         "srd-5.2:equipment/shortbow"
       ]
     },
-    "description": "When you nock an arrow on this bow, it whispers in Elvish, “Swift defeat to my enemies.” When you use this weapon to make a ranged attack, you can utter or sign the following command words: “Swift death to you who have wronged me.” The target of your attack becomes your sworn enemy until it dies or until dawn 7 days later. You can have only one such sworn enemy at a time. When your sworn enemy dies, you can choose a new one after the next dawn.\n\nWhen you make a ranged attack roll with this weapon against your sworn enemy, you have Advantage on the roll. In addition, your target gains no benefit from Half Cover or Three-Quarters Cover, and you suffer no Disadvantage due to long range. If the attack hits, your sworn enemy takes an extra 3d6 Piercing damage.\n\nWhile your sworn enemy lives, you have Disadvantage on attack rolls with all other weapons."
+    "description": "When you nock an arrow on this bow, it whispers in Elvish, “Swift defeat to my enemies.” When you use this weapon to make a ranged attack, you can utter or sign the following command words: “Swift death to you who have wronged me.” The target of your attack becomes your sworn enemy until it dies or until dawn 7 days later. You can have only one such sworn enemy at a time. When your sworn enemy dies, you can choose a new one after the next dawn.\n\nWhen you make a ranged attack roll with this weapon against your sworn enemy, you have Advantage on the roll. In addition, your target gains no benefit from Half Cover or Three-Quarters Cover, and you suffer no Disadvantage due to long range. If the attack hits, your sworn enemy takes an extra 3d6 Piercing damage.\n\nWhile your sworn enemy lives, you have Disadvantage on attack rolls with all other weapons.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "attackRoll",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "ranged"
+            ]
+          },
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "piercing",
+        "value": {
+          "count": 3,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "targetRelation",
+            "relation": "target"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/oil-of-etherealness",
@@ -3457,7 +5704,18 @@
     "category": "potion",
     "rarity": "rare",
     "consumable": true,
-    "description": "One vial of this oil can cover one Medium or smaller creature, along with the equipment it’s wearing and carrying (one additional vial is required for each size category above Medium). Applying the oil takes 10 minutes. The affected creature then gains the effect of the *Etherealness* spell for 1 hour.\n\nBeads of this cloudy, gray oil form on the outside of its container and quickly evaporate."
+    "description": "One vial of this oil can cover one Medium or smaller creature, along with the equipment it’s wearing and carrying (one additional vial is required for each size category above Medium). Applying the oil takes 10 minutes. The affected creature then gains the effect of the *Etherealness* spell for 1 hour.\n\nBeads of this cloudy, gray oil form on the outside of its container and quickly evaporate.",
+    "activation": {
+      "type": "special",
+      "trigger": "10 minutes to apply."
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/etherealness",
+        "affects": "target"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/oil-of-sharpness",
@@ -3465,7 +5723,11 @@
     "category": "potion",
     "rarity": "veryRare",
     "consumable": true,
-    "description": "One vial of this oil can coat one Melee weapon or twenty pieces of ammunition, but only ammunition and Melee weapons that are nonmagical and deal Slashing or Piercing damage are affected. Applying the oil takes 1 minute, after which the oil magically seeps into whatever it coats, turning the coated weapon into a *+3 Weapon* or the coated ammunition into *+3 Ammunition*.\n\nThis clear, gelatinous oil sparkles with tiny, ultrathin silver shards."
+    "description": "One vial of this oil can coat one Melee weapon or twenty pieces of ammunition, but only ammunition and Melee weapons that are nonmagical and deal Slashing or Piercing damage are affected. Applying the oil takes 1 minute, after which the oil magically seeps into whatever it coats, turning the coated weapon into a *+3 Weapon* or the coated ammunition into *+3 Ammunition*.\n\nThis clear, gelatinous oil sparkles with tiny, ultrathin silver shards.",
+    "activation": {
+      "type": "special",
+      "trigger": "1 minute to apply."
+    }
   },
   {
     "id": "srd-5.2:magic-item/oil-of-slipperiness",
@@ -3473,7 +5735,47 @@
     "category": "potion",
     "rarity": "uncommon",
     "consumable": true,
-    "description": "One vial of this oil can cover one Medium or smaller creature, along with the equipment it’s wearing and carrying (one additional vial is required for each size category above Medium). Applying the oil takes 10 minutes. The affected creature then gains the effect of the *Freedom of Movement* spell for 8 hours.\n\nAlternatively, the oil can be poured on the ground as a Magic action, where it covers a 10-foot square, duplicating the effect of the *Grease* spell in that area for 8 hours.\n\nThis sticky, black unguent is thick and heavy, but it flows quickly when poured."
+    "description": "One vial of this oil can cover one Medium or smaller creature, along with the equipment it’s wearing and carrying (one additional vial is required for each size category above Medium). Applying the oil takes 10 minutes. The affected creature then gains the effect of the *Freedom of Movement* spell for 8 hours.\n\nAlternatively, the oil can be poured on the ground as a Magic action, where it covers a 10-foot square, duplicating the effect of the *Grease* spell in that area for 8 hours.\n\nThis sticky, black unguent is thick and heavy, but it flows quickly when poured.",
+    "properties": [
+      {
+        "name": "Coat",
+        "activation": {
+          "type": "special",
+          "trigger": "10 minutes to apply."
+        },
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/freedom-of-movement",
+            "castingOverrides": {
+              "duration": {
+                "value": 8,
+                "unit": "hour"
+              }
+            },
+            "affects": "target"
+          }
+        ]
+      },
+      {
+        "name": "Pour",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "srd-5.2:spell/grease",
+            "castingOverrides": {
+              "duration": {
+                "value": 8,
+                "unit": "hour"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/pearl-of-power",

@@ -2466,6 +2466,100 @@
     ]
   },
   {
+    "id": "srd-5.2:creature/flying-snake",
+    "name": "Flying Snake",
+    "size": "tiny",
+    "creatureType": "monstrosity",
+    "alignment": "Unaligned",
+    "armorClass": 14,
+    "hitPoints": {
+      "average": 5,
+      "dice": {
+        "count": 2,
+        "die": "d4"
+      }
+    },
+    "speed": {
+      "walk": 30,
+      "fly": 60,
+      "swim": 30
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 4,
+        "modifier": -3,
+        "save": -3
+      },
+      "DEX": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "CON": {
+        "score": 11,
+        "modifier": 0,
+        "save": 0
+      },
+      "INT": {
+        "score": 2,
+        "modifier": -4,
+        "save": -4
+      },
+      "WIS": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "CHA": {
+        "score": 5,
+        "modifier": -3,
+        "save": -3
+      }
+    },
+    "senses": [
+      {
+        "sense": "blindsight",
+        "range": 10
+      }
+    ],
+    "passivePerception": 11,
+    "languages": "None",
+    "challengeRating": 0.125,
+    "xp": 25,
+    "proficiencyBonus": 2,
+    "traits": [
+      {
+        "name": "Flyby",
+        "description": "The snake doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Bite",
+        "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 1 Piercing damage plus 5 (2d4) Poison damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 4,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 5,
+            "dice": {
+              "count": 2,
+              "die": "d4"
+            },
+            "damageType": "poison"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/frog",
     "name": "Frog",
     "size": "tiny",
@@ -3646,6 +3740,114 @@
     ]
   },
   {
+    "id": "srd-5.2:creature/giant-eagle",
+    "name": "Giant Eagle",
+    "size": "large",
+    "creatureType": "celestial",
+    "alignment": "Neutral Good",
+    "armorClass": 13,
+    "hitPoints": {
+      "average": 26,
+      "dice": {
+        "count": 4,
+        "die": "d10",
+        "modifier": 4
+      }
+    },
+    "speed": {
+      "walk": 10,
+      "fly": 80
+    },
+    "initiative": {
+      "modifier": 3,
+      "score": 13
+    },
+    "abilities": {
+      "STR": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "DEX": {
+        "score": 17,
+        "modifier": 3,
+        "save": 3
+      },
+      "CON": {
+        "score": 13,
+        "modifier": 1,
+        "save": 1
+      },
+      "INT": {
+        "score": 8,
+        "modifier": -1,
+        "save": -1
+      },
+      "WIS": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "CHA": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      }
+    },
+    "skills": [
+      {
+        "skillId": "srd-5.2:skill/perception",
+        "bonus": 6
+      }
+    ],
+    "resistances": {
+      "damage": [
+        "necrotic",
+        "radiant"
+      ]
+    },
+    "senses": [],
+    "passivePerception": 16,
+    "languages": "Celestial; understands Common and Primordial (Auran) but can’t speak them",
+    "challengeRating": 1,
+    "xp": 200,
+    "proficiencyBonus": 2,
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The eagle makes two Rend attacks."
+      },
+      {
+        "name": "Rend",
+        "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Slashing damage plus 3 (1d6) Radiant damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 5,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 5,
+            "dice": {
+              "count": 1,
+              "die": "d4",
+              "modifier": 3
+            },
+            "damageType": "slashing"
+          },
+          {
+            "average": 3,
+            "dice": {
+              "count": 1,
+              "die": "d6"
+            },
+            "damageType": "radiant"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/giant-elk",
     "name": "Giant Elk",
     "size": "huge",
@@ -4455,6 +4657,121 @@
       {
         "name": "Ink Cloud (1/Day)",
         "description": "Trigger: The octopus takes damage while underwater. Response: The octopus releases ink that fills a 10-foot Cube centered on itself, and the octopus moves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar effect disperses the ink."
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/giant-owl",
+    "name": "Giant Owl",
+    "size": "large",
+    "creatureType": "celestial",
+    "alignment": "Neutral",
+    "armorClass": 12,
+    "hitPoints": {
+      "average": 19,
+      "dice": {
+        "count": 3,
+        "die": "d10",
+        "modifier": 3
+      }
+    },
+    "speed": {
+      "walk": 5,
+      "fly": 60
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 13,
+        "modifier": 1,
+        "save": 1
+      },
+      "DEX": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "CON": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "INT": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "WIS": {
+        "score": 14,
+        "modifier": 2,
+        "save": 4
+      },
+      "CHA": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      }
+    },
+    "skills": [
+      {
+        "skillId": "srd-5.2:skill/perception",
+        "bonus": 6
+      },
+      {
+        "skillId": "srd-5.2:skill/stealth",
+        "bonus": 6
+      }
+    ],
+    "resistances": {
+      "damage": [
+        "necrotic",
+        "radiant"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 120
+      }
+    ],
+    "passivePerception": 16,
+    "languages": "Celestial; understands Common, Elvish, and Sylvan but can’t speak them",
+    "challengeRating": 0.25,
+    "xp": 50,
+    "proficiencyBonus": 2,
+    "traits": [
+      {
+        "name": "Flyby",
+        "description": "The owl doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Talons",
+        "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (1d10 + 2) Slashing damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 4,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 7,
+            "dice": {
+              "count": 1,
+              "die": "d10",
+              "modifier": 2
+            },
+            "damageType": "slashing"
+          }
+        ]
+      },
+      {
+        "name": "Spellcasting",
+        "description": "The owl casts one of the following spells, requiring no spell components and using Wisdom as the spellcasting ability: At Will: Detect Evil and Good, Detect Magic. 1/Day: Clairvoyance."
       }
     ]
   },
@@ -5289,6 +5606,119 @@
               "die": "d8"
             },
             "damageType": "poison"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/giant-vulture",
+    "name": "Giant Vulture",
+    "size": "large",
+    "creatureType": "monstrosity",
+    "alignment": "Neutral Evil",
+    "armorClass": 10,
+    "hitPoints": {
+      "average": 25,
+      "dice": {
+        "count": 3,
+        "die": "d10",
+        "modifier": 9
+      }
+    },
+    "speed": {
+      "walk": 10,
+      "fly": 60
+    },
+    "initiative": {
+      "modifier": 0,
+      "score": 10
+    },
+    "abilities": {
+      "STR": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "DEX": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CON": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "INT": {
+        "score": 6,
+        "modifier": -2,
+        "save": -2
+      },
+      "WIS": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "CHA": {
+        "score": 7,
+        "modifier": -2,
+        "save": -2
+      }
+    },
+    "skills": [
+      {
+        "skillId": "srd-5.2:skill/perception",
+        "bonus": 3
+      }
+    ],
+    "resistances": {
+      "damage": [
+        "necrotic"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      }
+    ],
+    "passivePerception": 13,
+    "languages": "Understands Common but can’t speak",
+    "challengeRating": 1,
+    "xp": 200,
+    "proficiencyBonus": 2,
+    "traits": [
+      {
+        "name": "Pack Tactics",
+        "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Gouge",
+        "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2) Piercing damage, and the target has the Poisoned condition until the end of its next turn.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 4,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 9,
+            "dice": {
+              "count": 2,
+              "die": "d6",
+              "modifier": 2
+            },
+            "damageType": "piercing"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/poisoned",
+            "affects": "target"
           }
         ]
       }
