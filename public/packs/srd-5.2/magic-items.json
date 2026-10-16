@@ -8411,7 +8411,58 @@
     "charges": {
       "max": 12
     },
-    "description": "This beetle-shaped medallion provides three benefits while it is on your person.\n\n**Defense.** You gain a +1 bonus to Armor Class.\n\n**Preservation.** The scarab has 12 charges. If you fail a saving throw against a Necromancy spell or a harmful effect originating from an Undead, you can take a Reaction to expend 1 charge and turn the failed save into a successful one. The scarab crumbles into powder and is destroyed when its last charge is expended.\n\n**Spell Resistance.** You have Advantage on saving throws against spells."
+    "description": "This beetle-shaped medallion provides three benefits while it is on your person.\n\n**Defense.** You gain a +1 bonus to Armor Class.\n\n**Preservation.** The scarab has 12 charges. If you fail a saving throw against a Necromancy spell or a harmful effect originating from an Undead, you can take a Reaction to expend 1 charge and turn the failed save into a successful one. The scarab crumbles into powder and is destroyed when its last charge is expended.\n\n**Spell Resistance.** You have Advantage on saving throws against spells.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 1
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell"
+            ]
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Preservation",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You fail a save against a Necromancy spell or an Undead's harmful effect."
+        },
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "savingThrow",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "trigger": {
+              "event": "failRoll",
+              "roll": "savingThrow",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "necromancy"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/scimitar-of-speed",
@@ -8424,14 +8475,58 @@
         "srd-5.2:equipment/scimitar"
       ]
     },
-    "description": "You gain a +2 bonus to attack rolls and damage rolls made with this magic weapon. In addition, you can make one attack with it as a Bonus Action on each of your turns."
+    "description": "You gain a +2 bonus to attack rolls and damage rolls made with this magic weapon. In addition, you can make one attack with it as a Bonus Action on each of your turns.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "grantAttack",
+        "value": {
+          "count": 1,
+          "actionType": "bonusAction"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sending-stones",
     "name": "Sending Stones",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "*Sending Stones* come in pairs, with each stone carved to match the other so the pairing is easily recognized. While you touch one stone, you can cast *Sending* from it. The target is the bearer of the other stone. If no creature bears the other stone, you know that fact as soon as you use the stone, and you don’t cast the spell. Once *Sending* is cast using either stone, the stones can’t be used again until the next dawn. If one of the stones in a pair is destroyed, the other one becomes nonmagical."
+    "description": "*Sending Stones* come in pairs, with each stone carved to match the other so the pairing is easily recognized. While you touch one stone, you can cast *Sending* from it. The target is the bearer of the other stone. If no creature bears the other stone, you know that fact as soon as you use the stone, and you don’t cast the spell. Once *Sending* is cast using either stone, the stones can’t be used again until the next dawn. If one of the stones in a pair is destroyed, the other one becomes nonmagical.",
+    "uses": {
+      "max": 1,
+      "recharge": "dawn"
+    },
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/sending"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sentinel-shield",
@@ -8443,7 +8538,25 @@
         "srd-5.2:equipment/shield"
       ]
     },
-    "description": "While holding this Shield, you have Advantage on Initiative rolls and Wisdom (Perception) checks. The Shield is emblazoned with a symbol of an eye."
+    "description": "While holding this Shield, you have Advantage on Initiative rolls and Wisdom (Perception) checks. The Shield is emblazoned with a symbol of an eye.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "initiative"
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/perception"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/shield-plus",
@@ -8459,17 +8572,38 @@
       {
         "slug": "plus-1",
         "name": "+1 Shield",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 1
+          }
+        ]
       },
       {
         "slug": "plus-2",
         "name": "+2 Shield",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 2
+          }
+        ]
       },
       {
         "slug": "plus-3",
         "name": "+3 Shield",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "armorClass",
+            "value": 3
+          }
+        ]
       }
     ],
     "description": "While holding this Shield, you have a bonus to Armor Class determined by the Shield’s rarity, in addition to the Shield’s normal bonus to AC."
@@ -8486,7 +8620,44 @@
       ]
     },
     "cursed": true,
-    "description": "While holding this Shield, you have Resistance to damage from attacks made with Ranged weapons.\n\n**Curse.** This Shield is cursed. Attuning to it curses you until you are targeted by a *Remove Curse* spell or similar magic. Removing the Shield fails to end the curse on you. Whenever an attack with a Ranged weapon targets a creature within 10 feet of you, the curse causes you to become the target instead."
+    "description": "While holding this Shield, you have Resistance to damage from attacks made with Ranged weapons.\n\n**Curse.** This Shield is cursed. Attuning to it curses you until you are targeted by a *Remove Curse* spell or similar magic. Removing the Shield fails to end the curse on you. Whenever an attack with a Ranged weapon targets a creature within 10 feet of you, the curse causes you to become the target instead.",
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "allDamage",
+        "qualifiers": [
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "ranged"
+            ]
+          },
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "weapon"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "retarget",
+        "affects": "others",
+        "qualifiers": [
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "ranged"
+            ]
+          },
+          {
+            "type": "range",
+            "within": 10,
+            "unit": "feet"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/shield-of-the-cavalier",
@@ -8499,7 +8670,70 @@
         "srd-5.2:equipment/shield"
       ]
     },
-    "description": "While holding this Shield, you have a +2 bonus to Armor Class. This bonus is in addition to the Shield’s normal bonus to AC.\n\nThe Shield has the following additional properties that you can use while holding it.\n\n**Forceful Bash.** When you take the Attack action, you can make one of the attack rolls using the Shield against a target within 5 feet of yourself. Apply your Proficiency Bonus and Strength modifier to the attack roll. On a hit, the Shield deals Force damage to the target equal to 2d6 + 2 plus your Strength modifier, and if the target is a creature, you can push it up to 10 feet directly away from yourself. If the creature is your size or smaller, you can also knock it down, giving it the Prone condition.\n\n**Protective Field.** As a Reaction, when you or an ally you can see within 5 feet of you is targeted by an attack or makes a saving throw against an area of effect, you can use the Shield to create an immobile 5-foot Emanation originating from you. When the Emanation appears, any creatures or objects not fully contained within it are pushed into the nearest unoccupied spaces outside it. The attack or area of effect that triggered the Reaction has no effect on creatures and objects inside the Emanation, which lasts as long as you maintain Concentration, up to 1 minute. Nothing can pass into or out of the Emanation. A creature or object inside the Emanation can’t be damaged by attacks or effects originating from outside, nor can a creature inside the Emanation damage anything outside it. Once this property is used, it can’t be used again until the next dawn."
+    "description": "While holding this Shield, you have a +2 bonus to Armor Class. This bonus is in addition to the Shield’s normal bonus to AC.\n\nThe Shield has the following additional properties that you can use while holding it.\n\n**Forceful Bash.** When you take the Attack action, you can make one of the attack rolls using the Shield against a target within 5 feet of yourself. Apply your Proficiency Bonus and Strength modifier to the attack roll. On a hit, the Shield deals Force damage to the target equal to 2d6 + 2 plus your Strength modifier, and if the target is a creature, you can push it up to 10 feet directly away from yourself. If the creature is your size or smaller, you can also knock it down, giving it the Prone condition.\n\n**Protective Field.** As a Reaction, when you or an ally you can see within 5 feet of you is targeted by an attack or makes a saving throw against an area of effect, you can use the Shield to create an immobile 5-foot Emanation originating from you. When the Emanation appears, any creatures or objects not fully contained within it are pushed into the nearest unoccupied spaces outside it. The attack or area of effect that triggered the Reaction has no effect on creatures and objects inside the Emanation, which lasts as long as you maintain Concentration, up to 1 minute. Nothing can pass into or out of the Emanation. A creature or object inside the Emanation can’t be damaged by attacks or effects originating from outside, nor can a creature inside the Emanation damage anything outside it. Once this property is used, it can’t be used again until the next dawn.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 2
+      }
+    ],
+    "properties": [
+      {
+        "name": "Forceful Bash",
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "force",
+            "value": {
+              "count": 2,
+              "die": "d6",
+              "modifier": [
+                2,
+                "$derived:STR"
+              ]
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "forcedMovement",
+            "value": {
+              "feet": 10,
+              "direction": "away"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Protective Field",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You or an ally within 5 feet is targeted by an attack or saves against an area of effect."
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/slippers-of-spider-climbing",
@@ -8507,14 +8741,39 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While you wear these light shoes, you can move up, down, and across vertical surfaces and along ceilings, while leaving your hands free. You have a Climb Speed equal to your Speed. However, the slippers don’t allow you to move this way on a slippery surface, such as one covered by ice or oil."
+    "description": "While you wear these light shoes, you can move up, down, and across vertical surfaces and along ceilings, while leaving your hands free. You have a Climb Speed equal to your Speed. However, the slippers don’t allow you to move this way on a slippery surface, such as one covered by ice or oil.",
+    "effects": [
+      {
+        "type": "grantSpeed",
+        "target": "climb",
+        "value": "$derived:walkingSpeed"
+      },
+      {
+        "type": "traverseTerrain",
+        "target": [
+          "verticalSurfaces"
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sovereign-glue",
     "name": "Sovereign Glue",
     "category": "wondrousItem",
     "rarity": "legendary",
-    "description": "This viscous, milky-white substance can form a permanent adhesive bond between any two objects. It must be stored in a jar or flask that has been coated inside with *Oil of Slipperiness*. When found, a container contains 1d6 + 1 ounces.\n\nOne ounce of the glue can cover a 1-foot square surface. Applying an ounce of *Sovereign Glue* takes a Utilize action, and the applied glue takes 1 minute to set. Once it has done so, the bond it creates can be broken only by the application of *Universal Solvent* or *Oil of Etherealness*, or with a *Wish* spell."
+    "charges": {
+      "max": {
+        "count": 1,
+        "die": "d6",
+        "modifier": 1
+      }
+    },
+    "consumable": true,
+    "description": "This viscous, milky-white substance can form a permanent adhesive bond between any two objects. It must be stored in a jar or flask that has been coated inside with *Oil of Slipperiness*. When found, a container contains 1d6 + 1 ounces.\n\nOne ounce of the glue can cover a 1-foot square surface. Applying an ounce of *Sovereign Glue* takes a Utilize action, and the applied glue takes 1 minute to set. Once it has done so, the bond it creates can be broken only by the application of *Universal Solvent* or *Oil of Etherealness*, or with a *Wish* spell.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    }
   },
   {
     "id": "srd-5.2:magic-item/spellguard-shield",
@@ -8527,7 +8786,39 @@
         "srd-5.2:equipment/shield"
       ]
     },
-    "description": "While holding this Shield, you have Advantage on saving throws against spells and other magical effects, and spell attack rolls have Disadvantage against you."
+    "description": "While holding this Shield, you have Advantage on saving throws against spells and other magical effects, and spell attack rolls have Disadvantage against you.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell",
+              "magicalEffect"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "attackRoll",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "self"
+          },
+          {
+            "type": "attackSource",
+            "attackSources": [
+              "spell"
+            ]
+          }
+        ],
+        "affects": "others"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/spell-scroll",
@@ -8538,63 +8829,278 @@
       {
         "slug": "cantrip",
         "name": "Spell Scroll (Cantrip)",
-        "rarity": "common"
+        "rarity": "common",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 13,
+              "attackBonus": 5
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  0
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-1",
         "name": "Spell Scroll (Level 1)",
-        "rarity": "common"
+        "rarity": "common",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 13,
+              "attackBonus": 5
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  1
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-2",
         "name": "Spell Scroll (Level 2)",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 13,
+              "attackBonus": 5
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  2
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-3",
         "name": "Spell Scroll (Level 3)",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 15,
+              "attackBonus": 7
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  3
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-4",
         "name": "Spell Scroll (Level 4)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 15,
+              "attackBonus": 7
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  4
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-5",
         "name": "Spell Scroll (Level 5)",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 17,
+              "attackBonus": 9
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  5
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-6",
         "name": "Spell Scroll (Level 6)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 17,
+              "attackBonus": 9
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  6
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-7",
         "name": "Spell Scroll (Level 7)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 18,
+              "attackBonus": 10
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  7
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-8",
         "name": "Spell Scroll (Level 8)",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 18,
+              "attackBonus": 10
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  8
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "level-9",
         "name": "Spell Scroll (Level 9)",
-        "rarity": "legendary"
+        "rarity": "legendary",
+        "effects": [
+          {
+            "type": "grantSpells",
+            "target": "$choice:scroll-spell",
+            "castingOverrides": {
+              "ignoreMaterialComponent": true,
+              "saveDc": 19,
+              "attackBonus": 11
+            },
+            "qualifiers": [
+              {
+                "type": "spellLevel",
+                "spellLevels": [
+                  9
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "consumable": true,
-    "description": "A *Spell Scroll* bears the words of a single spell, written in a mystical cipher. If the spell is on your spell list, you can read the scroll and cast its spell without Material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell’s normal casting time. Once the spell is cast, the scroll crumbles to dust. If the casting is interrupted, the scroll isn’t lost.\n\nIf the spell is on your spell list but of a higher level than you can normally cast, you make an ability check using your spellcasting ability to determine whether you cast the spell. The DC equals 10 plus the spell’s level. On a failed check, the spell disappears from the scroll with no other effect.\n\nThe level of the spell on the scroll determines the spell’s saving throw DC and attack bonus, as well as the scroll’s rarity, as shown in the following table.\n\n| Spell Level | Rarity | Save DC | Attack Bonus |\n|---|---|---|---|\n| Cantrip | Common | 13 | +5 |\n| 1 | Common | 13 | +5 |\n| 2 | Uncommon | 13 | +5 |\n| 3 | Uncommon | 15 | +7 |\n| 4 | Rare | 15 | +7 |\n| 5 | Rare | 17 | +9 |\n| 6 | Very Rare | 17 | +9 |\n| 7 | Very Rare | 18 | +10 |\n| 8 | Very Rare | 18 | +10 |\n| 9 | Legendary | 19 | +11 |\n\n**Copying a Scroll into a Spellbook.** A Wizard spell on a *Spell Scroll* can be copied into a spellbook. When a spell is copied in this way, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 plus the spell’s level. On a successful check, the spell is copied. Whether the check succeeds or fails, the *Spell Scroll* is destroyed."
+    "description": "A *Spell Scroll* bears the words of a single spell, written in a mystical cipher. If the spell is on your spell list, you can read the scroll and cast its spell without Material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell’s normal casting time. Once the spell is cast, the scroll crumbles to dust. If the casting is interrupted, the scroll isn’t lost.\n\nIf the spell is on your spell list but of a higher level than you can normally cast, you make an ability check using your spellcasting ability to determine whether you cast the spell. The DC equals 10 plus the spell’s level. On a failed check, the spell disappears from the scroll with no other effect.\n\nThe level of the spell on the scroll determines the spell’s saving throw DC and attack bonus, as well as the scroll’s rarity, as shown in the following table.\n\n| Spell Level | Rarity | Save DC | Attack Bonus |\n|---|---|---|---|\n| Cantrip | Common | 13 | +5 |\n| 1 | Common | 13 | +5 |\n| 2 | Uncommon | 13 | +5 |\n| 3 | Uncommon | 15 | +7 |\n| 4 | Rare | 15 | +7 |\n| 5 | Rare | 17 | +9 |\n| 6 | Very Rare | 17 | +9 |\n| 7 | Very Rare | 18 | +10 |\n| 8 | Very Rare | 18 | +10 |\n| 9 | Legendary | 19 | +11 |\n\n**Copying a Scroll into a Spellbook.** A Wizard spell on a *Spell Scroll* can be copied into a spellbook. When a spell is copied in this way, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 plus the spell’s level. On a successful check, the spell is copied. Whether the check succeeds or fails, the *Spell Scroll* is destroyed.",
+    "activation": {
+      "type": "special",
+      "trigger": "The spell's casting time."
+    },
+    "choices": [
+      {
+        "id": "scroll-spell",
+        "prompt": "The spell on the scroll.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sphere-of-annihilation",
     "name": "Sphere of Annihilation",
     "category": "wondrousItem",
     "rarity": "legendary",
-    "description": "This 2-foot-diameter black sphere is a hole in the multiverse, hovering in space and stabilized by a magical field surrounding it.\n\nThe sphere obliterates all matter it passes through and all matter that passes through it. Artifacts are the exception. Unless an Artifact is susceptible to damage from a *Sphere of Annihilation*, it passes through the sphere unscathed. Anything else that touches the sphere but isn’t wholly engulfed and obliterated by it takes 8d10 Force damage.\n\n**Controlling the Sphere.** A *Sphere of Annihilation* is stationary until someone takes control of it. If you are within 60 feet of a sphere, you can take a Magic action to make a DC 25 Intelligence (Arcana) check. On a successful check, you control the sphere until the start of your next turn, and if it was under another creature’s control, that creature loses control of the sphere. On a failed check, the sphere moves 10 feet toward you in a straight line.\n\nWhile in control of the sphere, you can take a Bonus Action to cause it to move in one direction of your choice, up to a number of feet equal to 5 times your Intelligence modifier (minimum 5 feet). Any creature whose space the sphere enters must succeed on a DC 19 Dexterity saving throw or be touched by it, taking 8d10 Force damage. A creature reduced to 0 Hit Points by this damage is obliterated, leaving its possessions behind but no other physical remains.\n\n**Sphere Interactions.** If the sphere comes into contact with a planar portal (such as that created by the *Gate* spell) or an extradimensional space (such as that within a *Portable Hole*), the GM determines randomly what happens using the following table.\n\n**1d100 Result**\n\n| 01–50 | The sphere is destroyed. |\n|---|---|\n| 51–85 | The sphere moves through the portal or into the extradimensional space. |\n| 86–00 | A spatial rift sends the sphere and each creature and object within 180 feet of the sphere to a random plane of existence. |"
+    "description": "This 2-foot-diameter black sphere is a hole in the multiverse, hovering in space and stabilized by a magical field surrounding it.\n\nThe sphere obliterates all matter it passes through and all matter that passes through it. Artifacts are the exception. Unless an Artifact is susceptible to damage from a *Sphere of Annihilation*, it passes through the sphere unscathed. Anything else that touches the sphere but isn’t wholly engulfed and obliterated by it takes 8d10 Force damage.\n\n**Controlling the Sphere.** A *Sphere of Annihilation* is stationary until someone takes control of it. If you are within 60 feet of a sphere, you can take a Magic action to make a DC 25 Intelligence (Arcana) check. On a successful check, you control the sphere until the start of your next turn, and if it was under another creature’s control, that creature loses control of the sphere. On a failed check, the sphere moves 10 feet toward you in a straight line.\n\nWhile in control of the sphere, you can take a Bonus Action to cause it to move in one direction of your choice, up to a number of feet equal to 5 times your Intelligence modifier (minimum 5 feet). Any creature whose space the sphere enters must succeed on a DC 19 Dexterity saving throw or be touched by it, taking 8d10 Force damage. A creature reduced to 0 Hit Points by this damage is obliterated, leaving its possessions behind but no other physical remains.\n\n**Sphere Interactions.** If the sphere comes into contact with a planar portal (such as that created by the *Gate* spell) or an extradimensional space (such as that within a *Portable Hole*), the GM determines randomly what happens using the following table.\n\n**1d100 Result**\n\n| 01–50 | The sphere is destroyed. |\n|---|---|\n| 51–85 | The sphere moves through the portal or into the extradimensional space. |\n| 86–00 | A spatial rift sends the sphere and each creature and object within 180 feet of the sphere to a random plane of existence. |",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "force",
+        "value": {
+          "count": 8,
+          "die": "d10"
+        },
+        "affects": "target"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-charming",
@@ -8626,7 +9132,78 @@
         "atMost": 1
       }
     },
-    "description": "This staff has 10 charges. While holding the staff, you can use any of its properties: **Cast Spell.** You can expend 1 of the staff’s charges to cast *Charm Person*, *Command*, or *Comprehend* *Languages* from it using your spell save DC. **Reflect Enchantment.** If you succeed on a saving throw against an Enchantment spell that targets only you, you can take a Reaction to expend 1 charge from the staff and turn the spell back on its caster as if you had cast the spell. **Resist Enchantment.** If you fail a saving throw against an Enchantment spell that targets only you, you can turn your failed save into a successful one. You can’t use this property of the staff again until the next dawn.\n\n**Regaining Charges.** The staff regains 1d8 + 2 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff crumbles to dust and is destroyed."
+    "description": "This staff has 10 charges. While holding the staff, you can use any of its properties: **Cast Spell.** You can expend 1 of the staff’s charges to cast *Charm Person*, *Command*, or *Comprehend* *Languages* from it using your spell save DC. **Reflect Enchantment.** If you succeed on a saving throw against an Enchantment spell that targets only you, you can take a Reaction to expend 1 charge from the staff and turn the spell back on its caster as if you had cast the spell. **Resist Enchantment.** If you fail a saving throw against an Enchantment spell that targets only you, you can turn your failed save into a successful one. You can’t use this property of the staff again until the next dawn.\n\n**Regaining Charges.** The staff regains 1d8 + 2 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff crumbles to dust and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/charm-person",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/command",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/comprehend-languages",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Resist Enchantment",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "autoSucceed",
+            "target": "savingThrow",
+            "trigger": {
+              "event": "failRoll",
+              "roll": "savingThrow",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "spellSchool",
+                "schools": [
+                  "enchantment"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Reflect Enchantment",
+        "activation": {
+          "type": "reaction",
+          "trigger": "You succeed on a save against an Enchantment spell that targets only you."
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-fire",
@@ -8656,7 +9233,46 @@
         "atMost": 1
       }
     },
-    "description": "You have Resistance to Fire damage while you hold this staff.\n\n**Spells.** The staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Charge | Charge |  |  |\n|---|---|---|---|\n| *Burning Hands* | 1 | *Wall of Fire* | 4 |\n| *Fireball* | 3 |  |  |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff crumbles into cinders and is destroyed."
+    "description": "You have Resistance to Fire damage while you hold this staff.\n\n**Spells.** The staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Burning Hands* | 1 |\n| *Fireball* | 3 |\n| *Wall of Fire* | 4 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff crumbles into cinders and is destroyed.",
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "fire"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/burning-hands",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fireball",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 3
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wall-of-fire",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-frost",
@@ -8686,7 +9302,57 @@
         "atMost": 1
       }
     },
-    "description": "You have Resistance to Cold damage while you hold this staff.\n\n**Spells.** The staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Charge | Charge |  |  |\n|---|---|---|---|\n| *Cone of Cold* | 5 | *Ice Storm* | 4 |\n| *Fog Cloud* | 1 | *Wall of Ice* | 4 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff turns to water and is destroyed."
+    "description": "You have Resistance to Cold damage while you hold this staff.\n\n**Spells.** The staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Cone of Cold* | 5 |\n| *Fog Cloud* | 1 |\n| *Ice Storm* | 4 |\n| *Wall of Ice* | 4 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff turns to water and is destroyed.",
+    "effects": [
+      {
+        "type": "grantResistance",
+        "target": "cold"
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/cone-of-cold",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fog-cloud",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/ice-storm",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wall-of-ice",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-healing",
@@ -8715,7 +9381,47 @@
         "atMost": 1
       }
     },
-    "description": "This staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spellcasting ability modifier. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |  |\n|---|---|---|\n| *Cure Wounds* | 1 (maximum 4 for a level 4 | charge per spell level spell) |\n| *Lesser Restoration* |  | 2 |\n| *Mass Cure Wounds* |  | 5 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff vanishes in a flash of light, lost forever."
+    "description": "This staff has 10 charges. While holding the staff, you can cast one of the spells on the following table from it, using your spellcasting ability modifier. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Cure Wounds* | 1 charge per spell level (maximum 4 for a level 4 spell) |\n| *Lesser Restoration* | 2 |\n| *Mass Cure Wounds* | 5 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff vanishes in a flash of light, lost forever.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/cure-wounds",
+        "castingOverrides": {
+          "useOwnAbility": true,
+          "castLevel": 1,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 4
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/lesser-restoration",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/mass-cure-wounds",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-power",
@@ -8744,7 +9450,154 @@
         "atMost": 1
       }
     },
-    "description": "This staff has 20 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While holding it, you gain a +2 bonus to Armor Class, saving throws, and spell attack rolls.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n**Charge**\n\n| Spell | Cost |\n|---|---|\n| *Cone of Cold* | 5 |\n| *Fireball* (level 5 version) | 5 |\n| *Globe of Invulnerability* | 6 |\n| *Hold Monster* | 5 |\n| *Levitate* | 2 |\n| *Lightning Bolt* (level 5 version) | 5 |\n| *Magic Missile* | 1 |\n| *Ray of Enfeeblement* | 1 |\n| *Wall of Force* | 5 |\n\n**Regaining Charges.** The staff regains 2d8 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff retains its +2 bonus to attack rolls and damage rolls but loses all other properties. On a 20, the staff regains 1d8 + 2 charges.\n\n**Retributive Strike.** You can take a Magic action to break the staff over your knee or against a solid surface. The staff is destroyed and releases its magic in an explosion that fills a 30-foot Emanation originating from itself. You have a 50 percent chance to instantly travel to a random plane of existence, avoiding the explosion. If you fail to avoid the effect, you take Force damage equal to 16 times the number of charges in the staff. Each other creature in the area makes a DC 17 Dexterity saving throw. On a failed save, a creature takes Force damage equal to 4 times the number of charges in the staff. On a successful save, a creature takes half as much damage."
+    "description": "This staff has 20 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While holding it, you gain a +2 bonus to Armor Class, saving throws, and spell attack rolls.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Cone of Cold* | 5 |\n| *Fireball* (level 5 version) | 5 |\n| *Globe of Invulnerability* | 6 |\n| *Hold Monster* | 5 |\n| *Levitate* | 2 |\n| *Lightning Bolt* (level 5 version) | 5 |\n| *Magic Missile* | 1 |\n| *Ray of Enfeeblement* | 1 |\n| *Wall of Force* | 5 |\n\n**Regaining Charges.** The staff regains 2d8 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff retains its +2 bonus to attack rolls and damage rolls but loses all other properties. On a 20, the staff regains 1d8 + 2 charges.\n\n**Retributive Strike.** You can take a Magic action to break the staff over your knee or against a solid surface. The staff is destroyed and releases its magic in an explosion that fills a 30-foot Emanation originating from itself. You have a 50 percent chance to instantly travel to a random plane of existence, avoiding the explosion. If you fail to avoid the effect, you take Force damage equal to 16 times the number of charges in the staff. Each other creature in the area makes a DC 17 Dexterity saving throw. On a failed save, a creature takes Force damage equal to 4 times the number of charges in the staff. On a successful save, a creature takes half as much damage.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "modifier",
+        "target": "armorClass",
+        "value": 2
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 2
+      },
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/cone-of-cold",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fireball",
+        "castingOverrides": {
+          "useOwnAbility": true,
+          "castLevel": 5
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/globe-of-invulnerability",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 6
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/hold-monster",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/levitate",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/lightning-bolt",
+        "castingOverrides": {
+          "useOwnAbility": true,
+          "castLevel": 5
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/magic-missile",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/ray-of-enfeeblement",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wall-of-force",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Retributive Strike",
+        "activation": {
+          "type": "action"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-striking",
@@ -8767,7 +9620,57 @@
         "atMost": 1
       }
     },
-    "description": "This staff can be wielded as a magic Quarterstaff that grants a +3 bonus to attack rolls and damage rolls made with it.\n\nThe staff has 10 charges. When you hit with a melee attack using it, you can expend up to 3 charges. For each charge you expend, the target takes an extra 1d6 Force damage.\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff becomes a nonmagical Quarterstaff."
+    "description": "This staff can be wielded as a magic Quarterstaff that grants a +3 bonus to attack rolls and damage rolls made with it.\n\nThe staff has 10 charges. When you hit with a melee attack using it, you can expend up to 3 charges. For each charge you expend, the target takes an extra 1d6 Force damage.\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff becomes a nonmagical Quarterstaff.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "force",
+        "value": {
+          "count": 1,
+          "die": "d6"
+        },
+        "affects": "target",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        },
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "melee"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-swarming-insects",
@@ -8799,7 +9702,61 @@
         "atMost": 1
       }
     },
-    "description": "This staff has 10 charges.\n\n**Insect Cloud.** While holding the staff, you can take a Magic action and expend 1 charge to cause a swarm of harmless flying insects to fill a 30foot Emanation originating from you. The insects remain for 10 minutes, making the area Heavily Obscured for creatures other than you. A strong wind (like that created by *Gust of Wind*) disperses the swarm and ends the effect.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC and spell attack modifier. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Giant Insect* | 4 |\n| *Insect Plague* | 5 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, a swarm of insects consumes and destroys the staff, then disperses."
+    "description": "This staff has 10 charges.\n\n**Insect Cloud.** While holding the staff, you can take a Magic action and expend 1 charge to cause a swarm of harmless flying insects to fill a 30foot Emanation originating from you. The insects remain for 10 minutes, making the area Heavily Obscured for creatures other than you. A strong wind (like that created by *Gust of Wind*) disperses the swarm and ends the effect.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC and spell attack modifier. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Giant Insect* | 4 |\n| *Insect Plague* | 5 |\n\n**Regaining Charges.** The staff regains 1d6 + 4 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, a swarm of insects consumes and destroys the staff, then disperses.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/giant-insect",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/insect-plague",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Insect Cloud",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 10,
+          "unit": "minute"
+        },
+        "effects": [
+          {
+            "type": "createZone",
+            "value": {
+              "obscured": "heavy"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 30
+              }
+            ],
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-the-magi",
@@ -8828,7 +9785,284 @@
         "atMost": 20
       }
     },
-    "description": "This staff has 50 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While you hold it, you gain a +2 bonus to spell attack rolls.\n\n**Spell Absorption.** While holding the staff, you have Advantage on saving throws against spells. In addition, you can take a Reaction when another creature casts a spell that targets only you. If you do, the staff absorbs the magic of the spell, canceling its effect and gaining a number of charges equal to the absorbed spell’s level. However, if doing so brings the staff’s total number of charges above 50, the staff explodes as if you activated its Retributive Strike (see below).\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n**Charge**\n\n| Spell | Cost |\n|---|---|\n| *Arcane Lock* | 0 |\n| *Conjure Elemental* | 7 |\n| *Detect Magic* | 0 |\n| *Dispel Magic* | 3 |\n| *Enlarge/Reduce* | 0 |\n| *Fireball* (level 7 version) | 7 |\n| *Flaming Sphere* | 2 |\n| *Ice Storm* | 4 |\n| *Invisibility* | 2 |\n| *Knock* | 2 |\n| *Light* | 0 |\n| *Lightning Bolt* (level 7 version) | 7 |\n\n**Charge**\n\n| Spell Cost |  |\n|---|---|\n| *Mage Hand* 0 |  |\n\n*Passwall* 5\n\n*Plane Shift* 7\n\n*Protection from Evil and Good* 0\n\n*Telekinesis* 5\n\n*Wall of Fire* 4\n\n*Web* 2\n\n**Regaining Charges.** The staff regains 4d6 + 2 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 20, the staff regains 1d12 + 1 charges.\n\n**Retributive Strike.** You can take a Magic action to break the staff over your knee or against a solid surface. The staff is destroyed and releases its magic in an explosion that fills a 30-foot Emanation originating from itself. You have a 50 percent chance to instantly travel to a random plane of existence, avoiding the explosion. If you fail to avoid the effect, you take Force damage equal to 16 times the number of charges in the staff. Each other creature in the area makes a DC 17 Dexterity saving throw. On a failed save, a creature takes Force damage equal to 6 times the number of charges in the staff. On a successful save, a creature takes half as much damage."
+    "description": "This staff has 50 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While you hold it, you gain a +2 bonus to spell attack rolls.\n\n**Spell Absorption.** While holding the staff, you have Advantage on saving throws against spells. In addition, you can take a Reaction when another creature casts a spell that targets only you. If you do, the staff absorbs the magic of the spell, canceling its effect and gaining a number of charges equal to the absorbed spell’s level. However, if doing so brings the staff’s total number of charges above 50, the staff explodes as if you activated its Retributive Strike (see below).\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Arcane Lock* | 0 |\n| *Conjure Elemental* | 7 |\n| *Detect Magic* | 0 |\n| *Dispel Magic* | 3 |\n| *Enlarge/Reduce* | 0 |\n| *Fireball* (level 7 version) | 7 |\n| *Flaming Sphere* | 2 |\n| *Ice Storm* | 4 |\n| *Invisibility* | 2 |\n| *Knock* | 2 |\n| *Light* | 0 |\n| *Lightning Bolt* (level 7 version) | 7 |\n| *Mage Hand* | 0 |\n| *Passwall* | 5 |\n| *Plane Shift* | 7 |\n| *Protection from Evil and Good* | 0 |\n| *Telekinesis* | 5 |\n| *Wall of Fire* | 4 |\n| *Web* | 2 |\n\n**Regaining Charges.** The staff regains 4d6 + 2 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 20, the staff regains 1d12 + 1 charges.\n\n**Retributive Strike.** You can take a Magic action to break the staff over your knee or against a solid surface. The staff is destroyed and releases its magic in an explosion that fills a 30-foot Emanation originating from itself. You have a 50 percent chance to instantly travel to a random plane of existence, avoiding the explosion. If you fail to avoid the effect, you take Force damage equal to 16 times the number of charges in the staff. Each other creature in the area makes a DC 17 Dexterity saving throw. On a failed save, a creature takes Force damage equal to 6 times the number of charges in the staff. On a successful save, a creature takes half as much damage.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      },
+      {
+        "type": "grantAdvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "magicalSource",
+            "kinds": [
+              "spell"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/arcane-lock",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/conjure-elemental",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 7
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-magic",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/dispel-magic",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 3
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/enlarge-reduce",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fireball",
+        "castingOverrides": {
+          "useOwnAbility": true,
+          "castLevel": 7
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 7
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/flaming-sphere",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/ice-storm",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/invisibility",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/knock",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/light",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/lightning-bolt",
+        "castingOverrides": {
+          "useOwnAbility": true,
+          "castLevel": 7
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 7
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/mage-hand",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/passwall",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/plane-shift",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 7
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/protection-from-evil-and-good",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 0
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/telekinesis",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wall-of-fire",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 4
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/web",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Spell Absorption",
+        "activation": {
+          "type": "reaction",
+          "trigger": "Another creature casts a spell that targets only you."
+        },
+        "effects": [
+          {
+            "type": "interruptSpell",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Retributive Strike",
+        "activation": {
+          "type": "action"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-the-python",
@@ -8836,7 +10070,20 @@
     "category": "staff",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "As a Magic action, you can throw this staff so that it lands in an unoccupied space within 10 feet of you, causing the staff to become a **Giant Constrictor Snake** in that space. The snake is under your control and shares your Initiative count, taking its turn immediately after yours.\n\nOn your turn, you can mentally command the snake (no action required) if it is within 60 feet of you and you don’t have the Incapacitated condition. You decide what action the snake takes and where it moves during its turn, or you can issue it a general command, such as to attack your enemies or guard a location. Absent commands from you, the snake defends itself.\n\nAs a Bonus Action, you can command the snake to revert to staff form in its current space, and you can’t use the staff’s property again for 1 hour. If the snake is reduced to 0 Hit Points, it dies and reverts to its staff form; the staff then shatters and is destroyed. If the snake reverts to staff form before losing all its Hit Points, it regains all of them."
+    "description": "As a Magic action, you can throw this staff so that it lands in an unoccupied space within 10 feet of you, causing the staff to become a **Giant Constrictor Snake** in that space. The snake is under your control and shares your Initiative count, taking its turn immediately after yours.\n\nOn your turn, you can mentally command the snake (no action required) if it is within 60 feet of you and you don’t have the Incapacitated condition. You decide what action the snake takes and where it moves during its turn, or you can issue it a general command, such as to attack your enemies or guard a location. Absent commands from you, the snake defends itself.\n\nAs a Bonus Action, you can command the snake to revert to staff form in its current space, and you can’t use the staff’s property again for 1 hour. If the snake is reduced to 0 Hit Points, it dies and reverts to its staff form; the staff then shatters and is destroyed. If the snake reverts to staff form before losing all its Hit Points, it regains all of them.",
+    "activation": {
+      "type": "action"
+    },
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "forms": [
+            "srd-5.2:creature/giant-constrictor-snake"
+          ]
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-the-woodlands",
@@ -8862,7 +10109,131 @@
         "atMost": 1
       }
     },
-    "description": "This staff has 6 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While holding it, you have a +2 bonus to spell attack rolls.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Animal Friendship* | 1 |\n| *Awaken* | 5 |\n| *Barkskin* | 2 |\n| *Locate Animals or Plants* | 2 |\n| *Pass without Trace* | 2 |\n| *Speak with Animals* | 1 |\n| *Speak with Plants* | 3 |\n| *Wall of Thorns* | 6 |\n\n**Tree Form.** You can take a Magic action to plant one end of the staff in earth in an unoccupied space and expend 1 charge to transform the staff into a healthy tree. The tree is 60 feet tall and has a 5-foot-diameter trunk, and its branches at the top spread out in a 20-foot radius. The tree appears ordinary but radiates a faint aura of Transmutation magic that can be discerned with the *Detect Magic* spell. While touching the tree and using a Magic action, you return the staff to its normal form. Any creature in the tree falls when the tree reverts to a staff.\n\n**Regaining Charges.** The staff regains 1d6 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff loses its properties and becomes a nonmagical Quarterstaff."
+    "description": "This staff has 6 charges and can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. While holding it, you have a +2 bonus to spell attack rolls.\n\n**Spells.** While holding the staff, you can cast one of the spells on the following table from it, using your spell save DC. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Animal Friendship* | 1 |\n| *Awaken* | 5 |\n| *Barkskin* | 2 |\n| *Locate Animals or Plants* | 2 |\n| *Pass without Trace* | 2 |\n| *Speak with Animals* | 1 |\n| *Speak with Plants* | 3 |\n| *Wall of Thorns* | 6 |\n\n**Tree Form.** You can take a Magic action to plant one end of the staff in earth in an unoccupied space and expend 1 charge to transform the staff into a healthy tree. The tree is 60 feet tall and has a 5-foot-diameter trunk, and its branches at the top spread out in a 20-foot radius. The tree appears ordinary but radiates a faint aura of Transmutation magic that can be discerned with the *Detect Magic* spell. While touching the tree and using a Magic action, you return the staff to its normal form. Any creature in the tree falls when the tree reverts to a staff.\n\n**Regaining Charges.** The staff regains 1d6 expended charges daily at dawn. If you expend the last charge, roll 1d20. On a 1, the staff loses its properties and becomes a nonmagical Quarterstaff.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/animal-friendship",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/awaken",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/barkskin",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/locate-animals-or-plants",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/pass-without-trace",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/speak-with-animals",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/speak-with-plants",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 3
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/wall-of-thorns",
+        "castingOverrides": {
+          "useOwnAbility": true
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 6
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Tree Form",
+        "activation": {
+          "type": "action"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-thunder-and-lightning",
@@ -8870,7 +10241,205 @@
     "category": "staff",
     "rarity": "veryRare",
     "attunement": true,
-    "description": "This staff can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. It also has the following additional properties. Once one of these properties is used, it can’t be used again until the next dawn.\n\n**Lightning.** When you hit with a melee attack using the staff, you can cause the target to take an extra 2d6 Lightning damage (no action required).\n\n**Thunder.** When you hit with a melee attack using the staff, you can cause the staff to emit a crack of thunder audible out to 300 feet (no action required). The target you hit must succeed on a DC 17 Constitution saving throw or have the Stunned condition until the end of your next turn.\n\n**Thunder and Lightning.** Immediately after you hit with a melee attack using the staff, you can take a Bonus Action to use the Lightning and Thunder properties (see above) at the same time. Doing so doesn’t expend the daily use of those properties, only the use of this one.\n\n**Lightning Strike.** You can take a Magic action to cause a bolt of lightning to leap from the staff’s tip in a Line that is 5 feet wide and 120 feet long. Each creature in that Line makes a DC 17 Dexterity saving throw, taking 9d6 Lightning damage on a failed save or half as much damage on a successful one.\n\n**Thunderclap.** You can take a Magic action to cause the staff to produce a thunderclap audible out to 600 feet. Every creature within a 60-foot Emanation originating from you makes a DC 17 Constitution saving throw. On a failed save, a creature takes 2d6 Thunder damage and has the Deafened condition for 1 minute. On a successful save, a creature takes half as much damage only."
+    "description": "This staff can be wielded as a magic Quarterstaff that grants a +2 bonus to attack rolls and damage rolls made with it. It also has the following additional properties. Once one of these properties is used, it can’t be used again until the next dawn.\n\n**Lightning.** When you hit with a melee attack using the staff, you can cause the target to take an extra 2d6 Lightning damage (no action required).\n\n**Thunder.** When you hit with a melee attack using the staff, you can cause the staff to emit a crack of thunder audible out to 300 feet (no action required). The target you hit must succeed on a DC 17 Constitution saving throw or have the Stunned condition until the end of your next turn.\n\n**Thunder and Lightning.** Immediately after you hit with a melee attack using the staff, you can take a Bonus Action to use the Lightning and Thunder properties (see above) at the same time. Doing so doesn’t expend the daily use of those properties, only the use of this one.\n\n**Lightning Strike.** You can take a Magic action to cause a bolt of lightning to leap from the staff’s tip in a Line that is 5 feet wide and 120 feet long. Each creature in that Line makes a DC 17 Dexterity saving throw, taking 9d6 Lightning damage on a failed save or half as much damage on a successful one.\n\n**Thunderclap.** You can take a Magic action to cause the staff to produce a thunderclap audible out to 600 feet. Every creature within a 60-foot Emanation originating from you makes a DC 17 Constitution saving throw. On a failed save, a creature takes 2d6 Thunder damage and has the Deafened condition for 1 minute. On a successful save, a creature takes half as much damage only.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Lightning",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "lightning",
+            "value": {
+              "count": 2,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "melee"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Thunder",
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/stunned",
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "melee"
+                ]
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Thunder and Lightning",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": []
+      },
+      {
+        "name": "Lightning Strike",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "lightning",
+            "value": {
+              "count": 9,
+              "die": "d6"
+            },
+            "affects": "target",
+            "area": [
+              {
+                "shape": "line",
+                "size": 120,
+                "width": 5
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "half"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Thunderclap",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "thunder",
+            "value": {
+              "count": 2,
+              "die": "d6"
+            },
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 60
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 17
+              },
+              "onSuccess": "half"
+            }
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/deafened",
+            "affects": "target",
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 60
+              }
+            ],
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/staff-of-withering",
@@ -8888,14 +10457,104 @@
         "rest": "dawn"
       }
     },
-    "description": "This staff has 3 charges and regains 1d3 expended charges daily at dawn.\n\nThe staff can be wielded as a magic Quarterstaff. On a hit, it deals damage as a normal Quarterstaff, and you can expend 1 charge to deal an extra 2d10 Necrotic damage to the target and force it to make a DC 15 Constitution saving throw. On a failed save, the target has Disadvantage for 1 hour on any ability check or saving throw that uses Strength or Constitution."
+    "description": "This staff has 3 charges and regains 1d3 expended charges daily at dawn.\n\nThe staff can be wielded as a magic Quarterstaff. On a hit, it deals damage as a normal Quarterstaff, and you can expend 1 charge to deal an extra 2d10 Necrotic damage to the target and force it to make a DC 15 Constitution saving throw. On a failed save, the target has Disadvantage for 1 hour on any ability check or saving throw that uses Strength or Constitution.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": {
+          "count": 2,
+          "die": "d10"
+        },
+        "affects": "target",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        },
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR",
+              "CON"
+            ]
+          }
+        ],
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate"
+        }
+      },
+      {
+        "type": "grantDisadvantage",
+        "target": "savingThrow",
+        "qualifiers": [
+          {
+            "type": "ability",
+            "abilities": [
+              "STR",
+              "CON"
+            ]
+          },
+          {
+            "type": "saveResult",
+            "result": "failure"
+          }
+        ],
+        "affects": "target",
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/stone-of-controlling-earth-elementals",
     "name": "Stone of Controlling Earth Elementals",
     "category": "wondrousItem",
     "rarity": "rare",
-    "description": "While touching this 5-pound stone to the ground, you can take a Magic action to summon an **Earth Elemental**. The elemental appears in an unoccupied space you choose within 30 feet of yourself, obeys your commands, and takes its turn immediately after you on your Initiative count. The elemental disappears after 1 hour, when it dies, or when you dismiss it as a Bonus Action. The stone can’t be used this way again until the next dawn."
+    "description": "While touching this 5-pound stone to the ground, you can take a Magic action to summon an **Earth Elemental**. The elemental appears in an unoccupied space you choose within 30 feet of yourself, obeys your commands, and takes its turn immediately after you on your Initiative count. The elemental disappears after 1 hour, when it dies, or when you dismiss it as a Bonus Action. The stone can’t be used this way again until the next dawn.",
+    "activation": {
+      "type": "action"
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "dawn"
+    },
+    "duration": {
+      "value": 1,
+      "unit": "hour"
+    },
+    "effects": [
+      {
+        "type": "summon",
+        "value": {
+          "statBlock": "Earth Elemental"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/stone-of-good-luck-luckstone",
@@ -8903,7 +10562,19 @@
     "category": "wondrousItem",
     "rarity": "uncommon",
     "attunement": true,
-    "description": "While this polished agate is on your person, you gain a +1 bonus to ability checks and saving throws."
+    "description": "While this polished agate is on your person, you gain a +1 bonus to ability checks and saving throws.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "abilityCheck",
+        "value": 1
+      },
+      {
+        "type": "rollBonus",
+        "target": "savingThrow",
+        "value": 1
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sun-blade",
@@ -8916,7 +10587,78 @@
         "srd-5.2:equipment/longsword"
       ]
     },
-    "description": "This item appears to be a sword hilt.\n\n**Blade of Radiance.** While grasping the hilt, you can take a Bonus Action to cause a blade of pure radiance to spring into existence or make the blade disappear. While the blade exists, this magic weapon functions as a Longsword with the Finesse property. If you are proficient with Longswords or Shortswords, you are proficient with the *Sun Blade*.\n\nYou gain a +2 bonus to attack rolls and damage rolls made with this weapon, which deals Radiant damage instead of Slashing damage. When you hit an Undead with it, that target takes an extra 1d8 Radiant damage.\n\n**Sunlight.** The sword’s luminous blade emits Bright Light in a 15-foot radius and Dim Light for an additional 15 feet. The light is sunlight. While the blade persists, you can take a Magic action to expand or reduce its radius of Bright Light and Dim Light by 5 feet each, to a maximum of 30 feet each or a minimum of 10 feet each."
+    "description": "This item appears to be a sword hilt.\n\n**Blade of Radiance.** While grasping the hilt, you can take a Bonus Action to cause a blade of pure radiance to spring into existence or make the blade disappear. While the blade exists, this magic weapon functions as a Longsword with the Finesse property. If you are proficient with Longswords or Shortswords, you are proficient with the *Sun Blade*.\n\nYou gain a +2 bonus to attack rolls and damage rolls made with this weapon, which deals Radiant damage instead of Slashing damage. When you hit an Undead with it, that target takes an extra 1d8 Radiant damage.\n\n**Sunlight.** The sword’s luminous blade emits Bright Light in a 15-foot radius and Dim Light for an additional 15 feet. The light is sunlight. While the blade persists, you can take a Magic action to expand or reduce its radius of Bright Light and Dim Light by 5 feet each, to a maximum of 30 feet each or a minimum of 10 feet each.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 2,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "changeDamageType",
+        "value": "radiant",
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": {
+          "count": 1,
+          "die": "d8"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack",
+          "optional": true
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "undead"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "emitLight",
+        "value": {
+          "bright": 15,
+          "dim": 15
+        }
+      }
+    ],
+    "properties": [
+      {
+        "name": "Blade of Radiance",
+        "activation": {
+          "type": "bonusAction"
+        },
+        "effects": []
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sword-of-life-stealing",
@@ -8934,7 +10676,53 @@
         "srd-5.2:equipment/shortsword"
       ]
     },
-    "description": "When you attack a creature with this magic weapon and roll a 20 on the d20 for the attack roll, that target takes an extra 15 Necrotic damage if it isn’t a Construct or an Undead, and you gain Temporary Hit Points equal to the amount of Necrotic damage taken."
+    "description": "When you attack a creature with this magic weapon and roll a 20 on the d20 for the attack roll, that target takes an extra 15 Necrotic damage if it isn’t a Construct or an Undead, and you gain Temporary Hit Points equal to the amount of Necrotic damage taken.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": 15,
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct",
+              "undead"
+            ],
+            "negate": true
+          }
+        ]
+      },
+      {
+        "type": "grantTemporaryHitPoints",
+        "value": 15,
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          },
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "construct",
+              "undead"
+            ],
+            "negate": true
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sword-of-sharpness",
@@ -8950,7 +10738,38 @@
         "srd-5.2:equipment/scimitar"
       ]
     },
-    "description": "When you attack an object with this magic weapon and hit, maximize your weapon damage dice against the target.\n\nWhen you attack a creature with this weapon and roll a 20 on the d20 for the attack roll, that target takes an extra 14 Slashing damage and gains 1 Exhaustion level."
+    "description": "When you attack an object with this magic weapon and hit, maximize your weapon damage dice against the target.\n\nWhen you attack a creature with this weapon and roll a 20 on the d20 for the attack roll, that target takes an extra 14 Slashing damage and gains 1 Exhaustion level.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "slashing",
+        "value": 14,
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/exhaustion",
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/sword-of-wounding",
@@ -8968,7 +10787,52 @@
         "srd-5.2:equipment/shortsword"
       ]
     },
-    "description": "When you hit a creature with an attack using this magic weapon, the target takes an extra 2d6 Necrotic damage and must succeed on a DC 15 Constitution saving throw or be unable to regain Hit Points for 1 hour. The target repeats the save at the end of each of its turns, ending the effect on itself on a success."
+    "description": "When you hit a creature with an attack using this magic weapon, the target takes an extra 2d6 Necrotic damage and must succeed on a DC 15 Constitution saving throw or be unable to regain Hit Points for 1 hour. The target repeats the save at the end of each of its turns, ending the effect on itself on a success.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "necrotic",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "preventHealing",
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ],
+        "save": {
+          "ability": "CON",
+          "dc": {
+            "fixed": 15
+          },
+          "onSuccess": "negate",
+          "repeat": {
+            "event": "endTurn"
+          }
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/talisman-of-pure-good",
@@ -8984,7 +10848,62 @@
     "charges": {
       "max": 7
     },
-    "description": "This talisman is a mighty symbol of goodness. A Fiend or an Undead that touches the talisman takes 8d6 Radiant damage and takes the damage again each time it ends its turn holding or carrying the talisman.\n\n**Holy Symbol.** You can use the talisman as a Holy Symbol. You gain a +2 bonus to spell attack rolls while you wear or hold it.\n\n**Pure Rebuke.** The talisman has 7 charges. While wearing or holding the talisman, you can take a Magic action to expend 1 charge and target one creature you can see on the ground within 120 feet of yourself. A flaming fissure opens under the target, and the target makes a DC 20 Dexterity saving throw. If the target is a Fiend or an Undead, it has Disadvantage on the save. On a failed save, the target falls into the fissure and is destroyed, leaving no remains. On a successful save, the target isn’t cast into the fissure but takes 4d6 Psychic damage from the ordeal. In either case, the fissure then closes, leaving no trace of its existence. When you expend the last charge, the talisman disperses into motes of golden light and is destroyed."
+    "description": "This talisman is a mighty symbol of goodness. A Fiend or an Undead that touches the talisman takes 8d6 Radiant damage and takes the damage again each time it ends its turn holding or carrying the talisman.\n\n**Holy Symbol.** You can use the talisman as a Holy Symbol. You gain a +2 bonus to spell attack rolls while you wear or hold it.\n\n**Pure Rebuke.** The talisman has 7 charges. While wearing or holding the talisman, you can take a Magic action to expend 1 charge and target one creature you can see on the ground within 120 feet of yourself. A flaming fissure opens under the target, and the target makes a DC 20 Dexterity saving throw. If the target is a Fiend or an Undead, it has Disadvantage on the save. On a failed save, the target falls into the fissure and is destroyed, leaving no remains. On a successful save, the target isn’t cast into the fissure but takes 4d6 Psychic damage from the ordeal. In either case, the fissure then closes, leaving no trace of its existence. When you expend the last charge, the talisman disperses into motes of golden light and is destroyed.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      }
+    ],
+    "properties": [
+      {
+        "name": "Pure Rebuke",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/dead",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 120,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 20
+              },
+              "onSuccess": "negate"
+            }
+          },
+          {
+            "type": "dealDamage",
+            "target": "psychic",
+            "value": {
+              "count": 4,
+              "die": "d6"
+            },
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/talisman-of-the-sphere",
@@ -8992,7 +10911,21 @@
     "category": "wondrousItem",
     "rarity": "legendary",
     "attunement": true,
-    "description": "While holding or wearing this talisman, you have Advantage on any Intelligence (Arcana) check you make to control a *Sphere of Annihilation*. In addition, when you start your turn in control of a *Sphere of* *Annihilation*, you can take a Magic action to move it 10 feet plus a number of additional feet equal to 10 times your Intelligence modifier. This movement doesn’t have to be in a straight line."
+    "description": "While holding or wearing this talisman, you have Advantage on any Intelligence (Arcana) check you make to control a *Sphere of Annihilation*. In addition, when you start your turn in control of a *Sphere of* *Annihilation*, you can take a Magic action to move it 10 feet plus a number of additional feet equal to 10 times your Intelligence modifier. This movement doesn’t have to be in a straight line.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "abilityCheck",
+        "qualifiers": [
+          {
+            "type": "skill",
+            "skills": [
+              "srd-5.2:skill/arcana"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/talisman-of-ultimate-evil",
@@ -9003,7 +10936,62 @@
     "charges": {
       "max": 6
     },
-    "description": "This item symbolizes unrepentant evil. A creature that isn’t a Fiend or an Undead that touches the talisman takes 8d6 Necrotic damage and takes the damage again each time it ends its turn holding or carrying the talisman.\n\n**Holy Symbol.** You can use the talisman as a Holy Symbol. You gain a +2 bonus to spell attack rolls while you wear or hold it.\n\n**Ultimate End.** The talisman has 6 charges. While wearing or holding the talisman, you can take a Magic action to expend 1 charge and target one creature you can see on the ground within 120 feet of yourself. A flaming fissure opens under the target, and the target makes a DC 20 Dexterity saving throw. If the target is a Celestial, it has Disadvantage on the save. On a failed save, the target falls into the fissure and is destroyed, leaving no remains. On a successful save, the target isn’t cast into the fissure but takes 4d6 Psychic damage from the ordeal. In either case, the fissure then closes, leaving no trace of its existence. When you expend the last charge, the talisman dissolves into foul-smelling slime and is destroyed."
+    "description": "This item symbolizes unrepentant evil. A creature that isn’t a Fiend or an Undead that touches the talisman takes 8d6 Necrotic damage and takes the damage again each time it ends its turn holding or carrying the talisman.\n\n**Holy Symbol.** You can use the talisman as a Holy Symbol. You gain a +2 bonus to spell attack rolls while you wear or hold it.\n\n**Ultimate End.** The talisman has 6 charges. While wearing or holding the talisman, you can take a Magic action to expend 1 charge and target one creature you can see on the ground within 120 feet of yourself. A flaming fissure opens under the target, and the target makes a DC 20 Dexterity saving throw. If the target is a Celestial, it has Disadvantage on the save. On a failed save, the target falls into the fissure and is destroyed, leaving no remains. On a successful save, the target isn’t cast into the fissure but takes 4d6 Psychic damage from the ordeal. In either case, the fissure then closes, leaving no trace of its existence. When you expend the last charge, the talisman dissolves into foul-smelling slime and is destroyed.",
+    "effects": [
+      {
+        "type": "modifier",
+        "target": "spellAttackBonus",
+        "value": 2
+      }
+    ],
+    "properties": [
+      {
+        "name": "Ultimate End",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/dead",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 120,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 20
+              },
+              "onSuccess": "negate"
+            }
+          },
+          {
+            "type": "dealDamage",
+            "target": "psychic",
+            "value": {
+              "count": 4,
+              "die": "d6"
+            },
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "success"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/thunderous-greatclub",
@@ -9016,28 +11004,171 @@
         "srd-5.2:equipment/greatclub"
       ]
     },
-    "description": "While you are attuned to this magic weapon, your Strength is 20 unless your Strength is already equal to or greater than that score. The weapon deals an extra 1d8 Thunder damage to any creature it hits and an extra 3d8 Thunder damage to objects it hits that aren’t being worn or carried.\n\nThe weapon has the following additional properties.\n\n**Clap of Thunder.** As a Magic action, you can strike the weapon against a hard surface to create a loud clap of thunder audible out to 300 feet. You also create a 30-foot Cone of thunderous energy. Each creature in the Cone must succeed on a DC 15 Strength saving throw or have the Prone condition. Nonmagical objects in the Cone that aren’t being worn or carried take 3d8 Thunder damage.\n\n**Earthquake.** As a Magic action, you can strike the weapon against the ground to create an intense seismic disturbance in a 50-foot-radius circle centered on the point of impact. Structures in contact with the ground in that area take 50 Bludgeoning damage, and each creature on the ground in that area must succeed on a DC 20 Dexterity saving throw or have the Prone condition. If that creature is also concentrating, it must succeed on a DC 20 Constitution saving throw, or its Concentration is broken. In addition, you can cause a 30-foot-deep, 10-foot-wide fissure to open up on the ground anywhere in the area. Any creature on a spot where the fissure opens must make a DC 20 Dexterity saving throw, falling into the fissure on a failed save or moving with the fissure’s edge on a successful one. Any structure on a spot where the fissure opens collapses into the fissure. Once you use this property, it can’t be used again until the next dawn."
+    "description": "While you are attuned to this magic weapon, your Strength is 20 unless your Strength is already equal to or greater than that score. The weapon deals an extra 1d8 Thunder damage to any creature it hits and an extra 3d8 Thunder damage to objects it hits that aren’t being worn or carried.\n\nThe weapon has the following additional properties.\n\n**Clap of Thunder.** As a Magic action, you can strike the weapon against a hard surface to create a loud clap of thunder audible out to 300 feet. You also create a 30-foot Cone of thunderous energy. Each creature in the Cone must succeed on a DC 15 Strength saving throw or have the Prone condition. Nonmagical objects in the Cone that aren’t being worn or carried take 3d8 Thunder damage.\n\n**Earthquake.** As a Magic action, you can strike the weapon against the ground to create an intense seismic disturbance in a 50-foot-radius circle centered on the point of impact. Structures in contact with the ground in that area take 50 Bludgeoning damage, and each creature on the ground in that area must succeed on a DC 20 Dexterity saving throw or have the Prone condition. If that creature is also concentrating, it must succeed on a DC 20 Constitution saving throw, or its Concentration is broken. In addition, you can cause a 30-foot-deep, 10-foot-wide fissure to open up on the ground anywhere in the area. Any creature on a spot where the fissure opens must make a DC 20 Dexterity saving throw, falling into the fissure on a failed save or moving with the fissure’s edge on a successful one. Any structure on a spot where the fissure opens collapses into the fissure. Once you use this property, it can’t be used again until the next dawn.",
+    "effects": [
+      {
+        "type": "setAbilityScore",
+        "target": "STR",
+        "value": 20
+      },
+      {
+        "type": "dealDamage",
+        "target": "thunder",
+        "value": {
+          "count": 1,
+          "die": "d8"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "Clap of Thunder",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "area": [
+              {
+                "shape": "cone",
+                "size": 30
+              }
+            ],
+            "save": {
+              "ability": "STR",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Earthquake",
+        "activation": {
+          "type": "action"
+        },
+        "uses": {
+          "max": 1,
+          "recharge": "dawn"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "area": [
+              {
+                "shape": "cylinder",
+                "size": 50,
+                "height": 0
+              }
+            ],
+            "save": {
+              "ability": "DEX",
+              "dc": {
+                "fixed": 20
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/tome-of-clear-thought",
     "name": "Tome of Clear Thought",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book contains memory and logic exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Intelligence increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century."
+    "description": "This book contains memory and logic exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Intelligence increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "INT"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/tome-of-leadership-and-influence",
     "name": "Tome of Leadership and Influence",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book contains guidelines for influencing and charming others, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Charisma increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century."
+    "description": "This book contains guidelines for influencing and charming others, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Charisma increases by 2, to a maximum of 30. The manual then loses its magic but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "CHA"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/tome-of-understanding",
     "name": "Tome of Understanding",
     "category": "wondrousItem",
     "rarity": "veryRare",
-    "description": "This book contains intuition and insight exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Wisdom increases by 2, to a maximum of 30. The manual then loses its magic, but regains it in a century."
+    "description": "This book contains intuition and insight exercises, and its words are charged with magic. If you spend 48 hours over a period of 6 days or fewer studying the book’s contents and practicing its guidelines, your Wisdom increases by 2, to a maximum of 30. The manual then loses its magic, but regains it in a century.",
+    "activation": {
+      "type": "special",
+      "trigger": "48 hours of study over 6 days or fewer."
+    },
+    "uses": {
+      "max": 1,
+      "recharge": "none"
+    },
+    "effects": [
+      {
+        "type": "increaseAbilityScore",
+        "target": [
+          "WIS"
+        ],
+        "value": {
+          "amount": 2,
+          "maximum": 30
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/trident-of-fish-command",
@@ -9060,14 +11191,47 @@
         "rest": "dawn"
       }
     },
-    "description": "This magic weapon has 3 charges, and it regains 1d3 expended charges daily at dawn. While you carry it, you can expend 1 charge to cast *Dominate* *Beast* (save DC 15) from it on a Beast that has a Swim Speed."
+    "description": "This magic weapon has 3 charges, and it regains 1d3 expended charges daily at dawn. While you carry it, you can expend 1 charge to cast *Dominate* *Beast* (save DC 15) from it on a Beast that has a Swim Speed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/dominate-beast",
+        "castingOverrides": {
+          "saveDc": 15
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        },
+        "qualifiers": [
+          {
+            "type": "creatureType",
+            "creatureTypes": [
+              "beast"
+            ]
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/universal-solvent",
     "name": "Universal Solvent",
     "category": "wondrousItem",
     "rarity": "legendary",
-    "description": "This tube holds milky liquid with a strong alcohol smell. When found, a tube contains 1d6 + 1 ounces.\n\nYou can take a Utilize action to pour 1 or more ounces of solvent from the tube onto a surface within reach. Each ounce instantly dissolves up to 1 square foot of adhesive it touches, including *Sover-* *eign Glue*."
+    "charges": {
+      "max": {
+        "count": 1,
+        "die": "d6",
+        "modifier": 1
+      }
+    },
+    "consumable": true,
+    "description": "This tube holds milky liquid with a strong alcohol smell. When found, a tube contains 1d6 + 1 ounces.\n\nYou can take a Utilize action to pour 1 or more ounces of solvent from the tube onto a surface within reach. Each ounce instantly dissolves up to 1 square foot of adhesive it touches, including *Sover-* *eign Glue*.",
+    "activation": {
+      "type": "action",
+      "trigger": "Utilize action."
+    }
   },
   {
     "id": "srd-5.2:magic-item/vicious-weapon",
@@ -9081,7 +11245,26 @@
         "martial"
       ]
     },
-    "description": "This magic weapon deals an extra 2d6 damage to any creature it hits. This extra damage is of the same type as the weapon’s normal damage."
+    "description": "This magic weapon deals an extra 2d6 damage to any creature it hits. This extra damage is of the same type as the weapon’s normal damage.",
+    "effects": [
+      {
+        "type": "dealDamage",
+        "target": "$derived:attackDamageType",
+        "value": {
+          "count": 2,
+          "die": "d6"
+        },
+        "affects": "target",
+        "trigger": {
+          "event": "hitWithAttack"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/vorpal-sword",
@@ -9097,7 +11280,54 @@
         "srd-5.2:equipment/scimitar"
       ]
     },
-    "description": "You gain a +3 bonus to attack rolls and damage rolls made with this magic weapon. In addition, the weapon ignores Resistance to Slashing damage.\n\nWhen you use this weapon to attack a creature that has at least one head and roll a 20 on the d20 for the attack roll, you cut off one of the creature’s heads. The creature dies if it can’t survive without the lost head. A creature is immune to this effect if it has Immunity to Slashing damage, if it doesn’t have or need a head, or if the GM decides that the creature is too big for its head to be cut off with this weapon. Such a creature instead takes an extra 30 Slashing damage from the hit. If the creature has Legendary Resistance, it can expend one daily use of that trait to avoid losing its head, taking the extra damage instead."
+    "description": "You gain a +3 bonus to attack rolls and damage rolls made with this magic weapon. In addition, the weapon ignores Resistance to Slashing damage.\n\nWhen you use this weapon to attack a creature that has at least one head and roll a 20 on the d20 for the attack roll, you cut off one of the creature’s heads. The creature dies if it can’t survive without the lost head. A creature is immune to this effect if it has Immunity to Slashing damage, if it doesn’t have or need a head, or if the GM decides that the creature is too big for its head to be cut off with this weapon. Such a creature instead takes an extra 30 Slashing damage from the hit. If the creature has Legendary Resistance, it can expend one daily use of that trait to avoid losing its head, taking the extra damage instead.",
+    "effects": [
+      {
+        "type": "rollBonus",
+        "target": "attackRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "rollBonus",
+        "target": "damageRoll",
+        "value": 3,
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "ignoreResistance",
+        "target": [
+          "slashing"
+        ],
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      },
+      {
+        "type": "applyCondition",
+        "target": "srd-5.2:condition/dead",
+        "affects": "target",
+        "trigger": {
+          "event": "criticalHit",
+          "roll": "attackRoll"
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-binding",
@@ -9120,7 +11350,31 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges.\n\n**Spells.** While holding the wand, you can cast one of the spells (save DC 17) on the following table from it. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Hold Monster* | 5 |\n| *Hold Person* | 2 |\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges.\n\n**Spells.** While holding the wand, you can cast one of the spells (save DC 17) on the following table from it. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Hold Monster* | 5 |\n| *Hold Person* | 2 |\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/hold-monster",
+        "castingOverrides": {
+          "saveDc": 17
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 5
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/hold-person",
+        "castingOverrides": {
+          "saveDc": 17
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 2
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-enemy-detection",
@@ -9143,7 +11397,34 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge. For 1 minute, you know the direction of the nearest creature Hostile to you within 60 feet, but not its distance from you. The wand can sense the presence of Hostile creatures that are Invisible, ethereal, disguised, or hidden, as well as those in plain sight. The effect ends if you stop holding the wand.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge. For 1 minute, you know the direction of the nearest creature Hostile to you within 60 feet, but not its distance from you. The wand can sense the presence of Hostile creatures that are Invisible, ethereal, disguised, or hidden, as well as those in plain sight. The effect ends if you stop holding the wand.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "properties": [
+      {
+        "name": "Sense Enemies",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "minute"
+        },
+        "effects": [
+          {
+            "type": "detect",
+            "value": {
+              "within": 60,
+              "things": [
+                "creature"
+              ]
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-fear",
@@ -9166,7 +11447,31 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges.\n\n**Spells.** While holding the wand, you can cast one of the spells (save DC 15) on the following table from it. The table indicates how many charges you must expend to cast the spell.\n\n**Charge**\n\n| Spell | Cost |\n|---|---|\n| *Command* (“flee” or “grovel” only) | 1 |\n| *Fear* (60-foot Cone) | 3 |\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges.\n\n**Spells.** While holding the wand, you can cast one of the spells (save DC 15) on the following table from it. The table indicates how many charges you must expend to cast the spell.\n\n| Spell | Charge Cost |\n|---|---|\n| *Command* (“flee” or “grovel” only) | 1 |\n| *Fear* (60-foot Cone) | 3 |\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/command",
+        "castingOverrides": {
+          "saveDc": 15
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      },
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fear",
+        "castingOverrides": {
+          "saveDc": 15
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 3
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-fireballs",
@@ -9191,7 +11496,25 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Fireball* (save DC 15) from it. For 1 charge, you cast the level 3 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Fireball* (save DC 15) from it. For 1 charge, you cast the level 3 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/fireball",
+        "castingOverrides": {
+          "saveDc": 15,
+          "castLevel": 3,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 5
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-lightning-bolts",
@@ -9216,7 +11539,25 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Lightning* *Bolt* (save DC 15) from it. For 1 charge, you cast the level 3 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Lightning* *Bolt* (save DC 15) from it. For 1 charge, you cast the level 3 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/lightning-bolt",
+        "castingOverrides": {
+          "saveDc": 15,
+          "castLevel": 3,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 5
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-magic-detection",
@@ -9233,7 +11574,17 @@
         "rest": "dawn"
       }
     },
-    "description": "This wand has 3 charges. While holding it, you can expend 1 charge to cast *Detect Magic* from it. The wand regains 1d3 expended charges daily at dawn."
+    "description": "This wand has 3 charges. While holding it, you can expend 1 charge to cast *Detect Magic* from it. The wand regains 1d3 expended charges daily at dawn.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/detect-magic",
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-magic-missiles",
@@ -9255,7 +11606,24 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Magic Missile* from it. For 1 charge, you cast the level 1 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can expend no more than 3 charges to cast *Magic Missile* from it. For 1 charge, you cast the level 1 version of the spell. You can increase the spell’s level by 1 for each additional charge you expend.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/magic-missile",
+        "castingOverrides": {
+          "castLevel": 1,
+          "upcastCost": {
+            "perLevel": 1,
+            "maxLevel": 3
+          }
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-paralysis",
@@ -9280,7 +11648,47 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge to cause a thin blue ray to streak from the tip toward a creature you can see within 60 feet of yourself. The target must succeed on a DC 15 Constitution saving throw or have the Paralyzed condition for 1 minute. At the end of each of the target’s turns, it repeats the save, ending the effect on itself on a success.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge to cause a thin blue ray to streak from the tip toward a creature you can see within 60 feet of yourself. The target must succeed on a DC 15 Constitution saving throw or have the Paralyzed condition for 1 minute. At the end of each of the target’s turns, it repeats the save, ending the effect on itself on a success.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "properties": [
+      {
+        "name": "Paralyzing Ray",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/paralyzed",
+            "affects": "target",
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            },
+            "duration": {
+              "value": 1,
+              "unit": "minute"
+            },
+            "qualifiers": [
+              {
+                "type": "range",
+                "within": 60,
+                "unit": "feet"
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "fixed": 15
+              },
+              "onSuccess": "negate",
+              "repeat": {
+                "event": "endTurn"
+              }
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-polymorph",
@@ -9305,7 +11713,20 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can expend 1 charge to cast *Polymorph* (save DC 15) from it.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can expend 1 charge to cast *Polymorph* (save DC 15) from it.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/polymorph",
+        "castingOverrides": {
+          "saveDc": 15
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-secrets",
@@ -9322,7 +11743,31 @@
         "rest": "dawn"
       }
     },
-    "description": "This wand has 3 charges and regains 1d3 expended charges daily at dawn. While holding it, you can take a Magic action to expend 1 charge, and if a secret door or trap is within 60 feet of you, the wand pulses and points at the one nearest to you."
+    "description": "This wand has 3 charges and regains 1d3 expended charges daily at dawn. While holding it, you can take a Magic action to expend 1 charge, and if a secret door or trap is within 60 feet of you, the wand pulses and points at the one nearest to you.",
+    "properties": [
+      {
+        "name": "Find Secrets",
+        "activation": {
+          "type": "action"
+        },
+        "effects": [
+          {
+            "type": "detect",
+            "value": {
+              "within": 60,
+              "things": [
+                "traps",
+                "object"
+              ]
+            },
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-the-war-mage",
@@ -9336,17 +11781,38 @@
       {
         "slug": "plus-1",
         "name": "+1 Wand of the War Mage",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellAttackBonus",
+            "value": 1
+          }
+        ]
       },
       {
         "slug": "plus-2",
         "name": "+2 Wand of the War Mage",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellAttackBonus",
+            "value": 2
+          }
+        ]
       },
       {
         "slug": "plus-3",
         "name": "+3 Wand of the War Mage",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "spellAttackBonus",
+            "value": 3
+          }
+        ]
       }
     ],
     "description": "While holding this wand, you gain a bonus to spell attack rolls determined by the wand’s rarity. In addition, you ignore Half Cover when making a spell attack roll."
@@ -9374,7 +11840,20 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can expend 1 charge to cast *Web* (save DC 13) from it.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed."
+    "description": "This wand has 7 charges. While holding it, you can expend 1 charge to cast *Web* (save DC 13) from it.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into ashes and is destroyed.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/web",
+        "castingOverrides": {
+          "saveDc": 13
+        },
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wand-of-wonder",
@@ -9397,7 +11876,392 @@
         "atMost": 1
       }
     },
-    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge while choosing a point within 120 feet of yourself. That location becomes the point of origin of a spell or other magical effect determined by rolling on the Wand of Wonder Effects table. Spells cast from the wand have a save DC of 15. If a spell’s maximum range is normally less than 120 feet, it becomes 120 feet when cast from the wand. If an effect has multiple possible subjects, the GM determines randomly which among them are affected.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into dust and is destroyed.\n\n**Wand of Wonder Effects**\n\n| 1d100 Effect |  |  |\n|---|---|---|\n| 01–20 | You cast a spell originating from the chosen point. Roll 1d10 to determine the spell: on a **1–2,** *Darkness*; on a **3–4,** *Faerie Fire*; on a **5–6,** *Fireball*; on a **7–8,** *Slow*; on a **9–10,** *Stinking* *Cloud*. | the Ethereal Plane. The object must be neither worn nor carried, within 120 feet of the chosen point of origin, and no larger than 10 feet in any dimension. If there are no such objects in range, nothing happens. |\n| 21–25 | Nothing happens at the chosen point of origin. 69–72 Nothing happens at the chosen point of origin. Instead, you have the Stunned condition until the start of your next turn, believing something awesome just happened. | Instead, you shrink as if you had cast *Enlarge/* *Reduce* on yourself and remain in that state for 1 minute. |\n| 26–30 | You cast *Gust of Wind*. The Line created by the 73–77 Leaves grow from the creature nearest to the spell extends from you to the chosen point of origin. | chosen point of origin. Unless they are picked off, the leaves turn brown and fall off after 24 |\n| 31–35 | Nothing happens at the chosen point of origin. Instead, you take 1d6 Psychic damage. 78–82 Nothing happens at the chosen point of origin. | hours. |\n| 36–40 | Heavy rain falls for 1 minute in a 120-foothigh, 60-foot-radius Cylinder centered on the chosen point of origin. During that time, the area of effect is Lightly Obscured. | Instead, a burst of colorful, shimmering light extends from you in a 30-foot Emanation. Each creature in the area must succeed on a DC 15 Constitution saving throw or have the Blinded condition for 1 minute. A creature re- |\n| 41–45 | A cloud of 600 oversized butterflies fills a 60-foot-high, 30-foot-radius Cylinder centered on the chosen point of origin. The butterflies remain for 10 minutes, during which time the 83–87 Nothing happens at the chosen point of origin. area of effect is Heavily Obscured. | peats the save at the end of each of its turns, ending the effect on itself on a success. Instead, you cast *Invisibility* on yourself. |\n| 46–50 | You cast *Lightning Bolt*. The Line created by the 88–92 Nothing happens at the chosen point of orispell extends from you to the chosen point of origin. | gin. Instead, a stream of 1d4 × 10 gems, each worth 1 GP, shoots from the wand’s tip in a Line 30 feet long and 5 feet wide toward the |\n| 51–55 | The creature closest to the chosen point of origin is enlarged as if you had cast *Enlarge/* *Reduce* on it. If the target isn’t you and can’t be affected by that spell, you become the target instead. 93–97 You cast *Polymorph*, targeting the creature | chosen point of origin. Each gem deals 1 Bludgeoning damage, and the total damage of the gems is divided equally among all creatures in the Line. |\n| 56–60 | A magically formed creature appears in an unoccupied space as close to the chosen point of origin as possible. The creature isn’t under your control, acts as it normally would, and disappears after 1 hour or when it drops to 0 Hit Points. Roll 1d4 to determine which creature appears. On a **1,** a **Rhinoceros** appears; 98–00 The creature closest to the chosen point of on a **2,** an **Elephant** appears; and on a **3–4,** a **Rat** appears. | closest to the chosen point of origin. Roll 1d4 to determine the target’s new form. On a **1,** the new form is a **Black Bear;** on a **2,** the new form is a **Giant Wasp;** on a **3–4,** the new form is a **Frog.** origin makes a DC 15 Constitution saving throw. On a failed save, the creature has the Restrained condition and begins to turn to |\n| 61–64 | Grass covers a 60-foot-radius circle of ground, with the center of that circle as close to the chosen point of origin as possible. Grass that’s already there grows to ten times its normal size and remains overgrown for 1 minute. **1d100 Effect** 65–68 An object of the GM’s choice disappears into | stone. While Restrained in this way, the creature repeats the save at the end of its next turn. On a successful save, the effect ends. On a failed save, the creature has the Petrified condition instead of the Restrained condition. The petrification lasts until the creature is freed by the *Greater Restoration* spell or similar magic. |"
+    "description": "This wand has 7 charges. While holding it, you can take a Magic action to expend 1 charge while choosing a point within 120 feet of yourself. That location becomes the point of origin of a spell or other magical effect determined by rolling on the Wand of Wonder Effects table. Spells cast from the wand have a save DC of 15. If a spell’s maximum range is normally less than 120 feet, it becomes 120 feet when cast from the wand. If an effect has multiple possible subjects, the GM determines randomly which among them are affected.\n\n**Regaining Charges.** The wand regains 1d6 + 1 expended charges daily at dawn. If you expend the wand’s last charge, roll 1d20. On a 1, the wand crumbles into dust and is destroyed.\n\n**Wand of Wonder Effects**\n\n| 1d100 | Effect |\n|---|---|\n| 01–20 | You cast a spell originating from the chosen point. Roll 1d10 to determine the spell: on a 1–2, *Darkness*; on a 3–4, *Faerie Fire*; on a 5–6, *Fireball*; on a 7–8, *Slow*; on a 9–10, *Stinking Cloud*. |\n| 21–25 | Nothing happens at the chosen point of origin. Instead, you have the Stunned condition until the start of your next turn, believing something awesome just happened. |\n| 26–30 | You cast *Gust of Wind*. The Line created by the spell extends from you to the chosen point of origin. |\n| 31–35 | Nothing happens at the chosen point of origin. Instead, you take 1d6 Psychic damage. |\n| 36–40 | Heavy rain falls for 1 minute in a 120-foot-high, 60-foot-radius Cylinder centered on the chosen point of origin. During that time, the area of effect is Lightly Obscured. |\n| 41–45 | A cloud of 600 oversized butterflies fills a 60-foot-high, 30-foot-radius Cylinder centered on the chosen point of origin. The butterflies remain for 10 minutes, during which time the area of effect is Heavily Obscured. |\n| 46–50 | You cast *Lightning Bolt*. The Line created by the spell extends from you to the chosen point of origin. |\n| 51–55 | The creature closest to the chosen point of origin is enlarged as if you had cast *Enlarge/Reduce* on it. If the target isn’t you and can’t be affected by that spell, you become the target instead. |\n| 56–60 | A magically formed creature appears in an unoccupied space as close to the chosen point of origin as possible. The creature isn’t under your control, acts as it normally would, and disappears after 1 hour or when it drops to 0 Hit Points. Roll 1d4 to determine which creature appears. On a 1, a **Rhinoceros** appears; on a 2, an **Elephant** appears; and on a 3–4, a **Rat** appears. |\n| 61–64 | Grass covers a 60-foot-radius circle of ground, with the center of that circle as close to the chosen point of origin as possible. Grass that’s already there grows to ten times its normal size and remains overgrown for 1 minute. |\n| 65–68 | An object of the GM’s choice disappears into the Ethereal Plane. The object must be neither worn nor carried, within 120 feet of the chosen point of origin, and no larger than 10 feet in any dimension. If there are no such objects in range, nothing happens. |\n| 69–72 | Nothing happens at the chosen point of origin. Instead, you shrink as if you had cast *Enlarge/Reduce* on yourself and remain in that state for 1 minute. |\n| 73–77 | Leaves grow from the creature nearest to the chosen point of origin. Unless they are picked off, the leaves turn brown and fall off after 24 hours. |\n| 78–82 | Nothing happens at the chosen point of origin. Instead, a burst of colorful, shimmering light extends from you in a 30-foot Emanation. Each creature in the area must succeed on a DC 15 Constitution saving throw or have the Blinded condition for 1 minute. A creature repeats the save at the end of each of its turns, ending the effect on itself on a success. |\n| 83–87 | Nothing happens at the chosen point of origin. Instead, you cast *Invisibility* on yourself. |\n| 88–92 | Nothing happens at the chosen point of origin. Instead, a stream of 1d4 × 10 gems, each worth 1 GP, shoots from the wand’s tip in a Line 30 feet long and 5 feet wide toward the chosen point of origin. Each gem deals 1 Bludgeoning damage, and the total damage of the gems is divided equally among all creatures in the Line. |\n| 93–97 | You cast *Polymorph*, targeting the creature closest to the chosen point of origin. Roll 1d4 to determine the target’s new form. On a 1, the new form is a **Black Bear**; on a 2, the new form is a **Giant Wasp**; on a 3–4, the new form is a **Frog**. |\n| 98–00 | The creature closest to the chosen point of origin makes a DC 15 Constitution saving throw. On a failed save, the creature has the Restrained condition and begins to turn to stone. While Restrained in this way, the creature repeats the save at the end of its next turn. On a successful save, the effect ends. On a failed save, the creature has the Petrified condition instead of the Restrained condition. The petrification lasts until the creature is freed by the *Greater Restoration* spell or similar magic. |",
+    "activation": {
+      "type": "action"
+    },
+    "options": {
+      "list": "srd-5.2:list/wand-of-wonder",
+      "die": "d100",
+      "items": [
+        {
+          "id": "spell",
+          "name": "A random spell (1d10): Darkness, Faerie Fire, Fireball, Slow, or Stinking Cloud",
+          "description": "A random spell (1d10): Darkness, Faerie Fire, Fireball, Slow, or Stinking Cloud.",
+          "roll": {
+            "min": 1,
+            "max": 20
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/darkness",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            },
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/faerie-fire",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            },
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/fireball",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            },
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/slow",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            },
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/stinking-cloud",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "stunned",
+          "name": "You have the Stunned condition until the start of your next turn",
+          "description": "You have the Stunned condition until the start of your next turn.",
+          "roll": {
+            "min": 21,
+            "max": 25
+          },
+          "effects": [
+            {
+              "type": "applyCondition",
+              "target": "srd-5.2:condition/stunned",
+              "duration": {
+                "value": 1,
+                "unit": "round"
+              }
+            }
+          ]
+        },
+        {
+          "id": "gust-of-wind",
+          "name": "You cast Gust of Wind",
+          "description": "You cast Gust of Wind.",
+          "roll": {
+            "min": 26,
+            "max": 30
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/gust-of-wind",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "psychic",
+          "name": "You take 1d6 Psychic damage",
+          "description": "You take 1d6 Psychic damage.",
+          "roll": {
+            "min": 31,
+            "max": 35
+          },
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": "psychic",
+              "value": {
+                "count": 1,
+                "die": "d6"
+              }
+            }
+          ]
+        },
+        {
+          "id": "rain",
+          "name": "Heavy rain makes a 60-foot-radius Cylinder Lightly Obscured for 1 minute",
+          "description": "Heavy rain makes a 60-foot-radius Cylinder Lightly Obscured for 1 minute.",
+          "roll": {
+            "min": 36,
+            "max": 40
+          },
+          "effects": [
+            {
+              "type": "createZone",
+              "value": {
+                "obscured": "light"
+              },
+              "area": [
+                {
+                  "shape": "cylinder",
+                  "size": 60,
+                  "height": 120
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "butterflies",
+          "name": "Butterflies make a 30-foot-radius Cylinder Heavily Obscured for 10 minutes",
+          "description": "Butterflies make a 30-foot-radius Cylinder Heavily Obscured for 10 minutes.",
+          "roll": {
+            "min": 41,
+            "max": 45
+          },
+          "effects": [
+            {
+              "type": "createZone",
+              "value": {
+                "obscured": "heavy"
+              },
+              "area": [
+                {
+                  "shape": "cylinder",
+                  "size": 30,
+                  "height": 60
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lightning-bolt",
+          "name": "You cast Lightning Bolt",
+          "description": "You cast Lightning Bolt.",
+          "roll": {
+            "min": 46,
+            "max": 50
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/lightning-bolt",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "enlarge",
+          "name": "The creature closest to the point is enlarged",
+          "description": "The creature closest to the point is enlarged.",
+          "roll": {
+            "min": 51,
+            "max": 55
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/enlarge-reduce",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "creature",
+          "name": "A Rhinoceros, Elephant, or Rat appears (1d4)",
+          "description": "A Rhinoceros, Elephant, or Rat appears (1d4).",
+          "roll": {
+            "min": 56,
+            "max": 60
+          },
+          "effects": [
+            {
+              "type": "summon",
+              "value": {
+                "forms": [
+                  "srd-5.2:creature/rhinoceros",
+                  "srd-5.2:creature/elephant",
+                  "srd-5.2:creature/rat"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grass",
+          "name": "Grass grows over a 60-foot-radius circle",
+          "description": "Grass grows over a 60-foot-radius circle.",
+          "roll": {
+            "min": 61,
+            "max": 64
+          },
+          "effects": []
+        },
+        {
+          "id": "object-vanishes",
+          "name": "An object disappears into the Ethereal Plane",
+          "description": "An object disappears into the Ethereal Plane.",
+          "roll": {
+            "min": 65,
+            "max": 68
+          },
+          "effects": []
+        },
+        {
+          "id": "shrink",
+          "name": "You shrink as if by Enlarge/Reduce for 1 minute",
+          "description": "You shrink as if by Enlarge/Reduce for 1 minute.",
+          "roll": {
+            "min": 69,
+            "max": 72
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/enlarge-reduce"
+            }
+          ]
+        },
+        {
+          "id": "leaves",
+          "name": "Leaves grow from the nearest creature",
+          "description": "Leaves grow from the nearest creature.",
+          "roll": {
+            "min": 73,
+            "max": 77
+          },
+          "effects": []
+        },
+        {
+          "id": "light",
+          "name": "A 30-foot Emanation of light blinds on a failed DC 15 Constitution save",
+          "description": "A 30-foot Emanation of light blinds on a failed DC 15 Constitution save.",
+          "roll": {
+            "min": 78,
+            "max": 82
+          },
+          "effects": [
+            {
+              "type": "applyCondition",
+              "target": "srd-5.2:condition/blinded",
+              "affects": "target",
+              "area": [
+                {
+                  "shape": "emanation",
+                  "size": 30
+                }
+              ],
+              "duration": {
+                "value": 1,
+                "unit": "minute"
+              },
+              "save": {
+                "ability": "CON",
+                "dc": {
+                  "fixed": 15
+                },
+                "onSuccess": "negate",
+                "repeat": {
+                  "event": "endTurn"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "invisibility",
+          "name": "You cast Invisibility on yourself",
+          "description": "You cast Invisibility on yourself.",
+          "roll": {
+            "min": 83,
+            "max": 87
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/invisibility"
+            }
+          ]
+        },
+        {
+          "id": "gems",
+          "name": "A stream of 1d4 × 10 gems deals 1 Bludgeoning damage each in a 30-foot Line",
+          "description": "A stream of 1d4 × 10 gems deals 1 Bludgeoning damage each in a 30-foot Line.",
+          "roll": {
+            "min": 88,
+            "max": 92
+          },
+          "effects": []
+        },
+        {
+          "id": "polymorph",
+          "name": "You cast Polymorph on the nearest creature (Black Bear, Giant Wasp, or Frog)",
+          "description": "You cast Polymorph on the nearest creature (Black Bear, Giant Wasp, or Frog).",
+          "roll": {
+            "min": 93,
+            "max": 97
+          },
+          "effects": [
+            {
+              "type": "grantSpells",
+              "target": "srd-5.2:spell/polymorph",
+              "castingOverrides": {
+                "saveDc": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "petrify",
+          "name": "The nearest creature is Restrained, then Petrified on a second failed DC 15 Constitution save",
+          "description": "The nearest creature is Restrained, then Petrified on a second failed DC 15 Constitution save.",
+          "roll": {
+            "min": 98,
+            "max": 100
+          },
+          "effects": [
+            {
+              "type": "applyCondition",
+              "target": "srd-5.2:condition/restrained",
+              "affects": "target",
+              "save": {
+                "ability": "CON",
+                "dc": {
+                  "fixed": 15
+                },
+                "onSuccess": "negate"
+              }
+            },
+            {
+              "type": "applyCondition",
+              "target": "srd-5.2:condition/petrified",
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "saveResult",
+                  "result": "failure"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "effects": [
+      {
+        "type": "chooseOptions",
+        "target": "srd-5.2:list/wand-of-wonder",
+        "value": 1,
+        "cost": {
+          "resource": "charges",
+          "amount": 1
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/weapon-plus",
@@ -9415,17 +12279,83 @@
       {
         "slug": "plus-1",
         "name": "+1 Weapon",
-        "rarity": "uncommon"
+        "rarity": "uncommon",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": 1,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "plus-2",
         "name": "+2 Weapon",
-        "rarity": "rare"
+        "rarity": "rare",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": 2,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          }
+        ]
       },
       {
         "slug": "plus-3",
         "name": "+3 Weapon",
-        "rarity": "veryRare"
+        "rarity": "veryRare",
+        "effects": [
+          {
+            "type": "rollBonus",
+            "target": "attackRoll",
+            "value": 3,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          },
+          {
+            "type": "rollBonus",
+            "target": "damageRoll",
+            "value": 3,
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              }
+            ]
+          }
+        ]
       }
     ],
     "description": "You have a bonus to attack rolls and damage rolls made with this magic weapon. The bonus is determined by the weapon’s rarity."
@@ -9443,21 +12373,52 @@
         "martial"
       ]
     },
-    "description": "As long as this weapon is within your reach and you are attuned to it, you and allies within 30 feet of you gain the following benefits.\n\n**Alarm.** The weapon magically awakens each subject who is sleeping naturally when combat begins. This benefit doesn’t wake a subject from magically induced sleep.\n\n**Supernatural Readiness.** Each subject has Advantage on its Initiative rolls."
+    "description": "As long as this weapon is within your reach and you are attuned to it, you and allies within 30 feet of you gain the following benefits.\n\n**Alarm.** The weapon magically awakens each subject who is sleeping naturally when combat begins. This benefit doesn’t wake a subject from magically induced sleep.\n\n**Supernatural Readiness.** Each subject has Advantage on its Initiative rolls.",
+    "effects": [
+      {
+        "type": "grantAdvantage",
+        "target": "initiative",
+        "qualifiers": [
+          {
+            "type": "targetRelation",
+            "relation": "selfOrAlly"
+          }
+        ],
+        "affects": "target",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 30
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/well-of-many-worlds",
     "name": "Well of Many Worlds",
     "category": "wondrousItem",
     "rarity": "legendary",
-    "description": "This fine black cloth, soft as silk, is folded up to the dimensions of a handkerchief. It unfolds into a circular sheet 6 feet in diameter.\n\nYou can take a Magic action to unfold the *Well of* *Many Worlds* and place it on a solid surface, whereupon it forms a two-way, 6-foot-diameter, circular portal to another world or plane of existence. Each time the item opens a portal, the GM decides where it leads. The portal remains open until a creature within 5 feet of it takes a Magic action to close it by taking hold of the edges of the cloth and folding it up.\n\nOnce the *Well of Many Worlds* has opened a portal, it can’t do so again for 1d8 hours."
+    "description": "This fine black cloth, soft as silk, is folded up to the dimensions of a handkerchief. It unfolds into a circular sheet 6 feet in diameter.\n\nYou can take a Magic action to unfold the *Well of* *Many Worlds* and place it on a solid surface, whereupon it forms a two-way, 6-foot-diameter, circular portal to another world or plane of existence. Each time the item opens a portal, the GM decides where it leads. The portal remains open until a creature within 5 feet of it takes a Magic action to close it by taking hold of the edges of the cloth and folding it up.\n\nOnce the *Well of Many Worlds* has opened a portal, it can’t do so again for 1d8 hours.",
+    "activation": {
+      "type": "action"
+    }
   },
   {
     "id": "srd-5.2:magic-item/wind-fan",
     "name": "Wind Fan",
     "category": "wondrousItem",
     "rarity": "uncommon",
-    "description": "While holding this fan, you can cast *Gust of Wind* (save DC 13) from it. Each subsequent time the fan is used before the next dawn, it has a cumulative 20 percent chance of not working; if the fan fails to work, it tears into useless, nonmagical tatters."
+    "description": "While holding this fan, you can cast *Gust of Wind* (save DC 13) from it. Each subsequent time the fan is used before the next dawn, it has a cumulative 20 percent chance of not working; if the fan fails to work, it tears into useless, nonmagical tatters.",
+    "effects": [
+      {
+        "type": "grantSpells",
+        "target": "srd-5.2:spell/gust-of-wind",
+        "castingOverrides": {
+          "saveDc": 13
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/winged-boots",
@@ -9475,7 +12436,30 @@
         "rest": "dawn"
       }
     },
-    "description": "These boots have 4 charges and regain 1d4 expended charges daily at dawn. While wearing the boots, you can take a Magic action to expend 1 charge, gaining a Fly Speed of 30 feet for 1 hour. If you are flying when the duration expires, you descend at a rate of 30 feet per round until you land."
+    "description": "These boots have 4 charges and regain 1d4 expended charges daily at dawn. While wearing the boots, you can take a Magic action to expend 1 charge, gaining a Fly Speed of 30 feet for 1 hour. If you are flying when the duration expires, you descend at a rate of 30 feet per round until you land.",
+    "properties": [
+      {
+        "name": "Fly",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": 30,
+            "cost": {
+              "resource": "charges",
+              "amount": 1
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/wings-of-flying",
@@ -9483,6 +12467,25 @@
     "category": "wondrousItem",
     "rarity": "rare",
     "attunement": true,
-    "description": "While wearing this cloak, you can take a Magic action to turn the cloak into a pair of wings on your back. The wings lasts for 1 hour or until you end the effect early as a Magic action. The wings give you a Fly Speed of 60 feet. If you are aloft when the wings disappear, you fall. When the wings disappear, you can’t use them again for 1d12 hours."
+    "description": "While wearing this cloak, you can take a Magic action to turn the cloak into a pair of wings on your back. The wings lasts for 1 hour or until you end the effect early as a Magic action. The wings give you a Fly Speed of 60 feet. If you are aloft when the wings disappear, you fall. When the wings disappear, you can’t use them again for 1d12 hours.",
+    "properties": [
+      {
+        "name": "Wings",
+        "activation": {
+          "type": "action"
+        },
+        "duration": {
+          "value": 1,
+          "unit": "hour"
+        },
+        "effects": [
+          {
+            "type": "grantSpeed",
+            "target": "fly",
+            "value": 60
+          }
+        ]
+      }
+    ]
   }
 ]
