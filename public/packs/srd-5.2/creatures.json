@@ -1,5 +1,166 @@
 [
   {
+    "id": "srd-5.2:creature/air-elemental",
+    "name": "Air Elemental",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "armorClass": 15,
+    "hitPoints": {
+      "average": 90,
+      "dice": {
+        "count": 12,
+        "die": "d10",
+        "modifier": 24
+      }
+    },
+    "speed": {
+      "walk": 10,
+      "fly": 90,
+      "hover": true
+    },
+    "initiative": {
+      "modifier": 5,
+      "score": 15
+    },
+    "abilities": {
+      "STR": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "DEX": {
+        "score": 20,
+        "modifier": 5,
+        "save": 5
+      },
+      "CON": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "INT": {
+        "score": 6,
+        "modifier": -2,
+        "save": -2
+      },
+      "WIS": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 6,
+        "modifier": -2,
+        "save": -2
+      }
+    },
+    "resistances": {
+      "damage": [
+        "bludgeoning",
+        "lightning",
+        "piercing",
+        "slashing"
+      ]
+    },
+    "immunities": {
+      "damage": [
+        "poison",
+        "thunder"
+      ],
+      "conditions": [
+        "srd-5.2:condition/exhaustion",
+        "srd-5.2:condition/grappled",
+        "srd-5.2:condition/paralyzed",
+        "srd-5.2:condition/petrified",
+        "srd-5.2:condition/poisoned",
+        "srd-5.2:condition/prone",
+        "srd-5.2:condition/restrained",
+        "srd-5.2:condition/unconscious"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      }
+    ],
+    "passivePerception": 10,
+    "languages": "Primordial (Auran)",
+    "challengeRating": 5,
+    "xp": 1800,
+    "proficiencyBonus": 3,
+    "traits": [
+      {
+        "name": "Air Form",
+        "description": "The elemental can enter a creature’s space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The elemental makes two Thunderous Slam attacks."
+      },
+      {
+        "name": "Thunderous Slam",
+        "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Thunder damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 8,
+          "reach": 10
+        },
+        "damage": [
+          {
+            "average": 14,
+            "dice": {
+              "count": 2,
+              "die": "d8",
+              "modifier": 5
+            },
+            "damageType": "thunder"
+          }
+        ]
+      },
+      {
+        "name": "Whirlwind (Recharge 4–6)",
+        "description": "Strength Saving Throw: DC 13, one Medium or smaller creature in the elemental’s space. Failure: 24 (4d10 + 2) Thunder damage, and the target is pushed up to 20 feet straight away from the elemental and has the Prone condition. Success: Half damage only.",
+        "damage": [
+          {
+            "average": 24,
+            "dice": {
+              "count": 4,
+              "die": "d10",
+              "modifier": 2
+            },
+            "damageType": "thunder"
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": 13
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/allosaurus",
     "name": "Allosaurus",
     "size": "large",
@@ -417,7 +578,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The archelon can breathe air and water."
+        "description": "The archelon can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -621,6 +787,89 @@
     ]
   },
   {
+    "id": "srd-5.2:creature/axe-beak",
+    "name": "Axe Beak",
+    "size": "large",
+    "creatureType": "monstrosity",
+    "alignment": "Unaligned",
+    "armorClass": 11,
+    "hitPoints": {
+      "average": 19,
+      "dice": {
+        "count": 3,
+        "die": "d10",
+        "modifier": 3
+      }
+    },
+    "speed": {
+      "walk": 50
+    },
+    "initiative": {
+      "modifier": 1,
+      "score": 11
+    },
+    "abilities": {
+      "STR": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "DEX": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "CON": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "INT": {
+        "score": 2,
+        "modifier": -4,
+        "save": -4
+      },
+      "WIS": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 5,
+        "modifier": -3,
+        "save": -3
+      }
+    },
+    "senses": [],
+    "passivePerception": 10,
+    "languages": "None",
+    "challengeRating": 0.25,
+    "xp": 50,
+    "proficiencyBonus": 2,
+    "actions": [
+      {
+        "name": "Beak",
+        "description": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 4,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 6,
+            "dice": {
+              "count": 1,
+              "die": "d8",
+              "modifier": 2
+            },
+            "damageType": "slashing"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/baboon",
     "name": "Baboon",
     "size": "small",
@@ -682,7 +931,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The baboon has Advantage on an attack roll against a creature if at least one of the baboon’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The baboon has Advantage on an attack roll against a creature if at least one of the baboon’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -876,6 +1140,117 @@
     ]
   },
   {
+    "id": "srd-5.2:creature/berserker",
+    "name": "Berserker",
+    "size": "medium",
+    "creatureType": "humanoid",
+    "alignment": "Neutral",
+    "armorClass": 13,
+    "hitPoints": {
+      "average": 67,
+      "dice": {
+        "count": 9,
+        "die": "d8",
+        "modifier": 27
+      }
+    },
+    "speed": {
+      "walk": 30
+    },
+    "initiative": {
+      "modifier": 1,
+      "score": 11
+    },
+    "abilities": {
+      "STR": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "DEX": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "CON": {
+        "score": 17,
+        "modifier": 3,
+        "save": 3
+      },
+      "INT": {
+        "score": 9,
+        "modifier": -1,
+        "save": -1
+      },
+      "WIS": {
+        "score": 11,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 9,
+        "modifier": -1,
+        "save": -1
+      }
+    },
+    "senses": [],
+    "passivePerception": 10,
+    "languages": "Common",
+    "challengeRating": 2,
+    "xp": 450,
+    "proficiencyBonus": 2,
+    "traits": [
+      {
+        "name": "Bloodied Frenzy",
+        "description": "While Bloodied, the berserker has Advantage on attack rolls and saving throws.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true
+              }
+            ]
+          },
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "Greataxe",
+        "description": "Melee Attack Roll: +5, reach 5 ft. Hit: 9 (1d12 + 3) Slashing damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 5,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 9,
+            "dice": {
+              "count": 1,
+              "die": "d12",
+              "modifier": 3
+            },
+            "damageType": "slashing"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/black-bear",
     "name": "Black Bear",
     "size": "medium",
@@ -1043,7 +1418,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The hawk has Advantage on an attack roll against a creature if at least one of the hawk’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The hawk has Advantage on an attack roll against a creature if at least one of the hawk’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -1140,7 +1530,19 @@
     "traits": [
       {
         "name": "Bloodied Fury",
-        "description": "While Bloodied, the boar has Advantage on attack rolls."
+        "description": "While Bloodied, the boar has Advantage on attack rolls.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -1175,7 +1577,13 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -1479,7 +1887,14 @@
     "traits": [
       {
         "name": "Jumper",
-        "description": "The cat’s jump distance is determined using its Dexterity rather than its Strength."
+        "description": "The cat’s jump distance is determined using its Dexterity rather than its Strength.",
+        "effects": [
+          {
+            "type": "substituteAbility",
+            "target": "jumpDistance",
+            "value": "DEX"
+          }
+        ]
       }
     ],
     "actions": [
@@ -1704,7 +2119,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The crab can breathe air and water."
+        "description": "The crab can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -1832,6 +2252,11 @@
               {
                 "type": "creatureSize",
                 "maxSize": "medium"
+              },
+              {
+                "type": "targetCondition",
+                "conditionId": "srd-5.2:condition/grappled",
+                "source": "self"
               }
             ]
           }
@@ -1912,7 +2337,25 @@
     "traits": [
       {
         "name": "Agile",
-        "description": "The deer doesn’t provoke an Opportunity Attack when it moves out of an enemy’s reach."
+        "description": "The deer doesn’t provoke an Opportunity Attack when it moves out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -2015,7 +2458,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The wolf has Advantage on an attack roll against a creature if at least one of the wolf’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The wolf has Advantage on an attack roll against a creature if at least one of the wolf’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -2051,6 +2509,211 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/djinni",
+    "name": "Djinni",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "tags": [
+      "Genie"
+    ],
+    "armorClass": 17,
+    "hitPoints": {
+      "average": 218,
+      "dice": {
+        "count": 19,
+        "die": "d10",
+        "modifier": 114
+      }
+    },
+    "speed": {
+      "walk": 30,
+      "fly": 90,
+      "hover": true
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 21,
+        "modifier": 5,
+        "save": 5
+      },
+      "DEX": {
+        "score": 15,
+        "modifier": 2,
+        "save": 6
+      },
+      "CON": {
+        "score": 22,
+        "modifier": 6,
+        "save": 6
+      },
+      "INT": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "WIS": {
+        "score": 16,
+        "modifier": 3,
+        "save": 7
+      },
+      "CHA": {
+        "score": 20,
+        "modifier": 5,
+        "save": 5
+      }
+    },
+    "immunities": {
+      "damage": [
+        "lightning",
+        "thunder"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 120
+      }
+    ],
+    "passivePerception": 13,
+    "languages": "Primordial (Auran)",
+    "challengeRating": 11,
+    "xp": 7200,
+    "proficiencyBonus": 4,
+    "traits": [
+      {
+        "name": "Elemental Restoration",
+        "description": "If the djinni dies outside the Elemental Plane of Air, its body dissolves into mist, and it gains a new body in 1d4 days, reviving with all its Hit Points somewhere on the Plane of Air."
+      },
+      {
+        "name": "Magic Resistance",
+        "description": "The djinni has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Wishes",
+        "description": "The djinni has a 30 percent chance of knowing the Wish spell. If the djinni knows it, the djinni can cast it only on behalf of a non-genie creature who communicates a wish in a way the djinni can understand. If the djinni casts the spell for the creature, the djinni suffers none of the spell’s stress. Once the djinni has cast it three times, the djinni can’t do so again for 365 days."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The djinni makes three attacks, using Storm Blade or Storm Bolt in any combination."
+      },
+      {
+        "name": "Storm Blade",
+        "description": "Melee Attack Roll: +9, reach 5 feet. Hit: 12 (2d6 + 5) Slashing damage plus 7 (2d6) Lightning damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 9
+        },
+        "damage": [
+          {
+            "average": 12,
+            "dice": {
+              "count": 2,
+              "die": "d6",
+              "modifier": 5
+            },
+            "damageType": "slashing"
+          },
+          {
+            "average": 7,
+            "dice": {
+              "count": 2,
+              "die": "d6"
+            },
+            "damageType": "lightning"
+          }
+        ]
+      },
+      {
+        "name": "Storm Bolt",
+        "description": "Ranged Attack Roll: +9, range 120 feet. Hit: 13 (3d8) Thunder damage. If the target is a Large or smaller creature, it has the Prone condition.",
+        "attack": {
+          "kind": "ranged",
+          "toHit": 9
+        },
+        "damage": [
+          {
+            "average": 13,
+            "dice": {
+              "count": 3,
+              "die": "d8"
+            },
+            "damageType": "thunder"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Create Whirlwind",
+        "description": "The djinni conjures a whirlwind at a point it can see within 120 feet. The whirlwind fills a 20-foot-radius, 60-foot-high Cylinder centered on that point. The whirlwind lasts until the djinni’s Concentration on it ends. The djinni can move the whirlwind up to 20 feet at the start of each of its turns. Whenever the whirlwind enters a creature’s space or a creature enters the whirlwind, that creature is subjected to the following effect. Strength Saving Throw: DC 17 (a creature makes this save only once per turn, and the djinni is unaffected). Failure: While in the whirlwind, the target has the Restrained condition and moves with the whirlwind. At the start of each of its turns, the Restrained target takes 21 (6d6) Thunder damage. At the end of each of its turns, the target repeats the save, ending the effect on itself on a success.",
+        "damage": [
+          {
+            "average": 21,
+            "dice": {
+              "count": 6,
+              "die": "d6"
+            },
+            "damageType": "thunder"
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": 17
+        },
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Spellcasting",
+        "description": "The djinni casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17): At Will: Detect Evil and Good, Detect Magic 2/Day Each: Create Food and Water (can create wine instead of water), Tongues, Wind Walk 1/Day Each: Creation, Gaseous Form, Invisibility, Major Image, Plane Shift Doppelganger"
       }
     ]
   },
@@ -2221,6 +2884,331 @@
             "damageType": "slashing"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/earth-elemental",
+    "name": "Earth Elemental",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "armorClass": 17,
+    "hitPoints": {
+      "average": 147,
+      "dice": {
+        "count": 14,
+        "die": "d10",
+        "modifier": 70
+      }
+    },
+    "speed": {
+      "walk": 30,
+      "burrow": 30
+    },
+    "initiative": {
+      "modifier": -1,
+      "score": 9
+    },
+    "abilities": {
+      "STR": {
+        "score": 20,
+        "modifier": 5,
+        "save": 5
+      },
+      "DEX": {
+        "score": 8,
+        "modifier": -1,
+        "save": -1
+      },
+      "CON": {
+        "score": 20,
+        "modifier": 5,
+        "save": 5
+      },
+      "INT": {
+        "score": 5,
+        "modifier": -3,
+        "save": -3
+      },
+      "WIS": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 5,
+        "modifier": -3,
+        "save": -3
+      }
+    },
+    "vulnerabilities": {
+      "damage": [
+        "thunder"
+      ]
+    },
+    "immunities": {
+      "damage": [
+        "poison"
+      ],
+      "conditions": [
+        "srd-5.2:condition/exhaustion",
+        "srd-5.2:condition/paralyzed",
+        "srd-5.2:condition/petrified",
+        "srd-5.2:condition/poisoned",
+        "srd-5.2:condition/unconscious"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      },
+      {
+        "sense": "tremorsense",
+        "range": 60
+      }
+    ],
+    "passivePerception": 10,
+    "languages": "Primordial (Terran)",
+    "challengeRating": 5,
+    "xp": 1800,
+    "proficiencyBonus": 3,
+    "traits": [
+      {
+        "name": "Earth Glide",
+        "description": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn’t disturb the material it moves through."
+      },
+      {
+        "name": "Siege Monster",
+        "description": "The elemental deals double damage to objects and structures."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The elemental makes two attacks, using Slam or Rock Launch in any combination."
+      },
+      {
+        "name": "Slam",
+        "description": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Bludgeoning damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 8,
+          "reach": 10
+        },
+        "damage": [
+          {
+            "average": 14,
+            "dice": {
+              "count": 2,
+              "die": "d8",
+              "modifier": 5
+            },
+            "damageType": "bludgeoning"
+          }
+        ]
+      },
+      {
+        "name": "Rock Launch",
+        "description": "Ranged Attack Roll: +8, range 60 ft. Hit: 8 (1d6 + 5) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition.",
+        "attack": {
+          "kind": "ranged",
+          "toHit": 8,
+          "range": {
+            "normal": 60,
+            "long": 60
+          }
+        },
+        "damage": [
+          {
+            "average": 8,
+            "dice": {
+              "count": 1,
+              "die": "d6",
+              "modifier": 5
+            },
+            "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/efreeti",
+    "name": "Efreeti",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "tags": [
+      "Genie"
+    ],
+    "armorClass": 17,
+    "hitPoints": {
+      "average": 212,
+      "dice": {
+        "count": 17,
+        "die": "d10",
+        "modifier": 119
+      }
+    },
+    "speed": {
+      "walk": 40,
+      "fly": 60,
+      "hover": true
+    },
+    "initiative": {
+      "modifier": 1,
+      "score": 11
+    },
+    "abilities": {
+      "STR": {
+        "score": 22,
+        "modifier": 6,
+        "save": 6
+      },
+      "DEX": {
+        "score": 12,
+        "modifier": 1,
+        "save": 1
+      },
+      "CON": {
+        "score": 24,
+        "modifier": 7,
+        "save": 7
+      },
+      "INT": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "WIS": {
+        "score": 15,
+        "modifier": 2,
+        "save": 6
+      },
+      "CHA": {
+        "score": 19,
+        "modifier": 4,
+        "save": 8
+      }
+    },
+    "immunities": {
+      "damage": [
+        "fire"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 120
+      }
+    ],
+    "passivePerception": 12,
+    "languages": "Primordial (Ignan)",
+    "challengeRating": 11,
+    "xp": 7200,
+    "proficiencyBonus": 4,
+    "traits": [
+      {
+        "name": "Elemental Restoration",
+        "description": "If the efreeti dies outside the Elemental Plane of Fire, its body dissolves into ash, and it gains a new body in 1d4 days, reviving with all its Hit Points somewhere on the Plane of Fire."
+      },
+      {
+        "name": "Magic Resistance",
+        "description": "The efreeti has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Wishes",
+        "description": "The efreeti has a 30 percent chance of knowing the Wish spell. If the efreeti knows it, the efreeti can cast it only on behalf of a non-genie creature who communicates a wish in a way the efreeti can understand. If the efreeti casts the spell for the creature, the efreeti suffers none of the spell’s stress. Once the efreeti has cast it three times, the efreeti can’t do so again for 365 days."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The efreeti makes three attacks, using Heated Blade or Hurl Flame in any combination."
+      },
+      {
+        "name": "Heated Blade",
+        "description": "Melee Attack Roll: +10, reach 5 ft. Hit: 13 (2d6 + 6) Slashing damage plus 13 (2d12) Fire damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 10,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 13,
+            "dice": {
+              "count": 2,
+              "die": "d6",
+              "modifier": 6
+            },
+            "damageType": "slashing"
+          },
+          {
+            "average": 13,
+            "dice": {
+              "count": 2,
+              "die": "d12"
+            },
+            "damageType": "fire"
+          }
+        ]
+      },
+      {
+        "name": "Hurl Flame",
+        "description": "Ranged Attack Roll: +8, range 120 ft. Hit: 24 (7d6) Fire damage.",
+        "attack": {
+          "kind": "ranged",
+          "toHit": 8,
+          "range": {
+            "normal": 120,
+            "long": 120
+          }
+        },
+        "damage": [
+          {
+            "average": 24,
+            "dice": {
+              "count": 7,
+              "die": "d6"
+            },
+            "damageType": "fire"
+          }
+        ]
+      },
+      {
+        "name": "Spellcasting",
+        "description": "The efreeti casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 16): At Will: Detect Magic, Elementalism 1/Day Each: Gaseous Form, Invisibility, Major Image, Plane Shift, Tongues, Wall of Fire (level 7 version) Erinyes"
       }
     ]
   },
@@ -2466,6 +3454,194 @@
     ]
   },
   {
+    "id": "srd-5.2:creature/fire-elemental",
+    "name": "Fire Elemental",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "armorClass": 13,
+    "hitPoints": {
+      "average": 93,
+      "dice": {
+        "count": 11,
+        "die": "d10",
+        "modifier": 33
+      }
+    },
+    "speed": {
+      "walk": 50
+    },
+    "initiative": {
+      "modifier": 3,
+      "score": 13
+    },
+    "abilities": {
+      "STR": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "DEX": {
+        "score": 17,
+        "modifier": 3,
+        "save": 3
+      },
+      "CON": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "INT": {
+        "score": 6,
+        "modifier": -2,
+        "save": -2
+      },
+      "WIS": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 7,
+        "modifier": -2,
+        "save": -2
+      }
+    },
+    "resistances": {
+      "damage": [
+        "bludgeoning",
+        "piercing",
+        "slashing"
+      ]
+    },
+    "immunities": {
+      "damage": [
+        "fire",
+        "poison"
+      ],
+      "conditions": [
+        "srd-5.2:condition/exhaustion",
+        "srd-5.2:condition/grappled",
+        "srd-5.2:condition/paralyzed",
+        "srd-5.2:condition/petrified",
+        "srd-5.2:condition/poisoned",
+        "srd-5.2:condition/prone",
+        "srd-5.2:condition/restrained",
+        "srd-5.2:condition/unconscious"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      }
+    ],
+    "passivePerception": 10,
+    "languages": "Primordial (Ignan)",
+    "challengeRating": 5,
+    "xp": 1800,
+    "proficiencyBonus": 3,
+    "traits": [
+      {
+        "name": "Fire Aura",
+        "description": "At the end of each of the elemental’s turns, each creature in a 10-foot Emanation originating from the elemental takes 5 (1d10) Fire damage. Creatures and flammable objects in the Emanation start burning.",
+        "damage": [
+          {
+            "average": 5,
+            "dice": {
+              "count": 1,
+              "die": "d10"
+            },
+            "damageType": "fire"
+          }
+        ],
+        "effects": [
+          {
+            "type": "dealDamage",
+            "target": "fire",
+            "value": {
+              "count": 1,
+              "die": "d10"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "endTurn"
+            },
+            "area": [
+              {
+                "shape": "emanation",
+                "size": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Fire Form",
+        "description": "The elemental can move through a space as narrow as 1 inch without expending extra movement to do so, and it can enter a creature’s space and stop there. The first time it enters a creature’s space on a turn, that creature takes 5 (1d10) Fire damage.",
+        "damage": [
+          {
+            "average": 5,
+            "dice": {
+              "count": 1,
+              "die": "d10"
+            },
+            "damageType": "fire"
+          }
+        ],
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          }
+        ]
+      },
+      {
+        "name": "Illumination",
+        "description": "The elemental sheds Bright Light in a 30foot radius and Dim Light for an additional 30 feet."
+      },
+      {
+        "name": "Water Susceptibility",
+        "description": "The elemental takes 3 (1d6) Cold damage for every 5 feet the elemental moves in water or for every gallon of water splashed on it.",
+        "damage": [
+          {
+            "average": 3,
+            "dice": {
+              "count": 1,
+              "die": "d6"
+            },
+            "damageType": "cold"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The elemental makes two Burn attacks."
+      },
+      {
+        "name": "Burn",
+        "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 10 (2d6 + 3) Fire damage. If the target is a creature or a flammable object, it starts burning.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 6,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 10,
+            "dice": {
+              "count": 2,
+              "die": "d6",
+              "modifier": 3
+            },
+            "damageType": "fire"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "srd-5.2:creature/flying-snake",
     "name": "Flying Snake",
     "size": "tiny",
@@ -2534,7 +3710,25 @@
     "traits": [
       {
         "name": "Flyby",
-        "description": "The snake doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+        "description": "The snake doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -2638,7 +3832,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The frog can breathe air and water."
+        "description": "The frog can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       },
       {
         "name": "Standing Leap",
@@ -2796,6 +3995,20 @@
               {
                 "type": "saveResult",
                 "result": "failure"
+              },
+              {
+                "type": "creatureType",
+                "creatureTypes": [
+                  "undead"
+                ],
+                "negate": true
+              },
+              {
+                "type": "species",
+                "speciesIds": [
+                  "srd-5.2:species/elf"
+                ],
+                "negate": true
               }
             ]
           }
@@ -3195,7 +4408,19 @@
     "traits": [
       {
         "name": "Bloodied Fury",
-        "description": "The boar has Advantage on melee attack rolls while it is Bloodied."
+        "description": "The boar has Advantage on melee attack rolls while it is Bloodied.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "hitPoints",
+                "bloodied": true
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -3230,7 +4455,13 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -3542,7 +4773,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The crab can breathe air and water."
+        "description": "The crab can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -3699,6 +4935,11 @@
               {
                 "type": "creatureSize",
                 "maxSize": "large"
+              },
+              {
+                "type": "targetCondition",
+                "conditionId": "srd-5.2:condition/grappled",
+                "source": "self"
               }
             ]
           }
@@ -4050,7 +5291,16 @@
     "traits": [
       {
         "name": "Illumination",
-        "description": "The beetle sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet."
+        "description": "The beetle sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet.",
+        "effects": [
+          {
+            "type": "emitLight",
+            "value": {
+              "bright": 10,
+              "dim": 10
+            }
+          }
+        ]
       }
     ],
     "actions": [
@@ -4143,7 +5393,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The frog can breathe air and water."
+        "description": "The frog can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       },
       {
         "name": "Standing Leap",
@@ -4329,7 +5584,13 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
           }
         ]
       }
@@ -4504,7 +5765,15 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -4609,7 +5878,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The octopus can breathe only underwater. It can hold its breath for 1 hour outside water."
+        "description": "The octopus can breathe only underwater. It can hold its breath for 1 hour outside water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -4648,7 +5922,18 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/restrained",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              },
+              {
+                "type": "targetCondition",
+                "conditionId": "srd-5.2:condition/grappled",
+                "source": "self"
+              }
+            ]
           }
         ]
       }
@@ -4745,7 +6030,25 @@
     "traits": [
       {
         "name": "Flyby",
-        "description": "The owl doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+        "description": "The owl doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -4849,7 +6152,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The rat has Advantage on an attack roll against a creature if at least one of the rat’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The rat has Advantage on an attack roll against a creature if at least one of the rat’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -5070,7 +6388,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The seahorse can breathe only underwater."
+        "description": "The seahorse can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -5186,7 +6509,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The shark can breathe only underwater."
+        "description": "The shark can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -5290,7 +6618,15 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       },
       {
         "name": "Web Walker",
@@ -5418,7 +6754,12 @@
     "traits": [
       {
         "name": "Amphibious",
-        "description": "The toad can breathe air and water."
+        "description": "The toad can breathe air and water.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       },
       {
         "name": "Standing Leap",
@@ -5691,7 +7032,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -5786,7 +7142,25 @@
     "traits": [
       {
         "name": "Flyby",
-        "description": "The wasp doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+        "description": "The wasp doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -6005,7 +7379,15 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -6127,6 +7509,119 @@
               "die": "d4"
             },
             "damageType": "bludgeoning"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/griffon",
+    "name": "Griffon",
+    "size": "large",
+    "creatureType": "monstrosity",
+    "alignment": "Unaligned",
+    "armorClass": 12,
+    "hitPoints": {
+      "average": 59,
+      "dice": {
+        "count": 7,
+        "die": "d10",
+        "modifier": 21
+      }
+    },
+    "speed": {
+      "walk": 30,
+      "fly": 80
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 18,
+        "modifier": 4,
+        "save": 4
+      },
+      "DEX": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "CON": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "INT": {
+        "score": 2,
+        "modifier": -4,
+        "save": -4
+      },
+      "WIS": {
+        "score": 13,
+        "modifier": 1,
+        "save": 1
+      },
+      "CHA": {
+        "score": 8,
+        "modifier": -1,
+        "save": -1
+      }
+    },
+    "skills": [
+      {
+        "skillId": "srd-5.2:skill/perception",
+        "bonus": 5
+      }
+    ],
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      }
+    ],
+    "passivePerception": 15,
+    "languages": "None",
+    "challengeRating": 2,
+    "xp": 450,
+    "proficiencyBonus": 2,
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The griffon makes two Rend attacks."
+      },
+      {
+        "name": "Rend",
+        "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 14) from both of the griffon’s front claws.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 6,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 8,
+            "dice": {
+              "count": 1,
+              "die": "d8",
+              "modifier": 4
+            },
+            "damageType": "piercing"
+          }
+        ],
+        "escapeDc": 14,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
           }
         ]
       }
@@ -6384,7 +7879,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The shark can breathe only underwater."
+        "description": "The shark can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -6479,7 +7979,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The hyena has Advantage on an attack roll against a creature if at least one of the hyena’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The hyena has Advantage on an attack roll against a creature if at least one of the hyena’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -6604,7 +8119,22 @@
     "traits": [
       {
         "name": "Magic Resistance",
-        "description": "The imp has Advantage on saving throws against spells and other magical effects."
+        "description": "The imp has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -6914,7 +8444,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The lion has Advantage on an attack roll against a creature if at least one of the lion’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The lion has Advantage on an attack roll against a creature if at least one of the lion’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Running Leap",
@@ -7037,7 +8582,15 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -7348,7 +8901,14 @@
     "traits": [
       {
         "name": "Beast of Burden",
-        "description": "The mule counts as one size larger for the purpose of determining its carrying capacity."
+        "description": "The mule counts as one size larger for the purpose of determining its carrying capacity.",
+        "effects": [
+          {
+            "type": "countAsSize",
+            "target": "carryingCapacity",
+            "value": 1
+          }
+        ]
       }
     ],
     "actions": [
@@ -7371,6 +8931,125 @@
             "damageType": "bludgeoning"
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/nightmare",
+    "name": "Nightmare",
+    "size": "large",
+    "creatureType": "fiend",
+    "alignment": "Neutral Evil",
+    "armorClass": 13,
+    "hitPoints": {
+      "average": 68,
+      "dice": {
+        "count": 8,
+        "die": "d10",
+        "modifier": 24
+      }
+    },
+    "speed": {
+      "walk": 60,
+      "fly": 90,
+      "hover": true
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 18,
+        "modifier": 4,
+        "save": 4
+      },
+      "DEX": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      },
+      "CON": {
+        "score": 16,
+        "modifier": 3,
+        "save": 3
+      },
+      "INT": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "WIS": {
+        "score": 13,
+        "modifier": 1,
+        "save": 1
+      },
+      "CHA": {
+        "score": 15,
+        "modifier": 2,
+        "save": 2
+      }
+    },
+    "immunities": {
+      "damage": [
+        "fire"
+      ]
+    },
+    "senses": [],
+    "passivePerception": 11,
+    "languages": "Understands Abyssal, Common, and Infernal but can’t speak",
+    "challengeRating": 3,
+    "xp": 700,
+    "proficiencyBonus": 2,
+    "traits": [
+      {
+        "name": "Confer Fire Resistance",
+        "description": "The nightmare can grant Resistance to Fire damage to a rider while it is on the nightmare.",
+        "effects": [
+          {
+            "type": "grantResistance",
+            "target": "fire",
+            "affects": "target"
+          }
+        ]
+      },
+      {
+        "name": "Illumination",
+        "description": "The nightmare sheds Bright Light in a 10foot radius and Dim Light for an additional 10 feet."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Hooves",
+        "description": "Melee Attack Roll: +6, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage plus 10 (3d6) Fire damage.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 6,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 13,
+            "dice": {
+              "count": 2,
+              "die": "d8",
+              "modifier": 4
+            },
+            "damageType": "bludgeoning"
+          },
+          {
+            "average": 10,
+            "dice": {
+              "count": 3,
+              "die": "d6"
+            },
+            "damageType": "fire"
+          }
+        ]
+      },
+      {
+        "name": "Ethereal Stride",
+        "description": "The nightmare and up to three willing creatures within 5 feet of it teleport to the Ethereal Plane from the Material Plane or vice versa."
       }
     ]
   },
@@ -7452,11 +9131,21 @@
     "traits": [
       {
         "name": "Compression",
-        "description": "The octopus can move through a space as narrow as 1 inch without expending extra movement to do so."
+        "description": "The octopus can move through a space as narrow as 1 inch without expending extra movement to do so.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          }
+        ]
       },
       {
         "name": "Water Breathing",
-        "description": "The octopus can breathe only underwater."
+        "description": "The octopus can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -7556,7 +9245,25 @@
     "traits": [
       {
         "name": "Flyby",
-        "description": "The owl doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+        "description": "The owl doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -7744,7 +9451,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The piranha can breathe only underwater."
+        "description": "The piranha can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -8129,7 +9841,22 @@
     "traits": [
       {
         "name": "Magic Resistance",
-        "description": "The pseudodragon has Advantage on saving throws against spells and other magical effects."
+        "description": "The pseudodragon has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -8272,7 +9999,25 @@
     "traits": [
       {
         "name": "Flyby",
-        "description": "The pteranodon doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach."
+        "description": "The pteranodon doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -8389,7 +10134,22 @@
     "traits": [
       {
         "name": "Magic Resistance",
-        "description": "The quasit has Advantage on saving throws against spells and other magical effects."
+        "description": "The quasit has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -8526,7 +10286,25 @@
     "traits": [
       {
         "name": "Agile",
-        "description": "The rat doesn’t provoke an Opportunity Attack when it moves out of an enemy’s reach."
+        "description": "The rat doesn’t provoke an Opportunity Attack when it moves out of an enemy’s reach.",
+        "effects": [
+          {
+            "type": "loseAction",
+            "target": [
+              "reaction"
+            ],
+            "affects": "others",
+            "qualifiers": [
+              {
+                "type": "targetRelation",
+                "relation": "self"
+              },
+              {
+                "type": "opportunityAttack"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -8699,11 +10477,31 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The shark has Advantage on an attack roll against a creature if at least one of the shark’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The shark has Advantage on an attack roll against a creature if at least one of the shark’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Water Breathing",
-        "description": "The shark can breathe only underwater."
+        "description": "The shark can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -9182,7 +10980,12 @@
     "traits": [
       {
         "name": "Water Breathing",
-        "description": "The seahorse can breathe only underwater."
+        "description": "The seahorse can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -9403,7 +11206,22 @@
     "traits": [
       {
         "name": "Magic Resistance",
-        "description": "The sphinx has Advantage on saving throws against spells and other magical effects."
+        "description": "The sphinx has Advantage on saving throws against spells and other magical effects.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "savingThrow",
+            "qualifiers": [
+              {
+                "type": "magicalSource",
+                "kinds": [
+                  "spell",
+                  "magicalEffect"
+                ]
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -9518,7 +11336,15 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       },
       {
         "name": "Web Walker",
@@ -9760,7 +11586,15 @@
     "traits": [
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny bat. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny bat. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -9883,11 +11717,27 @@
     "traits": [
       {
         "name": "Spider Climb",
-        "description": "If the swarm has a Climb Speed, the swarm can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+        "description": "If the swarm has a Climb Speed, the swarm can climb difficult surfaces, including along ceilings, without needing to make an ability check.",
+        "effects": [
+          {
+            "type": "traverseTerrain",
+            "target": [
+              "verticalSurfaces"
+            ]
+          }
+        ]
       },
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny insect. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -10013,11 +11863,24 @@
     "traits": [
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny piranha. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny piranha. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       },
       {
         "name": "Water Breathing",
-        "description": "The swarm can breathe only underwater."
+        "description": "The swarm can breathe only underwater.",
+        "effects": [
+          {
+            "type": "waterBreathing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -10138,7 +12001,15 @@
     "traits": [
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny rat. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny rat. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -10262,7 +12133,15 @@
     "traits": [
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny raven. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny raven. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -10407,7 +12286,15 @@
     "traits": [
       {
         "name": "Swarm",
-        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny snake. The swarm can’t regain Hit Points or gain Temporary Hit Points."
+        "description": "The swarm can occupy another creature’s space and vice versa, and the swarm can move through any opening large enough for a Tiny snake. The swarm can’t regain Hit Points or gain Temporary Hit Points.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          },
+          {
+            "type": "preventHealing"
+          }
+        ]
       }
     ],
     "actions": [
@@ -10665,7 +12552,13 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "huge"
+              }
+            ]
           }
         ]
       }
@@ -10784,6 +12677,11 @@
               {
                 "type": "creatureSize",
                 "maxSize": "large"
+              },
+              {
+                "type": "targetCondition",
+                "conditionId": "srd-5.2:condition/grappled",
+                "source": "self"
               }
             ]
           }
@@ -10989,7 +12887,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -11105,7 +13018,237 @@
           {
             "type": "applyCondition",
             "target": "srd-5.2:condition/prone",
-            "affects": "target"
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "srd-5.2:creature/water-elemental",
+    "name": "Water Elemental",
+    "size": "large",
+    "creatureType": "elemental",
+    "alignment": "Neutral",
+    "armorClass": 14,
+    "hitPoints": {
+      "average": 114,
+      "dice": {
+        "count": 12,
+        "die": "d10",
+        "modifier": 48
+      }
+    },
+    "speed": {
+      "walk": 30,
+      "swim": 90
+    },
+    "initiative": {
+      "modifier": 2,
+      "score": 12
+    },
+    "abilities": {
+      "STR": {
+        "score": 18,
+        "modifier": 4,
+        "save": 4
+      },
+      "DEX": {
+        "score": 14,
+        "modifier": 2,
+        "save": 2
+      },
+      "CON": {
+        "score": 18,
+        "modifier": 4,
+        "save": 4
+      },
+      "INT": {
+        "score": 5,
+        "modifier": -3,
+        "save": -3
+      },
+      "WIS": {
+        "score": 10,
+        "modifier": 0,
+        "save": 0
+      },
+      "CHA": {
+        "score": 8,
+        "modifier": -1,
+        "save": -1
+      }
+    },
+    "resistances": {
+      "damage": [
+        "acid",
+        "fire"
+      ]
+    },
+    "immunities": {
+      "damage": [
+        "poison"
+      ],
+      "conditions": [
+        "srd-5.2:condition/exhaustion",
+        "srd-5.2:condition/grappled",
+        "srd-5.2:condition/paralyzed",
+        "srd-5.2:condition/petrified",
+        "srd-5.2:condition/poisoned",
+        "srd-5.2:condition/prone",
+        "srd-5.2:condition/restrained",
+        "srd-5.2:condition/unconscious"
+      ]
+    },
+    "senses": [
+      {
+        "sense": "darkvision",
+        "range": 60
+      }
+    ],
+    "passivePerception": 10,
+    "languages": "Primordial (Aquan)",
+    "challengeRating": 5,
+    "xp": 1800,
+    "proficiencyBonus": 3,
+    "traits": [
+      {
+        "name": "Freeze",
+        "description": "If the elemental takes Cold damage, its Speed decreases by 20 feet until the end of its next turn.",
+        "effects": [
+          {
+            "type": "modifier",
+            "target": "baseSpeed",
+            "value": -20,
+            "trigger": {
+              "event": "takeDamage"
+            },
+            "duration": {
+              "value": 1,
+              "unit": "round"
+            },
+            "qualifiers": [
+              {
+                "type": "damageType",
+                "damageTypes": [
+                  "cold"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Water Form",
+        "description": "The elemental can enter an enemy’s space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so.",
+        "effects": [
+          {
+            "type": "moveThroughOccupiedSpace"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "description": "The elemental makes two Slam attacks."
+      },
+      {
+        "name": "Slam",
+        "description": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage. If the target is a Medium or smaller creature, it has the Prone condition.",
+        "attack": {
+          "kind": "melee",
+          "toHit": 7,
+          "reach": 5
+        },
+        "damage": [
+          {
+            "average": 13,
+            "dice": {
+              "count": 2,
+              "die": "d8",
+              "modifier": 4
+            },
+            "damageType": "bludgeoning"
+          }
+        ],
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/prone",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "medium"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Whelm (Recharge 4–6)",
+        "description": "Strength Saving Throw: DC 15, each creature in the elemental’s space. Failure: 22 (4d8 + 4) Bludgeoning damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 14). Until the grapple ends, the target has the Restrained condition, is suffocating unless it can breathe water, and takes 9 (2d8) Bludgeoning damage at the start of each of the elemental’s turns. The elemental can grapple one Large creature or up to two Medium or smaller creatures at a time with Whelm. As an action, a creature within 5 feet of the elemental can pull a creature out of it by succeeding on a DC 14 Strength (Athletics) check. Success: Half damage only.",
+        "damage": [
+          {
+            "average": 22,
+            "dice": {
+              "count": 4,
+              "die": "d8",
+              "modifier": 4
+            },
+            "damageType": "bludgeoning"
+          },
+          {
+            "average": 9,
+            "dice": {
+              "count": 2,
+              "die": "d8"
+            },
+            "damageType": "bludgeoning"
+          }
+        ],
+        "save": {
+          "ability": "STR",
+          "dc": 15
+        },
+        "escapeDc": 14,
+        "effects": [
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/grappled",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              },
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
+          },
+          {
+            "type": "applyCondition",
+            "target": "srd-5.2:condition/restrained",
+            "affects": "target",
+            "qualifiers": [
+              {
+                "type": "creatureSize",
+                "maxSize": "large"
+              },
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
           }
         ]
       }
@@ -11281,7 +13424,22 @@
     "traits": [
       {
         "name": "Pack Tactics",
-        "description": "The wolf has Advantage on attack rolls against a creature if at least one of the wolf’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition."
+        "description": "The wolf has Advantage on attack rolls against a creature if at least one of the wolf’s allies is within 5 feet of the creature and the ally doesn’t have the Incapacitated condition.",
+        "effects": [
+          {
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "nearbyCreature",
+                "relation": "ally",
+                "within": 5,
+                "around": "target",
+                "withoutCondition": "srd-5.2:condition/incapacitated"
+              }
+            ]
+          }
+        ]
       }
     ],
     "actions": [
@@ -11397,7 +13555,33 @@
     "traits": [
       {
         "name": "Undead Fortitude",
-        "description": "If damage reduces the zombie to 0 Hit Points, it makes a Constitution saving throw (DC 5 plus the damage taken) unless the damage is Radiant or from a Critical Hit. On a successful save, the zombie drops to 1 Hit Point instead."
+        "description": "If damage reduces the zombie to 0 Hit Points, it makes a Constitution saving throw (DC 5 plus the damage taken) unless the damage is Radiant or from a Critical Hit. On a successful save, the zombie drops to 1 Hit Point instead.",
+        "effects": [
+          {
+            "type": "setHitPointFloor",
+            "value": 1,
+            "trigger": {
+              "event": "reducedToZeroHitPoints"
+            },
+            "qualifiers": [
+              {
+                "type": "damageType",
+                "damageTypes": [
+                  "radiant"
+                ],
+                "negate": true
+              }
+            ],
+            "save": {
+              "ability": "CON",
+              "dc": {
+                "base": 5,
+                "modifier": "$derived:triggerDamage"
+              },
+              "onSuccess": "negate"
+            }
+          }
+        ]
       }
     ]
   }

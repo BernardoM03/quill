@@ -3907,6 +3907,14 @@
                 "action"
               ],
               "affects": "target"
+            },
+            {
+              "type": "forcedMovement",
+              "value": {
+                "feet": "$derived:walkingSpeed",
+                "direction": "random"
+              },
+              "affects": "target"
             }
           ]
         },
@@ -3950,6 +3958,28 @@
               "value": "$derived:walkingSpeed",
               "multiplier": -1,
               "affects": "target"
+            },
+            {
+              "type": "grantAttack",
+              "value": 1,
+              "affects": "target",
+              "qualifiers": [
+                {
+                  "type": "attackRange",
+                  "attackRanges": [
+                    "melee"
+                  ]
+                },
+                {
+                  "type": "targetRelation",
+                  "relation": "random"
+                },
+                {
+                  "type": "range",
+                  "within": 5,
+                  "unit": "feet"
+                }
+              ]
             }
           ]
         },
@@ -16917,7 +16947,13 @@
             "min": 2,
             "max": 2
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/dragonborn",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "dwarf",
@@ -16927,7 +16963,13 @@
             "min": 3,
             "max": 3
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/dwarf",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "elf",
@@ -16937,7 +16979,13 @@
             "min": 4,
             "max": 4
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/elf",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "gnome",
@@ -16947,7 +16995,13 @@
             "min": 5,
             "max": 5
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/gnome",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "goliath",
@@ -16957,7 +17011,13 @@
             "min": 6,
             "max": 6
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/goliath",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "halfling",
@@ -16967,7 +17027,13 @@
             "min": 7,
             "max": 7
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/halfling",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "human",
@@ -16977,7 +17043,13 @@
             "min": 8,
             "max": 8
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/human",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "orc",
@@ -16987,7 +17059,13 @@
             "min": 9,
             "max": 9
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/orc",
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "tiefling",
@@ -16997,7 +17075,13 @@
             "min": 10,
             "max": 10
           },
-          "effects": []
+          "effects": [
+            {
+              "type": "setSpecies",
+              "target": "srd-5.2:species/tiefling",
+              "affects": "target"
+            }
+          ]
         }
       ]
     }
@@ -19821,6 +19905,10 @@
             "proficiency": true
           },
           "onSuccess": "half"
+        },
+        "targets": {
+          "count": 6,
+          "kind": "creatureOrObject"
         }
       },
       {
@@ -19925,11 +20013,7 @@
           }
         ]
       }
-    ],
-    "targets": {
-      "count": 6,
-      "kind": "creatureOrObject"
-    }
+    ]
   },
   {
     "id": "srd-5.2:spell/suggestion",
@@ -20754,7 +20838,20 @@
               "max": 73
             }
           ],
-          "effects": []
+          "effects": [
+            {
+              "type": "teleport",
+              "value": {
+                "distance": {
+                  "count": 2,
+                  "die": "d12"
+                },
+                "unit": "miles",
+                "direction": "random"
+              },
+              "affects": "target"
+            }
+          ]
         },
         {
           "id": "on-target",

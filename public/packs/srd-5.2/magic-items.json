@@ -674,9 +674,9 @@
                 "srd-5.2:creature/black-bear",
                 "srd-5.2:creature/giant-weasel",
                 "srd-5.2:creature/giant-hyena",
-                "srd-5.2:creature/tiger"
-              ],
-              "statBlock": "Axe Beak"
+                "srd-5.2:creature/tiger",
+                "srd-5.2:creature/axe-beak"
+              ]
             }
           }
         ]
@@ -1104,7 +1104,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Water Elemental"
+          "forms": [
+            "srd-5.2:creature/water-elemental"
+          ]
         }
       }
     ]
@@ -1198,7 +1200,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Fire Elemental"
+          "forms": [
+            "srd-5.2:creature/fire-elemental"
+          ]
         }
       }
     ]
@@ -1334,7 +1338,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Air Elemental"
+          "forms": [
+            "srd-5.2:creature/air-elemental"
+          ]
         }
       }
     ]
@@ -2691,7 +2697,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Efreeti"
+          "forms": [
+            "srd-5.2:creature/efreeti"
+          ]
         }
       },
       {
@@ -2715,7 +2723,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Air Elemental"
+              "forms": [
+                "srd-5.2:creature/air-elemental"
+              ]
             }
           }
         ]
@@ -2728,7 +2738,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Water Elemental"
+              "forms": [
+                "srd-5.2:creature/water-elemental"
+              ]
             }
           }
         ]
@@ -2741,7 +2753,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Fire Elemental"
+              "forms": [
+                "srd-5.2:creature/fire-elemental"
+              ]
             }
           }
         ]
@@ -2754,7 +2768,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Earth Elemental"
+              "forms": [
+                "srd-5.2:creature/earth-elemental"
+              ]
             }
           }
         ]
@@ -3150,7 +3166,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Griffon"
+              "forms": [
+                "srd-5.2:creature/griffon"
+              ]
             }
           }
         ]
@@ -3223,7 +3241,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Nightmare"
+              "forms": [
+                "srd-5.2:creature/nightmare"
+              ]
             }
           }
         ]
@@ -3892,6 +3912,14 @@
                 "creatureTypes": [
                   "giant"
                 ]
+              },
+              {
+                "type": "hasItem",
+                "itemIds": [
+                  "srd-5.2:magic-item/belt-of-giant-strength",
+                  "srd-5.2:magic-item/gauntlets-of-ogre-power"
+                ],
+                "attuned": true
               }
             ],
             "save": {
@@ -3901,6 +3929,26 @@
               },
               "onSuccess": "negate"
             }
+          },
+          {
+            "type": "increaseAbilityScore",
+            "target": [
+              "STR"
+            ],
+            "value": {
+              "amount": 4,
+              "maximum": 30
+            },
+            "qualifiers": [
+              {
+                "type": "hasItem",
+                "itemIds": [
+                  "srd-5.2:magic-item/belt-of-giant-strength",
+                  "srd-5.2:magic-item/gauntlets-of-ogre-power"
+                ],
+                "attuned": true
+              }
+            ]
           }
         ]
       }
@@ -3986,11 +4034,52 @@
     "category": "wondrousItem",
     "rarity": "veryRare",
     "attunement": true,
+    "pools": [
+      {
+        "id": "diamonds",
+        "name": "Diamonds",
+        "max": {
+          "count": 1,
+          "die": "d10"
+        }
+      },
+      {
+        "id": "rubies",
+        "name": "Rubies",
+        "max": {
+          "count": 2,
+          "die": "d10"
+        }
+      },
+      {
+        "id": "fireOpals",
+        "name": "Fire Opals",
+        "max": {
+          "count": 3,
+          "die": "d10"
+        }
+      },
+      {
+        "id": "opals",
+        "name": "Opals",
+        "max": {
+          "count": 4,
+          "die": "d10"
+        }
+      }
+    ],
     "description": "This helm is set with 1d10 diamonds, 2d10 rubies, 3d10 fire opals, and 4d10 opals. Any gem pried from the helm crumbles to dust. When all the gems are removed or destroyed, the helm loses its magic.\n\nYou gain the following benefits while wearing the helm.\n\n**Diamond Light.** As long as it has at least one diamond, the helm emits a 30-foot Emanation. When at least one Undead is within that area, the Emanation is filled with Dim Light. Any Undead that starts its turn in that area takes 1d6 Radiant damage.\n\n**Fire Opal Flames.** As long as the helm has at least one fire opal, you can take a Magic action to cause one weapon you are holding to burst into flames. The flames emit Bright Light in a 10-foot radius and Dim Light for an additional 10 feet. The flames are harmless to you and the weapon. When you hit with an attack using the blazing weapon, the target takes an extra 1d6 Fire damage. The flames last until you take a Bonus Action to extinguish them or until you drop or stow the weapon.\n\n**Ruby Resistance.** As long as the helm has at least one ruby, you have Resistance to Fire damage.\n\n**Spells.** You can cast one of the following spells (save DC 18), using one of the helm’s gems of the specified type as a component: *Daylight* (opal), *Fire-* *ball* (fire opal), *Prismatic Spray* (diamond), or *Wall of* *Fire* (ruby). The gem is destroyed when the spell is cast and disappears from the helm.\n\n**Taking Fire Damage.** Roll 1d20 if you are wearing the helm and take Fire damage as a result of failing a saving throw against a spell. On a roll of 1, the helm emits beams of light from its remaining gems and is then destroyed. Each creature within a 60foot Emanation originating from you must succeed on a DC 17 Dexterity saving throw or be struck by a beam, taking Radiant damage equal to the number of gems in the helm.",
     "effects": [
       {
         "type": "grantResistance",
-        "target": "fire"
+        "target": "fire",
+        "qualifiers": [
+          {
+            "type": "poolRemaining",
+            "pool": "rubies",
+            "atLeast": 1
+          }
+        ]
       },
       {
         "type": "dealDamage",
@@ -4016,8 +4105,52 @@
             "creatureTypes": [
               "undead"
             ]
+          },
+          {
+            "type": "poolRemaining",
+            "pool": "diamonds",
+            "atLeast": 1
           }
         ]
+      },
+      {
+        "type": "dealDamage",
+        "target": "radiant",
+        "value": "$derived:gemsRemaining",
+        "affects": "target",
+        "area": [
+          {
+            "shape": "emanation",
+            "size": 60
+          }
+        ],
+        "trigger": {
+          "event": "takeDamage"
+        },
+        "qualifiers": [
+          {
+            "type": "damageType",
+            "damageTypes": [
+              "fire"
+            ]
+          },
+          {
+            "type": "saveResult",
+            "result": "failure"
+          },
+          {
+            "type": "roll",
+            "die": "d20",
+            "equals": 1
+          }
+        ],
+        "save": {
+          "ability": "DEX",
+          "dc": {
+            "fixed": 17
+          },
+          "onSuccess": "negate"
+        }
       }
     ],
     "properties": [
@@ -4038,14 +4171,28 @@
             "trigger": {
               "event": "hitWithAttack",
               "optional": true
-            }
+            },
+            "qualifiers": [
+              {
+                "type": "poolRemaining",
+                "pool": "fireOpals",
+                "atLeast": 1
+              }
+            ]
           },
           {
             "type": "emitLight",
             "value": {
               "bright": 10,
               "dim": 10
-            }
+            },
+            "qualifiers": [
+              {
+                "type": "poolRemaining",
+                "pool": "fireOpals",
+                "atLeast": 1
+              }
+            ]
           }
         ]
       },
@@ -4057,6 +4204,10 @@
             "target": "srd-5.2:spell/daylight",
             "castingOverrides": {
               "saveDc": 18
+            },
+            "cost": {
+              "resource": "opals",
+              "amount": 1
             }
           },
           {
@@ -4064,6 +4215,10 @@
             "target": "srd-5.2:spell/fireball",
             "castingOverrides": {
               "saveDc": 18
+            },
+            "cost": {
+              "resource": "fireOpals",
+              "amount": 1
             }
           },
           {
@@ -4071,6 +4226,10 @@
             "target": "srd-5.2:spell/prismatic-spray",
             "castingOverrides": {
               "saveDc": 18
+            },
+            "cost": {
+              "resource": "diamonds",
+              "amount": 1
             }
           },
           {
@@ -4078,6 +4237,10 @@
             "target": "srd-5.2:spell/wall-of-fire",
             "castingOverrides": {
               "saveDc": 18
+            },
+            "cost": {
+              "resource": "rubies",
+              "amount": 1
             }
           }
         ]
@@ -4330,7 +4493,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Berserker",
+              "forms": [
+                "srd-5.2:creature/berserker"
+              ],
               "count": 2
             }
           }
@@ -4343,7 +4508,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Berserker",
+              "forms": [
+                "srd-5.2:creature/berserker"
+              ],
               "count": 3
             }
           }
@@ -4356,7 +4523,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Berserker",
+              "forms": [
+                "srd-5.2:creature/berserker"
+              ],
               "count": 4
             }
           }
@@ -4369,7 +4538,9 @@
           {
             "type": "summon",
             "value": {
-              "statBlock": "Berserker",
+              "forms": [
+                "srd-5.2:creature/berserker"
+              ],
               "count": 5
             }
           }
@@ -4457,9 +4628,16 @@
                   4
                 ]
               }
-            ]
+            ],
+            "cost": {
+              "resource": "charges",
+              "amount": "$derived:spellLevel"
+            }
           }
-        ]
+        ],
+        "charges": {
+          "max": 20
+        }
       },
       {
         "slug": "agility",
@@ -4540,9 +4718,16 @@
                   8
                 ]
               }
-            ]
+            ],
+            "cost": {
+              "resource": "charges",
+              "amount": "$derived:spellLevel"
+            }
           }
-        ]
+        ],
+        "charges": {
+          "max": 20
+        }
       },
       {
         "slug": "insight",
@@ -4627,6 +4812,13 @@
           {
             "type": "heal",
             "value": 15,
+            "trigger": {
+              "event": "timePasses",
+              "every": {
+                "value": 1,
+                "unit": "hour"
+              }
+            },
             "qualifiers": [
               {
                 "type": "hitPoints",
@@ -4640,7 +4832,27 @@
         "slug": "reserve",
         "name": "Ioun Stone (Reserve)",
         "rarity": "rare",
-        "effects": []
+        "effects": [
+          {
+            "type": "restoreUses",
+            "target": "charges",
+            "value": "$derived:slotLevel",
+            "trigger": {
+              "event": "castSpell"
+            }
+          },
+          {
+            "type": "grantSpells",
+            "target": "$choice:ioun-reserve-spell",
+            "cost": {
+              "resource": "charges",
+              "amount": "$derived:spellLevel"
+            }
+          }
+        ],
+        "charges": {
+          "max": 4
+        }
       },
       {
         "slug": "strength",
@@ -4674,7 +4886,18 @@
     "description": "Roughly marble sized, *Ioun Stones* are named after Ioun, a god of knowledge and prophecy revered on some worlds. Many types of *Ioun Stones* exist, each type a distinct combination of shape and color.\n\nWhen you take a Magic action to toss an *Ioun* *Stone* into the air, the stone orbits your head at a distance of 1d3 feet, conferring its benefit to you while doing so. You can have up to three *Ioun Stones* orbiting your head at the same time. Each *Ioun Stone* orbiting your head is considered to be an object you are wearing. The orbiting stone avoids contact with other creatures and objects, adjusting its orbit to avoid collisions and thwarting all attempts by other creatures to attack or snatch it.\n\nAs a Utilize action, you can seize and stow any number of *Ioun Stones* orbiting your head. If your Attunement to an *Ioun Stone* ends while it’s orbiting your head, the stone falls as though you had dropped it.\n\nThe type of stone determines its rarity and effects.\n\n**Absorption (Very Rare).** While this pale lavender ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 4 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Agility (Very Rare).** Your Dexterity increases by 2, to a maximum of 20, while this deep-red sphere orbits your head.\n\n**Awareness (Rare).** While this dark-blue rhomboid orbits your head, you have Advantage on Initiative rolls and Wisdom (Perception) checks.\n\n**Fortitude (Very Rare).** Your Constitution increases by 2, to a maximum of 20, while this pink rhomboid orbits your head.\n\n**Greater Absorption (Legendary).** While this marbled lavender and green ellipsoid orbits your head, you can take a Reaction to cancel a spell of level 8 or lower cast by a creature you can see. A canceled spell has no effect, and any resources used to cast it are wasted. Once the stone has canceled 20 levels of spells, it burns out, turns dull gray, and loses its magic.\n\n**Insight (Very Rare).** Your Wisdom increases by 2, to a maximum of 20, while this incandescent blue sphere orbits your head.\n\n**Intellect (Very Rare).** Your Intelligence increases by 2, to a maximum of 20, while this marbled scarlet and blue sphere orbits your head.\n\n**Leadership (Very Rare).** Your Charisma increases by 2, to a maximum of 20, while this marbled pink and green sphere orbits your head.\n\n**Mastery (Legendary).** Your Proficiency Bonus increases by 1 while this pale green prism orbits your head.\n\n**Protection (Rare).** You gain a +1 bonus to Armor Class while this dusty-rose prism orbits your head.\n\n**Regeneration (Legendary).** You regain 15 Hit Points at the end of each hour this pearly white spindle orbits your head if you have at least 1 Hit Point.\n\n**Reserve (Rare).** This vibrant purple prism stores spells cast into it, holding them until you use them. The stone can store up to 4 levels of spells at a time. When found, it contains 1d4 levels of stored spells chosen by the GM.\n\nAny creature can cast a spell of level 1 through 4 into the stone by touching it as the spell is cast. The spell has no effect, other than to be stored in the stone. If the stone can’t hold the spell, the spell is expended without effect. The level of the slot used to cast the spell determines how much space it uses.\n\nWhile this stone orbits your head, you can cast any spell stored in it. The spell uses the slot level, spell save DC, spell attack bonus, and spellcasting ability of the original caster but is otherwise treated as if you cast the spell. The spell cast from the stone is no longer stored in it, freeing up space.\n\n**Strength (Very Rare).** Your Strength increases by 2, to a maximum of 20, while this pale blue rhomboid orbits your head.\n\n**Sustenance (Rare).** You don’t need to eat or drink while this clear spindle orbits your head.",
     "activation": {
       "type": "action"
-    }
+    },
+    "choices": [
+      {
+        "id": "ioun-reserve-spell",
+        "prompt": "A spell stored in the Ioun Stone of Reserve.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ],
+        "when": "use"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/iron-bands",
@@ -5321,7 +5544,21 @@
         "srd-5.2:equipment/hide-armor"
       ]
     },
-    "description": "Mithral is a light, flexible metal. Armor made of this substance can be worn under normal clothes. If the armor normally imposes Disadvantage on Dexterity (Stealth) checks or has a Strength requirement, the mithral version of the armor doesn’t."
+    "description": "Mithral is a light, flexible metal. Armor made of this substance can be worn under normal clothes. If the armor normally imposes Disadvantage on Dexterity (Stealth) checks or has a Strength requirement, the mithral version of the armor doesn’t.",
+    "effects": [
+      {
+        "type": "overrideItem",
+        "value": {
+          "stealthDisadvantage": false,
+          "strength": null
+        },
+        "qualifiers": [
+          {
+            "type": "thisItem"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/mysterious-deck",
@@ -5654,45 +5891,74 @@
       ]
     },
     "description": "When you nock an arrow on this bow, it whispers in Elvish, “Swift defeat to my enemies.” When you use this weapon to make a ranged attack, you can utter or sign the following command words: “Swift death to you who have wronged me.” The target of your attack becomes your sworn enemy until it dies or until dawn 7 days later. You can have only one such sworn enemy at a time. When your sworn enemy dies, you can choose a new one after the next dawn.\n\nWhen you make a ranged attack roll with this weapon against your sworn enemy, you have Advantage on the roll. In addition, your target gains no benefit from Half Cover or Three-Quarters Cover, and you suffer no Disadvantage due to long range. If the attack hits, your sworn enemy takes an extra 3d6 Piercing damage.\n\nWhile your sworn enemy lives, you have Disadvantage on attack rolls with all other weapons.",
-    "effects": [
+    "properties": [
       {
-        "type": "grantAdvantage",
-        "target": "attackRoll",
-        "qualifiers": [
+        "name": "Sworn Enemy",
+        "activation": {
+          "type": "special",
+          "trigger": "You make a ranged attack and speak the command words."
+        },
+        "duration": {
+          "value": 7,
+          "unit": "day"
+        },
+        "effects": [
           {
-            "type": "thisItem"
-          },
-          {
-            "type": "attackRange",
-            "attackRanges": [
-              "ranged"
+            "type": "grantAdvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "attackRange",
+                "attackRanges": [
+                  "ranged"
+                ]
+              },
+              {
+                "type": "targetRelation",
+                "relation": "target"
+              }
             ]
           },
           {
-            "type": "targetRelation",
-            "relation": "target"
-          }
-        ]
-      },
-      {
-        "type": "dealDamage",
-        "target": "piercing",
-        "value": {
-          "count": 3,
-          "die": "d6"
-        },
-        "affects": "target",
-        "trigger": {
-          "event": "hitWithAttack",
-          "optional": true
-        },
-        "qualifiers": [
-          {
-            "type": "thisItem"
+            "type": "dealDamage",
+            "target": "piercing",
+            "value": {
+              "count": 3,
+              "die": "d6"
+            },
+            "affects": "target",
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "thisItem"
+              },
+              {
+                "type": "targetRelation",
+                "relation": "target"
+              }
+            ]
           },
           {
-            "type": "targetRelation",
-            "relation": "target"
+            "type": "grantDisadvantage",
+            "target": "attackRoll",
+            "qualifiers": [
+              {
+                "type": "attackSource",
+                "attackSources": [
+                  "weapon"
+                ]
+              },
+              {
+                "type": "thisItem",
+                "negate": true
+              }
+            ]
           }
         ]
       }
@@ -5727,7 +5993,37 @@
     "activation": {
       "type": "special",
       "trigger": "1 minute to apply."
-    }
+    },
+    "effects": [
+      {
+        "type": "overrideItem",
+        "value": {
+          "becomes": {
+            "id": "srd-5.2:magic-item/weapon-plus",
+            "variant": "plus-3"
+          }
+        },
+        "affects": "target",
+        "qualifiers": [
+          {
+            "type": "attackRange",
+            "attackRanges": [
+              "melee"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "overrideItem",
+        "value": {
+          "becomes": {
+            "id": "srd-5.2:magic-item/ammunition-plus",
+            "variant": "plus-3"
+          }
+        },
+        "affects": "target"
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/oil-of-slipperiness",
@@ -5883,6 +6179,13 @@
         "type": "rollFloor",
         "target": "deathSave",
         "value": 10
+      },
+      {
+        "type": "heal",
+        "value": "$derived:triggerHealing",
+        "trigger": {
+          "event": "spendHitPointDie"
+        }
       }
     ]
   },
@@ -5992,11 +6295,13 @@
             "value": {
               "forms": [
                 "srd-5.2:creature/swarm-of-rats"
-              ]
+              ],
+              "count": "$derived:chargesSpent"
             },
             "cost": {
               "resource": "charges",
-              "amount": 1
+              "amount": 1,
+              "maxAmount": 3
             }
           }
         ]
@@ -6775,7 +7080,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Djinni"
+          "forms": [
+            "srd-5.2:creature/djinni"
+          ]
         }
       }
     ]
@@ -7339,6 +7646,13 @@
           "count": 1,
           "die": "d6"
         },
+        "trigger": {
+          "event": "timePasses",
+          "every": {
+            "value": 10,
+            "unit": "minute"
+          }
+        },
         "qualifiers": [
           {
             "type": "hitPoints",
@@ -7457,26 +7771,112 @@
         },
         "effects": [
           {
-            "type": "dealDamage",
-            "target": "lightning",
-            "value": {
-              "count": 4,
-              "die": "d12"
-            },
-            "affects": "target",
+            "type": "chooseOptions",
+            "target": "srd-5.2:list/lightning-spheres",
+            "value": 1,
             "cost": {
               "resource": "charges",
               "amount": 2
-            },
-            "save": {
-              "ability": "DEX",
-              "dc": {
-                "fixed": 15
-              },
-              "onSuccess": "half"
             }
           }
-        ]
+        ],
+        "options": {
+          "list": "srd-5.2:list/lightning-spheres",
+          "items": [
+            {
+              "id": "spheres-1",
+              "name": "1 Sphere",
+              "description": "Each sphere deals 4d12 Lightning damage when it discharges (DC 15 Dexterity, half on a success).",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "lightning",
+                  "value": {
+                    "count": 4,
+                    "die": "d12"
+                  },
+                  "affects": "target",
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "fixed": 15
+                    },
+                    "onSuccess": "half"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "spheres-2",
+              "name": "2 Spheres",
+              "description": "Each sphere deals 5d4 Lightning damage when it discharges (DC 15 Dexterity, half on a success).",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "lightning",
+                  "value": {
+                    "count": 5,
+                    "die": "d4"
+                  },
+                  "affects": "target",
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "fixed": 15
+                    },
+                    "onSuccess": "half"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "spheres-3",
+              "name": "3 Spheres",
+              "description": "Each sphere deals 2d6 Lightning damage when it discharges (DC 15 Dexterity, half on a success).",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "lightning",
+                  "value": {
+                    "count": 2,
+                    "die": "d6"
+                  },
+                  "affects": "target",
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "fixed": 15
+                    },
+                    "onSuccess": "half"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "spheres-4",
+              "name": "4 Spheres",
+              "description": "Each sphere deals 2d4 Lightning damage when it discharges (DC 15 Dexterity, half on a success).",
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": "lightning",
+                  "value": {
+                    "count": 2,
+                    "die": "d4"
+                  },
+                  "affects": "target",
+                  "save": {
+                    "ability": "DEX",
+                    "dc": {
+                      "fixed": 15
+                    },
+                    "onSuccess": "half"
+                  }
+                }
+              ]
+            }
+          ]
+        }
       },
       {
         "name": "Shooting Stars",
@@ -7520,7 +7920,64 @@
     "category": "ring",
     "rarity": "rare",
     "attunement": true,
-    "description": "This ring stores spells cast into it, holding them until the attuned wearer uses them. The ring can store up to 5 levels worth of spells at a time. When found, it contains 1d6 − 1 levels of stored spells chosen by the GM.\n\nAny creature can cast a spell of level 1 through 5 into the ring by touching the ring as the spell is cast. The spell has no effect other than to be stored in the ring. If the ring can’t hold the spell, the spell is expended without effect. The level of the slot used to cast the spell determines how much space it uses.\n\nWhile wearing this ring, you can cast any spell stored in it. The spell uses the slot level, spell save DC, spell attack bonus, and spellcasting ability of the original caster but is otherwise treated as if you cast the spell. The spell cast from the ring is no longer stored in it, freeing up space."
+    "charges": {
+      "max": 5
+    },
+    "description": "This ring stores spells cast into it, holding them until the attuned wearer uses them. The ring can store up to 5 levels worth of spells at a time. When found, it contains 1d6 − 1 levels of stored spells chosen by the GM.\n\nAny creature can cast a spell of level 1 through 5 into the ring by touching the ring as the spell is cast. The spell has no effect other than to be stored in the ring. If the ring can’t hold the spell, the spell is expended without effect. The level of the slot used to cast the spell determines how much space it uses.\n\nWhile wearing this ring, you can cast any spell stored in it. The spell uses the slot level, spell save DC, spell attack bonus, and spellcasting ability of the original caster but is otherwise treated as if you cast the spell. The spell cast from the ring is no longer stored in it, freeing up space.",
+    "choices": [
+      {
+        "id": "stored-spell",
+        "prompt": "A spell stored in the ring.",
+        "count": 1,
+        "fromTypes": [
+          "spell"
+        ],
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ],
+        "when": "use"
+      }
+    ],
+    "effects": [
+      {
+        "type": "restoreUses",
+        "target": "charges",
+        "value": "$derived:slotLevel",
+        "affects": "others",
+        "trigger": {
+          "event": "castSpell"
+        },
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "type": "grantSpells",
+        "target": "$choice:stored-spell",
+        "cost": {
+          "resource": "charges",
+          "amount": "$derived:slotLevel"
+        }
+      }
+    ]
   },
   {
     "id": "srd-5.2:magic-item/ring-of-spell-turning",
@@ -7613,13 +8070,15 @@
             "type": "dealDamage",
             "target": "force",
             "value": {
-              "count": 2,
+              "count": "$derived:chargesSpent",
+              "countMultiplier": 2,
               "die": "d10"
             },
             "affects": "target",
             "cost": {
               "resource": "charges",
-              "amount": 1
+              "amount": 1,
+              "maxAmount": 3
             },
             "trigger": {
               "event": "hitWithAttack"
@@ -7628,13 +8087,14 @@
           {
             "type": "forcedMovement",
             "value": {
-              "feet": 5,
+              "feet": "$derived:chargesSpent",
               "direction": "away"
             },
             "affects": "target",
             "trigger": {
               "event": "hitWithAttack"
-            }
+            },
+            "multiplier": 5
           }
         ]
       }
@@ -7951,7 +8411,33 @@
     "category": "rod",
     "rarity": "veryRare",
     "attunement": true,
+    "charges": {
+      "max": 50
+    },
     "description": "While holding this rod, you can take a Reaction to absorb a spell that is targeting only you and doesn’t create an area of effect. The absorbed spell’s effect is canceled, and the spell’s energy—not the spell itself—is stored in the rod. The energy has the same level as the spell when it was cast. A canceled spell dissipates with no effect, and any resources used to cast it are wasted. The rod can absorb and store up to 50 levels of energy over the course of its existence. Once the rod absorbs 50 levels of energy, it can’t absorb more. If you are targeted by a spell that the rod can’t store, the rod has no effect on that spell.\n\nWhen you become attuned to the rod, you know how many levels of energy the rod has absorbed over the course of its existence and how many levels of spell energy it currently has stored.\n\nIf you are a spellcaster holding the rod, you can convert energy stored in it into spell slots to cast spells you have prepared or know. You can create spell slots only of a level equal to or lower than your own spell slots, up to a maximum of level 5. You use the stored levels in place of your slots but otherwise cast the spell as normal. For example, you can use 3 levels stored in the rod as a level 3 spell slot.\n\nA newly found rod typically has 1d10 levels of spell energy stored in it. A rod that can no longer absorb spell energy and has no energy remaining becomes nonmagical.",
+    "effects": [
+      {
+        "type": "restoreUses",
+        "target": "spellSlot",
+        "value": 1,
+        "cost": {
+          "resource": "charges",
+          "amount": "$derived:slotLevel"
+        },
+        "qualifiers": [
+          {
+            "type": "spellLevel",
+            "spellLevels": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      }
+    ],
     "properties": [
       {
         "name": "Absorb",
@@ -7968,6 +8454,11 @@
                 "relation": "self"
               }
             ]
+          },
+          {
+            "type": "restoreUses",
+            "target": "charges",
+            "value": "$derived:spellLevel"
           }
         ]
       }
@@ -8183,6 +8674,21 @@
               },
               "onSuccess": "negate"
             }
+          },
+          {
+            "type": "heal",
+            "value": "$derived:damageDealt",
+            "multiplier": 0.5,
+            "trigger": {
+              "event": "hitWithAttack",
+              "optional": true
+            },
+            "qualifiers": [
+              {
+                "type": "saveResult",
+                "result": "failure"
+              }
+            ]
           }
         ]
       },
@@ -9646,13 +10152,14 @@
         "type": "dealDamage",
         "target": "force",
         "value": {
-          "count": 1,
+          "count": "$derived:chargesSpent",
           "die": "d6"
         },
         "affects": "target",
         "cost": {
           "resource": "charges",
-          "amount": 1
+          "amount": 1,
+          "maxAmount": 3
         },
         "trigger": {
           "event": "hitWithAttack",
@@ -10551,7 +11058,9 @@
       {
         "type": "summon",
         "value": {
-          "statBlock": "Earth Elemental"
+          "forms": [
+            "srd-5.2:creature/earth-elemental"
+          ]
         }
       }
     ]
