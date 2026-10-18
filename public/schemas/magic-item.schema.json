@@ -141,6 +141,67 @@
           "$ref": "#/$defs/property"
         },
         "minItems": 1
+      },
+      "pools": {
+        "type": "array",
+        "minItems": 1,
+        "description": "Named pools besides `charges`, spent by `cost: {resource: <pool id>}`, as the Helm of Brilliance's diamonds, rubies, fire opals, and opals.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "max": {
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+                }
+              ]
+            },
+            "regain": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "oneOf": [
+                    {
+                      "const": "all"
+                    },
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "$ref": "https://quill.local/schemas/common.schema.json#/$defs/diceExpression"
+                    }
+                  ]
+                },
+                "rest": {
+                  "$ref": "https://quill.local/schemas/common.schema.json#/$defs/rest"
+                }
+              },
+              "required": [
+                "amount",
+                "rest"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "max"
+          ],
+          "additionalProperties": false
+        }
       }
     },
     "required": [

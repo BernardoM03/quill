@@ -148,6 +148,11 @@
           "type": "integer",
           "minimum": 1,
           "description": "Cap on a deferred `count`, as Falling's 20d6."
+        },
+        "countMultiplier": {
+          "type": "integer",
+          "minimum": 2,
+          "description": "Multiplies a deferred `count`, as a Ring of the Ram's 2d10 per charge spent: `{count: \"$derived:chargesSpent\", countMultiplier: 2, die: \"d10\"}`."
         }
       },
       "required": [
@@ -515,7 +520,7 @@
     },
     "triggerEvent": {
       "type": "string",
-      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing. `dealDamage` fires when you deal damage, as Sanctuary ending. `expendCharges` fires when you use a magic item property that spends charges, as Use Magic Device. `dayEnds` fires at the end of each day, as Dehydration and Malnutrition. `leaveReach` fires when a creature you can see leaves your reach, as an Opportunity Attack.",
+      "description": "Something that happens to or around the character, which an effect hangs off. `hitWithAttack` is you hitting; `hitByAttack` is you being hit, as Uncanny Dodge. `enterArea` and `endTurnInArea` fire for a creature entering, or ending its turn in, the effect's area, as Spirit Guardians. `moveInArea` fires for each 5 feet a creature moves into or within the area, as Spike Growth. `effectEnds` fires when the spell or feature carrying the effect ends, as Haste's lethargy. `restoreHitPoints` fires when your spell or feature restores Hit Points, as Disciple of Life. `reduceEnemyToZero` fires when you reduce an enemy to 0 Hit Points, as Dark One's Blessing. `dealDamage` fires when you deal damage, as Sanctuary ending. `expendCharges` fires when you use a magic item property that spends charges, as Use Magic Device. `dayEnds` fires at the end of each day, as Dehydration and Malnutrition. `leaveReach` fires when a creature you can see leaves your reach, as an Opportunity Attack. `timePasses` fires each time `trigger.every` elapses, as a Ring of Regeneration's 1d6 every 10 minutes. `spendHitPointDie` fires when you roll a Hit Point Die to heal, as the Periapt of Wound Closure.",
       "enum": [
         "hitWithAttack",
         "takeDamage",
@@ -543,7 +548,9 @@
         "dealDamage",
         "expendCharges",
         "dayEnds",
-        "leaveReach"
+        "leaveReach",
+        "timePasses",
+        "spendHitPointDie"
       ]
     },
     "trigger": {
@@ -604,6 +611,14 @@
             "summon"
           ],
           "description": "Whose event it is. Defaults to you. `target` is the creature your spell targets, as Warding Bond's 'each time it takes damage'."
+        },
+        "every": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/duration"
+            }
+          ],
+          "description": "With `timePasses`, how often it fires."
         }
       },
       "required": [
@@ -627,7 +642,7 @@
     },
     "relation": {
       "type": "string",
-      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry. `selfOrAlly` is you or any ally, as an aura's 'you and your allies'.",
+      "description": "How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry. `selfOrAlly` is you or any ally, as an aura's 'you and your allies'. `random` is a creature picked at random from those eligible, as Confusion's lash-out against a random creature within reach.",
       "enum": [
         "self",
         "others",
@@ -636,7 +651,8 @@
         "enemy",
         "triggerCreature",
         "target",
-        "selfOrAlly"
+        "selfOrAlly",
+        "random"
       ]
     },
     "acFormula": {
@@ -1202,7 +1218,9 @@
         "grantCover",
         "restrictMovement",
         "shareSenses",
-        "setAbilityScore"
+        "setAbilityScore",
+        "setSpecies",
+        "overrideItem"
       ]
     },
     "effect": {
@@ -1463,6 +1481,14 @@
             "dc"
           ],
           "additionalProperties": false
+        },
+        "targets": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/targets"
+            }
+          ],
+          "description": "How many targets this one effect picks, when it differs from its spell, as Storm of Vengeance's six lightning bolts on the third turn."
         }
       },
       "required": [
@@ -2092,6 +2118,43 @@
                   },
                   {
                     "const": "unlimited"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "distance": {
+                        "oneOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          {
+                            "$ref": "#/$defs/diceExpression"
+                          },
+                          {
+                            "$ref": "#/$defs/deferredValue"
+                          }
+                        ]
+                      },
+                      "unit": {
+                        "enum": [
+                          "feet",
+                          "miles"
+                        ]
+                      },
+                      "direction": {
+                        "enum": [
+                          "chosen",
+                          "random"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "distance",
+                      "unit"
+                    ],
+                    "additionalProperties": false,
+                    "description": "A teleport with its own unit or a random direction, as Teleport's Off Target result of 2d12 miles in a random direction."
                   }
                 ]
               }
@@ -2690,7 +2753,8 @@
                     "enum": [
                       "away",
                       "toward",
-                      "any"
+                      "any",
+                      "random"
                     ]
                   }
                 },
@@ -4240,6 +4304,87 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "setSpecies"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/speciesId"
+                  },
+                  {
+                    "$ref": "#/$defs/deferredValue"
+                  }
+                ],
+                "description": "The species the creature becomes, losing its old species' traits, as a Reincarnate result."
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "overrideItem"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "value"
+            ],
+            "properties": {
+              "value": {
+                "type": "object",
+                "description": "Fields of an item that change: Equipment fields set directly, as Mithral Armor's `{stealthDisadvantage: false, strength: null}`, or `becomes` for an item that turns into a magic item, as Oil of Sharpness making a weapon `+3 Weapon`.",
+                "properties": {
+                  "stealthDisadvantage": {
+                    "type": "boolean"
+                  },
+                  "strength": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "becomes": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "$ref": "#/$defs/magicItemId"
+                      },
+                      "variant": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "minProperties": 1,
+                "additionalProperties": false
+              }
+            }
+          }
         }
       ]
     },
@@ -5253,19 +5398,56 @@
                 },
                 {
                   "$ref": "#/$defs/toolId"
+                },
+                {
+                  "$ref": "#/$defs/magicItemId"
                 }
               ]
             },
             "negate": {
               "type": "boolean"
+            },
+            "itemIds": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/equipmentId"
+                  },
+                  {
+                    "$ref": "#/$defs/toolId"
+                  },
+                  {
+                    "$ref": "#/$defs/magicItemId"
+                  }
+                ]
+              },
+              "minItems": 2,
+              "uniqueItems": true,
+              "description": "Any one of these items."
+            },
+            "attuned": {
+              "const": true,
+              "description": "You are attuned to it, as Giants' Bane needing an attuned Belt of Giant Strength or Gauntlets of Ogre Power."
             }
           },
           "required": [
-            "type",
-            "itemId"
+            "type"
           ],
           "additionalProperties": false,
-          "description": "You have the item on your person."
+          "description": "You have the item on your person, or any of `itemIds`; with `attuned`, you are also attuned to it.",
+          "oneOf": [
+            {
+              "required": [
+                "itemId"
+              ]
+            },
+            {
+              "required": [
+                "itemIds"
+              ]
+            }
+          ]
         },
         {
           "properties": {
@@ -5997,6 +6179,30 @@
           ],
           "additionalProperties": false,
           "description": "The roll is against a spell, or any magical effect, as a Mantle of Spell Resistance's saves against spells."
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "poolRemaining"
+            },
+            "pool": {
+              "type": "string"
+            },
+            "atLeast": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "negate": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "pool",
+            "atLeast"
+          ],
+          "additionalProperties": false,
+          "description": "The item's named pool (`charges` or one of its `pools`) holds at least this many, as a Helm of Brilliance's Diamond Light needing one diamond."
         }
       ]
     },
@@ -6484,6 +6690,18 @@
           ],
           "additionalProperties": false,
           "description": "The spent use stays spent for this many rests, as Greater Divine Intervention's 2d4 Long Rests."
+        },
+        "maxAmount": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "$ref": "#/$defs/deferredValue"
+            }
+          ],
+          "description": "The most that can be spent at once, from `amount` up to this, as a Ring of the Ram's 1 to 3 charges. `$derived:chargesSpent` reads what was spent."
         }
       },
       "required": [
