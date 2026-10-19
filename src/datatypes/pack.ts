@@ -8,13 +8,18 @@ export interface pack {
   provides: string[]
 }
 
-// Packs whose manifests the Legal page loads. Every pack shipped in public/packs
-// belongs here: its license terms are only discharged if its notice is rendered.
-export const INSTALLED_PACKS: string[] = ['srd-5.2']
+// Ids of every installed pack: each folder in public/packs that holds a pack.json.
+// The index is built from the folders themselves (see the pack index plugin in
+// vite.config.ts), so a shipped pack can't be left off and its license notice missed.
+export async function fetchInstalledPackIds(): Promise<string[]> {
+  const response = await fetch('/packs/index.json')
+  return response.json() as Promise<string[]>
+}
 
 export async function fetchPackManifests(): Promise<pack[]> {
+  const ids = await fetchInstalledPackIds()
   return Promise.all(
-    INSTALLED_PACKS.map(id =>
+    ids.map(id =>
       fetch(`/packs/${id}/pack.json`).then(response => response.json() as Promise<pack>)
     )
   )
