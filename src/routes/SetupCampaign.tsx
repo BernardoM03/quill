@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 
-import type { campaign } from "../datatypes/campaign";
-
+import { CAMPAIGN_NAME_MAX_LENGTH, createCampaign, validateCampaignName } from "../api/campaigns";
+import FormField from "../components/FormField";
 
 export default function SetupCampaign() {
     const navigate = useNavigate();
@@ -11,24 +9,22 @@ export default function SetupCampaign() {
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
 
-        const newCampaign: campaign = {
-            name: new FormData(e.currentTarget).get('campaignName') as string,
-            id: uuidv4()
-        };
+        const name = validateCampaignName(String(new FormData(e.currentTarget).get('campaignName') ?? ''))
+        if (!name) {
+            alert(`Name must be 1–${CAMPAIGN_NAME_MAX_LENGTH} characters with no control characters.`)
+            return
+        }
 
-        axios.post('http://localhost:5174/createcampaign', newCampaign)
-            .then(() => navigate(`/campaignsettings/${newCampaign.id}`))
-            .catch((error) => console.error('Error creating campaign:', error));
+        createCampaign(name)
+            .then((newCampaign) => navigate(`/campaignsettings/${newCampaign.id}`))
+            .catch((err) => alert(err.response?.data?.error ?? 'Could not create campaign.'));
     }
 
     return (
         <div>
             <h1>Setup Campaign</h1>
-            <form method="post" onSubmit={handleSubmit}> 
-                <label>
-                    Campaign Name:
-                    <input type="text" name="campaignName" />
-                </label>
+            <form method="post" onSubmit={handleSubmit}>
+                <FormField label="Campaign Name:" name="campaignName" maxLength={CAMPAIGN_NAME_MAX_LENGTH} />
                 <button type="submit">Create Campaign</button>
             </form>
         </div>
