@@ -39,7 +39,6 @@ export default function App() {
   return (
     <>
       <h1>Quill</h1>
-      {/* Wait to fetch  */}
       { isLoading ? 
         <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
         <p>{welcomeMessage}</p>
