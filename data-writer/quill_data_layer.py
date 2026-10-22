@@ -8,11 +8,13 @@ PUBLIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'pub
 USER_JSON_URL = os.path.join(PUBLIC_DIR, 'user.json')
 CAMPAIGNS_FOLDER_URL = os.path.join(PUBLIC_DIR, '.campaigns') + os.sep
 
+CAMPAIGN_NAME_MAX_LENGTH = 64
+
 def clean_name(raw):
     if not isinstance(raw, str):
         return None
     name = ' '.join(raw.split())
-    if not 1 <= len(name) <= 60 or re.search(r'[\x00-\x1f\x7f]', name):
+    if not 1 <= len(name) <= CAMPAIGN_NAME_MAX_LENGTH or re.search(r'[\x00-\x1f\x7f]', name):
         return None
     return name
 
@@ -44,8 +46,13 @@ def create_user():
 def create_campaign():
     content = request.get_json()
     campaign_id = content.get('id')
-    campaign_name = content.get('name')
-        
+    campaign_name = clean_name(content.get('name'))
+    if campaign_name is None:
+        return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
+    if not valid_id(campaign_id):
+        return jsonify({'error': 'Invalid campaign id.'}), 400
+    content = {'name': campaign_name, 'id': campaign_id}
+
     with open(CAMPAIGNS_FOLDER_URL + campaign_id + '.json', 'w') as f:
         details = {
             "name": campaign_name,
@@ -73,7 +80,7 @@ def update_user_campaign():
     
     new_name = clean_name(content.get('name'))
     if new_name is None:
-        return jsonify({'error': 'Name must be 1–60 characters.'}), 400
+        return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
     if not valid_id(campaign_id):
         return jsonify({'error': 'Invalid campaign id.'}), 400
     
