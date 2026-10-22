@@ -18,15 +18,18 @@ def clean_name(raw):
         return None
     return name
 
-def valid_id(raw):
-    try:
-        return str(uuid.UUID(raw)) == raw
-    except (ValueError, TypeError, AttributeError):
-        return False
-
+# Returns the campaign's file path, or None if campaign_id isn't a canonical UUID.
+# The filename is built from the parsed UUID, never the raw request string, so the
+# path can't leave the campaigns folder; the commonpath check is a second guard.
 def campaign_file_path(campaign_id):
+    try:
+        safe_id = str(uuid.UUID(campaign_id))
+    except (ValueError, TypeError, AttributeError):
+        return None
+    if safe_id != campaign_id:
+        return None
     base_dir = os.path.realpath(CAMPAIGNS_FOLDER_URL)
-    candidate = os.path.realpath(os.path.join(base_dir, f'{campaign_id}.json'))
+    candidate = os.path.realpath(os.path.join(base_dir, f'{safe_id}.json'))
     if os.path.commonpath([base_dir, candidate]) != base_dir:
         return None
     return candidate
@@ -56,11 +59,9 @@ def create_campaign():
     campaign_name = clean_name(content.get('name'))
     if campaign_name is None:
         return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
-    if not valid_id(campaign_id):
-        return jsonify({'error': 'Invalid campaign id.'}), 400
     campaign_path = campaign_file_path(campaign_id)
     if campaign_path is None:
-        return jsonify({'error': 'Invalid campaign path.'}), 400
+        return jsonify({'error': 'Invalid campaign id.'}), 400
     content = {'name': campaign_name, 'id': campaign_id}
 
     with open(campaign_path, 'w') as f:
@@ -91,11 +92,9 @@ def update_user_campaign():
     new_name = clean_name(content.get('name'))
     if new_name is None:
         return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
-    if not valid_id(campaign_id):
-        return jsonify({'error': 'Invalid campaign id.'}), 400
     campaign_path = campaign_file_path(campaign_id)
     if campaign_path is None:
-        return jsonify({'error': 'Invalid campaign path.'}), 400
+        return jsonify({'error': 'Invalid campaign id.'}), 400
     
     # Update campaign info in user.json
     with open(USER_JSON_URL, 'r') as f:
