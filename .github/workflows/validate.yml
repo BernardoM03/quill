@@ -1,0 +1,28 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  packs:
+    name: Content packs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # ajv-cli is a devDependency, and validate-packs.sh calls it with
+      # `npx --no-install`, so it has to be installed rather than fetched.
+      - run: npm ci
+
+      - name: Validate content packs against their schemas
+        run: npm run validate
+
+      - name: Type-check and build
+        run: npm run build

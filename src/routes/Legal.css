@@ -1,0 +1,29 @@
+.legal {
+  max-width: 44rem;
+  margin: 0 auto;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.legal__section {
+  margin-bottom: 2.5rem;
+}
+
+.legal__pack {
+  margin-bottom: 1.5rem;
+}
+
+.legal__pack h4 {
+  margin-bottom: 0.5rem;
+}
+
+.legal__license {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid rgba(128, 128, 128, 0.4);
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 400;
+  vertical-align: middle;
+  opacity: 0.8;
+}

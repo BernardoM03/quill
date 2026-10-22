@@ -1,0 +1,20 @@
+[
+  { "id": "srd-5.2:skill/acrobatics", "name": "Acrobatics", "ability": "DEX" },
+  { "id": "srd-5.2:skill/animal-handling", "name": "Animal Handling", "ability": "WIS" },
+  { "id": "srd-5.2:skill/arcana", "name": "Arcana", "ability": "INT" },
+  { "id": "srd-5.2:skill/athletics", "name": "Athletics", "ability": "STR" },
+  { "id": "srd-5.2:skill/deception", "name": "Deception", "ability": "CHA" },
+  { "id": "srd-5.2:skill/history", "name": "History", "ability": "INT" },
+  { "id": "srd-5.2:skill/insight", "name": "Insight", "ability": "WIS" },
+  { "id": "srd-5.2:skill/intimidation", "name": "Intimidation", "ability": "CHA" },
+  { "id": "srd-5.2:skill/investigation", "name": "Investigation", "ability": "INT" },
+  { "id": "srd-5.2:skill/medicine", "name": "Medicine", "ability": "WIS" },
+  { "id": "srd-5.2:skill/nature", "name": "Nature", "ability": "INT" },
+  { "id": "srd-5.2:skill/perception", "name": "Perception", "ability": "WIS" },
+  { "id": "srd-5.2:skill/performance", "name": "Performance", "ability": "CHA" },
+  { "id": "srd-5.2:skill/persuasion", "name": "Persuasion", "ability": "CHA" },
+  { "id": "srd-5.2:skill/religion", "name": "Religion", "ability": "INT" },
+  { "id": "srd-5.2:skill/sleight-of-hand", "name": "Sleight of Hand", "ability": "DEX" },
+  { "id": "srd-5.2:skill/stealth", "name": "Stealth", "ability": "DEX" },
+  { "id": "srd-5.2:skill/survival", "name": "Survival", "ability": "WIS" }
+]
