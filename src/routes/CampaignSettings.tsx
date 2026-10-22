@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from 'react'
 
-import { updateCampaignName } from "../api/campaigns";
+import { CAMPAIGN_NAME_MAX_LENGTH, updateCampaignName, validateCampaignName } from "../api/campaigns";
 import FormField from "../components/FormField";
 import type { campaignDetails } from "../datatypes/campaignDetails";
 
@@ -20,11 +20,15 @@ export default function CampaignSettings() {
     function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
 
-        const name = new FormData(e.currentTarget).get('campaignName') as string;
+        const name = validateCampaignName(String(new FormData(e.currentTarget).get('campaignName') ?? ''))
+        if (!name) {
+            alert(`Name must be 1–${CAMPAIGN_NAME_MAX_LENGTH} characters with no control characters.`)
+            return
+        }
 
         updateCampaignName(campaignID as string, name)
             .then(() => setCampaignDetails(details => details ? { ...details, name } : null))
-            .catch((error) => console.error('Error changing campaign name:', error));
+            .catch((err) => alert(err.response?.data?.error ?? 'Could not save name.'))
     }
 
     return (
@@ -35,7 +39,7 @@ export default function CampaignSettings() {
             <div className="campaign-basic-info">
                 <h2>Change Campaign Name</h2>
                 <form method="post" onSubmit={handleNameSubmit}>
-                    <FormField label="Campaign Name:" name="campaignName" maxLength={64} />
+                    <FormField label="Campaign Name:" name="campaignName" maxLength={CAMPAIGN_NAME_MAX_LENGTH} />
                     <button type="submit">Modify Campaign</button>
                 </form>
             </div>

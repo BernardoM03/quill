@@ -1,0 +1,21 @@
+[
+  { "id": "srd-5.2:language/common", "name": "Common", "rarity": "standard", "description": "Every player character knows Common." },
+  { "id": "srd-5.2:language/common-sign-language", "name": "Common Sign Language", "rarity": "standard", "roll": {"min": 1, "max": 1} },
+  { "id": "srd-5.2:language/draconic", "name": "Draconic", "rarity": "standard", "roll": {"min": 2, "max": 2} },
+  { "id": "srd-5.2:language/dwarvish", "name": "Dwarvish", "rarity": "standard", "roll": {"min": 3, "max": 4} },
+  { "id": "srd-5.2:language/elvish", "name": "Elvish", "rarity": "standard", "roll": {"min": 5, "max": 6} },
+  { "id": "srd-5.2:language/giant", "name": "Giant", "rarity": "standard", "roll": {"min": 7, "max": 7} },
+  { "id": "srd-5.2:language/gnomish", "name": "Gnomish", "rarity": "standard", "roll": {"min": 8, "max": 8} },
+  { "id": "srd-5.2:language/goblin", "name": "Goblin", "rarity": "standard", "roll": {"min": 9, "max": 9} },
+  { "id": "srd-5.2:language/halfling", "name": "Halfling", "rarity": "standard", "roll": {"min": 10, "max": 11} },
+  { "id": "srd-5.2:language/orc", "name": "Orc", "rarity": "standard", "roll": {"min": 12, "max": 12} },
+  { "id": "srd-5.2:language/abyssal", "name": "Abyssal", "rarity": "rare" },
+  { "id": "srd-5.2:language/celestial", "name": "Celestial", "rarity": "rare" },
+  { "id": "srd-5.2:language/deep-speech", "name": "Deep Speech", "rarity": "rare" },
+  { "id": "srd-5.2:language/druidic", "name": "Druidic", "rarity": "rare" },
+  { "id": "srd-5.2:language/infernal", "name": "Infernal", "rarity": "rare" },
+  { "id": "srd-5.2:language/primordial", "name": "Primordial", "rarity": "rare", "dialects": ["Aquan", "Auran", "Ignan", "Terran"], "description": "Creatures that know one of these dialects can communicate with those that know a different one." },
+  { "id": "srd-5.2:language/sylvan", "name": "Sylvan", "rarity": "rare" },
+  { "id": "srd-5.2:language/thieves-cant", "name": "Thieves' Cant", "rarity": "rare" },
+  { "id": "srd-5.2:language/undercommon", "name": "Undercommon", "rarity": "rare" }
+]

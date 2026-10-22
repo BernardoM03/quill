@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/language.schema.json",
+  "title": "D&D 5.5e SRD Languages",
+  "description": "Top-level array of languages. Entities rather than strings so a feature granting 'one language of your choice' can offer every loaded language, including ones a later pack adds.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "$ref": "https://quill.local/schemas/common.schema.json#/$defs/languageId"
+      },
+      "name": {
+        "type": "string"
+      },
+      "rarity": {
+        "type": "string",
+        "enum": [
+          "standard",
+          "rare"
+        ],
+        "description": "Which table the language sits on. Character creation offers standard languages; rare ones come from features."
+      },
+      "roll": {
+        "type": "object",
+        "description": "The 1d12 result that picks this language on the Standard Languages table. Omitted for Common, which every character knows, and for rare languages.",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "max": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      "dialects": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Dialects whose speakers can all understand each other, as Primordial's Aquan, Auran, Ignan, and Terran."
+      },
+      "description": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "rarity"
+    ],
+    "additionalProperties": false
+  }
+}

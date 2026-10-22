@@ -1,0 +1,39 @@
+Quill
+Copyright (C) 2025 BernardoM03
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. See the LICENSE file for the full text.
+
+--------------------------------------------------------------------------------
+Third-party material
+--------------------------------------------------------------------------------
+
+The AGPL-3.0 covers Quill's own source code. It does NOT cover the game content
+packs under public/packs/, which carry their own licenses. Each pack declares its
+terms in its own pack.json manifest ("license", "attribution", "modifications").
+
+public/packs/srd-5.2/  --  CC-BY-4.0
+
+  This work includes material from the System Reference Document 5.2.1
+  ("SRD 5.2.1") by Wizards of the Coast LLC, available at
+  https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative
+  Commons Attribution 4.0 International License, available at
+  https://creativecommons.org/licenses/by/4.0/legalcode.
+
+  Changes were made. The SRD 5.2.1 material in this pack has been reformatted
+  from prose into structured JSON, re-encoded as machine-readable effect data,
+  and annotated with abridged summaries not present in the original.
+
+--------------------------------------------------------------------------------
+Trademarks
+--------------------------------------------------------------------------------
+
+The CC-BY-4.0 license on the SRD grants copyright permissions only. It grants no
+rights in any trademark (CC-BY-4.0 s. 2(b)(2)).
+
+Dungeons & Dragons, D&D, and Wizards of the Coast are trademarks of Wizards of
+the Coast LLC. Quill is not affiliated with, endorsed by, or sponsored by
+Wizards of the Coast. Quill uses those marks only where necessary to describe
+which ruleset its content is compatible with.

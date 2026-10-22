@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
 import { LifeLine } from 'react-loading-indicators'
 import CampaignCard from './components/CampaignCard'
+import LegalFooter from './components/LegalFooter'
 
 import './App.css'
 
@@ -38,7 +39,6 @@ export default function App() {
   return (
     <>
       <h1>Quill</h1>
-      {/* Wait to fetch  */}
       { isLoading ? 
         <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
         <p>{welcomeMessage}</p>
@@ -73,6 +73,7 @@ export default function App() {
         ) : null 
       }
       <Outlet />
+      <LegalFooter />
     </>
   )
 }

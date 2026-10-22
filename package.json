@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n API,WEB -c magenta,cyan \"npm:dev:api\" \"npm:dev:web\"",
+    "dev": "concurrently -k -n API,WEB -c magenta,cyan \"npm:dev:api\" \"npm:dev:web\"",
     "dev:web": "vite",
     "dev:api": "node scripts/dev-api.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate": "bash scripts/validate-packs.sh",
+    "check-refs": "node scripts/check-refs.mjs"
   },
   "dependencies": {
     "axios": "^1.16.1",
@@ -25,7 +27,8 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "concurrently": "^10.0.4",
+    "ajv-cli": "^5.0.0",
+    "concurrently": "^10.0.6",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
