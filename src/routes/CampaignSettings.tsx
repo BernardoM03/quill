@@ -8,6 +8,7 @@ import type { campaignDetails } from "../datatypes/campaignDetails";
 export default function CampaignSettings() {
     const { campaignID } = useParams();
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
+    const [nameError, setNameError] = useState<string | null>(null)
 
     useEffect(() => {
         console.log(campaignID)
@@ -17,16 +18,27 @@ export default function CampaignSettings() {
             .catch(error => console.error("Error fetching campaign details:", error))
     }, [campaignID])
 
+    function validateName(raw: string): string | null {
+        const name = raw.trim().replace(/\s+/g, ' ')
+        if (!name) return null
+        if (name.length > 64) return null
+        if (/[\u0000-\u001F\u007F]/.test(name)) return null
+        return name
+    }
+
     function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
+        const raw = String(new FormData(e.currentTarget).get('campaignName') ?? '')
+        const name = validateName(raw)
+        if (!name) {
+            setNameError('Name must be 1–64 characters with no control characters.')
+            return
+        }
+        setNameError(null)
 
-        const updatedCampaignInfo: campaign = {
-            name: new FormData(e.currentTarget).get('campaignName') as string,
-            id: campaignID as string
-        };        
-        axios.put('http://localhost:5174/update/campaign-name', updatedCampaignInfo)
-            .then(() => setCampaignDetails(details => details ? { ...details, name: updatedCampaignInfo.name } : null))
-            .catch((error) => console.error('Error changing campaign name:', error));
+        axios.put('http://localhost:5174/update/campaign-name', { name, id: campaignID })
+            .then(() => setCampaignDetails(d => d ? { ...d, name } : null))
+            .catch((err) => setNameError(err.response?.data?.error ?? 'Could not save name.'))
     }
 
     return (

@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
+import os
 
-USER_JSON_URL = '../public/user.json'
-CAMPAIGNS_FOLDER_URL = '../public/.campaigns/'
+PUBLIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public')
+USER_JSON_URL = os.path.join(PUBLIC_DIR, 'user.json')
+CAMPAIGNS_FOLDER_URL = os.path.join(PUBLIC_DIR, '.campaigns') + os.sep
 
 app = Flask(__name__)
 CORS(app)
