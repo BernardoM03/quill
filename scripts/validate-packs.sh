@@ -28,8 +28,7 @@ PAIRS=(
 
 failed=0
 
-# ajv reports a malformed $ref as an opaque "can't resolve reference", so check
-# for the common typo first and say plainly what is wrong.
+# check for the common typo first and say plainly what is wrong.
 if bad=$(grep -rn '#/defs/' "$SCHEMAS" 2>/dev/null); then
   echo "Malformed \$ref — '#/defs/' should be '#/\$defs/':"
   echo "$bad" | sed 's/^/  /'
@@ -49,7 +48,7 @@ for pack_dir in "$PACKS"/*/; do
   [ -f "$pack_dir/pack.json" ] || continue
   echo "${pack_dir##*/}"
 
-  # pack.json itself is always checked; the rest is whatever it lists in provides.
+  # pack.json itself is always checked and the rest is whatever it lists in provides.
   provides=$(node -e 'console.log(["pack", ...require(process.argv[1]).provides].join(" "))' "./$pack_dir/pack.json")
 
   for collection in $provides; do
@@ -68,9 +67,6 @@ for pack_dir in "$PACKS"/*/; do
       printf '  %-14s ok\n' "$collection"
     else
       printf '  %-14s FAILED\n' "$collection"
-      # A single bad qualifier emits one error per oneOf branch, so the raw dump runs
-      # to hundreds of lines. The repeated instancePath is the signal: it names which
-      # entry matched nothing. Show those, deduped.
       printf '%s\n' "$out" | grep -o "instancePath: '[^']*'" | sort -u | head -20 | sed 's/^/        /'
       n=$(printf '%s\n' "$out" | grep -c "instancePath:")
       printf '        (%s raw errors; rerun with -d for full output)\n' "$n"
