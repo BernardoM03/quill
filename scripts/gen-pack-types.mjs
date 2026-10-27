@@ -9,8 +9,6 @@ const schemasDir = join(root, 'public', 'schemas');
 const outDir = join(root, 'src', 'packs', 'generated');
 const SCHEMA_URL = 'https://quill.local/schemas/';
 
-// Schemas $ref each other by their https://quill.local $id. Serve those from disk
-// so generation works offline and always uses the checked-in files.
 const $refOptions = {
   resolve: {
     quill: {
@@ -34,8 +32,6 @@ const stems = readdirSync(schemasDir)
 
 for (const stem of stems) {
   const schema = JSON.parse(readFileSync(join(schemasDir, `${stem}.schema.json`), 'utf8'));
-  // Name the top-level type ourselves so each file exports a predictable
-  // "<Stem>Schema" regardless of the schema's title or $id.
   delete schema.title;
   delete schema.$id;
   const ts = await compile(schema, `${pascal(stem)}Schema`, {
