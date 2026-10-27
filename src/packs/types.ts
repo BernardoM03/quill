@@ -1,5 +1,5 @@
 // Entry types for each pack collection, derived from the generated schema types.
-// Regenerate those with `npm run gen-types` after editing public/schemas.
+// Regenerate with `npm run gen-types` after editing public/schemas.
 import type { ClassSchema } from './generated/class';
 import type { ConditionsSchema } from './generated/conditions';
 import type { CreatureSchema } from './generated/creature';
@@ -18,7 +18,7 @@ import type { ToolSchema } from './generated/tool';
 
 export type PackManifest = PackSchema;
 
-// Keyed by the collection names a pack.json lists in `provides`, which are also
+// Keyed by the collection names a pack.json lists in `provides`
 // the collection file names (`magic-items` -> magic-items.json).
 export interface CollectionEntries {
   classes: ClassSchema[number];
