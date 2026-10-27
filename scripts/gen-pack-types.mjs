@@ -9,12 +9,26 @@ const schemasDir = join(root, 'public', 'schemas');
 const outDir = join(root, 'src', 'packs', 'generated');
 const SCHEMA_URL = 'https://quill.local/schemas/';
 
+// Drop every `description` so the generated types have no JSDoc; the schemas are
+// the place to read them. Only string values are removed, so a property that is
+// itself named "description" (an object under `properties`) is kept.
+function stripDescriptions(value) {
+  if (Array.isArray(value)) value.forEach(stripDescriptions);
+  else if (value && typeof value === 'object') {
+    if (typeof value.description === 'string') delete value.description;
+    Object.values(value).forEach(stripDescriptions);
+  }
+  return value;
+}
+
+const readSchema = path => stripDescriptions(JSON.parse(readFileSync(path, 'utf8')));
+
 const $refOptions = {
   resolve: {
     quill: {
       order: 1,
       canRead: file => file.url.startsWith(SCHEMA_URL),
-      read: file => readFileSync(join(schemasDir, file.url.slice(SCHEMA_URL.length).split('#')[0]), 'utf8'),
+      read: file => JSON.stringify(readSchema(join(schemasDir, file.url.slice(SCHEMA_URL.length).split('#')[0]))),
     },
   },
 };
@@ -31,7 +45,7 @@ const stems = readdirSync(schemasDir)
   .sort();
 
 for (const stem of stems) {
-  const schema = JSON.parse(readFileSync(join(schemasDir, `${stem}.schema.json`), 'utf8'));
+  const schema = readSchema(join(schemasDir, `${stem}.schema.json`));
   delete schema.title;
   delete schema.$id;
   const ts = await compile(schema, `${pascal(stem)}Schema`, {

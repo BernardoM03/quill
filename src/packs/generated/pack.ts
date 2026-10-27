@@ -1,35 +1,14 @@
 /* Generated from public/schemas/pack.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
-/**
- * Envelope for a body of importable game content.
- */
 export type PackSchema = {
   [k: string]: unknown;
 } & {
-  /**
-   * Pack namespace prefix. Present in every content id this pack defines. i.e srd-5.2
-   */
   id: string;
   name: string;
-  /**
-   * Semver. Campaigns pin this so an old campaign resolves the content it was built against.
-   */
   version: string;
-  /**
-   * SPDX identifier for the terms this pack's content is under. Every pack must declare one so the UI can surface the right notice.
-   */
   license: string;
-  /**
-   * Verbatim attribution notice required by the pack's license. Rendered to end users on the Legal page. Required for CC-BY-4.0 packs.
-   */
   attribution?: string;
-  /**
-   * Namespaced effect types this pack introduces
-   */
   providesEffectTypes?: string[];
-  /**
-   * Content packs this pack ships. Each entry maps to <name>.json in the pack directory.
-   */
   provides: (
     | 'classes'
     | 'subclasses'
@@ -46,13 +25,7 @@ export type PackSchema = {
     | 'rules'
     | 'magic-items'
   )[];
-  /**
-   * How this pack's source material was changed. CC-BY-4.0 s. 3(a)(1)(B) requires indicating modification, and every pack here reformats prose into JSON, so this is required alongside attribution.
-   */
   modifications?: string;
-  /**
-   * Grants every new character receives from the rules themselves rather than from a species, background, or class, as 'Common plus two standard languages'.
-   */
   characterCreation?: {
     languages?: {
       items?: string[];
@@ -60,17 +33,11 @@ export type PackSchema = {
     };
   };
 };
-/**
- * Either a flat grant (`items`) or a pick (`count` plus `from` or `fromTypes`). The pick form is a `choice` minus the prompt: `from` is a fixed list, `fromTypes` an open pool of every loaded entity of those kinds, narrowed by `qualifiers`, so the Bard's 'any three skills' sees skills a later pack adds. `id` names the pick so `$choice:` can read it, as Soldier's starting Gaming Set matching its proficiency. Items and `from` entries are ids, or `{id, variant}` for one form of a tool.
- */
 export type ProficiencyGrant = {
   id?: string;
   items?: (
     | string
     | {
-        /**
-         * Namespaced content id for Tools: <packId>:tool/<slug>
-         */
         id: string;
         variant: string;
       }
@@ -79,9 +46,6 @@ export type ProficiencyGrant = {
   from?: (
     | string
     | {
-        /**
-         * Namespaced content id for Tools: <packId>:tool/<slug>
-         */
         id: string;
         variant: string;
       }
@@ -127,9 +91,6 @@ export type ProficiencyGrant = {
 } & {
   [k: string]: unknown;
 };
-/**
- * A machine-readable narrowing of when an effect applies. Qualifiers compose: an effect carrying both a `sense` and a `creatureType` qualifier applies only when both hold. Each axis is its own entry rather than a combined enum value, so 'sight' and 'against Fiends' never need a merged 'sightAgainstFiends' spelling. Every branch accepts `negate`, which inverts that one qualifier — this is what expresses 'against any target other than the grappler' without a second enum value for every exclusion.
- */
 export type Qualifier =
   | {
       type: 'sense';
@@ -145,8 +106,6 @@ export type Qualifier =
   | {
       type: 'creatureType';
       /**
-       * Matches if the creature is ANY of these. Set membership is an OR within this one axis, while separate qualifiers still AND across axes — so 'Fiends and Undead' is one qualifier, not two effects.
-       *
        * @minItems 1
        */
       creatureTypes: [
@@ -194,8 +153,6 @@ export type Qualifier =
   | {
       type: 'ability';
       /**
-       * Matches if the roll uses ANY of these abilities
-       *
        * @minItems 1
        */
       abilities: [
@@ -212,13 +169,7 @@ export type Qualifier =
     }
   | {
       type: 'targetCondition';
-      /**
-       * Applies only against creatures that have this condition, e.g. a creature you are Grappling.
-       */
       conditionId: string;
-      /**
-       * Who inflicted the condition. `self` means 'Grappled by you'. Omit to match the condition regardless of who caused it. Kept on this qualifier rather than as a separate targetRelation so the binding to THIS condition is unambiguous when an effect carries more than one.
-       */
       source?:
         | 'self'
         | 'others'
@@ -233,17 +184,11 @@ export type Qualifier =
     }
   | {
       type: 'againstCondition';
-      /**
-       * Applies only to a roll made to avoid or shake off this condition - Dwarven Resilience's Advantage on 'saving throws you make to avoid or end the Poisoned condition'. The mirror of `targetCondition`, and the reason both exist: that one asks whether the creature you are rolling AGAINST already carries the condition, this one asks whether the roll itself is your attempt to escape it. Collapsing them would make the direction of a save ambiguous.
-       */
       conditionId: string;
       negate?: boolean;
     }
   | {
       type: 'targetRelation';
-      /**
-       * How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry. `selfOrAlly` is you or any ally, as an aura's 'you and your allies'. `random` is a creature picked at random from those eligible, as Confusion's lash-out against a random creature within reach.
-       */
       relation:
         | 'self'
         | 'others'
@@ -266,9 +211,6 @@ export type Qualifier =
     }
   | {
       type: 'terrain';
-      /**
-       * The surface the character must be in physical contact with. Stonecunning's 'on a stone surface or touching a stone surface' is one requirement written two ways, so contact is the whole of what this qualifier tests - there is no separate on/touching axis to choose between. Nor does it distinguish natural stone from worked, which the SRD explicitly declines to do.
-       */
       material: 'stone' | 'earth' | 'sand' | 'snow' | 'ice' | 'water' | 'wood' | 'metal';
       negate?: boolean;
     }
@@ -277,9 +219,6 @@ export type Qualifier =
     }
   | {
       type: 'spellSource';
-      /**
-       * Applies only to spells on this class's or subclass's list.
-       */
       sourceId: string;
       negate?: boolean;
     }
@@ -287,8 +226,6 @@ export type Qualifier =
       type: 'spellLevel';
       negate?: boolean;
       /**
-       * Matches a spell of ANY listed level. 0 means cantrip.
-       *
        * @minItems 1
        */
       spellLevels: [number, ...number[]];
@@ -297,8 +234,6 @@ export type Qualifier =
       type: 'damageType';
       negate?: boolean;
       /**
-       * Matches damage of ANY of these types, as Deflect Attacks' Bludgeoning, Piercing, or Slashing.
-       *
        * @minItems 1
        */
       damageTypes: [
@@ -353,17 +288,12 @@ export type Qualifier =
     }
   | {
       type: 'conditionLevel';
-      /**
-       * Applies only once the owning condition has reached this level. Covers thresholds that are not linear, such as Exhaustion level 6.
-       */
       atLeast: number;
       negate?: boolean;
     }
   | {
       type: 'weaponProperty';
       /**
-       * Matches if the weapon has ANY of these properties, so 'Two-Handed or Versatile' is one qualifier. Combine with an attackOrigin qualifier to pin melee vs ranged. This tests the weapon's static properties only. How the weapon is currently held is runtime state, not content: Great Weapon Fighting requires a two-handed grip, and the sheet or VTT checks that against the live equipment state. Same division as the range qualifier.
-       *
        * @minItems 1
        */
       weaponProperties: [
@@ -406,8 +336,6 @@ export type Qualifier =
       type: 'featCategory';
       negate?: boolean;
       /**
-       * Narrows a feat pool to ANY of these categories. Human's Versatile names origin; a class's Ability Score Improvement negates origin, leaving every feat you could qualify for.
-       *
        * @minItems 1
        */
       featCategories: [
@@ -419,8 +347,6 @@ export type Qualifier =
       type: 'attackSource';
       negate?: boolean;
       /**
-       * Matches if the attack comes from ANY of these sources, so Improved Critical's 'weapons and Unarmed Strikes' is one qualifier.
-       *
        * @minItems 1
        */
       attackSources: ['weapon' | 'spell' | 'unarmed', ...('weapon' | 'spell' | 'unarmed')[]];
@@ -428,8 +354,6 @@ export type Qualifier =
   | {
       type: 'skill';
       /**
-       * Matches an ability check that uses ANY of these skills.
-       *
        * @minItems 1
        */
       skills: [string | string, ...(string | string)[]];
@@ -438,8 +362,6 @@ export type Qualifier =
   | {
       type: 'namedAction';
       /**
-       * Matches when the action taken is ANY of these. Action Surge's 'except the Magic action' is this negated.
-       *
        * @minItems 1
        */
       actions: [
@@ -482,22 +404,10 @@ export type Qualifier =
     }
   | {
       type: 'hitPoints';
-      /**
-       * True: at half your Hit Point maximum or lower.
-       */
       bloodied?: boolean;
-      /**
-       * At least this many Hit Points.
-       */
       minimum?: number;
       negate?: boolean;
-      /**
-       * Whose Hit Points. Defaults to you.
-       */
       subject?: 'self' | 'target';
-      /**
-       * At the Hit Point maximum. False is Colossus Slayer's 'missing any of its Hit Points'.
-       */
       atMaximum?: boolean;
     }
   | {
@@ -523,9 +433,6 @@ export type Qualifier =
     }
   | {
       type: 'nearbyCreature';
-      /**
-       * How a creature relates to the character carrying the effect. `conditionSource` is the creature that caused the condition — the grappler for Grappled, the charmer for Charmed, the source of fear for Frightened. `others` is any creature that is not you, used when a rule turns on what someone else can do or perceive. `triggerCreature` is the creature involved in the event that fired the effect - the one you missed, for Studied Attacks. `target` is the creature the spell or feature targets, as Hunter's Mark's quarry. `selfOrAlly` is you or any ally, as an aura's 'you and your allies'. `random` is a creature picked at random from those eligible, as Confusion's lash-out against a random creature within reach.
-       */
       relation:
         | 'self'
         | 'others'
@@ -537,13 +444,7 @@ export type Qualifier =
         | 'selfOrAlly'
         | 'random';
       within: number;
-      /**
-       * Whose position the distance is measured from.
-       */
       around: 'self' | 'target';
-      /**
-       * The nearby creature must not have this condition.
-       */
       withoutCondition?: string;
       negate?: boolean;
     }
@@ -559,9 +460,6 @@ export type Qualifier =
       type: 'cover';
       atLeast: 'half' | 'threeQuarters' | 'total';
       negate?: boolean;
-      /**
-       * Who is behind cover. Defaults to you.
-       */
       subject?: 'self' | 'target';
     }
   | {
