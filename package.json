@@ -10,7 +10,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "validate": "bash scripts/validate-packs.sh",
+    "validate": "node scripts/validate-packs.mjs",
     "check-refs": "node scripts/check-refs.mjs",
     "gen-types": "node scripts/gen-pack-types.mjs"
   },
@@ -28,7 +28,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "ajv-cli": "^5.0.0",
+    "ajv": "^8.20.0",
     "concurrently": "^10.0.6",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
