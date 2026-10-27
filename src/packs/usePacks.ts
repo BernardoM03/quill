@@ -5,8 +5,6 @@ import type { CollectionName, Entry } from './types';
 
 type LoadState<T> = { data: T | null; error: Error | null };
 
-// Shared by the hooks below: runs `load` for `key` and keeps the result, ignoring
-// results for a key the caller has since moved off.
 function useLoad<T>(key: string, load: () => Promise<T>): LoadState<T> & { loading: boolean } {
   const [state, setState] = useState<LoadState<T> & { key: string | null }>({ key: null, data: null, error: null });
 
@@ -16,8 +14,6 @@ function useLoad<T>(key: string, load: () => Promise<T>): LoadState<T> & { loadi
       .then(data => current && setState({ key, data, error: null }))
       .catch((error: Error) => current && setState({ key, data: null, error }));
     return () => { current = false; };
-    // `load` is rebuilt every render; `key` is what identifies the request.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   // A result for a previous key is stale: report loading until the new one lands.

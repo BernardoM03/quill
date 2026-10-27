@@ -1,10 +1,6 @@
 import { fetchInstalledPackIds } from '../datatypes/pack';
 import type { CollectionName, Entry, PackManifest } from './types';
 
-// Loads pack manifests once, then each collection lazily the first time it is
-// asked for. A collection merges that file from every installed pack that lists
-// it in `provides`, keyed by entry id.
-
 let manifestsPromise: Promise<PackManifest[]> | null = null;
 const collectionPromises = new Map<CollectionName, Promise<Map<string, unknown>>>();
 
