@@ -17,8 +17,7 @@ jobs:
           node-version: 24
           cache: npm
 
-      # ajv-cli is a devDependency, and validate-packs.sh calls it with
-      # `npx --no-install`, so it has to be installed rather than fetched.
+      # validate-packs.mjs imports ajv, a devDependency.
       - run: npm ci
 
       - name: Validate content packs against their schemas

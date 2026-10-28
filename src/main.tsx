@@ -6,11 +6,12 @@ import './index.css'
 //Routes and React Elements
 import App from './App'
 import Rules from './routes/Rules'
+import SetupUser from './routes/SetupUser';
 import SetupCampaign from './routes/SetupCampaign'
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 
-let router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path : "/",
     element : <App />,
@@ -18,15 +19,19 @@ let router = createBrowserRouter([
       {
       path : "rules",
       element : <Rules />
-      },
-      {
-      path : "legal",
-      element : <Legal />
       }
     ]
   },
   {
-    path : "/setupcampaign",
+    path : "/legal",
+    element : <Legal />
+  },
+  {
+    path : "/setup/user",
+    element: <SetupUser />
+  },
+  {
+    path : "/setup/campaign",
     element : <SetupCampaign />
   },
   {

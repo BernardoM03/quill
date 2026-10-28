@@ -37,35 +37,53 @@ export default function App() {
   }, 2000);
 
   return (
-    <>
+    <div className="page">
       <h1>Quill</h1>
-      { isLoading ? 
+      { isLoading ?
         <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
-        <p>{welcomeMessage}</p>
+        <p className="welcome muted">{welcomeMessage}</p>
       }
       {
         userData && userData.campaigns && userData.campaigns.length > 0 ? (
-          <div className="campaign-section">
-            <h2>Your Campaigns:</h2>
-            <div className="campaign-grid">
-              {userData.campaigns.map(campaign => (
-                <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
-              ))}
+          <div className="setting-section">
+            <span className="setting-caption">Your Campaigns</span>
+            <div className="campaign-grid-wrap">
+              <div className="campaign-grid">
+                {userData.campaigns.map(campaign => (
+                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
+                ))}
+              </div>
             </div>
-            <Link to="/setupcampaign">Create New Campaign</Link>
+            <div className="home-actions">
+              <Link to="/setup/campaign" className="setting-button">New Campaign</Link>
+            </div>
           </div>
         ) : null
       }
       {
         userData && (!userData.campaigns || userData.campaigns.length === 0) ? (
-          <div>
-            <h2>You don't have any campaigns yet.</h2>
-            <Link to="/setupcampaign">Set up your first campaign</Link>
+          <div className="setting-section">
+            <span className="setting-caption">Your Campaigns</span>
+            <p className="muted">You don't have any campaigns yet.</p>
+            <div className="home-actions">
+              <Link to="/setup/campaign" className="setting-button">Set Up Your First Campaign</Link>
+            </div>
+          </div>
+        ) : null
+      }
+      {
+        !userData ? (
+          <div className="setting-section">
+            <span className="setting-caption">New User</span>
+            <p className="muted">You don't have a profile yet.</p>
+            <div className="home-actions">
+              <Link to="/setup/user" className="setting-button">Set Up Your Account</Link>
+            </div>
           </div>
         ) : null
       }
       <Outlet />
       <LegalFooter />
-    </>
+    </div>
   )
 }

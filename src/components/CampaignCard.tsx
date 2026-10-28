@@ -12,13 +12,13 @@ export default function CampaignCard({ props }: { props: { name: string; id: str
       </div>
       <div className="campaign-card__actions">
         <button
-          className="campaign-card__btn campaign-card__btn--open"
+          className="setting-button"
           onClick={() => navigate(`/campaign/${props.id}`)}
         >
           Open
         </button>
         <button
-          className="campaign-card__btn campaign-card__btn--edit"
+          className="setting-button setting-button--quiet"
           onClick={() => navigate(`/campaignsettings/${props.id}`)}
         >
           Edit

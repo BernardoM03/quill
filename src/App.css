@@ -1,13 +1,28 @@
-.campaign-section {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.welcome {
+  margin-bottom: 2rem;
+}
+
+/* Cards share 1px lines the same way the species toggle grid does. */
+.campaign-grid-wrap {
+  container-type: inline-size;
 }
 
 .campaign-grid {
   display: grid;
-  grid-template-columns: repeat(3, 22vw);
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+@container (max-width: 600px) {
+  .campaign-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@container (max-width: 380px) {
+  .campaign-grid { grid-template-columns: 1fr; }
+}
+
+.home-actions {
+  display: flex;
+  gap: 0.5rem;
 }

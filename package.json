@@ -4,20 +4,22 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k -n vite,data -c cyan,yellow \"npm:dev:web\" \"npm:dev:data\"",
+    "dev": "concurrently -k -n API,WEB -c magenta,cyan \"npm:dev:api\" \"npm:dev:web\"",
     "dev:web": "vite",
-    "dev:data": "data-writer\\.venv\\Scripts\\python data-writer/quillDataLayer.py",
+    "dev:api": "node scripts/dev-api.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "validate": "bash scripts/validate-packs.sh",
-    "check-refs": "node scripts/check-refs.mjs"
+    "validate": "node scripts/validate-packs.mjs",
+    "check-refs": "node scripts/check-refs.mjs",
+    "gen-types": "node scripts/gen-pack-types.mjs"
   },
   "dependencies": {
     "axios": "^1.16.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-loading-indicators": "^1.0.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.15.1",
     "uuid": "^14.0.0"
   },
@@ -27,12 +29,13 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "ajv-cli": "^5.0.0",
+    "ajv": "^8.20.0",
     "concurrently": "^10.0.6",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "json-schema-to-typescript": "^15.0.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12"

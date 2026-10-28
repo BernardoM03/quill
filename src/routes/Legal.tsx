@@ -1,25 +1,19 @@
-import { useState, useEffect } from 'react'
-import { fetchPackManifests } from '../datatypes/pack'
-import type { pack } from '../datatypes/pack'
+import BackButton from '../components/BackButton'
+import { usePackManifests } from '../packs/usePacks'
 import './Legal.css'
 
 // The notices every shipped content pack requires, rendered from the manifests
 // themselves so a newly installed pack cannot go un-attributed.
 export default function Legal() {
-  const [packs, setPacks] = useState<pack[]>([])
-
-  useEffect(() => {
-    fetchPackManifests()
-      .then(setPacks)
-      .catch(error => console.error('Error fetching pack manifests:', error))
-  }, [])
+  const { data: packs, error } = usePackManifests()
 
   return (
-    <div className="legal">
-      <h2>Licenses and Attribution</h2>
+    <div className="page legal">
+      <BackButton />
+      <h1>Licenses and Attribution</h1>
 
       <section className="legal__section">
-        <h3>Quill</h3>
+        <span className="setting-caption">Quill</span>
         <p>
           Quill is free software, licensed under the{' '}
           <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noreferrer">
@@ -31,8 +25,9 @@ export default function Legal() {
       </section>
 
       <section className="legal__section">
-        <h3>Content packs</h3>
-        {packs.map(installed => (
+        <span className="setting-caption">Content packs</span>
+        {error && <p className="muted">Couldn't load the installed packs: {error.message}</p>}
+        {packs?.map(installed => (
           <article key={installed.id} className="legal__pack">
             <h4>
               {installed.name} <span className="legal__license">{installed.license}</span>
@@ -44,7 +39,7 @@ export default function Legal() {
       </section>
 
       <section className="legal__section">
-        <h3>Trademarks</h3>
+        <span className="setting-caption">Trademarks</span>
         <p>
           The Creative Commons license on the SRD grants copyright permissions only.
           It grants no rights in any trademark.

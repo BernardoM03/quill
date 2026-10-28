@@ -1,29 +1,41 @@
 .legal {
-  max-width: 44rem;
-  margin: 0 auto;
-  text-align: left;
   line-height: 1.6;
 }
 
 .legal__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 48rem;
   margin-bottom: 2.5rem;
+  color: var(--text-h);
 }
 
 .legal__pack {
-  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
 }
 
 .legal__pack h4 {
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem;
+  font-weight: 500;
+}
+
+.legal__pack p + p {
+  margin-top: 0.5rem;
 }
 
 .legal__license {
   margin-left: 0.5rem;
-  padding: 0.1rem 0.4rem;
-  border: 1px solid rgba(128, 128, 128, 0.4);
-  border-radius: 0.25rem;
-  font-size: 0.7rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
   font-weight: 400;
+  color: var(--text);
   vertical-align: middle;
-  opacity: 0.8;
+}
+
+.legal a {
+  color: var(--accent);
 }
