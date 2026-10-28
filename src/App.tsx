@@ -40,7 +40,7 @@ export default function App() {
     <div className="page">
       <h1>Quill</h1>
       { isLoading ?
-        <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
+        < div/> :
         <p className="welcome muted">{welcomeMessage}</p>
       }
       {

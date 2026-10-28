@@ -7,7 +7,6 @@ import './index.css'
 import App from './App'
 import Rules from './routes/Rules'
 import SetupUser from './routes/SetupUser';
-import SetupCampaign from './routes/SetupCampaign'
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 
@@ -32,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path : "/setup/campaign",
-    element : <SetupCampaign />
+    element : <CampaignSettings />
   },
   {
     path : "campaignsettings/:campaignID",

@@ -1,4 +1,4 @@
-import { useBlocker, useParams } from "react-router";
+import { useBlocker, useNavigate, useParams } from "react-router";
 import { useState, useEffect } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
@@ -22,10 +22,14 @@ const proficiencies = [
 ] as const
 
 export default function CampaignSettings() {
+    // No campaignID means /setup/campaign: only the name shows until the campaign is created,
+    // then the page swaps to that campaign's settings URL.
     const { campaignID } = useParams();
+    const navigate = useNavigate();
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
 
     useEffect(() => {
+        if (!campaignID) return
         getCampaign(campaignID as string)
             .then(setCampaignDetails)
             .catch(error => console.error("Error fetching campaign details:", error))
@@ -87,7 +91,7 @@ export default function CampaignSettings() {
     return (
         <div className="page">
             <BackButton disabled={broken}/>
-            <h1>Campaign Settings</h1>
+            <h1>{campaignID ? 'Campaign Settings' : 'New Campaign'}</h1>
             {broken && (
                 <div className="settings-problems" role="alert">
                     <strong>Fix these settings before leaving this page:</strong>
@@ -95,7 +99,11 @@ export default function CampaignSettings() {
                 </div>
             )}
             {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
-            <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}/>
+            <CampaignNameSettings
+                key={campaignID ?? 'new'}
+                name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}
+                onCreated={created => navigate(`/campaignsettings/${created.id}`, { replace: true })}
+            />
             {campaignDetails && (
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}

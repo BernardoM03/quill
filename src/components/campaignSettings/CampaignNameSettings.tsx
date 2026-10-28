@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { useParams } from "react-router";
 
-import { CAMPAIGN_NAME_MAX_LENGTH, updateCampaignName, validateCampaignName } from "../../api/campaigns";
+import { CAMPAIGN_NAME_MAX_LENGTH, createCampaign, updateCampaignName, validateCampaignName } from "../../api/campaigns";
+import type { campaign } from "../../datatypes/campaign";
 import "./CampaignSettings.css";
 
 // Shows the campaign name; the pencil swaps it for an input in place, like a GitHub PR title.
 // name is null while the campaign is still loading. onRenamed runs once the save succeeds.
 // locked blocks saving while other campaign settings are broken.
-export function CampaignNameSettings({ name, onRenamed, locked = false }: { name: string | null; onRenamed: (name: string) => void; locked?: boolean }) {
+// Without a campaignID in the route the campaign doesn't exist yet: the input starts open
+// and submitting creates the campaign, then runs onCreated.
+export function CampaignNameSettings({ name, onRenamed, onCreated, locked = false }: { name: string | null; onRenamed: (name: string) => void; onCreated?: (created: campaign) => void; locked?: boolean }) {
     const { campaignID } = useParams();
-    const [editing, setEditing] = useState(false)
+    const creating = !campaignID
+    const [editing, setEditing] = useState(creating)
     const [draft, setDraft] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
@@ -35,6 +39,13 @@ export function CampaignNameSettings({ name, onRenamed, locked = false }: { name
         }
 
         setSaving(true)
+        if (creating) {
+            createCampaign(newName)
+                .then(created => onCreated?.(created))
+                .catch((err) => setError(err.response?.data?.error ?? 'Could not create campaign.'))
+                .finally(() => setSaving(false))
+            return
+        }
         updateCampaignName(campaignID as string, newName)
             .then(() => {
                 onRenamed(newName)
@@ -57,12 +68,16 @@ export function CampaignNameSettings({ name, onRenamed, locked = false }: { name
                         maxLength={CAMPAIGN_NAME_MAX_LENGTH}
                         autoFocus
                         onChange={e => setDraft(e.target.value)}
-                        onKeyDown={e => e.key === 'Escape' && setEditing(false)}
+                        onKeyDown={e => e.key === 'Escape' && !creating && setEditing(false)}
                     />
-                    <button type="submit" className="setting-button" disabled={saving || locked}>Save</button>
-                    <button type="button" className="setting-button setting-button--quiet" onClick={() => setEditing(false)}>
-                        Cancel
+                    <button type="submit" className="setting-button" disabled={saving || locked}>
+                        {creating ? 'Create Campaign' : 'Save'}
                     </button>
+                    {!creating && (
+                        <button type="button" className="setting-button setting-button--quiet" onClick={() => setEditing(false)}>
+                            Cancel
+                        </button>
+                    )}
                 </form>
             ) : (
                 <div className="campaign-name__view">
