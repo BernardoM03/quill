@@ -5,6 +5,7 @@ import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed } from "../api/campaigns";
 
 import { SpeciesSettings } from "../components/campaignSettings/CampaignSpeciesSettings";
+import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 
@@ -49,6 +50,14 @@ export default function CampaignSettings() {
                 <SpeciesSettings
                     allowed={campaignDetails.allowedContent.species ?? null}
                     onChange={ids => handleAllowedChange('species', ids)}
+                />
+            )}
+            {campaignDetails && (
+                <ClassSettings
+                    allowedClasses={campaignDetails.allowedContent.classes ?? null}
+                    allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}
+                    onClassesChange={ids => handleAllowedChange('classes', ids)}
+                    onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
                 />
             )}
         </div>
