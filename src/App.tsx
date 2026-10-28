@@ -32,6 +32,10 @@ export default function App() {
     }
   }, [userData])
 
+  function handleCampaignDeleted(id: string) {
+    setUserData(data => data && { ...data, campaigns: data.campaigns.filter(c => c.id !== id) })
+  }
+
   setTimeout(() => {
     setIsLoading(false);
   }, 2000);
@@ -50,7 +54,7 @@ export default function App() {
             <div className="campaign-grid-wrap">
               <div className="campaign-grid">
                 {userData.campaigns.map(campaign => (
-                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
+                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} onDeleted={handleCampaignDeleted} />
                 ))}
               </div>
             </div>

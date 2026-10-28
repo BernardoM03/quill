@@ -1,5 +1,5 @@
 import { useBlocker, useNavigate, useParams } from "react-router";
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
@@ -11,6 +11,7 @@ import { SpellSettings } from "../components/campaignSettings/CampaignSpellSetti
 import { EquipmentSettings, MagicItemSettings } from "../components/campaignSettings/CampaignItemSettings";
 import { AdvancedRulesSettings, RulesSettings } from "../components/campaignSettings/CampaignRulesSettings";
 import BackButton from "../components/BackButton";
+import DeleteCampaignDialog from "../components/DeleteCampaignDialog";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
@@ -27,6 +28,9 @@ export default function CampaignSettings() {
     const { campaignID } = useParams();
     const navigate = useNavigate();
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
+    const [confirmingDelete, setConfirmingDelete] = useState(false)
+    // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
+    const deleted = useRef(false)
 
     useEffect(() => {
         if (!campaignID) return
@@ -42,7 +46,7 @@ export default function CampaignSettings() {
     const broken = problems.length > 0
 
     const blocker = useBlocker(({ currentLocation, nextLocation }) =>
-        broken && currentLocation.pathname !== nextLocation.pathname)
+        broken && !deleted.current && currentLocation.pathname !== nextLocation.pathname)
     useEffect(() => {
         if (blocker.state === 'blocked') blocker.reset()
     }, [blocker])
@@ -86,6 +90,11 @@ export default function CampaignSettings() {
             setRules(previous)
             alert('Could not save.')
         })
+    }
+
+    function handleDeleted() {
+        deleted.current = true
+        navigate('/', { replace: true })
     }
 
     return (
@@ -178,6 +187,20 @@ export default function CampaignSettings() {
                         />
                     ))}
                 </details>
+            )}
+            {campaignDetails && campaignID && (
+                <div className="settings-danger">
+                    <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
+                        Delete Campaign
+                    </button>
+                </div>
+            )}
+            {confirmingDelete && campaignDetails && campaignID && (
+                <DeleteCampaignDialog
+                    id={campaignID} name={campaignDetails.name}
+                    onClose={() => setConfirmingDelete(false)}
+                    onDeleted={handleDeleted}
+                />
             )}
         </div>
     )

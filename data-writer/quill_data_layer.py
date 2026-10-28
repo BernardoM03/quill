@@ -228,5 +228,29 @@ def update_campaign_rules():
 
     return jsonify({'success': True}), 200
 
+@app.route('/delete/campaign', methods=['DELETE'])
+def delete_campaign():
+    content = request.get_json()
+    campaign_id = content.get('id')
+    campaign_path = campaign_file_path(campaign_id)
+    if campaign_path is None:
+        return jsonify({'error': 'Invalid campaign id.'}), 400
+
+    with open(USER_JSON_URL, 'r') as f:
+        data = json.load(f)
+
+    remaining = [c for c in data['campaigns'] if c['id'] != campaign_id]
+    if len(remaining) == len(data['campaigns']):
+        return jsonify({'error': 'Campaign not found'}), 404
+    data['campaigns'] = remaining
+
+    with open(USER_JSON_URL, 'w') as f:
+        json.dump(data, f, indent=4)
+
+    if os.path.exists(campaign_path):
+        os.remove(campaign_path)
+
+    return jsonify({'success': True}), 200
+
 if __name__ == '__main__':
     app.run(port=5174, debug=False)

@@ -1,0 +1,59 @@
+.delete-dialog {
+  /* Fixed width so short names don't shrink it; narrower only on small screens. */
+  box-sizing: border-box;
+  width: min(420px, calc(100vw - 32px));
+  max-width: none;
+  padding: 1.25rem 1.5rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  text-align: left;
+}
+
+.delete-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.delete-dialog__title {
+  margin: 0 0 0.5rem;
+  font-size: 18px;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.delete-dialog__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.delete-dialog__input {
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+  font-family: var(--mono);
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.delete-dialog__input:focus {
+  outline: none;
+  border-color: var(--danger);
+}
+
+.delete-dialog__error {
+  margin: 0.5rem 0 0;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.delete-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

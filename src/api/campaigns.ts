@@ -44,3 +44,12 @@ export function updateCampaignDescription(id: string, description: string): Prom
 export function updateCampaignName(id: string, name: string): Promise<void> {
     return apiClient.put("/update/campaign-name", { id, name }).then(() => undefined);
 }
+
+// The short id shown on campaign cards, which the delete dialog asks the user to type.
+export function shortCampaignId(id: string): string {
+    return id.slice(0, 8);
+}
+
+export function deleteCampaign(id: string): Promise<void> {
+    return apiClient.delete("/delete/campaign", { data: { id } }).then(() => undefined);
+}

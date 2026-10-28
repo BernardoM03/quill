@@ -635,3 +635,10 @@
   color: var(--text);
   border: 1px solid var(--border);
 }
+
+/* Sits alone at the bottom of the settings page, below a hairline. */
+.settings-danger {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
