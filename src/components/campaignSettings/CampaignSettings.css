@@ -294,3 +294,43 @@
   color: var(--text);
 }
 .markdown a { color: var(--accent); }
+
+/* ---- Section header: caption left, View / Edit switch right ---- */
+
+.setting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tabs--small {
+  border-bottom: 0;
+}
+
+.tabs--small button {
+  padding: 0.15rem 0.6rem;
+  font-size: 12px;
+}
+
+/* ---- View mode: read-only cells in the shared-line grid ---- */
+
+.view-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.view-cell__sub {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.setting-error {
+  font-size: 13px;
+  color: var(--accent);
+}

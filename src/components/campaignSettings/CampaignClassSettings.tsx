@@ -1,9 +1,12 @@
+import { useState } from 'react';
+
 import { useCollection } from '../../packs/usePacks';
+import { SectionHeader, type SectionMode } from './SectionHeader';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 
-// One row per class: the class toggle, then (while it's on) its subclasses in columns below.
-// allowedClasses / allowedSubclasses are the saved ids, or null for "all".
+// View mode: a read-only grid of allowed classes. 
+// Edit mode: one row per class with its toggle
 export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChange, onSubclassesChange }: {
   allowedClasses: string[] | null;
   allowedSubclasses: string[] | null;
@@ -12,6 +15,8 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
 }) {
   const classes = useCollection('classes');
   const subclasses = useCollection('subclasses');
+  const [mode, setMode] = useState<SectionMode>('view');
+  const [rule, setRule] = useState<string | null>(null);
 
   let body;
   if (classes.loading || subclasses.loading) body = <p>Loading…</p>;
@@ -21,8 +26,46 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     const subclassList = [...subclasses.data!.values()];
     const selectedClasses = allowedClasses ?? classList.map(c => c.id);
     const selectedSubclasses = allowedSubclasses ?? subclassList.map(s => s.id);
+    const subclassesOf = (classId: string) => subclassList.filter(s => s.classId === classId);
+    const allowedClassList = classList.filter(c => selectedClasses.includes(c.id));
 
-    body = (
+    // Characters need a class, and a class with subclasses needs one of them to pick.
+    const toggleClass = (classId: string) => {
+      const next = toggleId(selectedClasses, classId);
+      if (next.length === 0) return setRule('At least one class must stay allowed.');
+      setRule(null);
+      onClassesChange(next);
+      // Turning a class on whose subclasses are all off: turn its subclasses back on too.
+      const subs = subclassesOf(classId).map(s => s.id);
+      if (next.includes(classId) && subs.length > 0 && !subs.some(id => selectedSubclasses.includes(id))) {
+        onSubclassesChange([...selectedSubclasses, ...subs]);
+      }
+    };
+
+    const toggleSubclass = (classId: string, subclassId: string) => {
+      const next = toggleId(selectedSubclasses, subclassId);
+      if (!subclassesOf(classId).some(s => next.includes(s.id))) {
+        return setRule('Each allowed class needs at least one subclass. Turn the class off instead.');
+      }
+      setRule(null);
+      onSubclassesChange(next);
+    };
+
+    if (mode === 'view') body = allowedClassList.length === 0 ? <p className="setting-error">No classes allowed. Characters can't be created until one is.</p> : (
+      <div className="toggle-grid-wrap">
+        <div className="toggle-grid">
+          {allowedClassList.map(cls => (
+            <div key={cls.id} className="view-cell">
+              <span>{cls.name}</span>
+              <span className="view-cell__sub">
+                {subclassesOf(cls.id).filter(s => selectedSubclasses.includes(s.id)).map(s => s.name).join(', ') || 'No subclasses (Recommended: Enable at least one)'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+    else body = (
       <div className="class-list">
         {classList.map(cls => {
           const classOn = selectedClasses.includes(cls.id);
@@ -31,17 +74,17 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
               <Toggle
                 label={cls.name}
                 checked={classOn}
-                onChange={() => onClassesChange(toggleId(selectedClasses, cls.id))}
+                onChange={() => toggleClass(cls.id)}
               />
               {classOn && (
                 <div className="subclass-grid">
-                  {subclassList.filter(s => s.classId === cls.id).map(sub => (
+                  {subclassesOf(cls.id).map(sub => (
                     <Toggle
                       key={sub.id}
                       className="subclass-row"
                       label={sub.name}
                       checked={selectedSubclasses.includes(sub.id)}
-                      onChange={() => onSubclassesChange(toggleId(selectedSubclasses, sub.id))}
+                      onChange={() => toggleSubclass(cls.id, sub.id)}
                     />
                   ))}
                 </div>
@@ -55,8 +98,9 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
 
   return (
     <div className="setting-section">
-      <span className="setting-caption">Allowed Classes</span>
+      <SectionHeader caption="Allowed Classes" mode={mode} onModeChange={setMode} />
       {body}
+      {mode === 'edit' && rule && <p className="setting-error">{rule}</p>}
     </div>
   );
 }

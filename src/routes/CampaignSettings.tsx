@@ -27,13 +27,15 @@ export default function CampaignSettings() {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, description })
     }
 
-    // Show the change right away; put the old list back if the save fails.
+    // Show the change right away; put the old list back if the save fails. Uses the setter's
+    // function form so two saves from one click (class + its subclasses) don't overwrite each other.
     function handleAllowedChange(collection: string, ids: string[] | null) {
-        if (!campaignDetails) return
-        const previous = campaignDetails
-        setCampaignDetails({ ...previous, allowedContent: { ...previous.allowedContent, [collection]: ids } })
+        const previous = campaignDetails?.allowedContent[collection] ?? null
+        const setList = (list: string[] | null) => setCampaignDetails(details =>
+            details && { ...details, allowedContent: { ...details.allowedContent, [collection]: list } })
+        setList(ids)
         updateCampaignAllowed(campaignID as string, collection, ids).catch(() => {
-            setCampaignDetails(previous)
+            setList(previous)
             alert('Could not save.')
         })
     }

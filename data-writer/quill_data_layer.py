@@ -145,6 +145,9 @@ def update_campaign_allowed():
         return jsonify({'error': 'Invalid collection.'}), 400
     if ids is not None and not (isinstance(ids, list) and all(isinstance(i, str) for i in ids)):
         return jsonify({'error': 'ids must be a list of strings or null.'}), 400
+    # A campaign with no species or no classes can't make characters.
+    if collection in ('species', 'classes') and ids == []:
+        return jsonify({'error': f'At least one entry in {collection} must stay allowed.'}), 400
     campaign_path = campaign_file_path(content.get('id'))
     if campaign_path is None or not os.path.exists(campaign_path):
         return jsonify({'error': 'Campaign not found'}), 404
