@@ -229,4 +229,4 @@ def update_campaign_rules():
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':
-    app.run(port=5174, debug=True)
+    app.run(port=5174, debug=False)
