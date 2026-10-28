@@ -9,6 +9,7 @@ USER_JSON_URL = os.path.join(PUBLIC_DIR, 'user.json')
 CAMPAIGNS_FOLDER_URL = os.path.join(PUBLIC_DIR, '.campaigns') + os.sep
 
 CAMPAIGN_NAME_MAX_LENGTH = 64
+CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
 
 def clean_name(raw):
     if not isinstance(raw, str):
@@ -151,6 +152,24 @@ def update_campaign_allowed():
     with open(campaign_path, 'r') as f:
         details = json.load(f)
     details.setdefault('allowedContent', {})[collection] = ids
+    with open(campaign_path, 'w') as f:
+        json.dump(details, f, indent=4)
+
+    return jsonify({'success': True}), 200
+
+@app.route('/update/campaign-description', methods=['PUT'])
+def update_campaign_description():
+    content = request.get_json()
+    description = content.get('description')
+    if not isinstance(description, str) or len(description) > CAMPAIGN_DESCRIPTION_MAX_LENGTH:
+        return jsonify({'error': f'Description must be at most {CAMPAIGN_DESCRIPTION_MAX_LENGTH} characters.'}), 400
+    campaign_path = campaign_file_path(content.get('id'))
+    if campaign_path is None or not os.path.exists(campaign_path):
+        return jsonify({'error': 'Campaign not found'}), 404
+
+    with open(campaign_path, 'r') as f:
+        details = json.load(f)
+    details['description'] = description.strip() or None
     with open(campaign_path, 'w') as f:
         json.dump(details, f, indent=4)
 

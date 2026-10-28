@@ -219,3 +219,111 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* ---- Description: rendered Markdown, or Write/Preview tabs while editing ---- */
+
+.campaign-description {
+  margin-bottom: 2rem;
+}
+
+.campaign-description__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.campaign-description__body {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.campaign-description__editor {
+  border: 1px solid var(--border);
+}
+
+.campaign-description__editor .campaign-description__body {
+  border: 0;
+  min-height: 160px;
+}
+
+/* Tabs sit on a hairline; the selected tab is underlined in the accent color. */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs button {
+  padding: 0.4rem 1rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected='true'] {
+  color: var(--text-h);
+  border-bottom-color: var(--accent);
+}
+
+.campaign-description__textarea {
+  display: block;
+  width: 100%;
+  min-height: 160px;
+  padding: 0.75rem 1rem;
+  box-sizing: border-box;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-h);
+  background: transparent;
+  border: 0;
+  resize: vertical;
+}
+
+.campaign-description__textarea:focus {
+  outline: none;
+}
+
+.campaign-description__editor:focus-within {
+  border-color: var(--accent);
+}
+
+.campaign-description__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.campaign-description__actions .campaign-name__error {
+  margin-right: auto;
+}
+
+.muted {
+  color: var(--text);
+}
+
+/* Rendered Markdown: undo the page's heading sizes and keep spacing tight. */
+.markdown > :first-child { margin-top: 0; }
+.markdown > :last-child { margin-bottom: 0; }
+.markdown p { margin: 0 0 0.75rem; }
+.markdown h1, .markdown h2, .markdown h3 {
+  font-size: 18px;
+  letter-spacing: normal;
+  margin: 1rem 0 0.5rem;
+}
+.markdown ul, .markdown ol { margin: 0 0 0.75rem; padding-left: 1.5rem; }
+.markdown blockquote {
+  margin: 0 0 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--border);
+  color: var(--text);
+}
+.markdown a { color: var(--accent); }

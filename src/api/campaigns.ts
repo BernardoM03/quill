@@ -29,6 +29,12 @@ export function updateCampaignAllowed(id: string, collection: string, ids: strin
     return apiClient.put("/update/campaign-allowed", { id, collection, ids }).then(() => undefined);
 }
 
+export const CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000;
+
+export function updateCampaignDescription(id: string, description: string): Promise<void> {
+    return apiClient.put("/update/campaign-description", { id, description }).then(() => undefined);
+}
+
 export function updateCampaignName(id: string, name: string): Promise<void> {
     return apiClient.put("/update/campaign-name", { id, name }).then(() => undefined);
 }

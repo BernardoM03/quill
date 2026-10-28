@@ -6,6 +6,7 @@ import { getCampaign, updateCampaignAllowed } from "../api/campaigns";
 
 import { SpeciesSettings } from "../components/campaignSettings/CampaignSpeciesSettings";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
+import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 
 export default function CampaignSettings() {
     const { campaignID } = useParams();
@@ -19,6 +20,10 @@ export default function CampaignSettings() {
 
     function handleRenamed(name: string) {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, name })
+    }
+
+    function handleDescriptionSaved(description: string | null) {
+        if (campaignDetails) setCampaignDetails({ ...campaignDetails, description })
     }
 
     // Show the change right away; put the old list back if the save fails.
@@ -37,6 +42,9 @@ export default function CampaignSettings() {
             <h1>Campaign Settings</h1>
             {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
             <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed}/>
+            {campaignDetails && (
+                <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved}/>
+            )}
             {campaignDetails && (
                 <SpeciesSettings
                     allowed={campaignDetails.allowedContent.species ?? null}
