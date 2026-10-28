@@ -1,0 +1,64 @@
+import { useCollection } from '../../packs/usePacks';
+import React from 'react';
+import './CampaignSettings.css';
+
+// allowed: the saved species ids, or null for "all species".
+export function SpeciesSettings({ allowed, onChange }: { allowed: string[] | null; onChange: (ids: string[]) => void }) {
+  const { data: species, error, loading } = useCollection('species');
+
+  if (loading) return <p>Loading…</p>;
+  if (error) return <p>Couldn't load species: {error.message}</p>;
+
+  const options: CheckboxOption[] = [...species!.values()].map(s => ({ id: s.id, label: s.name }));
+  const selected = allowed ?? options.map(o => o.id);
+
+  return (
+    <CheckboxList options={options} selectedIds={selected} onChange={ids => onChange(ids as string[])} />
+  );
+}
+
+interface CheckboxOption {
+  id: string | number;
+  label: string;
+}
+
+interface CheckboxListProps {
+  options: CheckboxOption[];
+  selectedIds: (string | number)[];
+  onChange: (selectedIds: (string | number)[]) => void;
+}
+
+export const CheckboxList: React.FC<CheckboxListProps> = ({
+  options,
+  selectedIds,
+  onChange,
+}) => {
+  const handleToggle = (id: string | number) => {
+    const exists = selectedIds.includes(id);
+    if (exists) {
+      onChange(selectedIds.filter((item) => item !== id));
+    } else {
+      onChange([...selectedIds, id]);
+    }
+  };
+
+  return (
+    <div className="toggle-grid-wrap">
+      <div className="toggle-grid">
+      {options.map((option) => (
+        <label key={option.id} className="setting-row toggle-row">
+          <span>{option.label}</span>
+          <input
+            type="checkbox"
+            role="switch"
+            className="toggle-input"
+            checked={selectedIds.includes(option.id)}
+            onChange={() => handleToggle(option.id)}
+          />
+          <span className="toggle" aria-hidden="true" />
+        </label>
+      ))}
+      </div>
+    </div>
+  );
+};

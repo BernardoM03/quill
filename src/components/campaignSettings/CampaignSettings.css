@@ -1,0 +1,214 @@
+/* The page left-aligns everything and spans the full width; #root centers by default. */
+.settings-page {
+  padding: 0 2rem 2rem;
+  text-align: left;
+}
+
+.settings-page h1 {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ---- Campaign name: view mode with a pencil, edit mode with an input in its place ---- */
+
+.campaign-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 2rem;
+}
+
+/* Both modes share a min-height so swapping them doesn't shift the page. */
+.campaign-name__view,
+.campaign-name__form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+}
+
+.campaign-name__view h2 {
+  margin: 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The input wears the h2's type, so editing looks like the title became editable. */
+.campaign-name__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--heading);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.campaign-name__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.campaign-name__error {
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.icon-button {
+  display: inline-flex;
+  padding: 4px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  color: var(--accent);
+  border-color: var(--border);
+  outline: none;
+}
+
+.setting-button--quiet {
+  border-color: transparent;
+  color: var(--text);
+}
+
+.setting-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Small caption above a value, e.g. "Campaign Name". */
+.setting-caption {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* Settings rows: label left, control right, hairline between rows. */
+.setting-list {
+  margin-bottom: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+/* ---- Toggle grid: 3 columns, rows added as needed ---- */
+
+/* Lines come from each cell's right and bottom edge plus the grid's top and left,
+   so every cell is boxed by a single 1px line. */
+.toggle-grid-wrap {
+  container-type: inline-size;
+  margin-bottom: 2rem;
+}
+
+.toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.toggle-grid .setting-row {
+  padding: 0.6rem 0.75rem;
+  border-right: 1px solid var(--border);
+}
+
+@container (max-width: 600px) {
+  .toggle-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@container (max-width: 380px) {
+  .toggle-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Toggle ---- */
+
+.toggle-row {
+  position: relative;
+  cursor: pointer;
+}
+
+.toggle-row:hover {
+  background: var(--code-bg);
+}
+
+/* The real checkbox stays in the page for keyboard and screen readers, just unseen. */
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 30px;
+  height: 14px;
+  border: 1px solid var(--text);
+  box-sizing: border-box;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--text);
+  transition: transform 120ms ease-out;
+}
+
+.toggle-input:checked + .toggle {
+  border-color: var(--accent);
+}
+
+.toggle-input:checked + .toggle::after {
+  background: var(--accent);
+  transform: translateX(16px);
+}
+
+.toggle-input:focus-visible + .toggle {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- Buttons ---- */
+
+.setting-button {
+  padding: 0.3rem 0.8rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.setting-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

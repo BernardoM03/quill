@@ -1,47 +1,50 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from 'react'
 
-import { CAMPAIGN_NAME_MAX_LENGTH, updateCampaignName, validateCampaignName } from "../api/campaigns";
-import FormField from "../components/FormField";
 import type { campaignDetails } from "../datatypes/campaignDetails";
+import { getCampaign, updateCampaignAllowed } from "../api/campaigns";
+
+import { SpeciesSettings } from "../components/campaignSettings/CampaignSpeciesSettings";
+import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 
 export default function CampaignSettings() {
     const { campaignID } = useParams();
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
 
     useEffect(() => {
-        console.log(campaignID)
-        fetch(`../../public/.campaigns/${campaignID}.json`)
-            .then(response => response.json())
-            .then(data => setCampaignDetails(data))
+        getCampaign(campaignID as string)
+            .then(setCampaignDetails)
             .catch(error => console.error("Error fetching campaign details:", error))
     }, [campaignID])
 
-    function handleNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault()
+    function handleRenamed(name: string) {
+        if (campaignDetails) setCampaignDetails({ ...campaignDetails, name })
+    }
 
-        const name = validateCampaignName(String(new FormData(e.currentTarget).get('campaignName') ?? ''))
-        if (!name) {
-            alert(`Name must be 1–${CAMPAIGN_NAME_MAX_LENGTH} characters with no control characters.`)
-            return
-        }
-
-        updateCampaignName(campaignID as string, name)
-            .then(() => setCampaignDetails(details => details ? { ...details, name } : null))
-            .catch((err) => alert(err.response?.data?.error ?? 'Could not save name.'))
+    // Show the change right away; put the old list back if the save fails.
+    function handleAllowedChange(collection: string, ids: string[] | null) {
+        if (!campaignDetails) return
+        const previous = campaignDetails
+        setCampaignDetails({ ...previous, allowedContent: { ...previous.allowedContent, [collection]: ids } })
+        updateCampaignAllowed(campaignID as string, collection, ids).catch(() => {
+            setCampaignDetails(previous)
+            alert('Could not save.')
+        })
     }
 
     return (
-        <div>
+        <div className="settings-page">
             <h1>Campaign Settings</h1>
-            <h2>{campaignDetails && campaignDetails.name ?
-            campaignDetails.name : "Loading..."}</h2>
-            <div className="campaign-basic-info">
-                <h2>Change Campaign Name</h2>
-                <form method="post" onSubmit={handleNameSubmit}>
-                    <FormField label="Campaign Name:" name="campaignName" maxLength={CAMPAIGN_NAME_MAX_LENGTH} />
-                    <button type="submit">Modify Campaign</button>
-                </form>
+            {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
+            <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed}/>
+            <div>
+                <h2>Allowed Campaign Species</h2>
+                {campaignDetails && (
+                    <SpeciesSettings
+                        allowed={campaignDetails.allowedContent.species ?? null}
+                        onChange={ids => handleAllowedChange('species', ids)}
+                    />
+                )}
             </div>
         </div>
     )

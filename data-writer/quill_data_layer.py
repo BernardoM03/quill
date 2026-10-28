@@ -68,8 +68,9 @@ def create_campaign():
         details = {
             "name": campaign_name,
             "description": None,
-            "characters": None,
-            "alternate-rules": None
+            "characters": [],
+            "alternateRules": [],
+            "allowedContent": {}
         }
         json.dump(details, f, indent=4)
         
@@ -121,6 +122,39 @@ def update_user_campaign():
         json.dump(details, f, indent=4)
 
     return jsonify({'success': True, 'campaign': campaign}), 200
+
+@app.route('/campaign/<campaign_id>', methods=['GET'])
+def get_campaign(campaign_id):
+    campaign_path = campaign_file_path(campaign_id)
+    if campaign_path is None or not os.path.exists(campaign_path):
+        return jsonify({'error': 'Campaign not found'}), 404
+    with open(campaign_path, 'r') as f:
+        details = json.load(f)
+    # Files made before allowedContent existed: missing means everything is allowed.
+    details.setdefault('allowedContent', {})
+    return jsonify(details), 200
+
+# Body: {id, collection, ids}. ids is a list of pack ids, or null for "everything allowed".
+@app.route('/update/campaign-allowed', methods=['PUT'])
+def update_campaign_allowed():
+    content = request.get_json()
+    collection = content.get('collection')
+    ids = content.get('ids')
+    if not isinstance(collection, str) or not re.fullmatch(r'[a-z-]+', collection):
+        return jsonify({'error': 'Invalid collection.'}), 400
+    if ids is not None and not (isinstance(ids, list) and all(isinstance(i, str) for i in ids)):
+        return jsonify({'error': 'ids must be a list of strings or null.'}), 400
+    campaign_path = campaign_file_path(content.get('id'))
+    if campaign_path is None or not os.path.exists(campaign_path):
+        return jsonify({'error': 'Campaign not found'}), 404
+
+    with open(campaign_path, 'r') as f:
+        details = json.load(f)
+    details.setdefault('allowedContent', {})[collection] = ids
+    with open(campaign_path, 'w') as f:
+        json.dump(details, f, indent=4)
+
+    return jsonify({'success': True}), 200
 
 if __name__ == '__main__':
     app.run(port=5174, debug=True)
