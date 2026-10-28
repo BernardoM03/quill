@@ -38,7 +38,7 @@ export default function CampaignSettings() {
     }
 
     return (
-        <div className="settings-page">
+        <div className="page">
             <h1>Campaign Settings</h1>
             {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
             <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed}/>

@@ -109,3 +109,65 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ---- Shared page building blocks (home, campaign settings, ...) ---- */
+
+/* Left-aligned, full-width page; #root centers by default. */
+.page {
+  padding: 0 2rem 2rem;
+  text-align: left;
+}
+
+.page > h1 {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* A captioned block: small caption over its content. */
+.setting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.setting-caption {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.muted {
+  color: var(--text);
+}
+
+/* Thin outlined button; also works on <a>/<Link>. */
+.setting-button {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-h);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.setting-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.setting-button--quiet {
+  border-color: transparent;
+  color: var(--text);
+}
+
+.setting-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

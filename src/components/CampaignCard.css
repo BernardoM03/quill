@@ -1,13 +1,16 @@
+/* One cell of .campaign-grid: draws its own right and bottom line. */
 .campaign-card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 1rem;
-  padding: 1rem;
-  width: 22vw;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.campaign-card:hover {
+  background: var(--code-bg);
 }
 
 .campaign-card__title {
@@ -21,40 +24,11 @@
 
 .campaign-card__id {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text);
-  background: var(--code-bg);
-  padding: 2px 6px;
-  border-radius: 4px;
 }
 
 .campaign-card__actions {
   display: flex;
   gap: 0.5rem;
-}
-
-.campaign-card__btn {
-  flex: 1;
-  padding: 0.4rem 0;
-  font-family: var(--sans);
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-}
-
-.campaign-card__btn--open {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.campaign-card__btn--open:hover {
-  opacity: 0.88;
-}
-
-.campaign-card__btn--edit:hover {
-  background: var(--code-bg);
 }

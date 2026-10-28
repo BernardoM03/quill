@@ -1,15 +1,3 @@
-/* The page left-aligns everything and spans the full width; #root centers by default. */
-.settings-page {
-  padding: 0 2rem 2rem;
-  text-align: left;
-}
-
-.settings-page h1 {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
 /* ---- Campaign name: view mode with a pencil, edit mode with an input in its place ---- */
 
 .campaign-name {
@@ -78,37 +66,7 @@
   outline: none;
 }
 
-.setting-button--quiet {
-  border-color: transparent;
-  color: var(--text);
-}
-
-.setting-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* A captioned block, e.g. "Allowed Species" over its toggle grid. */
-.setting-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Small caption above a value, e.g. "Campaign Name". */
-.setting-caption {
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-/* Settings rows: label left, control right, hairline between rows. */
-.setting-list {
-  margin-bottom: 2rem;
-  border-top: 1px solid var(--border);
-}
-
+/* A row: label left, control right, hairline below. */
 .setting-row {
   display: flex;
   align-items: center;
@@ -126,7 +84,6 @@
    so every cell is boxed by a single 1px line. */
 .toggle-grid-wrap {
   container-type: inline-size;
-  margin-bottom: 2rem;
 }
 
 .toggle-grid {
@@ -202,29 +159,7 @@
   outline-offset: 2px;
 }
 
-/* ---- Buttons ---- */
-
-.setting-button {
-  padding: 0.3rem 0.8rem;
-  font: inherit;
-  font-size: 14px;
-  color: var(--text-h);
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 0;
-  cursor: pointer;
-}
-
-.setting-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 /* ---- Description: rendered Markdown, or Write/Preview tabs while editing ---- */
-
-.campaign-description {
-  margin-bottom: 2rem;
-}
 
 .campaign-description__header {
   display: flex;
@@ -304,10 +239,6 @@
 
 .campaign-description__actions .campaign-name__error {
   margin-right: auto;
-}
-
-.muted {
-  color: var(--text);
 }
 
 /* Rendered Markdown: undo the page's heading sizes and keep spacing tight. */
