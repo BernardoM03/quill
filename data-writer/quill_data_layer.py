@@ -71,7 +71,8 @@ def create_campaign():
             "description": None,
             "characters": [],
             "alternateRules": [],
-            "allowedContent": {}
+            "allowedContent": {},
+            "rules": {}
         }
         json.dump(details, f, indent=4)
         
@@ -133,6 +134,7 @@ def get_campaign(campaign_id):
         details = json.load(f)
     # Files made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
+    details.setdefault('rules', {})
     return jsonify(details), 200
 
 # Body: {id, collection, ids}. ids is a list of pack ids, or null for "everything allowed".
@@ -173,6 +175,54 @@ def update_campaign_description():
     with open(campaign_path, 'r') as f:
         details = json.load(f)
     details['description'] = description.strip() or None
+    with open(campaign_path, 'w') as f:
+        json.dump(details, f, indent=4)
+
+    return jsonify({'success': True}), 200
+
+# Each rule's check. Mirrors src/datatypes/campaignRules.ts. bool is a subclass of
+# int in Python, so the level check rules bools out explicitly.
+def is_bool(v): return isinstance(v, bool)
+RULE_CHECKS = {
+    'optionalClassFeatures': is_bool,
+    'customizeOrigin': is_bool,
+    'advancement': lambda v: v in ('xp', 'milestone'),
+    'milestoneLevel': lambda v: isinstance(v, int) and not isinstance(v, bool) and 1 <= v <= 20,
+    'hitPoints': lambda v: v in ('automatic', 'manual'),
+    'featPrerequisites': is_bool,
+    'multiclassPrerequisites': is_bool,
+    'encumbrance': is_bool,
+    'ignoreCoinWeight': is_bool,
+    'allowMulticlass': is_bool,
+    'abilityScoreMethod': lambda v: v in ('standardArray', 'pointBuy', 'roll', 'manual', 'sharedManual'),
+    'sharedScores': lambda v: isinstance(v, list) and len(v) == 6
+        and all(isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= 20 for n in v),
+    'pointBuyBudget': lambda v: isinstance(v, int) and not isinstance(v, bool) and 15 <= v <= 40,
+    'startingEquipment': lambda v: v in ('choice', 'equipment', 'gold'),
+    'originFeat': lambda v: v in ('background', 'any'),
+    'characterApproval': is_bool,
+}
+
+# Body: {id, rules}. rules holds only the rules being changed; they merge into the file.
+@app.route('/update/campaign-rules', methods=['PUT'])
+def update_campaign_rules():
+    content = request.get_json()
+    rules = content.get('rules')
+    if not isinstance(rules, dict) or not rules:
+        return jsonify({'error': 'rules must be a non-empty object.'}), 400
+    for key, value in rules.items():
+        check = RULE_CHECKS.get(key)
+        if check is None:
+            return jsonify({'error': f'Unknown rule: {key}'}), 400
+        if not check(value):
+            return jsonify({'error': f'Invalid value for {key}.'}), 400
+    campaign_path = campaign_file_path(content.get('id'))
+    if campaign_path is None or not os.path.exists(campaign_path):
+        return jsonify({'error': 'Campaign not found'}), 404
+
+    with open(campaign_path, 'r') as f:
+        details = json.load(f)
+    details.setdefault('rules', {}).update(rules)
     with open(campaign_path, 'w') as f:
         json.dump(details, f, indent=4)
 

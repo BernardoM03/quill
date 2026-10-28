@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { apiClient } from "./client";
 import type { campaign } from "../datatypes/campaign";
 import type { campaignDetails } from "../datatypes/campaignDetails";
+import type { campaignRules } from "../datatypes/campaignRules";
 
 export const CAMPAIGN_NAME_MAX_LENGTH = 64;
 
@@ -27,6 +28,11 @@ export function getCampaign(id: string): Promise<campaignDetails> {
 // ids null means every entry in the collection is allowed.
 export function updateCampaignAllowed(id: string, collection: string, ids: string[] | null): Promise<void> {
     return apiClient.put("/update/campaign-allowed", { id, collection, ids }).then(() => undefined);
+}
+
+// Saves only the rules given; the rest stay as they are.
+export function updateCampaignRules(id: string, rules: Partial<campaignRules>): Promise<void> {
+    return apiClient.put("/update/campaign-rules", { id, rules }).then(() => undefined);
 }
 
 export const CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000;

@@ -2,10 +2,13 @@ import { useBlocker, useParams } from "react-router";
 import { useState, useEffect } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
-import { getCampaign, updateCampaignAllowed } from "../api/campaigns";
+import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
+import { withRuleDefaults, type campaignRules } from "../datatypes/campaignRules";
 
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
+import { SpellSettings } from "../components/campaignSettings/CampaignSpellSettings";
+import { AdvancedRulesSettings, RulesSettings } from "../components/campaignSettings/CampaignRulesSettings";
 import BackButton from "../components/BackButton";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
@@ -67,6 +70,19 @@ export default function CampaignSettings() {
         })
     }
 
+    // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
+    function handleRulesChange(changed: Partial<campaignRules>) {
+        const previous = Object.fromEntries(
+            Object.keys(changed).map(key => [key, campaignDetails?.rules[key as keyof campaignRules]]))
+        const setRules = (patch: Partial<campaignRules>) => setCampaignDetails(details =>
+            details && { ...details, rules: { ...details.rules, ...patch } })
+        setRules(changed)
+        updateCampaignRules(campaignID as string, changed).catch(() => {
+            setRules(previous)
+            alert('Could not save.')
+        })
+    }
+
     return (
         <div className="page">
             <BackButton disabled={broken}/>
@@ -83,6 +99,9 @@ export default function CampaignSettings() {
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
             {campaignDetails && (
+                <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
+            )}
+            {campaignDetails && (
                 <CollectionSettings
                     collection="species" caption="Allowed Species" noun="species" requireOne
                     allowed={campaignDetails.allowedContent.species ?? null}
@@ -96,6 +115,28 @@ export default function CampaignSettings() {
                     onClassesChange={ids => handleAllowedChange('classes', ids)}
                     onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
                 />
+            )}
+            {campaignDetails && (
+                <details className="settings-advanced">
+                    <summary>
+                        <span className="settings-advanced__title">Character Creation</span>
+                        <span className="muted">Advanced · equipment, origin feat, approval</span>
+                    </summary>
+                    <AdvancedRulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
+                </details>
+            )}
+            {campaignDetails && (
+                <details className="settings-advanced">
+                    <summary>
+                        <span className="settings-advanced__title">Spells</span>
+                        <span className="muted">Advanced · which spells players can learn</span>
+                    </summary>
+                    <SpellSettings
+                        allowed={campaignDetails.allowedContent.spells ?? null}
+                        allowedClasses={campaignDetails.allowedContent.classes ?? null}
+                        onChange={ids => handleAllowedChange('spells', ids)}
+                    />
+                </details>
             )}
             {campaignDetails && (
                 <details className="settings-advanced">
