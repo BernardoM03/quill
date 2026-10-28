@@ -11,7 +11,7 @@ import SetupCampaign from './routes/SetupCampaign'
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 
-let router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path : "/",
     element : <App />,
@@ -19,12 +19,12 @@ let router = createBrowserRouter([
       {
       path : "rules",
       element : <Rules />
-      },
-      {
-      path : "legal",
-      element : <Legal />
       }
     ]
+  },
+  {
+    path : "/legal",
+    element : <Legal />
   },
   {
     path : "/setup/user",
