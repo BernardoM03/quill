@@ -7,9 +7,11 @@ import "./CampaignSettings.css";
 
 // Like a GitHub PR description: rendered Markdown with a pencil, which opens Write/Preview tabs.
 // onSaved runs once the save succeeds, with the description as stored (null when empty).
-export function CampaignDescriptionSettings({ description, onSaved }: {
+// locked blocks saving while other campaign settings are broken.
+export function CampaignDescriptionSettings({ description, onSaved, locked = false }: {
     description: string | null;
     onSaved: (description: string | null) => void;
+    locked?: boolean;
 }) {
     const { campaignID } = useParams();
     const [editing, setEditing] = useState(false)
@@ -84,7 +86,7 @@ export function CampaignDescriptionSettings({ description, onSaved }: {
                     <button type="button" className="setting-button setting-button--quiet" onClick={() => setEditing(false)}>
                         Cancel
                     </button>
-                    <button type="button" className="setting-button" disabled={saving} onClick={handleSave}>Save</button>
+                    <button type="button" className="setting-button" disabled={saving || locked} onClick={handleSave}>Save</button>
                 </div>
             </div>
         </div>

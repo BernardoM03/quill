@@ -6,7 +6,8 @@ import "./CampaignSettings.css";
 
 // Shows the campaign name; the pencil swaps it for an input in place, like a GitHub PR title.
 // name is null while the campaign is still loading. onRenamed runs once the save succeeds.
-export function CampaignNameSettings({ name, onRenamed }: { name: string | null; onRenamed: (name: string) => void }) {
+// locked blocks saving while other campaign settings are broken.
+export function CampaignNameSettings({ name, onRenamed, locked = false }: { name: string | null; onRenamed: (name: string) => void; locked?: boolean }) {
     const { campaignID } = useParams();
     const [editing, setEditing] = useState(false)
     const [draft, setDraft] = useState('')
@@ -21,6 +22,7 @@ export function CampaignNameSettings({ name, onRenamed }: { name: string | null;
 
     function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
+        if (locked) return
 
         const newName = validateCampaignName(draft)
         if (!newName) {
@@ -57,7 +59,7 @@ export function CampaignNameSettings({ name, onRenamed }: { name: string | null;
                         onChange={e => setDraft(e.target.value)}
                         onKeyDown={e => e.key === 'Escape' && setEditing(false)}
                     />
-                    <button type="submit" className="setting-button" disabled={saving}>Save</button>
+                    <button type="submit" className="setting-button" disabled={saving || locked}>Save</button>
                     <button type="button" className="setting-button setting-button--quiet" onClick={() => setEditing(false)}>
                         Cancel
                     </button>

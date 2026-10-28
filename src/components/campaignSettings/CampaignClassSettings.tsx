@@ -16,7 +16,8 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
   const classes = useCollection('classes');
   const subclasses = useCollection('subclasses');
   const [mode, setMode] = useState<SectionMode>('view');
-  const [rule, setRule] = useState<string | null>(null);
+  // The refused toggle's message, shown inside the class box it came from.
+  const [rule, setRule] = useState<{ classId: string; text: string } | null>(null);
 
   let body;
   if (classes.loading || subclasses.loading) body = <p>Loading…</p>;
@@ -32,7 +33,7 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     // Characters need a class, and a class with subclasses needs one of them to pick.
     const toggleClass = (classId: string) => {
       const next = toggleId(selectedClasses, classId);
-      if (next.length === 0) return setRule('At least one class must stay allowed.');
+      if (next.length === 0) return setRule({ classId, text: 'At least one class must stay allowed.' });
       setRule(null);
       onClassesChange(next);
       // Turning a class on whose subclasses are all off: turn its subclasses back on too.
@@ -45,7 +46,7 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     const toggleSubclass = (classId: string, subclassId: string) => {
       const next = toggleId(selectedSubclasses, subclassId);
       if (!subclassesOf(classId).some(s => next.includes(s.id))) {
-        return setRule('Each allowed class needs at least one subclass. Turn the class off instead.');
+        return setRule({ classId, text: 'Each allowed class needs at least one subclass. Turn the class off instead.' });
       }
       setRule(null);
       onSubclassesChange(next);
@@ -89,6 +90,7 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
                   ))}
                 </div>
               )}
+              {rule?.classId === cls.id && <p className="setting-error class-cell__error">{rule.text}</p>}
             </div>
           );
         })}
@@ -100,7 +102,6 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     <div className="setting-section">
       <SectionHeader caption="Allowed Classes" mode={mode} onModeChange={setMode} />
       {body}
-      {mode === 'edit' && rule && <p className="setting-error">{rule}</p>}
     </div>
   );
 }

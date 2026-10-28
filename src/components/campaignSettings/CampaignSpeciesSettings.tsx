@@ -5,8 +5,8 @@ import { SectionHeader, type SectionMode } from './SectionHeader';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 
-// View mode lists the allowed species; 
-// Edit mode shows a toggle for each.
+// View mode lists the allowed species;
+// Edit mode shows a toggle for each. The last species can't be turned off.
 export function SpeciesSettings({ allowed, onChange }: { allowed: string[] | null; onChange: (ids: string[]) => void }) {
   const { data: species, error, loading } = useCollection('species');
   const [mode, setMode] = useState<SectionMode>('view');
@@ -19,7 +19,7 @@ export function SpeciesSettings({ allowed, onChange }: { allowed: string[] | nul
     const selected = allowed ?? options.map(o => o.id);
     const allowedOptions = options.filter(o => selected.includes(o.id));
     if (mode === 'edit') body = <ToggleGrid options={options} selectedIds={selected} onChange={onChange} />;
-    else body = allowedOptions.length === 0 ? <p className="muted">No species allowed.</p> : (
+    else body = allowedOptions.length === 0 ? <p className="setting-error">No species allowed. Characters can't be created until one is.</p> : (
       <div className="toggle-grid-wrap">
         <div className="toggle-grid">
           {allowedOptions.map(o => <div key={o.id} className="view-cell">{o.label}</div>)}
@@ -41,16 +41,28 @@ function ToggleGrid({ options, selectedIds, onChange }: {
   selectedIds: string[];
   onChange: (ids: string[]) => void;
 }) {
+  // The refused toggle's message, shown inside the cell it came from.
+  const [rule, setRule] = useState<{ id: string; text: string } | null>(null);
+
+  const toggle = (id: string) => {
+    const next = toggleId(selectedIds, id);
+    if (next.length === 0) return setRule({ id, text: 'At least one species must stay allowed.' });
+    setRule(null);
+    onChange(next);
+  };
+
   return (
     <div className="toggle-grid-wrap">
       <div className="toggle-grid">
         {options.map(option => (
-          <Toggle
-            key={option.id}
-            label={option.label}
-            checked={selectedIds.includes(option.id)}
-            onChange={() => onChange(toggleId(selectedIds, option.id))}
-          />
+          <div key={option.id} className="toggle-cell">
+            <Toggle
+              label={option.label}
+              checked={selectedIds.includes(option.id)}
+              onChange={() => toggle(option.id)}
+            />
+            {rule?.id === option.id && <p className="setting-error toggle-cell__error">{rule.text}</p>}
+          </div>
         ))}
       </div>
     </div>
