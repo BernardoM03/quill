@@ -587,7 +587,7 @@
 
 .spell-level-summary__name {
   flex-shrink: 0;
-  width: 5.5rem;
+  width: 9rem;
   color: var(--text-h);
 }
 

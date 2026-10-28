@@ -8,6 +8,7 @@ import { withRuleDefaults, type campaignRules } from "../datatypes/campaignRules
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
 import { SpellSettings } from "../components/campaignSettings/CampaignSpellSettings";
+import { EquipmentSettings, MagicItemSettings } from "../components/campaignSettings/CampaignItemSettings";
 import { AdvancedRulesSettings, RulesSettings } from "../components/campaignSettings/CampaignRulesSettings";
 import BackButton from "../components/BackButton";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
@@ -135,6 +136,22 @@ export default function CampaignSettings() {
                         allowed={campaignDetails.allowedContent.spells ?? null}
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         onChange={ids => handleAllowedChange('spells', ids)}
+                    />
+                </details>
+            )}
+            {campaignDetails && (
+                <details className="settings-advanced">
+                    <summary>
+                        <span className="settings-advanced__title">Items</span>
+                        <span className="muted">Advanced · equipment and magic items</span>
+                    </summary>
+                    <EquipmentSettings
+                        allowed={campaignDetails.allowedContent.equipment ?? null}
+                        onChange={ids => handleAllowedChange('equipment', ids)}
+                    />
+                    <MagicItemSettings
+                        allowed={campaignDetails.allowedContent['magic-items'] ?? null}
+                        onChange={ids => handleAllowedChange('magic-items', ids)}
                     />
                 </details>
             )}
