@@ -88,6 +88,13 @@
   cursor: default;
 }
 
+/* A captioned block, e.g. "Allowed Species" over its toggle grid. */
+.setting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 /* Small caption above a value, e.g. "Campaign Name". */
 .setting-caption {
   font-size: 12px;

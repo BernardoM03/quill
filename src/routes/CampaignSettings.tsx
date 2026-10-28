@@ -37,15 +37,12 @@ export default function CampaignSettings() {
             <h1>Campaign Settings</h1>
             {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
             <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed}/>
-            <div>
-                <h2>Allowed Campaign Species</h2>
-                {campaignDetails && (
-                    <SpeciesSettings
-                        allowed={campaignDetails.allowedContent.species ?? null}
-                        onChange={ids => handleAllowedChange('species', ids)}
-                    />
-                )}
-            </div>
+            {campaignDetails && (
+                <SpeciesSettings
+                    allowed={campaignDetails.allowedContent.species ?? null}
+                    onChange={ids => handleAllowedChange('species', ids)}
+                />
+            )}
         </div>
     )
 }

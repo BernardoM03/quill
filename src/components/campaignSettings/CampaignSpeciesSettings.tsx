@@ -6,14 +6,20 @@ import './CampaignSettings.css';
 export function SpeciesSettings({ allowed, onChange }: { allowed: string[] | null; onChange: (ids: string[]) => void }) {
   const { data: species, error, loading } = useCollection('species');
 
-  if (loading) return <p>Loading…</p>;
-  if (error) return <p>Couldn't load species: {error.message}</p>;
-
-  const options: CheckboxOption[] = [...species!.values()].map(s => ({ id: s.id, label: s.name }));
-  const selected = allowed ?? options.map(o => o.id);
+  let body;
+  if (loading) body = <p>Loading…</p>;
+  else if (error) body = <p>Couldn't load species: {error.message}</p>;
+  else {
+    const options: CheckboxOption[] = [...species!.values()].map(s => ({ id: s.id, label: s.name }));
+    const selected = allowed ?? options.map(o => o.id);
+    body = <CheckboxList options={options} selectedIds={selected} onChange={ids => onChange(ids as string[])} />;
+  }
 
   return (
-    <CheckboxList options={options} selectedIds={selected} onChange={ids => onChange(ids as string[])} />
+    <div className="setting-section">
+      <span className="setting-caption">Allowed Species</span>
+      {body}
+    </div>
   );
 }
 
