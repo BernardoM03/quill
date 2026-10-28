@@ -4,12 +4,18 @@ import { useState, useEffect } from 'react'
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed } from "../api/campaigns";
 
-import { SpeciesSettings } from "../components/campaignSettings/CampaignSpeciesSettings";
+import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
 import BackButton from "../components/BackButton";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
+
+const proficiencies = [
+    { collection: 'skills', caption: 'Allowed Skills' },
+    { collection: 'tools', caption: 'Allowed Tools' },
+    { collection: 'languages', caption: 'Allowed Languages' },
+] as const
 
 export default function CampaignSettings() {
     const { campaignID } = useParams();
@@ -77,7 +83,8 @@ export default function CampaignSettings() {
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
             {campaignDetails && (
-                <SpeciesSettings
+                <CollectionSettings
+                    collection="species" caption="Allowed Species" noun="species" requireOne
                     allowed={campaignDetails.allowedContent.species ?? null}
                     onChange={ids => handleAllowedChange('species', ids)}
                 />
@@ -89,6 +96,22 @@ export default function CampaignSettings() {
                     onClassesChange={ids => handleAllowedChange('classes', ids)}
                     onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
                 />
+            )}
+            {campaignDetails && (
+                <details className="settings-advanced">
+                    <summary>
+                        <span className="settings-advanced__title">Proficiencies</span>
+                        <span className="muted">Advanced · skills, tools, languages</span>
+                    </summary>
+                    {proficiencies.map(({ collection, caption }) => (
+                        <CollectionSettings
+                            key={collection}
+                            collection={collection} caption={caption} noun={collection} compact
+                            allowed={campaignDetails.allowedContent[collection] ?? null}
+                            onChange={ids => handleAllowedChange(collection, ids)}
+                        />
+                    ))}
+                </details>
             )}
         </div>
     )

@@ -373,3 +373,68 @@
 .toggle-cell__error {
   padding: 0 0.75rem 0.6rem;
 }
+
+/* ---- Advanced: a collapsed group of less common settings ---- */
+
+.settings-advanced {
+  margin-bottom: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.settings-advanced > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+}
+
+.settings-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* A thin chevron that points down when open. */
+.settings-advanced > summary::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid var(--text);
+  border-bottom: 1px solid var(--text);
+  transform: rotate(-45deg);
+  transition: transform 120ms ease-out;
+}
+
+.settings-advanced[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.settings-advanced__title {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.settings-advanced > summary:hover .settings-advanced__title {
+  color: var(--accent);
+}
+
+/* ---- Compact sections: smaller text, as many ~220px columns as fit ---- */
+
+.setting-section--compact .toggle-grid {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.setting-section--compact .setting-row,
+.setting-section--compact .view-cell {
+  padding: 0.35rem 0.6rem;
+  font-size: 13px;
+}
+
+/* Keep each compact row one line tall; a name too long for its cell ends in "…". */
+.setting-section--compact .setting-row > span:first-child {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

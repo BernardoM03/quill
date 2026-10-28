@@ -10,7 +10,7 @@ export function Toggle({ label, checked, onChange, className = '' }: {
 }) {
   return (
     <label className={`setting-row toggle-row ${className}`}>
-      <span>{label}</span>
+      <span title={label}>{label}</span>
       <input
         type="checkbox"
         role="switch"
