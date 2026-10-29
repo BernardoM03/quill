@@ -1,5 +1,5 @@
-import { useBlocker, useParams } from "react-router";
-import { useState, useEffect } from 'react'
+import { useBlocker, useNavigate, useParams } from "react-router";
+import { useState, useEffect, useRef } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
@@ -11,6 +11,7 @@ import { SpellSettings } from "../components/campaignSettings/CampaignSpellSetti
 import { EquipmentSettings, MagicItemSettings } from "../components/campaignSettings/CampaignItemSettings";
 import { AdvancedRulesSettings, RulesSettings } from "../components/campaignSettings/CampaignRulesSettings";
 import BackButton from "../components/BackButton";
+import DeleteCampaignDialog from "../components/DeleteCampaignDialog";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
@@ -22,10 +23,17 @@ const proficiencies = [
 ] as const
 
 export default function CampaignSettings() {
+    // No campaignID means /setup/campaign: only the name shows until the campaign is created,
+    // then the page swaps to that campaign's settings URL.
     const { campaignID } = useParams();
+    const navigate = useNavigate();
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
+    const [confirmingDelete, setConfirmingDelete] = useState(false)
+    // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
+    const deleted = useRef(false)
 
     useEffect(() => {
+        if (!campaignID) return
         getCampaign(campaignID as string)
             .then(setCampaignDetails)
             .catch(error => console.error("Error fetching campaign details:", error))
@@ -38,7 +46,7 @@ export default function CampaignSettings() {
     const broken = problems.length > 0
 
     const blocker = useBlocker(({ currentLocation, nextLocation }) =>
-        broken && currentLocation.pathname !== nextLocation.pathname)
+        broken && !deleted.current && currentLocation.pathname !== nextLocation.pathname)
     useEffect(() => {
         if (blocker.state === 'blocked') blocker.reset()
     }, [blocker])
@@ -84,10 +92,15 @@ export default function CampaignSettings() {
         })
     }
 
+    function handleDeleted() {
+        deleted.current = true
+        navigate('/', { replace: true })
+    }
+
     return (
         <div className="page">
             <BackButton disabled={broken}/>
-            <h1>Campaign Settings</h1>
+            <h1>{campaignID ? 'Campaign Settings' : 'New Campaign'}</h1>
             {broken && (
                 <div className="settings-problems" role="alert">
                     <strong>Fix these settings before leaving this page:</strong>
@@ -95,7 +108,11 @@ export default function CampaignSettings() {
                 </div>
             )}
             {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
-            <CampaignNameSettings name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}/>
+            <CampaignNameSettings
+                key={campaignID ?? 'new'}
+                name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}
+                onCreated={created => navigate(`/campaignsettings/${created.id}`, { replace: true })}
+            />
             {campaignDetails && (
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
@@ -170,6 +187,20 @@ export default function CampaignSettings() {
                         />
                     ))}
                 </details>
+            )}
+            {campaignDetails && campaignID && (
+                <div className="settings-danger">
+                    <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
+                        Delete Campaign
+                    </button>
+                </div>
+            )}
+            {confirmingDelete && campaignDetails && campaignID && (
+                <DeleteCampaignDialog
+                    id={campaignID} name={campaignDetails.name}
+                    onClose={() => setConfirmingDelete(false)}
+                    onDeleted={handleDeleted}
+                />
             )}
         </div>
     )

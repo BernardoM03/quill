@@ -1,7 +1,6 @@
 import {Link, Outlet} from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
-import { LifeLine } from 'react-loading-indicators'
 import CampaignCard from './components/CampaignCard'
 import LegalFooter from './components/LegalFooter'
 
@@ -32,6 +31,10 @@ export default function App() {
     }
   }, [userData])
 
+  function handleCampaignDeleted(id: string) {
+    setUserData(data => data && { ...data, campaigns: data.campaigns.filter(c => c.id !== id) })
+  }
+
   setTimeout(() => {
     setIsLoading(false);
   }, 2000);
@@ -40,7 +43,7 @@ export default function App() {
     <div className="page">
       <h1>Quill</h1>
       { isLoading ?
-        <LifeLine color="#5fb1dd" size="medium" text="" textColor="" /> :
+        < div/> :
         <p className="welcome muted">{welcomeMessage}</p>
       }
       {
@@ -50,7 +53,7 @@ export default function App() {
             <div className="campaign-grid-wrap">
               <div className="campaign-grid">
                 {userData.campaigns.map(campaign => (
-                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} />
+                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} onDeleted={handleCampaignDeleted} />
                 ))}
               </div>
             </div>

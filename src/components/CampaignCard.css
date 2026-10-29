@@ -32,3 +32,27 @@
   display: flex;
   gap: 0.5rem;
 }
+
+.campaign-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.campaign-card__delete {
+  display: inline-flex;
+  padding: 4px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.campaign-card__delete:hover,
+.campaign-card__delete:focus-visible {
+  color: var(--danger);
+  border-color: var(--border);
+  outline: none;
+}
