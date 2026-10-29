@@ -1,7 +1,6 @@
 import {Link, Outlet} from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
-import { LifeLine } from 'react-loading-indicators'
 import CampaignCard from './components/CampaignCard'
 import LegalFooter from './components/LegalFooter'
 
