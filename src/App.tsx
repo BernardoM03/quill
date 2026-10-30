@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
 import CampaignCard from './components/CampaignCard'
 import LegalFooter from './components/LegalFooter'
+import { getUser } from './api/users'
 
 import './App.css'
 
@@ -11,10 +12,9 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [welcomeMessage, setWelcomeMessage] = useState('Welcome to Quill! Please make sure to set up your user profile to get the best experience.')
 
-  // Fetch user data from the JSON file at startup
+  // Fetch user data from the API at startup. A 404 means no user is set up yet.
   useEffect(() => {
-    fetch('/user.json')
-      .then(response => response.json())
+    getUser()
       .then(data => {
         setUserData(data)
         setIsLoading(false)

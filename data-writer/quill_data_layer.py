@@ -2,15 +2,15 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
 import os
-import re, uuid
-from db import init_db
-
-PUBLIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public')
-USER_JSON_URL = os.path.join(PUBLIC_DIR, 'user.json')
-CAMPAIGNS_FOLDER_URL = os.path.join(PUBLIC_DIR, '.campaigns') + os.sep
+import re, sqlite3, uuid
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from server.db import connect, init_db
 
 CAMPAIGN_NAME_MAX_LENGTH = 64
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
+
+NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
 
 def clean_name(raw):
     if not isinstance(raw, str):
@@ -20,120 +20,138 @@ def clean_name(raw):
         return None
     return name
 
-# Returns the campaign's file path, or None if campaign_id isn't a canonical UUID.
-# The filename is built from the parsed UUID, never the raw request string, so the
-# path can't leave the campaigns folder; the commonpath check is a second guard.
-def campaign_file_path(campaign_id):
+def canonical_uuid(value):
     try:
-        safe_id = str(uuid.UUID(campaign_id))
+        parsed = str(uuid.UUID(value))
     except (ValueError, TypeError, AttributeError):
         return None
-    if safe_id != campaign_id:
-        return None
-    base_dir = os.path.realpath(CAMPAIGNS_FOLDER_URL)
-    candidate = os.path.realpath(os.path.join(base_dir, f'{safe_id}.json'))
-    if os.path.commonpath([base_dir, candidate]) != base_dir:
-        return None
-    return candidate
+    return parsed if parsed == value else None
+
+# There's no sign-in yet, so the admin stands in for the current user.
+def current_user(conn):
+    return conn.execute(
+        'SELECT * FROM users WHERE is_admin = 1 AND deleted_at IS NULL ORDER BY created_at LIMIT 1'
+    ).fetchone()
+
+# Runs fn(settings) on a campaign's settings JSON and saves the result.
+# Returns False if the campaign doesn't exist.
+def update_settings(campaign_id, fn):
+    conn = connect()
+    try:
+        with conn:
+            row = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+            if row is None:
+                return False
+            settings = json.loads(row['settings'])
+            fn(settings)
+            conn.execute(
+                f'UPDATE campaigns SET settings = ?, updated_at = {NOW} WHERE id = ?',
+                (json.dumps(settings), campaign_id),
+            )
+        return True
+    finally:
+        conn.close()
 
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/user', methods=['GET'])
+def get_user():
+    conn = connect()
+    try:
+        user = current_user(conn)
+        if user is None:
+            return jsonify({'error': 'No user set up'}), 404
+        campaigns = conn.execute(
+            'SELECT c.id, c.name FROM campaigns c JOIN memberships m ON m.campaign_id = c.id '
+            'WHERE m.user_id = ? ORDER BY c.created_at',
+            (user['id'],),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify({'name': user['display_name'], 'campaigns': [dict(c) for c in campaigns]}), 200
+
 @app.route('/create/user', methods=['POST'])
 def create_user():
-    content = request.get_json()
-    username = content.get('name')
-    
-    with open(USER_JSON_URL, 'w') as f:
-        data = {
-            "name": username,
-            "campaigns": []
-        }
-        json.dump(data, f, indent=4)
-    
+    username = clean_name(request.get_json().get('name'))
+    if username is None:
+        return jsonify({'error': 'Invalid name.'}), 400
+    conn = connect()
+    try:
+        with conn:
+            if current_user(conn) is not None:
+                return jsonify({'error': 'A user is already set up.'}), 409
+            conn.execute(
+                'INSERT INTO users (id, username, display_name, is_admin) VALUES (?, ?, ?, 1)',
+                (str(uuid.uuid4()), username, username),
+            )
+    finally:
+        conn.close()
     return jsonify({'success': True}), 201
-    
 
 @app.route('/create/campaign', methods=['POST'])
 def create_campaign():
     content = request.get_json()
-    campaign_id = content.get('id')
     campaign_name = clean_name(content.get('name'))
     if campaign_name is None:
         return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
-    campaign_path = campaign_file_path(campaign_id)
-    if campaign_path is None:
+    campaign_id = canonical_uuid(content.get('id'))
+    if campaign_id is None:
         return jsonify({'error': 'Invalid campaign id.'}), 400
-    content = {'name': campaign_name, 'id': campaign_id}
+    settings = {'alternateRules': [], 'allowedContent': {}, 'rules': {}}
 
-    with open(campaign_path, 'w') as f:
-        details = {
-            "name": campaign_name,
-            "description": None,
-            "characters": [],
-            "alternateRules": [],
-            "allowedContent": {},
-            "rules": {}
-        }
-        json.dump(details, f, indent=4)
-        
-    with open(USER_JSON_URL, 'r') as f:
-        data = json.load(f)
-    
-    data['campaigns'].append(content)
-    
-    with open(USER_JSON_URL, 'w') as f:
-        json.dump(data, f, indent=4)
-        
-    return jsonify(content), 201
+    conn = connect()
+    try:
+        with conn:
+            user = current_user(conn)
+            if user is None:
+                return jsonify({'error': 'Set up a user first.'}), 400
+            try:
+                conn.execute(
+                    'INSERT INTO campaigns (id, owner_id, name, settings) VALUES (?, ?, ?, ?)',
+                    (campaign_id, user['id'], campaign_name, json.dumps(settings)),
+                )
+            except sqlite3.IntegrityError:
+                return jsonify({'error': 'Campaign id already in use.'}), 409
+            conn.execute(
+                "INSERT INTO memberships (campaign_id, user_id, role) VALUES (?, ?, 'gm')",
+                (campaign_id, user['id']),
+            )
+    finally:
+        conn.close()
+    return jsonify({'name': campaign_name, 'id': campaign_id}), 201
 
 @app.route('/update/campaign-name', methods=['PUT'])
 def update_user_campaign():
     content = request.get_json()
     campaign_id = content.get('id')
-    new_name = content.get('name')
-    
     new_name = clean_name(content.get('name'))
     if new_name is None:
         return jsonify({'error': f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.'}), 400
-    campaign_path = campaign_file_path(campaign_id)
-    if campaign_path is None:
-        return jsonify({'error': 'Invalid campaign id.'}), 400
-    
-    # Update campaign info in user.json
-    with open(USER_JSON_URL, 'r') as f:
-        data = json.load(f)
-
-    campaign = next((c for c in data['campaigns'] if c['id'] == campaign_id), None)
-
-    if not campaign:
+    conn = connect()
+    try:
+        with conn:
+            updated = conn.execute(
+                f'UPDATE campaigns SET name = ?, updated_at = {NOW} WHERE id = ?', (new_name, campaign_id)
+            ).rowcount
+    finally:
+        conn.close()
+    if not updated:
         return jsonify({'error': 'Campaign not found'}), 404
-
-    campaign['name'] = new_name
-
-    with open(USER_JSON_URL, 'w') as f:
-        json.dump(data, f, indent=4)
-    
-    # Update campaign info in ${campaign_id}.json
-    
-    with open(campaign_path, 'r') as f:
-        details = json.load(f)
-        
-    details['name'] = new_name
-    
-    with open(campaign_path, 'w') as f:
-        json.dump(details, f, indent=4)
-
-    return jsonify({'success': True, 'campaign': campaign}), 200
+    return jsonify({'success': True, 'campaign': {'name': new_name, 'id': campaign_id}}), 200
 
 @app.route('/campaign/<campaign_id>', methods=['GET'])
 def get_campaign(campaign_id):
-    campaign_path = campaign_file_path(campaign_id)
-    if campaign_path is None or not os.path.exists(campaign_path):
+    conn = connect()
+    try:
+        row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+    finally:
+        conn.close()
+    if row is None:
         return jsonify({'error': 'Campaign not found'}), 404
-    with open(campaign_path, 'r') as f:
-        details = json.load(f)
-    # Files made before allowedContent existed: missing means everything is allowed.
+    details = json.loads(row['settings'])
+    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': []})
+    # Campaigns made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
     details.setdefault('rules', {})
     return jsonify(details), 200
@@ -151,16 +169,9 @@ def update_campaign_allowed():
     # A campaign with no species or no classes can't make characters.
     if collection in ('species', 'classes') and ids == []:
         return jsonify({'error': f'At least one entry in {collection} must stay allowed.'}), 400
-    campaign_path = campaign_file_path(content.get('id'))
-    if campaign_path is None or not os.path.exists(campaign_path):
+
+    if not update_settings(content.get('id'), lambda s: s.setdefault('allowedContent', {}).update({collection: ids})):
         return jsonify({'error': 'Campaign not found'}), 404
-
-    with open(campaign_path, 'r') as f:
-        details = json.load(f)
-    details.setdefault('allowedContent', {})[collection] = ids
-    with open(campaign_path, 'w') as f:
-        json.dump(details, f, indent=4)
-
     return jsonify({'success': True}), 200
 
 @app.route('/update/campaign-description', methods=['PUT'])
@@ -169,16 +180,17 @@ def update_campaign_description():
     description = content.get('description')
     if not isinstance(description, str) or len(description) > CAMPAIGN_DESCRIPTION_MAX_LENGTH:
         return jsonify({'error': f'Description must be at most {CAMPAIGN_DESCRIPTION_MAX_LENGTH} characters.'}), 400
-    campaign_path = campaign_file_path(content.get('id'))
-    if campaign_path is None or not os.path.exists(campaign_path):
+    conn = connect()
+    try:
+        with conn:
+            updated = conn.execute(
+                f'UPDATE campaigns SET description = ?, updated_at = {NOW} WHERE id = ?',
+                (description.strip(), content.get('id')),
+            ).rowcount
+    finally:
+        conn.close()
+    if not updated:
         return jsonify({'error': 'Campaign not found'}), 404
-
-    with open(campaign_path, 'r') as f:
-        details = json.load(f)
-    details['description'] = description.strip() or None
-    with open(campaign_path, 'w') as f:
-        json.dump(details, f, indent=4)
-
     return jsonify({'success': True}), 200
 
 # Each rule's check. Mirrors src/datatypes/campaignRules.ts. bool is a subclass of
@@ -204,7 +216,7 @@ RULE_CHECKS = {
     'characterApproval': is_bool,
 }
 
-# Body: {id, rules}. rules holds only the rules being changed; they merge into the file.
+# Body: {id, rules}. rules holds only the rules being changed; they merge into the saved rules.
 @app.route('/update/campaign-rules', methods=['PUT'])
 def update_campaign_rules():
     content = request.get_json()
@@ -217,40 +229,23 @@ def update_campaign_rules():
             return jsonify({'error': f'Unknown rule: {key}'}), 400
         if not check(value):
             return jsonify({'error': f'Invalid value for {key}.'}), 400
-    campaign_path = campaign_file_path(content.get('id'))
-    if campaign_path is None or not os.path.exists(campaign_path):
+
+    if not update_settings(content.get('id'), lambda s: s.setdefault('rules', {}).update(rules)):
         return jsonify({'error': 'Campaign not found'}), 404
-
-    with open(campaign_path, 'r') as f:
-        details = json.load(f)
-    details.setdefault('rules', {}).update(rules)
-    with open(campaign_path, 'w') as f:
-        json.dump(details, f, indent=4)
-
     return jsonify({'success': True}), 200
 
 @app.route('/delete/campaign', methods=['DELETE'])
 def delete_campaign():
-    content = request.get_json()
-    campaign_id = content.get('id')
-    campaign_path = campaign_file_path(campaign_id)
-    if campaign_path is None:
-        return jsonify({'error': 'Invalid campaign id.'}), 400
-
-    with open(USER_JSON_URL, 'r') as f:
-        data = json.load(f)
-
-    remaining = [c for c in data['campaigns'] if c['id'] != campaign_id]
-    if len(remaining) == len(data['campaigns']):
+    campaign_id = request.get_json().get('id')
+    conn = connect()
+    try:
+        with conn:
+            # Memberships, characters and invites go with it (ON DELETE CASCADE).
+            deleted = conn.execute('DELETE FROM campaigns WHERE id = ?', (campaign_id,)).rowcount
+    finally:
+        conn.close()
+    if not deleted:
         return jsonify({'error': 'Campaign not found'}), 404
-    data['campaigns'] = remaining
-
-    with open(USER_JSON_URL, 'w') as f:
-        json.dump(data, f, indent=4)
-
-    if os.path.exists(campaign_path):
-        os.remove(campaign_path)
-
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':
