@@ -28,7 +28,8 @@ dist-ssr
 venv
 .env
 .env.local
-user.json
-public/.campaigns
 # SQLite app data
 data/
+
+# Python bytecode
+__pycache__/
