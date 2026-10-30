@@ -15,6 +15,7 @@ if (!existsSync(python)) {
   process.exit(1);
 }
 
-spawn(python, ['quill_data_layer.py'], { cwd: dataWriterDir, stdio: 'inherit' }).on('exit', (code) =>
+// Runs the server package from the repo root with the venv's Python.
+spawn(python, ['-m', 'server'], { cwd: path.resolve(import.meta.dirname, '..'), stdio: 'inherit' }).on('exit', (code) =>
   process.exit(code ?? 0),
 );
