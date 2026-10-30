@@ -26,6 +26,7 @@ dist-ssr
 
 # Environment variables
 venv
+.venv
 .env
 .env.local
 # SQLite app data
