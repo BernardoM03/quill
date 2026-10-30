@@ -30,3 +30,5 @@ venv
 .env.local
 user.json
 public/.campaigns
+# SQLite app data
+data/

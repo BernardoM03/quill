@@ -3,6 +3,7 @@ from flask_cors import CORS
 import json
 import os
 import re, uuid
+from db import init_db
 
 PUBLIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public')
 USER_JSON_URL = os.path.join(PUBLIC_DIR, 'user.json')
@@ -253,4 +254,5 @@ def delete_campaign():
     return jsonify({'success': True}), 200
 
 if __name__ == '__main__':
+    init_db()
     app.run(port=5174, debug=False)
