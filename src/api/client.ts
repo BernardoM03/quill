@@ -1,3 +1,4 @@
 import axios from "axios";
 
-export const apiClient = axios.create({ baseURL: "http://localhost:5174" });
+// Same-origin: Vite proxies /api to the Flask server in dev.
+export const apiClient = axios.create({ baseURL: "/api" });

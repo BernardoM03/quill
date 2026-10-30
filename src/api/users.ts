@@ -6,5 +6,5 @@ export function getUser(): Promise<user> {
 }
 
 export function createUser(name: string): Promise<void> {
-    return apiClient.post("/create/user", { name }).then(() => undefined);
+    return apiClient.post("/user", { name }).then(() => undefined);
 }
