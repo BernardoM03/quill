@@ -45,7 +45,8 @@ export function updateCampaignName(id: string, name: string): Promise<void> {
     return apiClient.patch(`/campaigns/${id}`, { name }).then(() => undefined);
 }
 
-// The short id shown on campaign cards, which the delete dialog asks the user to type.
+// The short id shown on campaign cards
+// 703ffe14-e831-4fb9-856f-8fe17aa026d4 --> 703ffe14
 export function shortCampaignId(id: string): string {
     return id.slice(0, 8);
 }

@@ -8,6 +8,10 @@ from server.db import connect, init_db
 
 CAMPAIGN_NAME_MAX_LENGTH = 64
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
+# Caps on allowedContent so one request can't bloat the database.
+ALLOWED_COLLECTIONS_MAX = 32
+ALLOWED_IDS_MAX = 2000
+ALLOWED_ID_MAX_LENGTH = 200
 
 NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
 
@@ -29,6 +33,11 @@ def canonical_uuid(value):
 def error(message, status):
     return jsonify({'error': message}), status
 
+# The request's JSON body if it is an object, else None (missing, malformed, or another type).
+def json_body():
+    body = request.get_json(silent=True)
+    return body if isinstance(body, dict) else None
+
 # There's no sign-in yet, so the admin stands in for the current user.
 def current_user(conn):
     return conn.execute(
@@ -43,8 +52,7 @@ def list_campaigns(conn, user_id):
     ).fetchall()
     return [dict(r) for r in rows]
 
-# Each rule's check. Mirrors src/datatypes/campaignRules.ts. bool is a subclass of
-# int in Python, so the level check rules bools out explicitly.
+# Each rule's check. Mirrors src/datatypes/campaignRules.ts.
 def is_bool(v): return isinstance(v, bool)
 RULE_CHECKS = {
     'optionalClassFeatures': is_bool,
@@ -95,11 +103,16 @@ def validate_campaign_patch(content):
         allowed = content['allowedContent']
         if not isinstance(allowed, dict) or not allowed:
             return 'allowedContent must be a non-empty object.'
+        if len(allowed) > ALLOWED_COLLECTIONS_MAX:
+            return f'allowedContent may have at most {ALLOWED_COLLECTIONS_MAX} collections.'
         for collection, ids in allowed.items():
-            if not re.fullmatch(r'[a-z-]+', collection):
+            if not re.fullmatch(r'[a-z-]{1,64}', collection):
                 return 'Invalid collection.'
-            if ids is not None and not (isinstance(ids, list) and all(isinstance(i, str) for i in ids)):
-                return 'ids must be a list of strings or null.'
+            if ids is not None and not (
+                isinstance(ids, list) and len(ids) <= ALLOWED_IDS_MAX
+                and all(isinstance(i, str) and len(i) <= ALLOWED_ID_MAX_LENGTH for i in ids)
+            ):
+                return f'ids must be null or a list of at most {ALLOWED_IDS_MAX} strings.'
             # A campaign with no species or no classes can't make characters.
             if collection in ('species', 'classes') and ids == []:
                 return f'At least one entry in {collection} must stay allowed.'
@@ -121,7 +134,8 @@ def get_user():
 
 @api.post('/user')
 def create_user():
-    username = clean_name(request.get_json().get('name'))
+    content = json_body()
+    username = clean_name(content.get('name')) if content else None
     if username is None:
         return error('Invalid name.', 400)
     conn = connect()
@@ -149,7 +163,9 @@ def get_campaigns():
 
 @api.post('/campaigns')
 def create_campaign():
-    content = request.get_json()
+    content = json_body()
+    if content is None:
+        return error('Body must be a JSON object.', 400)
     campaign_name = clean_name(content.get('name'))
     if campaign_name is None:
         return error(f'Name must be 1–{CAMPAIGN_NAME_MAX_LENGTH} characters.', 400)
@@ -198,7 +214,7 @@ def get_campaign(campaign_id):
 # Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
 @api.patch('/campaigns/<campaign_id>')
 def update_campaign(campaign_id):
-    content = request.get_json()
+    content = json_body()
     message = validate_campaign_patch(content)
     if message:
         return error(message, 400)
@@ -238,6 +254,12 @@ def delete_campaign(campaign_id):
     return jsonify({'success': True}), 200
 
 app = Flask(__name__)
+# Reject requests addressed to any other hostname, so a page using DNS rebinding
+# (a domain re-pointed at 127.0.0.1) can't reach the API. Ports are ignored; the
+# Vite proxy forwards the browser's localhost:5173 Host header unchanged.
+app.config['TRUSTED_HOSTS'] = ['localhost', '127.0.0.1']
+# Larger bodies get 413 before any route runs.
+app.config['MAX_CONTENT_LENGTH'] = 1_000_000
 app.register_blueprint(api)
 
 if __name__ == '__main__':
