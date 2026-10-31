@@ -1,4 +1,4 @@
-/* Generated from public/schemas/subclass.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/subclass.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type Effect = {
   [k: string]: unknown;

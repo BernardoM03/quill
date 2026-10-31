@@ -1,6 +1,7 @@
 import re
 
 from server.helpers import NAME_MAX_LENGTH, clean_name
+from server.rules.settings import LIMITS, RULE_DEFAULTS
 
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
 # Caps on allowedContent so one request can't bloat the database.
@@ -8,13 +9,15 @@ ALLOWED_COLLECTIONS_MAX = 32
 ALLOWED_IDS_MAX = 2000
 ALLOWED_ID_MAX_LENGTH = 200
 
-# Each rule's check. Mirrors src/datatypes/campaignRules.ts.
+# Each rule's check. The values each rule can take are described in server/rules/settings.py.
 def is_bool(v): return isinstance(v, bool)
+def is_int_in(v, low, high): return isinstance(v, int) and not isinstance(v, bool) and low <= v <= high
+BUDGET, SCORE = LIMITS['pointBuyBudget'], LIMITS['sharedScore']
 RULE_CHECKS = {
     'optionalClassFeatures': is_bool,
     'customizeOrigin': is_bool,
     'advancement': lambda v: v in ('xp', 'milestone'),
-    'milestoneLevel': lambda v: isinstance(v, int) and not isinstance(v, bool) and 1 <= v <= 20,
+    'milestoneLevel': lambda v: is_int_in(v, 1, LIMITS['maxLevel']),
     'hitPoints': lambda v: v in ('automatic', 'manual'),
     'featPrerequisites': is_bool,
     'multiclassPrerequisites': is_bool,
@@ -23,12 +26,14 @@ RULE_CHECKS = {
     'allowMulticlass': is_bool,
     'abilityScoreMethod': lambda v: v in ('standardArray', 'pointBuy', 'roll', 'manual', 'sharedManual'),
     'sharedScores': lambda v: isinstance(v, list) and len(v) == 6
-        and all(isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= 20 for n in v),
-    'pointBuyBudget': lambda v: isinstance(v, int) and not isinstance(v, bool) and 15 <= v <= 40,
+        and all(is_int_in(n, SCORE['min'], SCORE['max']) for n in v),
+    'pointBuyBudget': lambda v: is_int_in(v, BUDGET['min'], BUDGET['max']),
     'startingEquipment': lambda v: v in ('choice', 'equipment', 'gold'),
     'originFeat': lambda v: v in ('background', 'any'),
     'characterApproval': is_bool,
 }
+# A rule added to one list but not the other would be unsettable or have no default.
+assert set(RULE_CHECKS) == set(RULE_DEFAULTS), 'RULE_CHECKS and RULE_DEFAULTS must name the same rules'
 
 # Checks a campaign PATCH body. Returns an error message, or None if every field is valid.
 def validate_campaign_patch(content):

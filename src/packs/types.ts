@@ -1,5 +1,5 @@
 // Entry types for each pack collection, derived from the generated schema types.
-// Regenerate with `npm run gen-types` after editing public/schemas.
+// Regenerate with `npm run gen-types` after editing schemas/.
 import type { ClassSchema } from './generated/class';
 import type { ConditionsSchema } from './generated/conditions';
 import type { CreatureSchema } from './generated/creature';

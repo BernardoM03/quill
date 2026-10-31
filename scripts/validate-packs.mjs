@@ -3,8 +3,8 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import Ajv2020 from 'ajv/dist/2020.js';
 
-const SCHEMAS_DIR = 'public/schemas';
-const PACKS_DIR = 'public/packs';
+const SCHEMAS_DIR = 'schemas';
+const PACKS_DIR = 'packs';
 const MAX_ERRORS_SHOWN = 20;
 
 // Collection name (as listed in pack.json "provides") -> schema file stem.

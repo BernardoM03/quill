@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
 import { getSessionUser } from "../api/auth";
-import { withRuleDefaults, type campaignRules } from "../datatypes/campaignRules";
+import type { campaignRules } from "../datatypes/campaignRules";
 
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
@@ -17,7 +17,6 @@ import { CampaignNameSettings } from "../components/campaignSettings/CampaignNam
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
-import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
 import { ReadOnlyContext } from "../components/campaignSettings/ReadOnly";
 
 const proficiencies = [
@@ -48,6 +47,8 @@ export default function CampaignSettings() {
     const [confirmingDelete, setConfirmingDelete] = useState(false)
     // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
     const deleted = useRef(false)
+    // Counts allowed-content saves, so only the newest one's problems are shown.
+    const latestAllowedSave = useRef(0)
 
     // Creating a campaign is admin-only for now; anyone else gets a message instead of a
     // form whose save the server would refuse. An existing campaign goes by role below.
@@ -70,7 +71,7 @@ export default function CampaignSettings() {
     // asks first, and only the allowed-content toggles (the fix) can save.
     // Players see the same page as Campaign Information: everything shown, nothing editable.
     const readOnly = campaignDetails?.role === 'player'
-    const problems = useCampaignProblems(campaignDetails?.allowedContent)
+    const problems = campaignDetails?.problems ?? []
     // Only someone who can fix broken settings is kept on the page until they do.
     const broken = problems.length > 0 && !readOnly
 
@@ -95,17 +96,34 @@ export default function CampaignSettings() {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, description })
     }
 
-    // Show the change right away; put the old list back if the save fails. Uses the setter's
-    // function form so two saves from one click (class + its subclasses) don't overwrite each other.
-    function handleAllowedChange(collection: string, ids: string[] | null) {
-        const previous = campaignDetails?.allowedContent[collection] ?? null
-        const setList = (list: string[] | null) => setCampaignDetails(details =>
-            details && { ...details, allowedContent: { ...details.allowedContent, [collection]: list } })
-        setList(ids)
-        updateCampaignAllowed(campaignID as string, collection, ids).catch(() => {
-            setList(previous)
-            alert('Could not save.')
-        })
+    // Show the change right away; put the old lists back if the save fails. changes can hold
+    // several collections (a class and its subclasses), saved together so the server checks
+    // them as one change. Uses the setter's function form so quick saves don't overwrite each other.
+    // Rejects with the server's reason, which the section shows beside the toggle.
+    function handleAllowedChanges(changes: Record<string, string[] | null>): Promise<void> {
+        const previous = Object.fromEntries(
+            Object.keys(changes).map(collection => [collection, campaignDetails?.allowedContent[collection] ?? null]))
+        const setLists = (lists: Record<string, string[] | null>) => setCampaignDetails(details =>
+            details && { ...details, allowedContent: { ...details.allowedContent, ...lists } })
+        setLists(changes)
+        const request = ++latestAllowedSave.current
+        return updateCampaignAllowed(campaignID as string, changes)
+            .then(problems => {
+                // Saves can overlap; only the last one sent knows the final state.
+                if (request === latestAllowedSave.current) {
+                    setCampaignDetails(details => details && { ...details, problems })
+                }
+            })
+            .catch(err => {
+                setLists(previous)
+                // The server refuses some changes outright, e.g. leaving a class with no
+                // subclasses or no cantrips.
+                throw new Error(err.response?.data?.error ?? 'Could not save.')
+            })
+    }
+
+    function handleAllowedChange(collection: string, ids: string[] | null): Promise<void> {
+        return handleAllowedChanges({ [collection]: ids })
     }
 
     // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
@@ -193,8 +211,8 @@ export default function CampaignSettings() {
             )}
             {campaignDetails && tab === 'rules' && (
                 <>
-                    <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
-                    <AdvancedRulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
+                    <RulesSettings rules={campaignDetails.rules} limits={campaignDetails.ruleLimits} onChange={handleRulesChange}/>
+                    <AdvancedRulesSettings rules={campaignDetails.rules} onChange={handleRulesChange}/>
                 </>
             )}
             {campaignDetails && content && (
@@ -207,12 +225,10 @@ export default function CampaignSettings() {
                     <ClassSettings
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}
-                        onClassesChange={ids => handleAllowedChange('classes', ids)}
-                        onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
+                        onChange={handleAllowedChanges}
                     />
                     <SpellSettings
                         allowed={campaignDetails.allowedContent.spells ?? null}
-                        allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         onChange={ids => handleAllowedChange('spells', ids)}
                     />
                     <EquipmentSettings

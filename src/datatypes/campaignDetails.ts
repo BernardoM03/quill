@@ -1,4 +1,4 @@
-import type { campaignRules } from "./campaignRules";
+import type { campaignRules, ruleLimits } from "./campaignRules";
 
 export interface campaignDetails {
     name: string,
@@ -9,6 +9,10 @@ export interface campaignDetails {
     alternateRules: string[],
     // Per collection ("species", ...): the allowed pack ids, or null/missing for "everything".
     allowedContent: Record<string, string[] | null>
-    // Only the rules the DM changed; read through withRuleDefaults.
-    rules: Partial<campaignRules>
+    // Every rule, with the server's defaults filled in for any the GM hasn't changed.
+    rules: campaignRules,
+    ruleLimits: ruleLimits,
+    // What the settings are missing before characters can be made, worked out by the
+    // server (server/rules/problems.py). Empty when they're fine.
+    problems: string[]
 };

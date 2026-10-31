@@ -1,4 +1,4 @@
-/* Generated from public/schemas/magic-item.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/magic-item.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'veryRare' | 'legendary' | 'artifact' | 'varies';
 export type EquipmentFilter = {

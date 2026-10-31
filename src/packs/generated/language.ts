@@ -1,4 +1,4 @@
-/* Generated from public/schemas/language.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/language.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type LanguageSchema = {
   id: string;

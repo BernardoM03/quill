@@ -1,4 +1,4 @@
-/* Generated from public/schemas/skill.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/skill.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type SkillSchema = {
   id: string;

@@ -1,4 +1,4 @@
-/* Generated from public/schemas/equipment.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/equipment.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type Item = {
   [k: string]: unknown;
