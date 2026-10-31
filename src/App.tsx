@@ -41,7 +41,12 @@ export default function App() {
   }
 
   function handleCampaignDeleted(id: string) {
-    setUserData(data => data && { ...data, campaigns: data.campaigns.filter(c => c.id !== id) })
+    // The campaign's characters went with it on the server.
+    setUserData(data => data && {
+      ...data,
+      campaigns: data.campaigns.filter(c => c.id !== id),
+      characters: data.characters.filter(c => c.campaignId !== id),
+    })
   }
 
   setTimeout(() => {
@@ -101,6 +106,34 @@ export default function App() {
           </div>
         ) : null
       }
+      {userData && (
+        <div className="setting-section">
+          <span className="setting-caption">Your Characters</span>
+          {userData.characters.length > 0 ? (
+            <ul className="character-list">
+              {userData.characters.map(character => (
+                <li key={character.id} className="character-row">
+                  <div className="character-row__info">
+                    <span className="character-row__name">{character.name}</span>
+                    <Link to={`/campaign/${character.campaignId}`} className="character-row__campaign">
+                      {character.campaignName}
+                    </Link>
+                  </div>
+                  {character.isActive && <span className="character-row__badge">Active</span>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">You don't have any characters yet.</p>
+          )}
+          {/* A character belongs to a campaign, so there has to be one to make it in. */}
+          {userData.campaigns.length > 0 && (
+            <div className="home-actions">
+              <Link to="/characters/new" className="setting-button">Create Character</Link>
+            </div>
+          )}
+        </div>
+      )}
       <Outlet />
       <LegalFooter />
     </div>

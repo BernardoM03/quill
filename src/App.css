@@ -64,3 +64,55 @@
 .home-header__name:hover {
   color: var(--accent);
 }
+
+/* Campaign page: actions under the description. */
+.campaign-view__actions {
+  margin-top: 2rem;
+}
+
+/* ---- Your Characters: one row each, with its campaign and whether it's the active one ---- */
+
+.character-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.character-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.character-row__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.character-row__name {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.character-row__campaign {
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.character-row__campaign:hover {
+  color: var(--accent);
+}
+
+.character-row__badge {
+  padding: 0.05rem 0.45rem;
+  font-size: 12px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
