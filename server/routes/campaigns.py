@@ -112,9 +112,16 @@ def update_campaign(campaign_id):
             row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
             if row is None or not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
+            settings = json.loads(row['settings'])
+            # While the campaign has problems, only the fix can be saved: allowed content (and
+            # rules, which can't affect problems). Matches the settings page, which locks the
+            # name and description until the problems are gone.
+            if 'name' in content or 'description' in content:
+                problems = campaign_problems(settings.get('allowedContent', {}))
+                if problems:
+                    return error('Fix the campaign’s problems first: ' + ' '.join(problems), 409)
             name = clean_name(content['name']) if 'name' in content else row['name']
             description = content['description'].strip() if 'description' in content else row['description']
-            settings = json.loads(row['settings'])
             if 'rules' in content:
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { SectionHeader, type SectionMode } from './SectionHeader';
+import { refusalText, type SaveAllowed } from './saveAllowed';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 
@@ -15,7 +16,8 @@ export type GroupedEntry = {
 // A long collection's allowed entries, grouped (spells by level, items by category).
 // View mode summarizes each group by what's left out; Edit mode has a search, an optional
 // filter row, All/None per group, and a toggle per entry. validate can refuse a change by
-// returning a message, which shows where the change came from.
+// returning a message, and so can the server when the save fails; either shows where the
+// change came from.
 // allowed: the saved ids, or null for "all".
 export function GroupedSettings({ caption, noun, entries, groups, filters, validate, allowed, onChange }: {
   caption: string;
@@ -25,7 +27,7 @@ export function GroupedSettings({ caption, noun, entries, groups, filters, valid
   filters?: { key: string; label: string }[];
   validate?: (next: string[]) => string | null;
   allowed: string[] | null;
-  onChange: (ids: string[]) => void;
+  onChange: SaveAllowed;
 }) {
   const [mode, setMode] = useState<SectionMode>('view');
   const [search, setSearch] = useState('');
@@ -41,7 +43,7 @@ export function GroupedSettings({ caption, noun, entries, groups, filters, valid
     const problem = validate?.(next) ?? null;
     if (problem) return setRule({ at, text: problem });
     setRule(null);
-    onChange(next);
+    onChange(next).catch(err => setRule({ at, text: refusalText(err) }));
   };
 
   return (

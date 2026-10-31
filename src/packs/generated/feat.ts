@@ -1,4 +1,4 @@
-/* Generated from public/schemas/feat.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/feat.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type Prerequisite =
   | {

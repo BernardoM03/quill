@@ -1,4 +1,4 @@
-/* Generated from public/schemas/pack.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/pack.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type PackSchema = {
   [k: string]: unknown;

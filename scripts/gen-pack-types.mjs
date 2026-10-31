@@ -1,11 +1,11 @@
-// Generates TypeScript types for pack collections from public/schemas.
+// Generates TypeScript types for pack collections from schemas/.
 // Run with: npm run gen-types (rerun whenever a schema changes).
 import { readFileSync, readdirSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { compile } from 'json-schema-to-typescript';
 
 const root = resolve(import.meta.dirname, '..');
-const schemasDir = join(root, 'public', 'schemas');
+const schemasDir = join(root, 'schemas');
 const outDir = join(root, 'src', 'packs', 'generated');
 const SCHEMA_URL = 'https://quill.local/schemas/';
 
@@ -50,7 +50,7 @@ for (const stem of stems) {
   delete schema.$id;
   const ts = await compile(schema, `${pascal(stem)}Schema`, {
     $refOptions,
-    bannerComment: `/* Generated from public/schemas/${stem}.schema.json by scripts/gen-pack-types.mjs. Do not edit. */`,
+    bannerComment: `/* Generated from schemas/${stem}.schema.json by scripts/gen-pack-types.mjs. Do not edit. */`,
     additionalProperties: false,
     unreachableDefinitions: false,
     style: { singleQuote: true },

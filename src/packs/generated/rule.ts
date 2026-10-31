@@ -1,4 +1,4 @@
-/* Generated from public/schemas/rule.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/rule.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type ResourceCost = {
   featureId?: string;

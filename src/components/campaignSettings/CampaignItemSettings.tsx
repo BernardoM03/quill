@@ -1,5 +1,6 @@
 import { useCollection } from '../../packs/usePacks';
 import { GroupedSettings } from './GroupedSettings';
+import type { SaveAllowed } from './saveAllowed';
 
 // "spellcastingFocus" -> "Spellcasting Focus"
 const titleCase = (key: string) => key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase());
@@ -9,7 +10,7 @@ const keysInOrder = (values: string[]) => [...new Set(values)];
 
 const RARITY_ORDER = ['common', 'uncommon', 'rare', 'veryRare', 'legendary', 'artifact', 'varies'];
 
-type Props = { allowed: string[] | null; onChange: (ids: string[]) => void };
+type Props = { allowed: string[] | null; onChange: SaveAllowed };
 
 // Mundane equipment, grouped by category (weapons, armor, gear, ...).
 export function EquipmentSettings({ allowed, onChange }: Props) {

@@ -1,5 +1,6 @@
 import { useCollection } from '../../packs/usePacks';
 import { GroupedSettings } from './GroupedSettings';
+import type { SaveAllowed } from './saveAllowed';
 import { classTags } from './spellRules';
 
 const levelName = (level: number) => (level === 0 ? 'Cantrips' : `Level ${level}`);
@@ -10,7 +11,7 @@ const levelName = (level: number) => (level === 0 ? 'Cantrips' : `Level ${level}
 // allowed: the saved ids, or null for "all".
 export function SpellSettings({ allowed, onChange }: {
   allowed: string[] | null;
-  onChange: (ids: string[]) => void;
+  onChange: SaveAllowed;
 }) {
   const spells = useCollection('spells');
   const classes = useCollection('classes');
