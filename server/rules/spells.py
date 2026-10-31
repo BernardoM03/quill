@@ -1,14 +1,5 @@
-# Spell rules, ported from src/components/campaignSettings/spellRules.ts.
-
-# Short class tags for spell lists: the first letter, or the first two when classes share
-# one (Warlock "Wa", Wizard "Wi"). Built from whatever classes the packs provide.
-# classes: entries with id and name. Returns {class id: tag}.
-def class_tags(classes):
-    first_letters = [c['name'][0] for c in classes]
-    return {
-        c['id']: c['name'][:2] if first_letters.count(c['name'][0]) > 1 else c['name'][0]
-        for c in classes
-    }
+# Spell rules. (The short class labels on spell toggles, "Wa" / "Wi", are display only and
+# stay in the browser: src/components/campaignSettings/spellRules.ts.)
 
 # Names of allowed classes that have cantrips on their list but none of them allowed.
 # A class with no cantrips at all (Paladin, Ranger) is fine.

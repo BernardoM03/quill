@@ -5,16 +5,18 @@ import type { CollectionName, Entry } from './types';
 
 type LoadState<T> = { data: T | null; error: Error | null };
 
-function useLoad<T>(key: string, load: () => Promise<T>): LoadState<T> & { loading: boolean } {
+// load must be a stable function (a module-level loader), called with key; the effect
+// reruns when either changes.
+function useLoad<K extends string, T>(key: K, load: (key: K) => Promise<T>): LoadState<T> & { loading: boolean } {
   const [state, setState] = useState<LoadState<T> & { key: string | null }>({ key: null, data: null, error: null });
 
   useEffect(() => {
     let current = true;
-    load()
+    load(key)
       .then(data => current && setState({ key, data, error: null }))
       .catch((error: Error) => current && setState({ key, data: null, error }));
     return () => { current = false; };
-  }, [key]);
+  }, [key, load]);
 
   // A result for a previous key is stale: report loading until the new one lands.
   if (state.key !== key) return { data: null, error: null, loading: true };
@@ -27,7 +29,7 @@ export function usePackManifests() {
 
 // All entries in a collection across installed packs, keyed by id.
 export function useCollection<C extends CollectionName>(name: C) {
-  return useLoad<Map<string, Entry<C>>>(name, () => loadCollection(name));
+  return useLoad<C, Map<string, Entry<C>>>(name, loadCollection);
 }
 
 // One entry by id, e.g. useEntry('spells', 'srd-5.2:spell/acid-arrow').
