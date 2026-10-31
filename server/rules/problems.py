@@ -39,16 +39,45 @@ def campaign_problems(allowed_content):
         problems.append(f'{name} has no allowed cantrips.')
     return problems
 
-# The refusal a spells change gets when it would leave an allowed class with no
-# cantrips, or None. Same message the settings page showed before this moved here.
-def spell_change_problem(allowed_content):
+# Ids of allowed classes that have subclasses but none of them allowed.
+def classes_without_subclasses(allowed_content):
+    subclasses = packs.collection('subclasses')
+    allowed_subclasses = set(allowed_ids(allowed_content, 'subclasses', subclasses))
+    broken = []
+    for class_id in allowed_ids(allowed_content, 'classes', packs.collection('classes')):
+        subs = [s['id'] for s in subclasses.values() if s.get('classId') == class_id]
+        if subs and not any(s in allowed_subclasses for s in subs):
+            broken.append(class_id)
+    return broken
+
+# The refusal a classes or subclasses change gets when it leaves a class that was fine
+# with no allowed subclass, or None. Classes that were already broken don't count, so a
+# GM fixing an old campaign one class at a time isn't blocked by the classes left to fix.
+# Turning a class on must include its subclasses in the same change.
+def subclass_change_problem(before, after):
+    already = set(classes_without_subclasses(before))
+    newly = [c for c in classes_without_subclasses(after) if c not in already]
+    if not newly:
+        return None
+    classes = packs.collection('classes')
+    names = ', '.join(classes[c]['name'] for c in newly)
+    return f'{names} would have no subclasses. Each allowed class needs at least one; turn the class off instead.'
+
+def _without_cantrips(allowed_content):
     classes = packs.collection('classes')
     spells = packs.collection('spells')
-    missing = classes_without_cantrips(
+    return classes_without_cantrips(
         list(spells.values()), list(classes.values()),
         allowed_ids(allowed_content, 'classes', classes),
         allowed_ids(allowed_content, 'spells', spells),
     )
-    if missing:
-        return f'{", ".join(missing)} would have no cantrips. Each class needs at least one.'
+
+# The refusal a spells change gets when it leaves a class that had a cantrip with none,
+# or None. Like subclass_change_problem, classes already without one don't count, so
+# an old campaign missing cantrips for two classes can be fixed one class at a time.
+def spell_change_problem(before, after):
+    already = set(_without_cantrips(before))
+    newly = [name for name in _without_cantrips(after) if name not in already]
+    if newly:
+        return f'{", ".join(newly)} would have no cantrips. Each class needs at least one.'
     return None

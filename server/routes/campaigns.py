@@ -8,7 +8,7 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
-from server.rules.problems import campaign_problems, spell_change_problem
+from server.rules.problems import campaign_problems, spell_change_problem, subclass_change_problem
 from server.access import require_admin, require_login, require_member
 
 bp = Blueprint('campaigns', __name__)
@@ -114,11 +114,16 @@ def update_campaign(campaign_id):
             if 'rules' in content:
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:
+                before = dict(settings.get('allowedContent', {}))
                 settings.setdefault('allowedContent', {}).update(content['allowedContent'])
-                # Refused outright, unlike the problems list: the spell picker never needs
-                # to pass through a state where a class has no cantrips.
+                # Refused outright, unlike the problems list: the class and spell pickers
+                # never need to pass through these states.
+                if 'classes' in content['allowedContent'] or 'subclasses' in content['allowedContent']:
+                    message = subclass_change_problem(before, settings['allowedContent'])
+                    if message:
+                        return error(message, 400)
                 if 'spells' in content['allowedContent']:
-                    message = spell_change_problem(settings['allowedContent'])
+                    message = spell_change_problem(before, settings['allowedContent'])
                     if message:
                         return error(message, 400)
             conn.execute(

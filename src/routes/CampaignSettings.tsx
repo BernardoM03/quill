@@ -96,27 +96,33 @@ export default function CampaignSettings() {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, description })
     }
 
-    // Show the change right away; put the old list back if the save fails. Uses the setter's
-    // function form so two saves from one click (class + its subclasses) don't overwrite each other.
-    function handleAllowedChange(collection: string, ids: string[] | null) {
-        const previous = campaignDetails?.allowedContent[collection] ?? null
-        const setList = (list: string[] | null) => setCampaignDetails(details =>
-            details && { ...details, allowedContent: { ...details.allowedContent, [collection]: list } })
-        setList(ids)
+    // Show the change right away; put the old lists back if the save fails. changes can hold
+    // several collections (a class and its subclasses), saved together so the server checks
+    // them as one change. Uses the setter's function form so quick saves don't overwrite each other.
+    function handleAllowedChanges(changes: Record<string, string[] | null>) {
+        const previous = Object.fromEntries(
+            Object.keys(changes).map(collection => [collection, campaignDetails?.allowedContent[collection] ?? null]))
+        const setLists = (lists: Record<string, string[] | null>) => setCampaignDetails(details =>
+            details && { ...details, allowedContent: { ...details.allowedContent, ...lists } })
+        setLists(changes)
         const request = ++latestAllowedSave.current
-        updateCampaignAllowed(campaignID as string, collection, ids)
+        updateCampaignAllowed(campaignID as string, changes)
             .then(problems => {
-                // One click can send two saves (a class and its subclasses); only the
-                // last one sent knows the final state.
+                // Saves can overlap; only the last one sent knows the final state.
                 if (request === latestAllowedSave.current) {
                     setCampaignDetails(details => details && { ...details, problems })
                 }
             })
             .catch(err => {
-                setList(previous)
-                // The server refuses some changes outright, e.g. leaving a class with no cantrips.
+                setLists(previous)
+                // The server refuses some changes outright, e.g. leaving a class with no
+                // subclasses or no cantrips.
                 alert(err.response?.data?.error ?? 'Could not save.')
             })
+    }
+
+    function handleAllowedChange(collection: string, ids: string[] | null) {
+        handleAllowedChanges({ [collection]: ids })
     }
 
     // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
@@ -218,8 +224,7 @@ export default function CampaignSettings() {
                     <ClassSettings
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}
-                        onClassesChange={ids => handleAllowedChange('classes', ids)}
-                        onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
+                        onChange={handleAllowedChanges}
                     />
                     <SpellSettings
                         allowed={campaignDetails.allowedContent.spells ?? null}

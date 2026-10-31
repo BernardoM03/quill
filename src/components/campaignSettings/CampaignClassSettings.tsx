@@ -5,13 +5,14 @@ import { SectionHeader, type SectionMode } from './SectionHeader';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 
-// View mode: a read-only grid of allowed classes. 
-// Edit mode: one row per class with its toggle
-export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChange, onSubclassesChange }: {
+// View mode: a read-only grid of allowed classes.
+// Edit mode: one row per class with its toggle.
+// onChange gets the lists that changed; a class and its subclasses come in one call,
+// because the server checks them together (server/rules/problems.py).
+export function ClassSettings({ allowedClasses, allowedSubclasses, onChange }: {
   allowedClasses: string[] | null;
   allowedSubclasses: string[] | null;
-  onClassesChange: (ids: string[]) => void;
-  onSubclassesChange: (ids: string[]) => void;
+  onChange: (changes: { classes?: string[]; subclasses?: string[] }) => void;
 }) {
   const classes = useCollection('classes');
   const subclasses = useCollection('subclasses');
@@ -30,16 +31,18 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     const subclassesOf = (classId: string) => subclassList.filter(s => s.classId === classId);
     const allowedClassList = classList.filter(c => selectedClasses.includes(c.id));
 
-    // Characters need a class, and a class with subclasses needs one of them to pick.
+    // Characters need a class, and a class with subclasses needs one of them to pick. The
+    // server enforces both; these messages just say so before a round trip.
     const toggleClass = (classId: string) => {
       const next = toggleId(selectedClasses, classId);
       if (next.length === 0) return setRule({ classId, text: 'At least one class must stay allowed.' });
       setRule(null);
-      onClassesChange(next);
       // Turning a class on whose subclasses are all off: turn its subclasses back on too.
       const subs = subclassesOf(classId).map(s => s.id);
       if (next.includes(classId) && subs.length > 0 && !subs.some(id => selectedSubclasses.includes(id))) {
-        onSubclassesChange([...selectedSubclasses, ...subs]);
+        onChange({ classes: next, subclasses: [...selectedSubclasses, ...subs] });
+      } else {
+        onChange({ classes: next });
       }
     };
 
@@ -49,7 +52,7 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
         return setRule({ classId, text: 'Each allowed class needs at least one subclass. Turn the class off instead.' });
       }
       setRule(null);
-      onSubclassesChange(next);
+      onChange({ subclasses: next });
     };
 
     if (mode === 'view') body = allowedClassList.length === 0 ? <p className="setting-error">No classes allowed. Characters can't be created until one is.</p> : (
