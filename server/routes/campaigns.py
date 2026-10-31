@@ -8,7 +8,7 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
-from server.access import require_admin
+from server.access import require_admin, require_member
 
 bp = Blueprint('campaigns', __name__)
 
@@ -55,22 +55,24 @@ def create_campaign():
         conn.close()
     return jsonify({'name': campaign_name, 'id': campaign_id}), 201
 
+# Members read their campaign; the admin can read any. role is the user's role in it,
+# or 'admin' for an admin who isn't a member.
 @bp.get('/campaigns/<campaign_id>')
-@require_admin
+@require_member
 def get_campaign(campaign_id):
     conn = connect()
     try:
         row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
-        user = current_user(conn)
-        role = user and conn.execute(
-            'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user['id'])
+        membership = conn.execute(
+            'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, current_user(conn)['id'])
         ).fetchone()
     finally:
         conn.close()
-    if row is None or not role:
+    if row is None:
         return error('Campaign not found', 404)
+    role = membership['role'] if membership else 'admin'
     details = json.loads(row['settings'])
-    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role['role']})
+    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role})
     # Campaigns made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
     details.setdefault('rules', {})

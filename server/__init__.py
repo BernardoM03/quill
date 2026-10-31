@@ -10,7 +10,7 @@ from server.routes import account, admin, auth, campaigns, invites, setup, users
 # Backstop for every API request, on top of the stricter per-route limits.
 API_LIMIT = (300, 60)
 
-ACCESS_LEVELS = {'public', 'login', 'admin'}
+ACCESS_LEVELS = {'public', 'login', 'member', 'admin'}
 
 # Every API route must declare who may call it (server/access.py). One that doesn't
 # would be open to everyone, so the server won't start until it's fixed.
@@ -21,7 +21,7 @@ def check_access_declared(app):
         and getattr(app.view_functions[rule.endpoint], 'access', None) not in ACCESS_LEVELS
     ]
     if missing:
-        raise RuntimeError('API routes without @public, @require_login or @require_admin: ' + ', '.join(missing))
+        raise RuntimeError('API routes without @public, @require_login, @require_member or @require_admin: ' + ', '.join(missing))
 
 def create_app():
     app = Flask(__name__)
