@@ -18,6 +18,7 @@ import { CampaignDescriptionSettings } from "../components/campaignSettings/Camp
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
+import { ReadOnlyContext } from "../components/campaignSettings/ReadOnly";
 
 const proficiencies = [
     { collection: 'skills', caption: 'Allowed Skills' },
@@ -67,8 +68,11 @@ export default function CampaignSettings() {
     // While the settings are broken (no species, no classes, a class with no subclasses),
     // the page can't be left: Back is disabled, in-app links are blocked, closing the tab
     // asks first, and only the allowed-content toggles (the fix) can save.
+    // Players see the same page as Campaign Information: everything shown, nothing editable.
+    const readOnly = campaignDetails?.role === 'player'
     const problems = useCampaignProblems(campaignDetails?.allowedContent)
-    const broken = problems.length > 0
+    // Only someone who can fix broken settings is kept on the page until they do.
+    const broken = problems.length > 0 && !readOnly
 
     const blocker = useBlocker(({ currentLocation, nextLocation }) =>
         broken && !deleted.current && currentLocation.pathname !== nextLocation.pathname)
@@ -144,26 +148,14 @@ export default function CampaignSettings() {
         )
     }
 
-    // The GM manages the campaign, and so can the admin. Players can only read it;
-    // send them to its page instead.
-    if (campaignDetails && campaignDetails.role === 'player') {
-        return (
-            <div className="page">
-                <BackButton/>
-                <h1>Campaign Settings</h1>
-                <p className="muted">Only the campaign’s GM can change its settings.</p>
-                <Link to={`/campaign/${campaignID}`} className="setting-button">Open {campaignDetails.name}</Link>
-            </div>
-        )
-    }
-
     const content = tab === 'content'
     const general = tab === 'general'
 
     return (
+        <ReadOnlyContext.Provider value={readOnly}>
         <div className="page">
             <BackButton disabled={broken}/>
-            <h1>{campaignID ? 'Campaign Settings' : 'New Campaign'}</h1>
+            <h1>{!campaignID ? 'New Campaign' : readOnly ? 'Campaign Information' : 'Campaign Settings'}</h1>
             {broken && (
                 <div className="settings-problems" role="alert">
                     <strong>Fix these settings before leaving this page:</strong>
@@ -193,10 +185,10 @@ export default function CampaignSettings() {
             {campaignDetails && general && (
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
-            {campaignDetails && campaignID && general && (
+            {campaignDetails && campaignID && general && !readOnly && (
                 <CampaignInviteSettings campaignId={campaignID}/>
             )}
-            {campaignDetails && campaignID && general && (
+            {campaignDetails && campaignID && general && !readOnly && (
                 <CampaignMemberSettings campaignId={campaignID}/>
             )}
             {campaignDetails && tab === 'rules' && (
@@ -241,7 +233,7 @@ export default function CampaignSettings() {
                     ))}
                 </>
             )}
-            {campaignDetails && campaignID && general && (
+            {campaignDetails && campaignID && general && !readOnly && (
                 <div className="settings-danger">
                     <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
                         Delete Campaign
@@ -256,5 +248,6 @@ export default function CampaignSettings() {
                 />
             )}
         </div>
+        </ReadOnlyContext.Provider>
     )
 }

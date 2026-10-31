@@ -37,12 +37,13 @@ export default function CampaignCard({ props, onDeleted }: { props: { name: stri
         >
           Open
         </button>
-        {isGm && <button
+        {/* Same page either way: settings for the GM, read-only Campaign Information for players. */}
+        <button
           className="setting-button setting-button--quiet"
           onClick={() => navigate(`/campaignsettings/${props.id}`)}
         >
-          Edit
-        </button>}
+          {isGm ? 'Edit' : 'Info'}
+        </button>
       </div>
       {confirmingDelete && (
         <DeleteCampaignDialog

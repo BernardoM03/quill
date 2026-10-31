@@ -705,3 +705,30 @@
   border-color: var(--danger);
   color: var(--danger);
 }
+
+/* ---- Read-only (Campaign Information): controls show their value but don't respond ---- */
+
+.toggle-row:has(.toggle-input:disabled) {
+  cursor: default;
+}
+
+.toggle-row:has(.toggle-input:disabled):hover {
+  background: none;
+}
+
+/* The chosen option keeps its accent; the others fade so the choice reads at a glance. */
+.segmented button:disabled {
+  cursor: default;
+}
+
+.segmented button:disabled[aria-checked='false'] {
+  opacity: 0.45;
+}
+
+/* A dropdown that can't change reads as a plain value: no arrow, no greying. */
+.rules-select:disabled {
+  appearance: none;
+  opacity: 1;
+  color: var(--text-h);
+  cursor: default;
+}

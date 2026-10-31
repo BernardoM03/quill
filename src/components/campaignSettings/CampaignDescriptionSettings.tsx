@@ -4,6 +4,7 @@ import Markdown from "react-markdown";
 
 import { CAMPAIGN_DESCRIPTION_MAX_LENGTH, updateCampaignDescription } from "../../api/campaigns";
 import "./CampaignSettings.css";
+import { useReadOnly } from "./ReadOnly";
 
 // Like a GitHub PR description: rendered Markdown with a pencil, which opens Write/Preview tabs.
 // onSaved runs once the save succeeds, with the description as stored (null when empty).
@@ -14,6 +15,7 @@ export function CampaignDescriptionSettings({ description, onSaved, locked = fal
     locked?: boolean;
 }) {
     const { campaignID } = useParams();
+    const readOnly = useReadOnly()
     const [editing, setEditing] = useState(false)
     const [tab, setTab] = useState<'write' | 'preview'>('write')
     const [draft, setDraft] = useState('')
@@ -43,11 +45,13 @@ export function CampaignDescriptionSettings({ description, onSaved, locked = fal
             <div className="setting-section campaign-description">
                 <div className="campaign-description__header">
                     <span className="setting-caption">Description</span>
-                    <button type="button" className="icon-button" aria-label="Edit description" onClick={startEditing}>
-                        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                            <path d="M11 2.5l2.5 2.5L5.5 13H3v-2.5z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                        </svg>
-                    </button>
+                    {!readOnly && (
+                        <button type="button" className="icon-button" aria-label="Edit description" onClick={startEditing}>
+                            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                                <path d="M11 2.5l2.5 2.5L5.5 13H3v-2.5z" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
                 <div className="campaign-description__body markdown">
                     {description ? <Markdown>{description}</Markdown> : <p className="muted">No description provided.</p>}
