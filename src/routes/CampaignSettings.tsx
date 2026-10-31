@@ -16,6 +16,7 @@ import DeleteCampaignDialog from "../components/DeleteCampaignDialog";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
+import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
 
 const proficiencies = [
@@ -180,6 +181,9 @@ export default function CampaignSettings() {
             )}
             {campaignDetails && campaignID && general && (
                 <CampaignInviteSettings campaignId={campaignID}/>
+            )}
+            {campaignDetails && campaignID && general && (
+                <CampaignMemberSettings campaignId={campaignID}/>
             )}
             {campaignDetails && tab === 'rules' && (
                 <>

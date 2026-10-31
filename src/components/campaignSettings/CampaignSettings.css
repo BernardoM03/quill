@@ -669,3 +669,39 @@
 .settings-problems .setting-button {
   margin-top: 0.5rem;
 }
+
+/* ---- Members: one row per person, Remove on the right for players ---- */
+
+.member-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.member {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.member__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 12rem;
+}
+
+.member__name {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.member__remove:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}

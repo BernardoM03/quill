@@ -8,16 +8,27 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
-from server.access import require_admin, require_member
+from server.access import require_admin, require_login, require_member
 
 bp = Blueprint('campaigns', __name__)
 
+# The admin gets every campaign; anyone else only the ones they've joined. role is the
+# user's role in each, or 'admin' where the admin isn't a member.
 @bp.get('/campaigns')
-@require_admin
+@require_login
 def get_campaigns():
     conn = connect()
     try:
-        campaigns = list_campaigns(conn, current_user(conn)['id'])
+        user = current_user(conn)
+        if user['is_admin']:
+            rows = conn.execute(
+                "SELECT c.id, c.name, COALESCE(m.role, 'admin') AS role FROM campaigns c "
+                'LEFT JOIN memberships m ON m.campaign_id = c.id AND m.user_id = ? ORDER BY c.created_at',
+                (user['id'],),
+            ).fetchall()
+            campaigns = [dict(r) for r in rows]
+        else:
+            campaigns = list_campaigns(conn, user['id'])
     finally:
         conn.close()
     return jsonify(campaigns), 200
@@ -122,4 +133,52 @@ def delete_campaign(campaign_id):
         conn.close()
     if not deleted:
         return error('Campaign not found', 404)
+    return jsonify({'success': True}), 200
+
+# Everyone in the campaign, GM first, with how many characters each has there.
+@bp.get('/campaigns/<campaign_id>/members')
+@require_admin
+def get_members(campaign_id):
+    conn = connect()
+    try:
+        if not is_gm(conn, campaign_id, current_user(conn)):
+            return error('Campaign not found', 404)
+        rows = conn.execute(
+            'SELECT u.id, u.username, u.display_name, m.role, m.joined_at, '
+            '(SELECT COUNT(*) FROM characters ch WHERE ch.campaign_id = m.campaign_id AND ch.owner_id = u.id) '
+            'AS character_count FROM memberships m JOIN users u ON u.id = m.user_id WHERE m.campaign_id = ? '
+            "ORDER BY m.role = 'gm' DESC, m.joined_at",
+            (campaign_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify([{
+        'userId': r['id'],
+        'username': r['username'],
+        'displayName': r['display_name'],
+        'role': r['role'],
+        'joinedAt': r['joined_at'],
+        'characterCount': r['character_count'],
+    } for r in rows]), 200
+
+# Removes a player from the campaign, and with them their characters there (the
+# characters table cascades from memberships). The GM can't be removed this way.
+@bp.delete('/campaigns/<campaign_id>/members/<user_id>')
+@require_admin
+def remove_member(campaign_id, user_id):
+    conn = connect()
+    try:
+        with conn:
+            if not is_gm(conn, campaign_id, current_user(conn)):
+                return error('Campaign not found', 404)
+            member = conn.execute(
+                'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user_id)
+            ).fetchone()
+            if member is None:
+                return error('That user isn’t in this campaign.', 404)
+            if member['role'] != 'player':
+                return error('The GM can’t be removed from their campaign.', 400)
+            conn.execute('DELETE FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user_id))
+    finally:
+        conn.close()
     return jsonify({'success': True}), 200

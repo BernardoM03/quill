@@ -79,6 +79,34 @@ MIGRATIONS = [
         deleted_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
     );
     ''',
+    # 4: a character belongs to its owner's membership, so removing a player from a
+    # campaign deletes their characters there. SQLite can't add a foreign key to an
+    # existing table, so the table is rebuilt; characters with no membership are dropped.
+    '''
+    CREATE TABLE characters_new (
+        id             TEXT PRIMARY KEY,
+        campaign_id    TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        owner_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name           TEXT NOT NULL,
+        sheet          TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(sheet)),
+        personal_notes TEXT NOT NULL DEFAULT '',
+        is_active      INTEGER NOT NULL DEFAULT 0 CHECK (is_active IN (0, 1)),
+        created_at     TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        updated_at     TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        deleted_at     TEXT,
+        FOREIGN KEY (campaign_id, owner_id) REFERENCES memberships(campaign_id, user_id) ON DELETE CASCADE
+    );
+    INSERT INTO characters_new
+        SELECT ch.* FROM characters ch
+        JOIN memberships m ON m.campaign_id = ch.campaign_id AND m.user_id = ch.owner_id;
+    DROP TABLE characters;
+    ALTER TABLE characters_new RENAME TO characters;
+    CREATE INDEX characters_campaign ON characters(campaign_id);
+    CREATE INDEX characters_owner ON characters(owner_id);
+    -- At most one active character per player per campaign.
+    CREATE UNIQUE INDEX characters_one_active
+        ON characters(campaign_id, owner_id) WHERE is_active = 1 AND deleted_at IS NULL;
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

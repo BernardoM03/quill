@@ -54,3 +54,22 @@ export function shortCampaignId(id: string): string {
 export function deleteCampaign(id: string): Promise<void> {
     return apiClient.delete(`/campaigns/${id}`).then(() => undefined);
 }
+
+// Someone in a campaign, as its GM sees them.
+export interface campaignMember {
+    userId: string,
+    username: string,
+    displayName: string,
+    role: 'gm' | 'player',
+    joinedAt: string,
+    characterCount: number,
+}
+
+export function getMembers(campaignId: string): Promise<campaignMember[]> {
+    return apiClient.get(`/campaigns/${campaignId}/members`).then(response => response.data);
+}
+
+// Removes a player and deletes their characters in this campaign.
+export function removeMember(campaignId: string, userId: string): Promise<void> {
+    return apiClient.delete(`/campaigns/${campaignId}/members/${userId}`).then(() => undefined);
+}
