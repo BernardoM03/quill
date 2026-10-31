@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request
 
 from server.db import connect
 from server.helpers import NOW, current_user, error, is_gm, json_body
+from server.ratelimit import limit
 
 INVITE_DEFAULT_DAYS = 7
 INVITE_MAX_DAYS = 365
@@ -37,7 +38,6 @@ def invite_json(row):
         'createdAt': row['created_at'],
     }
 
-# Newest first, including revoked and expired ones. Raw tokens are never stored, so they can't be listed.
 @bp.get('/campaigns/<campaign_id>/invites')
 def get_invites(campaign_id):
     conn = connect()
@@ -53,7 +53,6 @@ def get_invites(campaign_id):
     return jsonify([invite_json(r) for r in rows]), 200
 
 # Body (optional): {expiresInDays: 1–365 or null for never, maxUses: 1–1000 or null for unlimited}.
-# The response is the only time the raw token is shown.
 @bp.post('/campaigns/<campaign_id>/invites')
 def create_invite(campaign_id):
     content = json_body() if request.content_length else {}
@@ -88,9 +87,9 @@ def create_invite(campaign_id):
         conn.close()
     return jsonify({**invite_json(row), 'token': token}), 201
 
-# Public: anyone holding the link can check it before joining. Takes only the raw
-# token, never the invite id, and an unknown token is a plain 404.
+# Public: anyone holding the link can check it before joining
 @bp.get('/invites/<token>')
+@limit('invite-check', 30, 10 * 60)
 def check_invite(token):
     conn = connect()
     try:
@@ -107,8 +106,7 @@ def check_invite(token):
     status = invite_status(row)
     return jsonify({'campaignName': row['campaign_name'], 'valid': status == 'active', 'status': status}), 200
 
-# Revokes an invite. Takes the raw token from the link, or the invite id from the list
-# (for a GM who no longer has the link). The row stays, marked revoked.
+# Revokes an invite.
 @bp.delete('/invites/<token>')
 def revoke_invite(token):
     conn = connect()

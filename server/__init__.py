@@ -1,6 +1,10 @@
 from flask import Blueprint, Flask
 
-from server.routes import campaigns, invites, users
+from server import ratelimit
+from server.routes import auth, campaigns, invites, users
+
+# Backstop for every API request, on top of the stricter per-route limits.
+API_LIMIT = (300, 60)
 
 def create_app():
     app = Flask(__name__)
@@ -12,7 +16,14 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 1_000_000
 
     api = Blueprint('api', __name__, url_prefix='/api')
-    for module in (users, campaigns, invites):
+
+    @api.before_request
+    def limit_api():
+        retry_after = ratelimit.hit('api', *API_LIMIT)
+        if retry_after:
+            return ratelimit.too_many(retry_after)
+
+    for module in (auth, users, campaigns, invites):
         api.register_blueprint(module.bp)
     app.register_blueprint(api)
     return app
