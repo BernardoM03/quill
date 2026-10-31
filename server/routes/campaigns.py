@@ -8,6 +8,7 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
+from server.rules.settings import LIMITS, with_rule_defaults
 from server.rules.problems import campaign_problems, spell_change_problem, subclass_change_problem
 from server.access import require_admin, require_login, require_member
 
@@ -87,7 +88,10 @@ def get_campaign(campaign_id):
     details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role})
     # Campaigns made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
-    details.setdefault('rules', {})
+    # Stored: only what the GM changed. Sent: every rule, defaults filled in, with the limits
+    # the settings page should offer.
+    details['rules'] = with_rule_defaults(details.get('rules'))
+    details['ruleLimits'] = LIMITS
     # What the settings are missing before characters can be made; the page shows these.
     details['problems'] = campaign_problems(details['allowedContent'])
     return jsonify(details), 200

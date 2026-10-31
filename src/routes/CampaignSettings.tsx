@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
 import { getSessionUser } from "../api/auth";
-import { withRuleDefaults, type campaignRules } from "../datatypes/campaignRules";
+import type { campaignRules } from "../datatypes/campaignRules";
 
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
@@ -210,8 +210,8 @@ export default function CampaignSettings() {
             )}
             {campaignDetails && tab === 'rules' && (
                 <>
-                    <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
-                    <AdvancedRulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
+                    <RulesSettings rules={campaignDetails.rules} limits={campaignDetails.ruleLimits} onChange={handleRulesChange}/>
+                    <AdvancedRulesSettings rules={campaignDetails.rules} onChange={handleRulesChange}/>
                 </>
             )}
             {campaignDetails && content && (

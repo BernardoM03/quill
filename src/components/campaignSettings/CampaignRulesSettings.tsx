@@ -1,4 +1,4 @@
-import { MAX_LEVEL, POINT_BUY_BUDGET_RANGE, SHARED_SCORE_RANGE, type campaignRules } from '../../datatypes/campaignRules';
+import type { campaignRules, ruleLimits } from '../../datatypes/campaignRules';
 import { Toggle } from './Toggle';
 import { useReadOnly } from './ReadOnly';
 
@@ -18,12 +18,12 @@ const INVENTORY: ToggleSpec[] = [
 ];
 
 type Props = {
-  rules: campaignRules; // already merged with the defaults
+  rules: campaignRules; // every rule, defaults filled in by the server
   onChange: (changed: Partial<campaignRules>) => void; // only the rules that changed
 };
 
-// The campaign's main character creation rules.
-export function RulesSettings({ rules, onChange }: Props) {
+// The campaign's main character creation rules. limits: the ranges the server accepts.
+export function RulesSettings({ rules, limits, onChange }: Props & { limits: ruleLimits }) {
   const toggle = (t: ToggleSpec, className?: string) => (
     <Toggle key={t.rule} className={className} label={t.label} hint={t.hint} checked={rules[t.rule]} onChange={() => onChange({ [t.rule]: !rules[t.rule] })} />
   );
@@ -60,12 +60,12 @@ export function RulesSettings({ rules, onChange }: Props) {
           {rules.abilityScoreMethod === 'pointBuy' && (
             <NumberRow
               label="Point Budget" hint="Points each player can spend. The standard budget is 27."
-              value={rules.pointBuyBudget} min={POINT_BUY_BUDGET_RANGE.min} max={POINT_BUY_BUDGET_RANGE.max}
+              value={rules.pointBuyBudget} min={limits.pointBuyBudget.min} max={limits.pointBuyBudget.max}
               onChange={pointBuyBudget => onChange({ pointBuyBudget })}
             />
           )}
           {rules.abilityScoreMethod === 'sharedManual' && (
-            <SharedScoresRow scores={rules.sharedScores} onChange={sharedScores => onChange({ sharedScores })} />
+            <SharedScoresRow scores={rules.sharedScores} range={limits.sharedScore} onChange={sharedScores => onChange({ sharedScores })} />
           )}
         </div>
       </div>
@@ -83,7 +83,7 @@ export function RulesSettings({ rules, onChange }: Props) {
           {rules.advancement === 'milestone' && (
             <NumberRow
               label="Current Level" hint="New characters start at this level."
-              value={rules.milestoneLevel} min={1} max={MAX_LEVEL}
+              value={rules.milestoneLevel} min={1} max={limits.maxLevel}
               onChange={milestoneLevel => onChange({ milestoneLevel })}
             />
           )}
@@ -204,7 +204,11 @@ function NumberRow({ label, hint, value, min, max, onChange }: {
 }
 
 // The six scores every player assigns under Shared Manual, highest first.
-function SharedScoresRow({ scores, onChange }: { scores: number[]; onChange: (scores: number[]) => void }) {
+function SharedScoresRow({ scores, range, onChange }: {
+  scores: number[];
+  range: { min: number; max: number };
+  onChange: (scores: number[]) => void;
+}) {
   const readOnly = useReadOnly();
   const setScore = (index: number, value: number) =>
     onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a));
@@ -225,7 +229,7 @@ function SharedScoresRow({ scores, onChange }: { scores: number[]; onChange: (sc
             disabled={readOnly}
             onChange={e => setScore(i, Number(e.target.value))}
           >
-            {Array.from({ length: SHARED_SCORE_RANGE.max - SHARED_SCORE_RANGE.min + 1 }, (_, n) => SHARED_SCORE_RANGE.min + n)
+            {Array.from({ length: range.max - range.min + 1 }, (_, n) => range.min + n)
               .map(n => <option key={n} value={n}>{n}</option>)}
           </select>
         ))}
