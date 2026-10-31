@@ -9,6 +9,12 @@ export interface createdCharacter {
     isActive: boolean,
 }
 
+// Creates a Character Sandbox character: in no campaign, using all the content the
+// server has and the default rules.
+export function createSandboxCharacter(name: string): Promise<createdCharacter> {
+    return apiClient.post("/sandbox/characters", { name }).then(response => response.data);
+}
+
 // Creates a character for the signed-in player in this campaign.
 export function createCharacter(campaignId: string, name: string): Promise<createdCharacter> {
     return apiClient.post(`/campaigns/${campaignId}/characters`, { name }).then(response => response.data);

@@ -79,7 +79,8 @@ def restore_account(account_id):
                     )
             restored_characters = 0
             for c in snapshot['characters']:
-                if c['campaign_id'] not in existing:
+                # Sandbox characters (no campaign) always come back.
+                if c['campaign_id'] is not None and c['campaign_id'] not in existing:
                     continue
                 conn.execute(
                     'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, personal_notes, is_active, '

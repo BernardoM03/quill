@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
-import { CHARACTER_NAME_MAX_LENGTH, createCharacter } from "../api/characters";
+import { CHARACTER_NAME_MAX_LENGTH, createCharacter, createSandboxCharacter } from "../api/characters";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
 import type { campaign } from "../datatypes/campaign";
 import "../components/campaignSettings/CampaignSettings.css";
 import "./NewCharacter.css";
 
+// Stands in for a campaign id when the character goes in the Character Sandbox.
+const SANDBOX = 'sandbox'
+
 // Everything the wizard collects. Each later step (species, class, ability scores, ...)
-// adds its fields here and a step to stepsFor below.
+// adds its fields here and a step to stepsFor below. Those steps offer what the chosen
+// campaign allows; in the sandbox that's everything the server has, with the default rules.
 interface characterDraft {
+    // A campaign id, SANDBOX, or '' while nothing is chosen.
     campaignId: string,
     name: string,
 }
@@ -26,7 +31,7 @@ interface wizardStep {
 const CAMPAIGN_STEP: wizardStep = {
     id: 'campaign',
     label: 'Campaign',
-    validate: draft => draft.campaignId ? null : 'Choose the campaign this character is for.',
+    validate: draft => draft.campaignId ? null : 'Choose a campaign, or the Character Sandbox.',
 }
 
 const NAME_STEP: wizardStep = {
@@ -73,18 +78,16 @@ export default function NewCharacter() {
                 .catch(() => setNotFound(true))
         } else {
             getUser()
-                .then(user => {
-                    setCampaigns(user.campaigns)
-                    // Only one to choose from: choose it, but still show the step.
-                    if (user.campaigns.length === 1) setDraft(d => ({ ...d, campaignId: user.campaigns[0].id }))
-                })
+                .then(user => setCampaigns(user.campaigns))
                 .catch(() => setCampaigns([]))
         }
     }, [campaignID])
 
     const step = steps[stepIndex]
     const isLast = stepIndex === steps.length - 1
-    const chosenCampaign = campaigns?.find(c => c.id === draft.campaignId)
+    const chosenName = draft.campaignId === SANDBOX
+        ? 'Character Sandbox'
+        : campaigns?.find(c => c.id === draft.campaignId)?.name
 
     function update(changes: Partial<characterDraft>) {
         setDraft(d => ({ ...d, ...changes }))
@@ -104,7 +107,11 @@ export default function NewCharacter() {
         }
         setSaving(true)
         setSaveError(null)
-        createCharacter(draft.campaignId, draft.name.trim())
+        const name = draft.name.trim()
+        const create = draft.campaignId === SANDBOX
+            ? createSandboxCharacter(name)
+            : createCharacter(draft.campaignId, name)
+        create
             // From a campaign, go back to it; from home, go home, where the new character is listed.
             .then(() => navigate(campaignID ? `/campaign/${campaignID}` : '/', { replace: true }))
             .catch(err => {
@@ -123,23 +130,10 @@ export default function NewCharacter() {
         )
     }
 
-    if (campaigns && campaigns.length === 0) {
-        return (
-            <div className="page">
-                <BackButton/>
-                <h1>New Character</h1>
-                <p className="muted">
-                    Characters are made for a campaign, and you aren’t in one yet. Ask your GM for an invite link.
-                </p>
-                <Link to="/" className="setting-button">Go home</Link>
-            </div>
-        )
-    }
-
     return (
         <div className="page wizard">
             <BackButton/>
-            <span className="setting-caption">{chosenCampaign?.name ?? ' '}</span>
+            <span className="setting-caption">{chosenName ?? '\u00a0'}</span>
             <h1>New Character</h1>
 
             <ol className="wizard__steps" aria-label="Steps">
@@ -163,6 +157,14 @@ export default function NewCharacter() {
                                 <span>{c.name}</span>
                             </label>
                         ))}
+                        <label className="wizard__choice">
+                            <input type="radio" name="campaign" value={SANDBOX}
+                                checked={draft.campaignId === SANDBOX}
+                                onChange={() => update({ campaignId: SANDBOX })} />
+                            <span className="wizard__choice-text">
+                                <span>Character Sandbox</span>
+                            </span>
+                        </label>
                     </fieldset>
                 )}
 

@@ -107,6 +107,34 @@ MIGRATIONS = [
     CREATE UNIQUE INDEX characters_one_active
         ON characters(campaign_id, owner_id) WHERE is_active = 1 AND deleted_at IS NULL;
     ''',
+    # 5: Character Sandbox. campaign_id may be NULL for a character that isn't in any
+    # campaign; it belongs to its owner alone. SQLite skips a composite foreign key when
+    # one of its columns is NULL, so the membership link still holds for campaign characters.
+    # Sandbox characters are never "active" (that's per campaign).
+    '''
+    CREATE TABLE characters_new (
+        id             TEXT PRIMARY KEY,
+        campaign_id    TEXT REFERENCES campaigns(id) ON DELETE CASCADE,  -- NULL: Character Sandbox
+        owner_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name           TEXT NOT NULL,
+        sheet          TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(sheet)),
+        personal_notes TEXT NOT NULL DEFAULT '',
+        is_active      INTEGER NOT NULL DEFAULT 0 CHECK (is_active IN (0, 1)),
+        created_at     TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        updated_at     TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        deleted_at     TEXT,
+        FOREIGN KEY (campaign_id, owner_id) REFERENCES memberships(campaign_id, user_id) ON DELETE CASCADE,
+        CHECK (campaign_id IS NOT NULL OR is_active = 0)
+    );
+    INSERT INTO characters_new SELECT * FROM characters;
+    DROP TABLE characters;
+    ALTER TABLE characters_new RENAME TO characters;
+    CREATE INDEX characters_campaign ON characters(campaign_id);
+    CREATE INDEX characters_owner ON characters(owner_id);
+    -- At most one active character per player per campaign.
+    CREATE UNIQUE INDEX characters_one_active
+        ON characters(campaign_id, owner_id) WHERE is_active = 1 AND deleted_at IS NULL;
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

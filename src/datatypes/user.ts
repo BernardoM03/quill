@@ -4,10 +4,11 @@ import type { campaign } from "./campaign";
 export interface userCharacter {
   id: string,
   name: string,
-  // The one character the player is playing in that campaign.
+  // The one character the player is playing in that campaign. Never true in the sandbox.
   isActive: boolean,
-  campaignId: string,
-  campaignName: string,
+  // Both null for a Character Sandbox character.
+  campaignId: string | null,
+  campaignName: string | null,
 }
 
 export interface user {

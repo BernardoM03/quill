@@ -115,9 +115,13 @@ export default function App() {
                 <li key={character.id} className="character-row">
                   <div className="character-row__info">
                     <span className="character-row__name">{character.name}</span>
-                    <Link to={`/campaign/${character.campaignId}`} className="character-row__campaign">
-                      {character.campaignName}
-                    </Link>
+                    {character.campaignId ? (
+                      <Link to={`/campaign/${character.campaignId}`} className="character-row__campaign">
+                        {character.campaignName}
+                      </Link>
+                    ) : (
+                      <span className="character-row__campaign">Character Sandbox</span>
+                    )}
                   </div>
                   {character.isActive && <span className="character-row__badge">Active</span>}
                 </li>
@@ -126,12 +130,10 @@ export default function App() {
           ) : (
             <p className="muted">You don't have any characters yet.</p>
           )}
-          {/* A character belongs to a campaign, so there has to be one to make it in. */}
-          {userData.campaigns.length > 0 && (
-            <div className="home-actions">
-              <Link to="/characters/new" className="setting-button">Create Character</Link>
-            </div>
-          )}
+          {/* Always available: with no campaign, a character can still go in the Character Sandbox. */}
+          <div className="home-actions">
+            <Link to="/characters/new" className="setting-button">Create Character</Link>
+          </div>
         </div>
       )}
       <Outlet />

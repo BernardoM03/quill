@@ -6,7 +6,8 @@ from server.access import require_login
 
 bp = Blueprint('users', __name__)
 
-# The signed-in user's home page data: their campaigns, and their characters across all of them.
+# The signed-in user's home page data: their campaigns, and their characters across all of
+# them and the Character Sandbox (campaignId and campaignName null).
 @bp.get('/user')
 @require_login
 def get_user():
@@ -15,9 +16,11 @@ def get_user():
         user = current_user(conn)
         campaigns = list_campaigns(conn, user['id'])
         characters = conn.execute(
-            'SELECT ch.id, ch.name, ch.is_active, c.id AS campaign_id, c.name AS campaign_name '
-            'FROM characters ch JOIN campaigns c ON c.id = ch.campaign_id '
-            'WHERE ch.owner_id = ? AND ch.deleted_at IS NULL ORDER BY c.created_at, ch.created_at',
+            # Character Sandbox characters have no campaign; they're listed after the rest.
+            'SELECT ch.id, ch.name, ch.is_active, ch.campaign_id, c.name AS campaign_name '
+            'FROM characters ch LEFT JOIN campaigns c ON c.id = ch.campaign_id '
+            'WHERE ch.owner_id = ? AND ch.deleted_at IS NULL '
+            'ORDER BY ch.campaign_id IS NULL, c.created_at, ch.created_at',
             (user['id'],),
         ).fetchall()
     finally:

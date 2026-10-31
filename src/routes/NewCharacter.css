@@ -92,3 +92,9 @@
 .wizard__choice input {
   accent-color: var(--accent);
 }
+
+.wizard__choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
