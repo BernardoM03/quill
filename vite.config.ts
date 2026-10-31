@@ -35,4 +35,8 @@ function packIndex(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), packIndex()],
+  server: {
+    // Same-origin requests to the Flask API, so it needs no CORS.
+    proxy: { '/api': 'http://localhost:5174' },
+  },
 })

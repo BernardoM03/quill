@@ -29,8 +29,6 @@ export function RulesSettings({ rules, onChange }: Props) {
 
   return (
     <section className="rules-settings">
-      <h2>Rules</h2>
-
       <div className="setting-section">
         <span className="setting-caption">Character Options</span>
         <div className="rules-list">
@@ -120,34 +118,37 @@ const EQUIPMENT_HINTS: Record<campaignRules['startingEquipment'], string> = {
   gold: 'Everyone takes the gold and buys their own gear.',
 };
 
-// Less common character creation rules, shown inside the Advanced section.
+// Less common character creation rules, shown under the main rules.
 export function AdvancedRulesSettings({ rules, onChange }: Props) {
   return (
-    <div className="rules-list">
-      <ChoiceRow
-        label="Starting Equipment"
-        hint={EQUIPMENT_HINTS[rules.startingEquipment]}
-        value={rules.startingEquipment}
-        options={[
-          { value: 'choice', label: 'Player’s Choice' },
-          { value: 'equipment', label: 'Equipment' },
-          { value: 'gold', label: 'Gold' },
-        ]}
-        onChange={startingEquipment => onChange({ startingEquipment })}
-      />
-      <ChoiceRow
-        label="Origin Feat"
-        hint={rules.originFeat === 'background' ? 'Players take the feat their background grants.' : 'Players pick any Origin feat.'}
-        value={rules.originFeat}
-        options={[{ value: 'background', label: 'From Background' }, { value: 'any', label: 'Any' }]}
-        onChange={originFeat => onChange({ originFeat })}
-      />
-      <Toggle
-        label="Character Approval"
-        hint="New characters wait for the DM to approve them before they can be played."
-        checked={rules.characterApproval}
-        onChange={() => onChange({ characterApproval: !rules.characterApproval })}
-      />
+    <div className="setting-section">
+      <span className="setting-caption">Character Creation</span>
+      <div className="rules-list">
+        <ChoiceRow
+          label="Starting Equipment"
+          hint={EQUIPMENT_HINTS[rules.startingEquipment]}
+          value={rules.startingEquipment}
+          options={[
+            { value: 'choice', label: 'Player’s Choice' },
+            { value: 'equipment', label: 'Equipment' },
+            { value: 'gold', label: 'Gold' },
+          ]}
+          onChange={startingEquipment => onChange({ startingEquipment })}
+        />
+        <ChoiceRow
+          label="Origin Feat"
+          hint={rules.originFeat === 'background' ? 'Players take the feat their background grants.' : 'Players pick any Origin feat.'}
+          value={rules.originFeat}
+          options={[{ value: 'background', label: 'From Background' }, { value: 'any', label: 'Any' }]}
+          onChange={originFeat => onChange({ originFeat })}
+        />
+        <Toggle
+          label="Character Approval"
+          hint="New characters wait for the DM to approve them before they can be played."
+          checked={rules.characterApproval}
+          onChange={() => onChange({ characterApproval: !rules.characterApproval })}
+        />
+      </div>
     </div>
   );
 }

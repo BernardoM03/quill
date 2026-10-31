@@ -6,9 +6,12 @@ import './index.css'
 //Routes and React Elements
 import App from './App'
 import Rules from './routes/Rules'
-import SetupUser from './routes/SetupUser';
+import Setup from './routes/Setup';
+import Login from './routes/Login';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
+import Join from './routes/Join';
+import CampaignView from './routes/CampaignView';
 
 const router = createBrowserRouter([
   {
@@ -26,12 +29,24 @@ const router = createBrowserRouter([
     element : <Legal />
   },
   {
-    path : "/setup/user",
-    element: <SetupUser />
+    path : "/setup",
+    element: <Setup />
+  },
+  {
+    path : "/login",
+    element: <Login />
   },
   {
     path : "/setup/campaign",
     element : <CampaignSettings />
+  },
+  {
+    path : "/join/:token",
+    element : <Join />
+  },
+  {
+    path : "/campaign/:campaignID",
+    element : <CampaignView />
   },
   {
     path : "campaignsettings/:campaignID",

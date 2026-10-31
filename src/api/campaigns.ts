@@ -18,38 +18,39 @@ export function validateCampaignName(raw: string): string | null {
 export function createCampaign(name: string): Promise<campaign> {
     const newCampaign: campaign = { name, id: uuidv4() };
 
-    return apiClient.post("/create/campaign", newCampaign).then(() => newCampaign);
+    return apiClient.post("/campaigns", newCampaign).then(() => newCampaign);
 }
 
 export function getCampaign(id: string): Promise<campaignDetails> {
-    return apiClient.get(`/campaign/${id}`).then(response => response.data);
+    return apiClient.get(`/campaigns/${id}`).then(response => response.data);
 }
 
 // ids null means every entry in the collection is allowed.
 export function updateCampaignAllowed(id: string, collection: string, ids: string[] | null): Promise<void> {
-    return apiClient.put("/update/campaign-allowed", { id, collection, ids }).then(() => undefined);
+    return apiClient.patch(`/campaigns/${id}`, { allowedContent: { [collection]: ids } }).then(() => undefined);
 }
 
 // Saves only the rules given; the rest stay as they are.
 export function updateCampaignRules(id: string, rules: Partial<campaignRules>): Promise<void> {
-    return apiClient.put("/update/campaign-rules", { id, rules }).then(() => undefined);
+    return apiClient.patch(`/campaigns/${id}`, { rules }).then(() => undefined);
 }
 
 export const CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000;
 
 export function updateCampaignDescription(id: string, description: string): Promise<void> {
-    return apiClient.put("/update/campaign-description", { id, description }).then(() => undefined);
+    return apiClient.patch(`/campaigns/${id}`, { description }).then(() => undefined);
 }
 
 export function updateCampaignName(id: string, name: string): Promise<void> {
-    return apiClient.put("/update/campaign-name", { id, name }).then(() => undefined);
+    return apiClient.patch(`/campaigns/${id}`, { name }).then(() => undefined);
 }
 
-// The short id shown on campaign cards, which the delete dialog asks the user to type.
+// The short id shown on campaign cards
+// 703ffe14-e831-4fb9-856f-8fe17aa026d4 --> 703ffe14
 export function shortCampaignId(id: string): string {
     return id.slice(0, 8);
 }
 
 export function deleteCampaign(id: string): Promise<void> {
-    return apiClient.delete("/delete/campaign", { data: { id } }).then(() => undefined);
+    return apiClient.delete(`/campaigns/${id}`).then(() => undefined);
 }
