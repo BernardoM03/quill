@@ -70,6 +70,15 @@ MIGRATIONS = [
     );
     CREATE INDEX invites_campaign ON invites(campaign_id);
     ''',
+    # 3: snapshots of deleted accounts, kept 30 days so the admin can restore them
+    '''
+    CREATE TABLE deleted_accounts (
+        id         TEXT PRIMARY KEY,                    -- the deleted user's id
+        username   TEXT NOT NULL,
+        snapshot   TEXT NOT NULL CHECK (json_valid(snapshot)),  -- user, memberships, characters
+        deleted_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    );
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

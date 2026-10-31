@@ -22,7 +22,8 @@ DUMMY_PASSWORD_HASH = generate_password_hash('quill-dummy-password')
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 def user_json(user):
-    return {'id': user['id'], 'username': user['username'], 'displayName': user['display_name']}
+    return {'id': user['id'], 'username': user['username'], 'displayName': user['display_name'],
+            'isAdmin': bool(user['is_admin'])}
 
 # Body: {token, username, password, displayName?}.
 # Sign-up is invite-only and always makes a player;

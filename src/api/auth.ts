@@ -4,6 +4,7 @@ export interface sessionUser {
     id: string,
     username: string,
     displayName: string,
+    isAdmin: boolean,
 }
 
 export const USERNAME_PATTERN = "[A-Za-z0-9_.\\-]{3,32}";
