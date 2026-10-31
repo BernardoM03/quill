@@ -5,7 +5,7 @@ from flask import Blueprint, Flask, g, session
 from server import config, ratelimit
 from server.db import connect
 from server.helpers import load_user
-from server.routes import account, admin, auth, campaigns, invites, setup, users
+from server.routes import account, admin, auth, campaigns, invites, packs, rules, setup, users
 
 # Backstop for every API request, on top of the stricter per-route limits.
 API_LIMIT = (300, 60)
@@ -56,7 +56,7 @@ def create_app():
             # A cookie left over from a deleted account.
             session.clear()
 
-    for module in (setup, auth, users, account, admin, campaigns, invites):
+    for module in (setup, auth, users, account, admin, campaigns, invites, rules, packs):
         api.register_blueprint(module.bp)
     app.register_blueprint(api)
     check_access_declared(app)

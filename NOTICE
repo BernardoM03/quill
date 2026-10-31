@@ -11,10 +11,10 @@ Third-party material
 --------------------------------------------------------------------------------
 
 The AGPL-3.0 covers Quill's own source code. It does NOT cover the game content
-packs under public/packs/, which carry their own licenses. Each pack declares its
+packs under packs/, which carry their own licenses. Each pack declares its
 terms in its own pack.json manifest ("license", "attribution", "modifications").
 
-public/packs/srd-5.2/  --  CC-BY-4.0
+packs/srd-5.2/  --  CC-BY-4.0
 
   This work includes material from the System Reference Document 5.2.1
   ("SRD 5.2.1") by Wizards of the Coast LLC, available at

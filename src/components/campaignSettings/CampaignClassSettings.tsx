@@ -4,14 +4,17 @@ import { useCollection } from '../../packs/usePacks';
 import { SectionHeader, type SectionMode } from './SectionHeader';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
+import { refusalText } from './saveAllowed';
 
-// View mode: a read-only grid of allowed classes. 
-// Edit mode: one row per class with its toggle
-export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChange, onSubclassesChange }: {
+// View mode: a read-only grid of allowed classes.
+// Edit mode: one row per class with its toggle.
+// onChange gets the lists that changed; a class and its subclasses come in one call,
+// because the server checks them together (server/rules/problems.py).
+export function ClassSettings({ allowedClasses, allowedSubclasses, onChange }: {
   allowedClasses: string[] | null;
   allowedSubclasses: string[] | null;
-  onClassesChange: (ids: string[]) => void;
-  onSubclassesChange: (ids: string[]) => void;
+  // Rejects with the server's reason when it refuses the change.
+  onChange: (changes: { classes?: string[]; subclasses?: string[] }) => Promise<void>;
 }) {
   const classes = useCollection('classes');
   const subclasses = useCollection('subclasses');
@@ -30,26 +33,23 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onClassesChan
     const subclassesOf = (classId: string) => subclassList.filter(s => s.classId === classId);
     const allowedClassList = classList.filter(c => selectedClasses.includes(c.id));
 
-    // Characters need a class, and a class with subclasses needs one of them to pick.
+    // Characters need a class, and a class with subclasses needs one of them to pick. The
+    // server checks both (server/rules/) and its reason shows in the class's box.
     const toggleClass = (classId: string) => {
       const next = toggleId(selectedClasses, classId);
-      if (next.length === 0) return setRule({ classId, text: 'At least one class must stay allowed.' });
       setRule(null);
-      onClassesChange(next);
       // Turning a class on whose subclasses are all off: turn its subclasses back on too.
       const subs = subclassesOf(classId).map(s => s.id);
-      if (next.includes(classId) && subs.length > 0 && !subs.some(id => selectedSubclasses.includes(id))) {
-        onSubclassesChange([...selectedSubclasses, ...subs]);
-      }
+      const changes = next.includes(classId) && subs.length > 0 && !subs.some(id => selectedSubclasses.includes(id))
+        ? { classes: next, subclasses: [...selectedSubclasses, ...subs] }
+        : { classes: next };
+      onChange(changes).catch(err => setRule({ classId, text: refusalText(err) }));
     };
 
     const toggleSubclass = (classId: string, subclassId: string) => {
       const next = toggleId(selectedSubclasses, subclassId);
-      if (!subclassesOf(classId).some(s => next.includes(s.id))) {
-        return setRule({ classId, text: 'Each allowed class needs at least one subclass. Turn the class off instead.' });
-      }
       setRule(null);
-      onSubclassesChange(next);
+      onChange({ subclasses: next }).catch(err => setRule({ classId, text: refusalText(err) }));
     };
 
     if (mode === 'view') body = allowedClassList.length === 0 ? <p className="setting-error">No classes allowed. Characters can't be created until one is.</p> : (

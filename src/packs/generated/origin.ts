@@ -1,4 +1,4 @@
-/* Generated from public/schemas/origin.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
+/* Generated from schemas/origin.schema.json by scripts/gen-pack-types.mjs. Do not edit. */
 
 export type ProficiencyGrant = {
   id?: string;

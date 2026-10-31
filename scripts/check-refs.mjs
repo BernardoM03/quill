@@ -8,7 +8,7 @@
 // Run with: npm run check-refs [-- kind ...]   e.g. npm run check-refs -- feature equipment
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 
-const PACKS_DIR = 'public/packs';
+const PACKS_DIR = 'packs';
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
 const packs = readdirSync(PACKS_DIR)
@@ -22,7 +22,7 @@ const packs = readdirSync(PACKS_DIR)
 
 const entities = packs.flatMap((p) => p.entities);
 
-const common = readJson('public/schemas/common.schema.json');
+const common = readJson('schemas/common.schema.json');
 const knownEffectTypes = new Set([
   ...common.$defs.coreEffectType.enum,
   ...packs.flatMap((p) => p.manifest.providesEffectTypes ?? []),
