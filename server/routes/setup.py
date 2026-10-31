@@ -79,7 +79,7 @@ def bootstrap():
             if message is None:
                 print(f'Quill: created admin "{username}" from QUILL_ADMIN_USERNAME / QUILL_ADMIN_PASSWORD.', flush=True)
                 return
-            print(f'Quill: could not create the admin from environment variables: {message}', flush=True)
+            print('Quill: could not create admin from environment variables.', flush=True)
     finally:
         conn.close()
 
