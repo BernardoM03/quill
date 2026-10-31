@@ -25,9 +25,11 @@ export function getCampaign(id: string): Promise<campaignDetails> {
     return apiClient.get(`/campaigns/${id}`).then(response => response.data);
 }
 
-// ids null means every entry in the collection is allowed.
-export function updateCampaignAllowed(id: string, collection: string, ids: string[] | null): Promise<void> {
-    return apiClient.patch(`/campaigns/${id}`, { allowedContent: { [collection]: ids } }).then(() => undefined);
+// ids null means every entry in the collection is allowed. Resolves with the campaign's
+// problems after the change, as worked out by the server.
+export function updateCampaignAllowed(id: string, collection: string, ids: string[] | null): Promise<string[]> {
+    return apiClient.patch(`/campaigns/${id}`, { allowedContent: { [collection]: ids } })
+        .then(response => response.data.problems);
 }
 
 // Saves only the rules given; the rest stay as they are.

@@ -1,16 +1,15 @@
 import { useCollection } from '../../packs/usePacks';
 import { GroupedSettings } from './GroupedSettings';
-import { classesWithoutCantrips, classTags } from './spellRules';
+import { classTags } from './spellRules';
 
 const levelName = (level: number) => (level === 0 ? 'Cantrips' : `Level ${level}`);
 
 // Allowed spells, grouped by level. Each spell is tagged with the classes that have it,
 // and the class filter narrows to one class's list. A change that leaves an allowed class
-// with no cantrips is refused.
-// allowed / allowedClasses: the saved ids, or null for "all".
-export function SpellSettings({ allowed, allowedClasses, onChange }: {
+// with no cantrips is refused by the server (server/rules/problems.py).
+// allowed: the saved ids, or null for "all".
+export function SpellSettings({ allowed, onChange }: {
   allowed: string[] | null;
-  allowedClasses: string[] | null;
   onChange: (ids: string[]) => void;
 }) {
   const spells = useCollection('spells');
@@ -24,7 +23,6 @@ export function SpellSettings({ allowed, allowedClasses, onChange }: {
   // Only classes with spells get tags, so Bard is "B" rather than clashing with Barbarian.
   const casters = classList.filter(c => all.some(s => s.sourceIds?.includes(c.id)));
   const tags = classTags(casters);
-  const selectedClasses = allowedClasses ?? classList.map(c => c.id);
   const levels = [...new Set(all.map(s => s.level))].sort((a, b) => a - b);
 
   return (
@@ -43,10 +41,6 @@ export function SpellSettings({ allowed, allowedClasses, onChange }: {
       })}
       groups={levels.map(level => ({ key: String(level), label: levelName(level) }))}
       filters={casters.map(c => ({ key: c.id, label: c.name }))}
-      validate={next => {
-        const missing = classesWithoutCantrips(all, classList, selectedClasses, next);
-        return missing.length > 0 ? `${missing.join(', ')} would have no cantrips. Each class needs at least one.` : null;
-      }}
       allowed={allowed}
       onChange={onChange}
     />

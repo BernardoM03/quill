@@ -10,5 +10,8 @@ export interface campaignDetails {
     // Per collection ("species", ...): the allowed pack ids, or null/missing for "everything".
     allowedContent: Record<string, string[] | null>
     // Only the rules the DM changed; read through withRuleDefaults.
-    rules: Partial<campaignRules>
+    rules: Partial<campaignRules>,
+    // What the settings are missing before characters can be made, worked out by the
+    // server (server/rules/problems.py). Empty when they're fine.
+    problems: string[]
 };

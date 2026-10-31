@@ -17,7 +17,6 @@ import { CampaignNameSettings } from "../components/campaignSettings/CampaignNam
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
-import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
 import { ReadOnlyContext } from "../components/campaignSettings/ReadOnly";
 
 const proficiencies = [
@@ -48,6 +47,8 @@ export default function CampaignSettings() {
     const [confirmingDelete, setConfirmingDelete] = useState(false)
     // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
     const deleted = useRef(false)
+    // Counts allowed-content saves, so only the newest one's problems are shown.
+    const latestAllowedSave = useRef(0)
 
     // Creating a campaign is admin-only for now; anyone else gets a message instead of a
     // form whose save the server would refuse. An existing campaign goes by role below.
@@ -70,7 +71,7 @@ export default function CampaignSettings() {
     // asks first, and only the allowed-content toggles (the fix) can save.
     // Players see the same page as Campaign Information: everything shown, nothing editable.
     const readOnly = campaignDetails?.role === 'player'
-    const problems = useCampaignProblems(campaignDetails?.allowedContent)
+    const problems = campaignDetails?.problems ?? []
     // Only someone who can fix broken settings is kept on the page until they do.
     const broken = problems.length > 0 && !readOnly
 
@@ -102,10 +103,20 @@ export default function CampaignSettings() {
         const setList = (list: string[] | null) => setCampaignDetails(details =>
             details && { ...details, allowedContent: { ...details.allowedContent, [collection]: list } })
         setList(ids)
-        updateCampaignAllowed(campaignID as string, collection, ids).catch(() => {
-            setList(previous)
-            alert('Could not save.')
-        })
+        const request = ++latestAllowedSave.current
+        updateCampaignAllowed(campaignID as string, collection, ids)
+            .then(problems => {
+                // One click can send two saves (a class and its subclasses); only the
+                // last one sent knows the final state.
+                if (request === latestAllowedSave.current) {
+                    setCampaignDetails(details => details && { ...details, problems })
+                }
+            })
+            .catch(err => {
+                setList(previous)
+                // The server refuses some changes outright, e.g. leaving a class with no cantrips.
+                alert(err.response?.data?.error ?? 'Could not save.')
+            })
     }
 
     // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
@@ -212,7 +223,6 @@ export default function CampaignSettings() {
                     />
                     <SpellSettings
                         allowed={campaignDetails.allowedContent.spells ?? null}
-                        allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         onChange={ids => handleAllowedChange('spells', ids)}
                     />
                     <EquipmentSettings

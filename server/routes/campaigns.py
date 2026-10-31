@@ -8,6 +8,7 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
+from server.rules.problems import campaign_problems, spell_change_problem
 from server.access import require_admin, require_login, require_member
 
 bp = Blueprint('campaigns', __name__)
@@ -87,9 +88,12 @@ def get_campaign(campaign_id):
     # Campaigns made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
     details.setdefault('rules', {})
+    # What the settings are missing before characters can be made; the page shows these.
+    details['problems'] = campaign_problems(details['allowedContent'])
     return jsonify(details), 200
 
 # Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
+# Returns the campaign's problems after the change, so the page needn't work them out.
 @bp.patch('/campaigns/<campaign_id>')
 @require_login
 def update_campaign(campaign_id):
@@ -111,13 +115,19 @@ def update_campaign(campaign_id):
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:
                 settings.setdefault('allowedContent', {}).update(content['allowedContent'])
+                # Refused outright, unlike the problems list: the spell picker never needs
+                # to pass through a state where a class has no cantrips.
+                if 'spells' in content['allowedContent']:
+                    message = spell_change_problem(settings['allowedContent'])
+                    if message:
+                        return error(message, 400)
             conn.execute(
                 f'UPDATE campaigns SET name = ?, description = ?, settings = ?, updated_at = {NOW} WHERE id = ?',
                 (name, description, json.dumps(settings), campaign_id),
             )
     finally:
         conn.close()
-    return jsonify({'success': True}), 200
+    return jsonify({'success': True, 'problems': campaign_problems(settings.get('allowedContent', {}))}), 200
 
 @bp.delete('/campaigns/<campaign_id>')
 @require_login
