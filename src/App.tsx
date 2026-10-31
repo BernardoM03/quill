@@ -54,7 +54,7 @@ export default function App() {
         <h1>Quill</h1>
         {userData && (
           <div className="home-header__account">
-            <span className="muted">{userData.name}</span>
+            <Link to="/account" className="home-header__name" title="Account settings">{userData.name}</Link>
             <button type="button" className="setting-button" onClick={handleSignOut}>Sign out</button>
           </div>
         )}
