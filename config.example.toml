@@ -1,0 +1,15 @@
+# Copy to config.toml (or point QUILL_CONFIG at another path) and fill in.
+# Every setting is optional. Environment variables, where listed, take priority.
+
+[session]
+# Signs session cookies; at least 32 characters. Changing it signs everyone out.
+# Env: QUILL_SECRET_KEY. If neither is set, a key is generated into data/secret_key.
+# Make one with: python -c "import secrets; print(secrets.token_hex(32))"
+# secret_key = ""
+
+# Send the session cookie over HTTPS only. Turn on once the site is served over HTTPS.
+# Env: QUILL_SECURE_COOKIES=1
+secure_cookies = false
+
+# How long a sign-in lasts, in days (1-365).
+lifetime_days = 30

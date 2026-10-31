@@ -2,6 +2,8 @@ import type { campaignRules } from "./campaignRules";
 
 export interface campaignDetails {
     name: string,
+    // The current user's role in this campaign; 'admin' for an admin who isn't a member.
+    role: 'gm' | 'player' | 'admin',
     description: string | null,
     characters: string[],
     alternateRules: string[],

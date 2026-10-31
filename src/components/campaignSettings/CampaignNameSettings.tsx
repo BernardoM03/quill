@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import { CAMPAIGN_NAME_MAX_LENGTH, createCampaign, updateCampaignName, validateCampaignName } from "../../api/campaigns";
 import type { campaign } from "../../datatypes/campaign";
 import "./CampaignSettings.css";
+import { useReadOnly } from "./ReadOnly";
 
 // Shows the campaign name; the pencil swaps it for an input in place, like a GitHub PR title.
 // name is null while the campaign is still loading. onRenamed runs once the save succeeds.
@@ -13,6 +14,7 @@ import "./CampaignSettings.css";
 export function CampaignNameSettings({ name, onRenamed, onCreated, locked = false }: { name: string | null; onRenamed: (name: string) => void; onCreated?: (created: campaign) => void; locked?: boolean }) {
     const { campaignID } = useParams();
     const creating = !campaignID
+    const readOnly = useReadOnly()
     const [editing, setEditing] = useState(creating)
     const [draft, setDraft] = useState('')
     const [error, setError] = useState<string | null>(null)
@@ -82,7 +84,7 @@ export function CampaignNameSettings({ name, onRenamed, onCreated, locked = fals
             ) : (
                 <div className="campaign-name__view">
                     <h2>{name ?? "Loading..."}</h2>
-                    {name !== null && (
+                    {name !== null && !readOnly && (
                         <button type="button" className="icon-button" aria-label="Edit campaign name" onClick={startEditing}>
                             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
                                 <path d="M11 2.5l2.5 2.5L5.5 13H3v-2.5z" fill="none" stroke="currentColor" strokeWidth="1.2" />

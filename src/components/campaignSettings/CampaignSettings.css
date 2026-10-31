@@ -374,51 +374,6 @@
   padding: 0 0.75rem 0.6rem;
 }
 
-/* ---- Advanced: a collapsed group of less common settings ---- */
-
-.settings-advanced {
-  margin-bottom: 2rem;
-  border-top: 1px solid var(--border);
-}
-
-.settings-advanced > summary {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  cursor: pointer;
-  list-style: none;
-  font-size: 13px;
-}
-
-.settings-advanced > summary::-webkit-details-marker {
-  display: none;
-}
-
-/* A thin chevron that points down when open. */
-.settings-advanced > summary::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-right: 1px solid var(--text);
-  border-bottom: 1px solid var(--text);
-  transform: rotate(-45deg);
-  transition: transform 120ms ease-out;
-}
-
-.settings-advanced[open] > summary::before {
-  transform: rotate(45deg);
-}
-
-.settings-advanced__title {
-  font-size: 15px;
-  color: var(--text-h);
-}
-
-.settings-advanced > summary:hover .settings-advanced__title {
-  color: var(--accent);
-}
-
 /* ---- Compact sections: smaller text, as many ~220px columns as fit ---- */
 
 .setting-section--compact .toggle-grid {
@@ -525,15 +480,6 @@
   flex-wrap: wrap;
 }
 
-/* Two Advanced sections in a row share one line between them. */
-.settings-advanced + .settings-advanced {
-  margin-top: -2rem;
-}
-
-.settings-advanced > .rules-list {
-  margin-bottom: 1rem;
-}
-
 .shared-scores {
   display: flex;
   flex-wrap: wrap;
@@ -591,10 +537,6 @@
   color: var(--text-h);
 }
 
-.settings-advanced > .setting-section {
-  margin-bottom: 1rem;
-}
-
 .spell-tools {
   display: flex;
   flex-wrap: wrap;
@@ -641,4 +583,152 @@
   margin-top: 3rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
+}
+
+/* ---- Invites: create controls, then one row per invite ---- */
+
+.invite-create {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.invite-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.invite--inactive {
+  opacity: 0.6;
+}
+
+.invite__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 10rem;
+}
+
+.invite__status {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+/* Takes the row's spare width; wraps under the info on narrow screens. */
+.invite__link {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 14rem;
+}
+
+.invite__link input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.invite__link input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.invite__revoke {
+  margin-left: auto;
+}
+
+.invite-list__toggle {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+/* ---- Settings page tabs: General / Rules / Content ---- */
+
+.settings-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.settings-problems .setting-button {
+  margin-top: 0.5rem;
+}
+
+/* ---- Members: one row per person, Remove on the right for players ---- */
+
+.member-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.member {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.member__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 12rem;
+}
+
+.member__name {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.member__remove:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ---- Read-only (Campaign Information): controls show their value but don't respond ---- */
+
+.toggle-row:has(.toggle-input:disabled) {
+  cursor: default;
+}
+
+.toggle-row:has(.toggle-input:disabled):hover {
+  background: none;
+}
+
+/* The chosen option keeps its accent; the others fade so the choice reads at a glance. */
+.segmented button:disabled {
+  cursor: default;
+}
+
+.segmented button:disabled[aria-checked='false'] {
+  opacity: 0.45;
+}
+
+/* A dropdown that can't change reads as a plain value: no arrow, no greying. */
+.rules-select:disabled {
+  appearance: none;
+  opacity: 1;
+  color: var(--text-h);
+  cursor: default;
 }

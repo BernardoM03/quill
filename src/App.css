@@ -26,3 +26,41 @@
   display: flex;
   gap: 0.5rem;
 }
+
+/* Title on the left, the signed-in account on the right; takes over the page h1's rule. */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  /* The h1's own top margin, moved here so the title sits where it did. */
+  margin-top: 32px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 1024px) {
+  .home-header { margin-top: 20px; }
+}
+
+.home-header h1 {
+  margin: 0;
+}
+
+.home-header__account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 14px;
+}
+
+.home-header__name {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.home-header__name:hover {
+  color: var(--accent);
+}

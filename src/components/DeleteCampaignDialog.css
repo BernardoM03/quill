@@ -57,3 +57,17 @@
   gap: 0.5rem;
   margin-top: 1rem;
 }
+
+/* Explanation between the title and the input. */
+.delete-dialog__body {
+  margin-bottom: 0.75rem;
+  font-size: 14px;
+}
+
+.delete-dialog__body p {
+  margin: 0 0 0.5rem;
+}
+
+.delete-dialog__body a {
+  color: var(--accent);
+}

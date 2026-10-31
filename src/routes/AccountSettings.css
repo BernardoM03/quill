@@ -1,0 +1,13 @@
+/* ---- Account settings: delete account ---- */
+
+.account-delete {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.account-delete__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

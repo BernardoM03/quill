@@ -1,5 +1,6 @@
 import { MAX_LEVEL, POINT_BUY_BUDGET_RANGE, SHARED_SCORE_RANGE, type campaignRules } from '../../datatypes/campaignRules';
 import { Toggle } from './Toggle';
+import { useReadOnly } from './ReadOnly';
 
 type BooleanRule = { [K in keyof campaignRules]: campaignRules[K] extends boolean ? K : never }[keyof campaignRules];
 type ToggleSpec = { rule: BooleanRule; label: string; hint: string };
@@ -29,8 +30,6 @@ export function RulesSettings({ rules, onChange }: Props) {
 
   return (
     <section className="rules-settings">
-      <h2>Rules</h2>
-
       <div className="setting-section">
         <span className="setting-caption">Character Options</span>
         <div className="rules-list">
@@ -120,34 +119,37 @@ const EQUIPMENT_HINTS: Record<campaignRules['startingEquipment'], string> = {
   gold: 'Everyone takes the gold and buys their own gear.',
 };
 
-// Less common character creation rules, shown inside the Advanced section.
+// Less common character creation rules, shown under the main rules.
 export function AdvancedRulesSettings({ rules, onChange }: Props) {
   return (
-    <div className="rules-list">
-      <ChoiceRow
-        label="Starting Equipment"
-        hint={EQUIPMENT_HINTS[rules.startingEquipment]}
-        value={rules.startingEquipment}
-        options={[
-          { value: 'choice', label: 'Player’s Choice' },
-          { value: 'equipment', label: 'Equipment' },
-          { value: 'gold', label: 'Gold' },
-        ]}
-        onChange={startingEquipment => onChange({ startingEquipment })}
-      />
-      <ChoiceRow
-        label="Origin Feat"
-        hint={rules.originFeat === 'background' ? 'Players take the feat their background grants.' : 'Players pick any Origin feat.'}
-        value={rules.originFeat}
-        options={[{ value: 'background', label: 'From Background' }, { value: 'any', label: 'Any' }]}
-        onChange={originFeat => onChange({ originFeat })}
-      />
-      <Toggle
-        label="Character Approval"
-        hint="New characters wait for the DM to approve them before they can be played."
-        checked={rules.characterApproval}
-        onChange={() => onChange({ characterApproval: !rules.characterApproval })}
-      />
+    <div className="setting-section">
+      <span className="setting-caption">Character Creation</span>
+      <div className="rules-list">
+        <ChoiceRow
+          label="Starting Equipment"
+          hint={EQUIPMENT_HINTS[rules.startingEquipment]}
+          value={rules.startingEquipment}
+          options={[
+            { value: 'choice', label: 'Player’s Choice' },
+            { value: 'equipment', label: 'Equipment' },
+            { value: 'gold', label: 'Gold' },
+          ]}
+          onChange={startingEquipment => onChange({ startingEquipment })}
+        />
+        <ChoiceRow
+          label="Origin Feat"
+          hint={rules.originFeat === 'background' ? 'Players take the feat their background grants.' : 'Players pick any Origin feat.'}
+          value={rules.originFeat}
+          options={[{ value: 'background', label: 'From Background' }, { value: 'any', label: 'Any' }]}
+          onChange={originFeat => onChange({ originFeat })}
+        />
+        <Toggle
+          label="Character Approval"
+          hint="New characters wait for the DM to approve them before they can be played."
+          checked={rules.characterApproval}
+          onChange={() => onChange({ characterApproval: !rules.characterApproval })}
+        />
+      </div>
     </div>
   );
 }
@@ -160,6 +162,7 @@ function ChoiceRow<T extends string>({ label, hint, value, options, onChange }: 
   options: { value: T; label: string }[];
   onChange: (value: T) => void;
 }) {
+  const readOnly = useReadOnly();
   return (
     <div className="setting-row">
       <span className="setting-label">
@@ -168,7 +171,7 @@ function ChoiceRow<T extends string>({ label, hint, value, options, onChange }: 
       </span>
       <div className="segmented" role="radiogroup" aria-label={label}>
         {options.map(o => (
-          <button key={o.value} type="button" role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)}>
+          <button key={o.value} type="button" role="radio" aria-checked={value === o.value} disabled={readOnly} onClick={() => onChange(o.value)}>
             {o.label}
           </button>
         ))}
@@ -186,13 +189,14 @@ function NumberRow({ label, hint, value, min, max, onChange }: {
   max: number;
   onChange: (value: number) => void;
 }) {
+  const readOnly = useReadOnly();
   return (
     <div className="setting-row rules-subrow">
       <span className="setting-label">
         <span>{label}</span>
         <span className="setting-hint">{hint}</span>
       </span>
-      <select className="rules-select" aria-label={label} value={value} onChange={e => onChange(Number(e.target.value))}>
+      <select className="rules-select" aria-label={label} value={value} disabled={readOnly} onChange={e => onChange(Number(e.target.value))}>
         {Array.from({ length: max - min + 1 }, (_, i) => min + i).map(n => <option key={n} value={n}>{n}</option>)}
       </select>
     </div>
@@ -201,6 +205,7 @@ function NumberRow({ label, hint, value, min, max, onChange }: {
 
 // The six scores every player assigns under Shared Manual, highest first.
 function SharedScoresRow({ scores, onChange }: { scores: number[]; onChange: (scores: number[]) => void }) {
+  const readOnly = useReadOnly();
   const setScore = (index: number, value: number) =>
     onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a));
 
@@ -217,6 +222,7 @@ function SharedScoresRow({ scores, onChange }: { scores: number[]; onChange: (sc
             className="rules-select"
             aria-label={`Score ${i + 1}`}
             value={score}
+            disabled={readOnly}
             onChange={e => setScore(i, Number(e.target.value))}
           >
             {Array.from({ length: SHARED_SCORE_RANGE.max - SHARED_SCORE_RANGE.min + 1 }, (_, n) => SHARED_SCORE_RANGE.min + n)
