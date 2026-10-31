@@ -46,8 +46,14 @@ def sign_in(user_id):
     session.permanent = True
     session['user_id'] = user_id
 
+# May this user manage the campaign? Its GM can, and so can the admin, who can step in
+# on any campaign. False if the campaign doesn't exist, so callers can answer 404 either way.
 def is_gm(conn, campaign_id, user):
-    return user is not None and conn.execute(
+    if user is None:
+        return False
+    if user['is_admin']:
+        return conn.execute('SELECT 1 FROM campaigns WHERE id = ?', (campaign_id,)).fetchone() is not None
+    return conn.execute(
         "SELECT 1 FROM memberships WHERE campaign_id = ? AND user_id = ? AND role = 'gm'",
         (campaign_id, user['id']),
     ).fetchone() is not None

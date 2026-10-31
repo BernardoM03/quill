@@ -7,7 +7,7 @@ from flask import Blueprint, jsonify, request
 from server.db import connect
 from server.helpers import NOW, current_user, error, is_gm, json_body
 from server.ratelimit import limit
-from server.access import public, require_admin, require_login
+from server.access import public, require_login
 
 INVITE_DEFAULT_DAYS = 7
 INVITE_MAX_DAYS = 365
@@ -52,7 +52,7 @@ def invite_json(row):
     }
 
 @bp.get('/campaigns/<campaign_id>/invites')
-@require_admin
+@require_login
 def get_invites(campaign_id):
     conn = connect()
     try:
@@ -68,7 +68,7 @@ def get_invites(campaign_id):
 
 # Body (optional): {expiresInDays: 1–365 or null for never, maxUses: 1–1000 or null for unlimited}.
 @bp.post('/campaigns/<campaign_id>/invites')
-@require_admin
+@require_login
 def create_invite(campaign_id):
     content = json_body() if request.content_length else {}
     if content is None:
@@ -152,7 +152,7 @@ def accept_invite(token):
 
 # Revokes an invite.
 @bp.delete('/invites/<token>')
-@require_admin
+@require_login
 def revoke_invite(token):
     conn = connect()
     try:

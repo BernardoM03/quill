@@ -91,7 +91,7 @@ def get_campaign(campaign_id):
 
 # Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
 @bp.patch('/campaigns/<campaign_id>')
-@require_admin
+@require_login
 def update_campaign(campaign_id):
     content = json_body()
     message = validate_campaign_patch(content)
@@ -120,7 +120,7 @@ def update_campaign(campaign_id):
     return jsonify({'success': True}), 200
 
 @bp.delete('/campaigns/<campaign_id>')
-@require_admin
+@require_login
 def delete_campaign(campaign_id):
     conn = connect()
     try:
@@ -137,7 +137,7 @@ def delete_campaign(campaign_id):
 
 # Everyone in the campaign, GM first, with how many characters each has there.
 @bp.get('/campaigns/<campaign_id>/members')
-@require_admin
+@require_login
 def get_members(campaign_id):
     conn = connect()
     try:
@@ -164,7 +164,7 @@ def get_members(campaign_id):
 # Removes a player from the campaign, and with them their characters there (the
 # characters table cascades from memberships). The GM can't be removed this way.
 @bp.delete('/campaigns/<campaign_id>/members/<user_id>')
-@require_admin
+@require_login
 def remove_member(campaign_id, user_id):
     conn = connect()
     try:

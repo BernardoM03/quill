@@ -48,18 +48,20 @@ export default function CampaignSettings() {
     // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
     const deleted = useRef(false)
 
-    // Creating and managing campaigns is admin-only for now; anyone else gets a message
-    // instead of a form whose saves the server would refuse.
+    // Creating a campaign is admin-only for now; anyone else gets a message instead of a
+    // form whose save the server would refuse. An existing campaign goes by role below.
     const [isAdmin, setIsAdmin] = useState<boolean | undefined>(undefined)
     useEffect(() => {
         getSessionUser().then(user => setIsAdmin(user?.isAdmin ?? false)).catch(() => setIsAdmin(false))
     }, [])
 
+    // The server answers 404 when the campaign is gone or the user isn't in it.
+    const [notFound, setNotFound] = useState(false)
     useEffect(() => {
         if (!campaignID) return
         getCampaign(campaignID as string)
             .then(setCampaignDetails)
-            .catch(error => console.error("Error fetching campaign details:", error))
+            .catch(() => setNotFound(true))
     }, [campaignID])
 
     // While the settings are broken (no species, no classes, a class with no subclasses),
@@ -120,19 +122,31 @@ export default function CampaignSettings() {
         navigate('/', { replace: true })
     }
 
-    if (isAdmin === false) {
+    if (!campaignID && isAdmin === false) {
         return (
             <div className="page">
                 <BackButton/>
-                <h1>{campaignID ? 'Campaign Settings' : 'New Campaign'}</h1>
-                <p className="muted">Only the admin can create and manage campaigns.</p>
+                <h1>New Campaign</h1>
+                <p className="muted">Only the admin can create campaigns.</p>
                 <Link to="/" className="setting-button">Go home</Link>
             </div>
         )
     }
 
-    // Players can read a campaign but not change it; send them to its page instead.
-    if (campaignDetails && campaignDetails.role !== 'gm') {
+    if (notFound) {
+        return (
+            <div className="page">
+                <BackButton/>
+                <h1>Campaign not found</h1>
+                <p className="muted">It may have been deleted, or you aren’t a member.</p>
+                <Link to="/" className="setting-button">Go home</Link>
+            </div>
+        )
+    }
+
+    // The GM manages the campaign, and so can the admin. Players can only read it;
+    // send them to its page instead.
+    if (campaignDetails && campaignDetails.role === 'player') {
         return (
             <div className="page">
                 <BackButton/>
