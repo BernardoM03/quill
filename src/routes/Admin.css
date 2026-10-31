@@ -1,0 +1,46 @@
+/* ---- Admin page: deleted accounts, one row each ---- */
+
+.deleted-accounts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.deleted-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.deleted-account__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 12rem;
+}
+
+.deleted-account__name {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.deleted-account__days {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Close to permanent deletion. */
+.deleted-account__days--soon {
+  color: var(--danger);
+}
+
+.admin-notice {
+  font-size: 13px;
+  color: var(--text-h);
+}

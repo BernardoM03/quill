@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
+import { getSessionUser } from "../api/auth";
 import { withRuleDefaults, type campaignRules } from "../datatypes/campaignRules";
 
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
@@ -45,6 +46,13 @@ export default function CampaignSettings() {
     const [confirmingDelete, setConfirmingDelete] = useState(false)
     // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
     const deleted = useRef(false)
+
+    // Creating and managing campaigns is admin-only for now; anyone else gets a message
+    // instead of a form whose saves the server would refuse.
+    const [isAdmin, setIsAdmin] = useState<boolean | undefined>(undefined)
+    useEffect(() => {
+        getSessionUser().then(user => setIsAdmin(user?.isAdmin ?? false)).catch(() => setIsAdmin(false))
+    }, [])
 
     useEffect(() => {
         if (!campaignID) return
@@ -109,6 +117,17 @@ export default function CampaignSettings() {
     function handleDeleted() {
         deleted.current = true
         navigate('/', { replace: true })
+    }
+
+    if (isAdmin === false) {
+        return (
+            <div className="page">
+                <BackButton/>
+                <h1>{campaignID ? 'Campaign Settings' : 'New Campaign'}</h1>
+                <p className="muted">Only the admin can create and manage campaigns.</p>
+                <Link to="/" className="setting-button">Go home</Link>
+            </div>
+        )
     }
 
     // Players can read a campaign but not change it; send them to its page instead.

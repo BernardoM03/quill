@@ -54,6 +54,7 @@ export default function App() {
         <h1>Quill</h1>
         {userData && (
           <div className="home-header__account">
+            {userData.isAdmin && <Link to="/admin" className="home-header__name">Admin</Link>}
             <Link to="/account" className="home-header__name" title="Account settings">{userData.name}</Link>
             <button type="button" className="setting-button" onClick={handleSignOut}>Sign out</button>
           </div>
@@ -74,9 +75,12 @@ export default function App() {
                 ))}
               </div>
             </div>
-            <div className="home-actions">
-              <Link to="/setup/campaign" className="setting-button">New Campaign</Link>
-            </div>
+            {/* Only the admin can create campaigns for now. */}
+            {userData.isAdmin && (
+              <div className="home-actions">
+                <Link to="/setup/campaign" className="setting-button">New Campaign</Link>
+              </div>
+            )}
           </div>
         ) : null
       }
@@ -84,10 +88,16 @@ export default function App() {
         userData && (!userData.campaigns || userData.campaigns.length === 0) ? (
           <div className="setting-section">
             <span className="setting-caption">Your Campaigns</span>
-            <p className="muted">You don't have any campaigns yet.</p>
-            <div className="home-actions">
-              <Link to="/setup/campaign" className="setting-button">Set Up Your First Campaign</Link>
-            </div>
+            {userData.isAdmin ? (
+              <>
+                <p className="muted">You don't have any campaigns yet.</p>
+                <div className="home-actions">
+                  <Link to="/setup/campaign" className="setting-button">Set Up Your First Campaign</Link>
+                </div>
+              </>
+            ) : (
+              <p className="muted">You aren't in any campaigns yet. Ask your GM for an invite link.</p>
+            )}
           </div>
         ) : null
       }

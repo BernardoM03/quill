@@ -9,6 +9,7 @@ import Rules from './routes/Rules'
 import Setup from './routes/Setup';
 import Login from './routes/Login';
 import AccountSettings from './routes/AccountSettings';
+import Admin from './routes/Admin';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path : "/account",
     element: <AccountSettings />
+  },
+  {
+    path : "/admin",
+    element: <Admin />
   },
   {
     path : "/setup/campaign",

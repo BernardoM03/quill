@@ -16,4 +16,4 @@ def get_user():
         campaigns = list_campaigns(conn, user['id'])
     finally:
         conn.close()
-    return jsonify({'name': user['display_name'], 'campaigns': campaigns}), 200
+    return jsonify({'name': user['display_name'], 'isAdmin': bool(user['is_admin']), 'campaigns': campaigns}), 200

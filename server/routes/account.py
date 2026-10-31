@@ -1,4 +1,5 @@
 import json
+import threading
 from datetime import datetime, timezone
 
 from flask import Blueprint, Response, g, jsonify, session
@@ -32,17 +33,38 @@ def collect_account(conn, user_id, include_secrets):
         characters.append(character)
     return {'user': user, 'memberships': memberships, 'characters': characters}
 
-# Snapshots older than 30 days can no longer be restored, so they're removed. Runs at startup.
+# Snapshots older than 30 days can no longer be restored, so they're permanently deleted:
+# overwritten on disk, like the full erase. Returns how many were removed.
 def purge_old_snapshots():
     conn = connect()
     try:
+        conn.execute('PRAGMA secure_delete = ON')
         with conn:
-            conn.execute(
+            removed = conn.execute(
                 "DELETE FROM deleted_accounts WHERE deleted_at < strftime('%Y-%m-%dT%H:%M:%fZ', 'now', ?)",
                 (f'-{SNAPSHOT_DAYS} days',),
-            )
+            ).rowcount
+        if removed:
+            conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
     finally:
         conn.close()
+    return removed
+
+# Runs the purge now and then once a day, on a background thread that stops with the server.
+def start_daily_purge():
+    def loop():
+        while True:
+            try:
+                removed = purge_old_snapshots()
+                if removed:
+                    print(f'Quill: permanently deleted {removed} account snapshot(s) older than {SNAPSHOT_DAYS} days.', flush=True)
+            except Exception as e:  # A failed run shouldn't stop later ones.
+                print(f'Quill: account snapshot cleanup failed: {e}', flush=True)
+            if _stop_purge.wait(24 * 60 * 60):
+                return
+    threading.Thread(target=loop, name='snapshot-purge', daemon=True).start()
+
+_stop_purge = threading.Event()
 
 # The signed-in user's data as a JSON file download.
 @bp.get('/account/export')

@@ -11,6 +11,6 @@ except ConfigError as e:
     sys.exit(f'Quill: configuration error: {e}')
 
 init_db()
-account.purge_old_snapshots()
+account.start_daily_purge()
 setup.bootstrap()
 app.run(port=5174, debug=False)
