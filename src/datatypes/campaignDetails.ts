@@ -2,6 +2,8 @@ import type { campaignRules } from "./campaignRules";
 
 export interface campaignDetails {
     name: string,
+    // The current user's role in this campaign.
+    role: 'gm' | 'player',
     description: string | null,
     characters: string[],
     alternateRules: string[],

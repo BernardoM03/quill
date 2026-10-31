@@ -3,7 +3,7 @@ import uuid
 from flask import Blueprint, jsonify
 
 from server.db import connect
-from server.helpers import clean_name, current_user, error, json_body, list_campaigns
+from server.helpers import clean_name, current_user, error, json_body, list_campaigns, session_user
 
 bp = Blueprint('users', __name__)
 
@@ -15,9 +15,11 @@ def get_user():
         if user is None:
             return error('No user set up', 404)
         campaigns = list_campaigns(conn, user['id'])
+        # False while acting as the admin without signing in.
+        signed_in = session_user(conn) is not None
     finally:
         conn.close()
-    return jsonify({'name': user['display_name'], 'campaigns': campaigns}), 200
+    return jsonify({'name': user['display_name'], 'signedIn': signed_in, 'campaigns': campaigns}), 200
 
 @bp.post('/user')
 def create_user():

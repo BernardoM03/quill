@@ -4,6 +4,7 @@ import type { user } from './datatypes/user'
 import CampaignCard from './components/CampaignCard'
 import LegalFooter from './components/LegalFooter'
 import { getUser } from './api/users'
+import { logout } from './api/auth'
 
 import './App.css'
 
@@ -32,6 +33,17 @@ export default function App() {
     }
   }, [userData])
 
+  // Back to acting as the admin until admin sign-in exists, so reload the page's user.
+  function handleSignOut() {
+    logout()
+      .then(getUser)
+      .then(data => {
+        setUserData(data)
+        setWelcomeMessage(`Welcome, ${data.name}!`)
+      })
+      .catch(error => console.error('Error signing out:', error))
+  }
+
   function handleCampaignDeleted(id: string) {
     setUserData(data => data && { ...data, campaigns: data.campaigns.filter(c => c.id !== id) })
   }
@@ -45,7 +57,12 @@ export default function App() {
       <h1>Quill</h1>
       { isLoading ?
         < div/> :
-        <p className="welcome muted">{welcomeMessage}</p>
+        <p className="welcome muted">
+          {welcomeMessage}
+          {userData?.signedIn && (
+            <button type="button" className="setting-button setting-button--quiet" onClick={handleSignOut}>Sign out</button>
+          )}
+        </p>
       }
       {
         userData && userData.campaigns && userData.campaigns.length > 0 ? (
@@ -54,7 +71,7 @@ export default function App() {
             <div className="campaign-grid-wrap">
               <div className="campaign-grid">
                 {userData.campaigns.map(campaign => (
-                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id}} onDeleted={handleCampaignDeleted} />
+                  <CampaignCard key={campaign.id} props={{name: campaign.name, id: campaign.id, role: campaign.role}} onDeleted={handleCampaignDeleted} />
                 ))}
               </div>
             </div>

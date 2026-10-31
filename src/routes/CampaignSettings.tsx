@@ -1,4 +1,4 @@
-import { useBlocker, useNavigate, useParams } from "react-router";
+import { Link, useBlocker, useNavigate, useParams } from "react-router";
 import { useState, useEffect, useRef } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
@@ -14,6 +14,7 @@ import BackButton from "../components/BackButton";
 import DeleteCampaignDialog from "../components/DeleteCampaignDialog";
 import { CampaignNameSettings } from "../components/campaignSettings/CampaignNameSettings";
 import { CampaignDescriptionSettings } from "../components/campaignSettings/CampaignDescriptionSettings";
+import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { useCampaignProblems } from "../components/campaignSettings/useCampaignProblems";
 
 const proficiencies = [
@@ -97,6 +98,18 @@ export default function CampaignSettings() {
         navigate('/', { replace: true })
     }
 
+    // Players can read a campaign but not change it; send them to its page instead.
+    if (campaignDetails && campaignDetails.role !== 'gm') {
+        return (
+            <div className="page">
+                <BackButton/>
+                <h1>Campaign Settings</h1>
+                <p className="muted">Only the campaign’s GM can change its settings.</p>
+                <Link to={`/campaign/${campaignID}`} className="setting-button">Open {campaignDetails.name}</Link>
+            </div>
+        )
+    }
+
     return (
         <div className="page">
             <BackButton disabled={broken}/>
@@ -115,6 +128,9 @@ export default function CampaignSettings() {
             />
             {campaignDetails && (
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
+            )}
+            {campaignDetails && campaignID && (
+                <CampaignInviteSettings campaignId={campaignID}/>
             )}
             {campaignDetails && (
                 <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>

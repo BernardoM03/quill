@@ -49,11 +49,6 @@ def current_user(conn):
         'SELECT * FROM users WHERE is_admin = 1 AND deleted_at IS NULL ORDER BY created_at LIMIT 1'
     ).fetchone()
 
-def is_member(conn, campaign_id, user):
-    return user is not None and conn.execute(
-        'SELECT 1 FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user['id'])
-    ).fetchone() is not None
-
 def is_gm(conn, campaign_id, user):
     return user is not None and conn.execute(
         "SELECT 1 FROM memberships WHERE campaign_id = ? AND user_id = ? AND role = 'gm'",
@@ -62,7 +57,7 @@ def is_gm(conn, campaign_id, user):
 
 def list_campaigns(conn, user_id):
     rows = conn.execute(
-        'SELECT c.id, c.name FROM campaigns c JOIN memberships m ON m.campaign_id = c.id '
+        'SELECT c.id, c.name, m.role FROM campaigns c JOIN memberships m ON m.campaign_id = c.id '
         'WHERE m.user_id = ? ORDER BY c.created_at',
         (user_id,),
     ).fetchall()

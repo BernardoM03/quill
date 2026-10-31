@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify
 
 from server.db import connect
 from server.helpers import (
-    NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, is_member, json_body, list_campaigns,
+    NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
 
@@ -60,13 +60,16 @@ def get_campaign(campaign_id):
     conn = connect()
     try:
         row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
-        member = is_member(conn, campaign_id, current_user(conn))
+        user = current_user(conn)
+        role = user and conn.execute(
+            'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user['id'])
+        ).fetchone()
     finally:
         conn.close()
-    if row is None or not member:
+    if row is None or not role:
         return error('Campaign not found', 404)
     details = json.loads(row['settings'])
-    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': []})
+    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role['role']})
     # Campaigns made before allowedContent existed: missing means everything is allowed.
     details.setdefault('allowedContent', {})
     details.setdefault('rules', {})
