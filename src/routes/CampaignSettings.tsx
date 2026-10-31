@@ -1,4 +1,4 @@
-import { Link, useBlocker, useNavigate, useParams } from "react-router";
+import { Link, useBlocker, useNavigate, useParams, useSearchParams } from "react-router";
 import { useState, useEffect, useRef } from 'react'
 
 import type { campaignDetails } from "../datatypes/campaignDetails";
@@ -23,11 +23,24 @@ const proficiencies = [
     { collection: 'languages', caption: 'Allowed Languages' },
 ] as const
 
+const SETTINGS_TABS = [
+    { id: 'general', label: 'General' },
+    { id: 'rules', label: 'Rules' },
+    { id: 'content', label: 'Content' },
+] as const
+type settingsTab = typeof SETTINGS_TABS[number]['id']
+
 export default function CampaignSettings() {
     // No campaignID means /setup/campaign: only the name shows until the campaign is created,
     // then the page swaps to that campaign's settings URL.
     const { campaignID } = useParams();
     const navigate = useNavigate();
+    // The open tab lives in ?tab=, so reloading or going Back keeps it. Unknown values mean General.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tab: settingsTab = SETTINGS_TABS.find(t => t.id === searchParams.get('tab'))?.id ?? 'general'
+    function selectTab(next: settingsTab) {
+        setSearchParams(next === 'general' ? {} : { tab: next }, { replace: true })
+    }
     const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
     const [confirmingDelete, setConfirmingDelete] = useState(false)
     // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
@@ -110,6 +123,9 @@ export default function CampaignSettings() {
         )
     }
 
+    const content = tab === 'content'
+    const general = tab === 'general'
+
     return (
         <div className="page">
             <BackButton disabled={broken}/>
@@ -118,66 +134,58 @@ export default function CampaignSettings() {
                 <div className="settings-problems" role="alert">
                     <strong>Fix these settings before leaving this page:</strong>
                     <ul>{problems.map(p => <li key={p}>{p}</li>)}</ul>
+                    {!content && (
+                        <button type="button" className="setting-button" onClick={() => selectTab('content')}>Go to Content</button>
+                    )}
                 </div>
             )}
-            {/* Name element: Updates campaignDetails when renamed via <CampaignNameSettings />*/}
-            <CampaignNameSettings
-                key={campaignID ?? 'new'}
-                name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}
-                onCreated={created => navigate(`/campaignsettings/${created.id}`, { replace: true })}
-            />
-            {campaignDetails && (
+            {campaignDetails && campaignID && (
+                <div className="tabs settings-tabs" role="tablist">
+                    {SETTINGS_TABS.map(t => (
+                        <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => selectTab(t.id)}>
+                            {t.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+            {/* Without a campaignID only the name shows, so creating a campaign stays one step. */}
+            {(general || !campaignID) && (
+                <CampaignNameSettings
+                    key={campaignID ?? 'new'}
+                    name={campaignDetails?.name ?? null} onRenamed={handleRenamed} locked={broken}
+                    onCreated={created => navigate(`/campaignsettings/${created.id}`, { replace: true })}
+                />
+            )}
+            {campaignDetails && general && (
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
-            {campaignDetails && campaignID && (
+            {campaignDetails && campaignID && general && (
                 <CampaignInviteSettings campaignId={campaignID}/>
             )}
-            {campaignDetails && (
-                <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
-            )}
-            {campaignDetails && (
-                <CollectionSettings
-                    collection="species" caption="Allowed Species" noun="species" requireOne
-                    allowed={campaignDetails.allowedContent.species ?? null}
-                    onChange={ids => handleAllowedChange('species', ids)}
-                />
-            )}
-            {campaignDetails && (
-                <ClassSettings
-                    allowedClasses={campaignDetails.allowedContent.classes ?? null}
-                    allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}
-                    onClassesChange={ids => handleAllowedChange('classes', ids)}
-                    onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
-                />
-            )}
-            {campaignDetails && (
-                <details className="settings-advanced">
-                    <summary>
-                        <span className="settings-advanced__title">Character Creation</span>
-                        <span className="muted">Advanced · equipment, origin feat, approval</span>
-                    </summary>
+            {campaignDetails && tab === 'rules' && (
+                <>
+                    <RulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
                     <AdvancedRulesSettings rules={withRuleDefaults(campaignDetails.rules)} onChange={handleRulesChange}/>
-                </details>
+                </>
             )}
-            {campaignDetails && (
-                <details className="settings-advanced">
-                    <summary>
-                        <span className="settings-advanced__title">Spells</span>
-                        <span className="muted">Advanced · which spells players can learn</span>
-                    </summary>
+            {campaignDetails && content && (
+                <>
+                    <CollectionSettings
+                        collection="species" caption="Allowed Species" noun="species" requireOne
+                        allowed={campaignDetails.allowedContent.species ?? null}
+                        onChange={ids => handleAllowedChange('species', ids)}
+                    />
+                    <ClassSettings
+                        allowedClasses={campaignDetails.allowedContent.classes ?? null}
+                        allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}
+                        onClassesChange={ids => handleAllowedChange('classes', ids)}
+                        onSubclassesChange={ids => handleAllowedChange('subclasses', ids)}
+                    />
                     <SpellSettings
                         allowed={campaignDetails.allowedContent.spells ?? null}
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         onChange={ids => handleAllowedChange('spells', ids)}
                     />
-                </details>
-            )}
-            {campaignDetails && (
-                <details className="settings-advanced">
-                    <summary>
-                        <span className="settings-advanced__title">Items</span>
-                        <span className="muted">Advanced · equipment and magic items</span>
-                    </summary>
                     <EquipmentSettings
                         allowed={campaignDetails.allowedContent.equipment ?? null}
                         onChange={ids => handleAllowedChange('equipment', ids)}
@@ -186,14 +194,6 @@ export default function CampaignSettings() {
                         allowed={campaignDetails.allowedContent['magic-items'] ?? null}
                         onChange={ids => handleAllowedChange('magic-items', ids)}
                     />
-                </details>
-            )}
-            {campaignDetails && (
-                <details className="settings-advanced">
-                    <summary>
-                        <span className="settings-advanced__title">Proficiencies</span>
-                        <span className="muted">Advanced · skills, tools, languages</span>
-                    </summary>
                     {proficiencies.map(({ collection, caption }) => (
                         <CollectionSettings
                             key={collection}
@@ -202,9 +202,9 @@ export default function CampaignSettings() {
                             onChange={ids => handleAllowedChange(collection, ids)}
                         />
                     ))}
-                </details>
+                </>
             )}
-            {campaignDetails && campaignID && (
+            {campaignDetails && campaignID && general && (
                 <div className="settings-danger">
                     <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
                         Delete Campaign

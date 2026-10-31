@@ -374,51 +374,6 @@
   padding: 0 0.75rem 0.6rem;
 }
 
-/* ---- Advanced: a collapsed group of less common settings ---- */
-
-.settings-advanced {
-  margin-bottom: 2rem;
-  border-top: 1px solid var(--border);
-}
-
-.settings-advanced > summary {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  cursor: pointer;
-  list-style: none;
-  font-size: 13px;
-}
-
-.settings-advanced > summary::-webkit-details-marker {
-  display: none;
-}
-
-/* A thin chevron that points down when open. */
-.settings-advanced > summary::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-right: 1px solid var(--text);
-  border-bottom: 1px solid var(--text);
-  transform: rotate(-45deg);
-  transition: transform 120ms ease-out;
-}
-
-.settings-advanced[open] > summary::before {
-  transform: rotate(45deg);
-}
-
-.settings-advanced__title {
-  font-size: 15px;
-  color: var(--text-h);
-}
-
-.settings-advanced > summary:hover .settings-advanced__title {
-  color: var(--accent);
-}
-
 /* ---- Compact sections: smaller text, as many ~220px columns as fit ---- */
 
 .setting-section--compact .toggle-grid {
@@ -525,15 +480,6 @@
   flex-wrap: wrap;
 }
 
-/* Two Advanced sections in a row share one line between them. */
-.settings-advanced + .settings-advanced {
-  margin-top: -2rem;
-}
-
-.settings-advanced > .rules-list {
-  margin-bottom: 1rem;
-}
-
 .shared-scores {
   display: flex;
   flex-wrap: wrap;
@@ -589,10 +535,6 @@
   flex-shrink: 0;
   width: 9rem;
   color: var(--text-h);
-}
-
-.settings-advanced > .setting-section {
-  margin-bottom: 1rem;
 }
 
 .spell-tools {
@@ -716,4 +658,14 @@
 .invite-list__toggle {
   align-self: flex-start;
   padding-left: 0;
+}
+
+/* ---- Settings page tabs: General / Rules / Content ---- */
+
+.settings-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.settings-problems .setting-button {
+  margin-top: 0.5rem;
 }
