@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from server import ratelimit
 from server.db import connect
-from server.helpers import NAME_MAX_LENGTH, clean_name, error, json_body, session_user, sign_in
+from server.helpers import NAME_MAX_LENGTH, clean_name, error, json_body, current_user, sign_in
 from server.ratelimit import limit
 from server.routes.invites import claim_invite
 
@@ -115,7 +115,7 @@ def logout():
 def me():
     conn = connect()
     try:
-        user = session_user(conn)
+        user = current_user(conn)
     finally:
         conn.close()
     if user is None:

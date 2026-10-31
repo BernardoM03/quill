@@ -5,7 +5,7 @@ import uuid
 from flask import Blueprint, jsonify, request
 
 from server.db import connect
-from server.helpers import NOW, current_user, error, is_gm, json_body, session_user
+from server.helpers import NOW, current_user, error, is_gm, json_body
 from server.ratelimit import limit
 
 INVITE_DEFAULT_DAYS = 7
@@ -126,7 +126,7 @@ def accept_invite(token):
     conn = connect()
     try:
         with conn:
-            user = session_user(conn)
+            user = current_user(conn)
             if user is None:
                 return error('Sign in first.', 401)
             row = conn.execute(

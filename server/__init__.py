@@ -2,14 +2,26 @@ import os
 import secrets
 from datetime import timedelta
 
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, request, session
 
 from server import ratelimit
-from server.db import DATA_DIR
-from server.routes import auth, campaigns, invites, users
+from server.db import DATA_DIR, connect
+from server.helpers import current_user, error
+from server.routes import auth, campaigns, invites, setup, users
 
 # Backstop for every API request, on top of the stricter per-route limits.
 API_LIMIT = (300, 60)
+
+# The only API routes reachable without signing in. Everything else gets 401.
+PUBLIC_ENDPOINTS = {
+    'api.setup.get_setup',
+    'api.setup.complete_setup',
+    'api.auth.signup',
+    'api.auth.login',
+    'api.auth.logout',
+    'api.auth.me',
+    'api.invites.check_invite',
+}
 
 SECRET_KEY_PATH = os.path.join(DATA_DIR, 'secret_key')
 
@@ -45,8 +57,19 @@ def create_app():
         retry_after = ratelimit.hit('api', *API_LIMIT)
         if retry_after:
             return ratelimit.too_many(retry_after)
+        if request.endpoint in PUBLIC_ENDPOINTS:
+            return None
+        conn = connect()
+        try:
+            user = current_user(conn)
+        finally:
+            conn.close()
+        if user is None:
+            # Also drops a cookie left over from a deleted account.
+            session.clear()
+            return error('Sign in first.', 401)
 
-    for module in (auth, users, campaigns, invites):
+    for module in (setup, auth, users, campaigns, invites):
         api.register_blueprint(module.bp)
     app.register_blueprint(api)
     return app

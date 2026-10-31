@@ -15,8 +15,7 @@ bp = Blueprint('campaigns', __name__)
 def get_campaigns():
     conn = connect()
     try:
-        user = current_user(conn)
-        campaigns = list_campaigns(conn, user['id']) if user else []
+        campaigns = list_campaigns(conn, current_user(conn)['id'])
     finally:
         conn.close()
     return jsonify(campaigns), 200
@@ -38,8 +37,6 @@ def create_campaign():
     try:
         with conn:
             user = current_user(conn)
-            if user is None:
-                return error('Set up a user first.', 400)
             try:
                 conn.execute(
                     'INSERT INTO campaigns (id, owner_id, name, settings) VALUES (?, ?, ?, ?)',

@@ -52,3 +52,9 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* Login page: the note under the form. */
+.login__hint {
+  margin-top: 2rem;
+  font-size: 13px;
+}

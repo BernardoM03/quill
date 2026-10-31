@@ -6,7 +6,8 @@ import './index.css'
 //Routes and React Elements
 import App from './App'
 import Rules from './routes/Rules'
-import SetupUser from './routes/SetupUser';
+import Setup from './routes/Setup';
+import Login from './routes/Login';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
@@ -28,8 +29,12 @@ const router = createBrowserRouter([
     element : <Legal />
   },
   {
-    path : "/setup/user",
-    element: <SetupUser />
+    path : "/setup",
+    element: <Setup />
+  },
+  {
+    path : "/login",
+    element: <Login />
   },
   {
     path : "/setup/campaign",

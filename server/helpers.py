@@ -30,8 +30,9 @@ def json_body():
     body = request.get_json(silent=True)
     return body if isinstance(body, dict) else None
 
-# The signed-in user from the session cookie, or None.
-def session_user(conn):
+# The signed-in user from the session cookie, or None. There is no fallback user:
+# anyone not signed in only reaches the public routes listed in create_app.
+def current_user(conn):
     user_id = session.get('user_id')
     if not user_id:
         return None
@@ -41,13 +42,6 @@ def sign_in(user_id):
     session.clear()
     session.permanent = True
     session['user_id'] = user_id
-
-# The signed-in user, or else the admin. The admin has no password until it's created
-# with the server CLI, so for now anyone not signed in acts as the admin.
-def current_user(conn):
-    return session_user(conn) or conn.execute(
-        'SELECT * FROM users WHERE is_admin = 1 AND deleted_at IS NULL ORDER BY created_at LIMIT 1'
-    ).fetchone()
 
 def is_gm(conn, campaign_id, user):
     return user is not None and conn.execute(
