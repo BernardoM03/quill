@@ -5,7 +5,7 @@ import uuid
 from flask import Blueprint, jsonify, request
 
 from server.db import connect
-from server.helpers import NOW, current_user, error, is_gm, json_body
+from server.helpers import NOW, current_user, error, is_gm, json_body, session_user
 from server.ratelimit import limit
 
 INVITE_DEFAULT_DAYS = 7
@@ -18,6 +18,18 @@ bp = Blueprint('invites', __name__)
 
 def hash_token(token):
     return hashlib.sha256(token.encode()).hexdigest()
+
+# Uses up one use of the invite and returns its campaign id, or None if it isn't active.
+# A single statement, so two people racing for the last use can't both get it.
+# Call inside a transaction, so a later failure gives the use back.
+def claim_invite(conn, token):
+    row = conn.execute(
+        'UPDATE invites SET use_count = use_count + 1 WHERE token_hash = ? AND revoked_at IS NULL '
+        f'AND (expires_at IS NULL OR expires_at > {NOW}) AND (max_uses IS NULL OR use_count < max_uses) '
+        'RETURNING campaign_id',
+        (hash_token(token),),
+    ).fetchone()
+    return row['campaign_id'] if row else None
 
 def invite_status(row):
     if row['revoked_at']:
@@ -105,6 +117,35 @@ def check_invite(token):
         return error('Invite not found', 404)
     status = invite_status(row)
     return jsonify({'campaignName': row['campaign_name'], 'valid': status == 'active', 'status': status}), 200
+
+# Joins the signed-in player to the invite's campaign. Needs a real session, not the
+# admin fallback. Someone already in the campaign is let through without using up the invite.
+@bp.post('/invites/<token>/accept')
+@limit('invite-accept', 10, 60 * 60)
+def accept_invite(token):
+    conn = connect()
+    try:
+        with conn:
+            user = session_user(conn)
+            if user is None:
+                return error('Sign in first.', 401)
+            row = conn.execute(
+                'SELECT m.campaign_id FROM invites i JOIN memberships m '
+                'ON m.campaign_id = i.campaign_id AND m.user_id = ? WHERE i.token_hash = ?',
+                (user['id'], hash_token(token)),
+            ).fetchone()
+            if row:
+                return jsonify({'campaignId': row['campaign_id']}), 200
+            campaign_id = claim_invite(conn, token)
+            if campaign_id is None:
+                return error('This invite is not valid.', 400)
+            conn.execute(
+                "INSERT INTO memberships (campaign_id, user_id, role) VALUES (?, ?, 'player')",
+                (campaign_id, user['id']),
+            )
+    finally:
+        conn.close()
+    return jsonify({'campaignId': campaign_id}), 201
 
 # Revokes an invite.
 @bp.delete('/invites/<token>')

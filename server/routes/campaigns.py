@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify
 
 from server.db import connect
 from server.helpers import (
-    NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, json_body, list_campaigns,
+    NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, is_member, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
 
@@ -60,9 +60,10 @@ def get_campaign(campaign_id):
     conn = connect()
     try:
         row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+        member = is_member(conn, campaign_id, current_user(conn))
     finally:
         conn.close()
-    if row is None:
+    if row is None or not member:
         return error('Campaign not found', 404)
     details = json.loads(row['settings'])
     details.update({'name': row['name'], 'description': row['description'] or None, 'characters': []})
@@ -83,7 +84,7 @@ def update_campaign(campaign_id):
     try:
         with conn:
             row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
-            if row is None:
+            if row is None or not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
             name = clean_name(content['name']) if 'name' in content else row['name']
             description = content['description'].strip() if 'description' in content else row['description']
@@ -106,6 +107,8 @@ def delete_campaign(campaign_id):
     try:
         with conn:
             # Memberships, characters and invites go with it (ON DELETE CASCADE).
+            if not is_gm(conn, campaign_id, current_user(conn)):
+                return error('Campaign not found', 404)
             deleted = conn.execute('DELETE FROM campaigns WHERE id = ?', (campaign_id,)).rowcount
     finally:
         conn.close()

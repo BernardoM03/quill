@@ -24,10 +24,11 @@ def _sweep(now):
         del _hits[key]
 
 # Records a hit and returns 0 if it's allowed, else the seconds until the oldest hit expires.
-def hit(bucket, max_requests, window_seconds):
+# subject defaults to the client IP; pass e.g. a username to limit across all IPs.
+def hit(bucket, max_requests, window_seconds, subject=None):
     global _calls_since_sweep
     now = time.monotonic()
-    key = (bucket, _client_ip())
+    key = (bucket, subject if subject is not None else _client_ip())
     with _lock:
         _calls_since_sweep += 1
         if _calls_since_sweep >= SWEEP_EVERY:

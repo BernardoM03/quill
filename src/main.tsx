@@ -9,6 +9,8 @@ import Rules from './routes/Rules'
 import SetupUser from './routes/SetupUser';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
+import Join from './routes/Join';
+import CampaignView from './routes/CampaignView';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,14 @@ const router = createBrowserRouter([
   {
     path : "/setup/campaign",
     element : <CampaignSettings />
+  },
+  {
+    path : "/join/:token",
+    element : <Join />
+  },
+  {
+    path : "/campaign/:campaignID",
+    element : <CampaignView />
   },
   {
     path : "campaignsettings/:campaignID",
