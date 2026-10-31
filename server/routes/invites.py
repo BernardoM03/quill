@@ -18,18 +18,19 @@ bp = Blueprint('invites', __name__)
 def hash_token(token):
     return hashlib.sha256(token.encode()).hexdigest()
 
-def invite_json(row):
+def invite_status(row):
     if row['revoked_at']:
-        status = 'revoked'
-    elif row['expired']:
-        status = 'expired'
-    elif row['max_uses'] is not None and row['use_count'] >= row['max_uses']:
-        status = 'used'
-    else:
-        status = 'active'
+        return 'revoked'
+    if row['expired']:
+        return 'expired'
+    if row['max_uses'] is not None and row['use_count'] >= row['max_uses']:
+        return 'used'
+    return 'active'
+
+def invite_json(row):
     return {
         'id': row['id'],
-        'status': status,
+        'status': invite_status(row),
         'maxUses': row['max_uses'],
         'useCount': row['use_count'],
         'expiresAt': row['expires_at'],
@@ -86,6 +87,25 @@ def create_invite(campaign_id):
     finally:
         conn.close()
     return jsonify({**invite_json(row), 'token': token}), 201
+
+# Public: anyone holding the link can check it before joining. Takes only the raw
+# token, never the invite id, and an unknown token is a plain 404.
+@bp.get('/invites/<token>')
+def check_invite(token):
+    conn = connect()
+    try:
+        row = conn.execute(
+            'SELECT i.max_uses, i.use_count, i.revoked_at, '
+            f'i.expires_at <= {NOW} AS expired, c.name AS campaign_name FROM invites i '
+            'JOIN campaigns c ON c.id = i.campaign_id WHERE i.token_hash = ?',
+            (hash_token(token),),
+        ).fetchone()
+    finally:
+        conn.close()
+    if row is None:
+        return error('Invite not found', 404)
+    status = invite_status(row)
+    return jsonify({'campaignName': row['campaign_name'], 'valid': status == 'active', 'status': status}), 200
 
 # Revokes an invite. Takes the raw token from the link, or the invite id from the list
 # (for a GM who no longer has the link). The row stays, marked revoked.
