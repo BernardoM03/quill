@@ -10,6 +10,7 @@ from server.db import connect
 from server.helpers import NAME_MAX_LENGTH, clean_name, error, json_body, current_user, sign_in
 from server.ratelimit import limit
 from server.routes.invites import claim_invite
+from server.access import public
 
 USERNAME_PATTERN = r'[A-Za-z0-9_.-]{3,32}'
 PASSWORD_MIN_LENGTH = 8
@@ -27,6 +28,7 @@ def user_json(user):
 # Sign-up is invite-only and always makes a player;
 # admins are created on the server, never through the web.
 @bp.post('/signup')
+@public
 @limit('signup', 5, 60 * 60)
 def signup():
     content = json_body()
@@ -81,6 +83,7 @@ def signup():
 # Body: {username, password}. Limited per IP and per username, so neither one IP
 # trying many accounts nor many IPs trying one account gets far.
 @bp.post('/login')
+@public
 @limit('login', 10, 15 * 60)
 def login():
     content = json_body()
@@ -106,12 +109,14 @@ def login():
     return jsonify(user_json(user)), 200
 
 @bp.post('/logout')
+@public
 def logout():
     session.clear()
     return jsonify({'success': True}), 200
 
-# The signed-in user, or 401. Unlike other routes, never falls back to the admin.
+# The signed-in user, or 401. Public so the login and join pages can ask without being redirected.
 @bp.get('/me')
+@public
 def me():
     conn = connect()
     try:

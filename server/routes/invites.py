@@ -7,6 +7,7 @@ from flask import Blueprint, jsonify, request
 from server.db import connect
 from server.helpers import NOW, current_user, error, is_gm, json_body
 from server.ratelimit import limit
+from server.access import public, require_admin, require_login
 
 INVITE_DEFAULT_DAYS = 7
 INVITE_MAX_DAYS = 365
@@ -51,6 +52,7 @@ def invite_json(row):
     }
 
 @bp.get('/campaigns/<campaign_id>/invites')
+@require_admin
 def get_invites(campaign_id):
     conn = connect()
     try:
@@ -66,6 +68,7 @@ def get_invites(campaign_id):
 
 # Body (optional): {expiresInDays: 1–365 or null for never, maxUses: 1–1000 or null for unlimited}.
 @bp.post('/campaigns/<campaign_id>/invites')
+@require_admin
 def create_invite(campaign_id):
     content = json_body() if request.content_length else {}
     if content is None:
@@ -101,6 +104,7 @@ def create_invite(campaign_id):
 
 # Public: anyone holding the link can check it before joining
 @bp.get('/invites/<token>')
+@public
 @limit('invite-check', 30, 10 * 60)
 def check_invite(token):
     conn = connect()
@@ -118,17 +122,16 @@ def check_invite(token):
     status = invite_status(row)
     return jsonify({'campaignName': row['campaign_name'], 'valid': status == 'active', 'status': status}), 200
 
-# Joins the signed-in player to the invite's campaign. Needs a real session, not the
-# admin fallback. Someone already in the campaign is let through without using up the invite.
+# Joins the signed-in player to the invite's campaign. Someone already in the
+# campaign is let through without using up the invite.
 @bp.post('/invites/<token>/accept')
+@require_login
 @limit('invite-accept', 10, 60 * 60)
 def accept_invite(token):
     conn = connect()
     try:
         with conn:
             user = current_user(conn)
-            if user is None:
-                return error('Sign in first.', 401)
             row = conn.execute(
                 'SELECT m.campaign_id FROM invites i JOIN memberships m '
                 'ON m.campaign_id = i.campaign_id AND m.user_id = ? WHERE i.token_hash = ?',
@@ -149,6 +152,7 @@ def accept_invite(token):
 
 # Revokes an invite.
 @bp.delete('/invites/<token>')
+@require_admin
 def revoke_invite(token):
     conn = connect()
     try:

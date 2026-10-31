@@ -11,6 +11,7 @@ from server.db import connect
 from server.helpers import NAME_MAX_LENGTH, clean_name, error, json_body, sign_in
 from server.ratelimit import limit
 from server.routes.auth import PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, USERNAME_PATTERN
+from server.access import public
 
 # First-run setup. Until an admin has a password, the server either creates one from
 # QUILL_ADMIN_USERNAME / QUILL_ADMIN_PASSWORD (for Docker), or prints a one-time setup
@@ -93,6 +94,7 @@ def bootstrap():
 
 # Public: lets the home page and setup page know whether setup is still needed.
 @bp.get('/setup')
+@public
 def get_setup():
     conn = connect()
     try:
@@ -103,6 +105,7 @@ def get_setup():
 
 # Body: {token, username, password, displayName?}. Signs the new admin in.
 @bp.post('/setup')
+@public
 @limit('setup', 10, 60 * 60)
 def complete_setup():
     global _setup_token_hash

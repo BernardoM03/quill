@@ -2,11 +2,13 @@ from flask import Blueprint, jsonify
 
 from server.db import connect
 from server.helpers import current_user, list_campaigns
+from server.access import require_login
 
 bp = Blueprint('users', __name__)
 
-# The signed-in user's home page data. Signing in is checked in create_app.
+# The signed-in user's home page data.
 @bp.get('/user')
+@require_login
 def get_user():
     conn = connect()
     try:

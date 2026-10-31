@@ -8,10 +8,12 @@ from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
+from server.access import require_admin
 
 bp = Blueprint('campaigns', __name__)
 
 @bp.get('/campaigns')
+@require_admin
 def get_campaigns():
     conn = connect()
     try:
@@ -21,6 +23,7 @@ def get_campaigns():
     return jsonify(campaigns), 200
 
 @bp.post('/campaigns')
+@require_admin
 def create_campaign():
     content = json_body()
     if content is None:
@@ -53,6 +56,7 @@ def create_campaign():
     return jsonify({'name': campaign_name, 'id': campaign_id}), 201
 
 @bp.get('/campaigns/<campaign_id>')
+@require_admin
 def get_campaign(campaign_id):
     conn = connect()
     try:
@@ -74,6 +78,7 @@ def get_campaign(campaign_id):
 
 # Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
 @bp.patch('/campaigns/<campaign_id>')
+@require_admin
 def update_campaign(campaign_id):
     content = json_body()
     message = validate_campaign_patch(content)
@@ -102,6 +107,7 @@ def update_campaign(campaign_id):
     return jsonify({'success': True}), 200
 
 @bp.delete('/campaigns/<campaign_id>')
+@require_admin
 def delete_campaign(campaign_id):
     conn = connect()
     try:

@@ -1,48 +1,38 @@
-import os
-import secrets
 from datetime import timedelta
 
-from flask import Blueprint, Flask, request, session
+from flask import Blueprint, Flask, g, session
 
-from server import ratelimit
-from server.db import DATA_DIR, connect
-from server.helpers import current_user, error
+from server import config, ratelimit
+from server.db import connect
+from server.helpers import load_user
 from server.routes import auth, campaigns, invites, setup, users
 
 # Backstop for every API request, on top of the stricter per-route limits.
 API_LIMIT = (300, 60)
 
-# The only API routes reachable without signing in. Everything else gets 401.
-PUBLIC_ENDPOINTS = {
-    'api.setup.get_setup',
-    'api.setup.complete_setup',
-    'api.auth.signup',
-    'api.auth.login',
-    'api.auth.logout',
-    'api.auth.me',
-    'api.invites.check_invite',
-}
+ACCESS_LEVELS = {'public', 'login', 'admin'}
 
-SECRET_KEY_PATH = os.path.join(DATA_DIR, 'secret_key')
-
-# Signs session cookies. Made on first run and kept with the database; deleting it signs everyone out.
-def load_secret_key():
-    os.makedirs(DATA_DIR, exist_ok=True)
-    if not os.path.exists(SECRET_KEY_PATH):
-        fd = os.open(SECRET_KEY_PATH, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        with os.fdopen(fd, 'w') as f:
-            f.write(secrets.token_hex(32))
-    with open(SECRET_KEY_PATH) as f:
-        return f.read().strip()
+# Every API route must declare who may call it (server/access.py). One that doesn't
+# would be open to everyone, so the server won't start until it's fixed.
+def check_access_declared(app):
+    missing = [
+        rule.rule for rule in app.url_map.iter_rules()
+        if rule.endpoint.startswith('api.')
+        and getattr(app.view_functions[rule.endpoint], 'access', None) not in ACCESS_LEVELS
+    ]
+    if missing:
+        raise RuntimeError('API routes without @public, @require_login or @require_admin: ' + ', '.join(missing))
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = load_secret_key()
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
-    # HttpOnly is Flask's default. Lax keeps the cookie off cross-site POSTs.
+    settings = config.load_config()
+    # Signed session cookie: holds only the user id. HttpOnly keeps it from page scripts;
+    # Lax keeps it off cross-site POSTs; Secure (HTTPS only) is set from config.
+    app.config['SECRET_KEY'] = config.secret_key(settings)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=config.session_days(settings))
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-    # Set QUILL_SECURE_COOKIES=1 when served over HTTPS.
-    app.config['SESSION_COOKIE_SECURE'] = os.environ.get('QUILL_SECURE_COOKIES') == '1'
+    app.config['SESSION_COOKIE_SECURE'] = config.secure_cookies(settings)
     # Reject requests addressed to any other hostname, so a page using DNS rebinding
     # (a domain re-pointed at 127.0.0.1) can't reach the API. Ports are ignored; the
     # Vite proxy forwards the browser's localhost:5173 Host header unchanged.
@@ -53,23 +43,21 @@ def create_app():
     api = Blueprint('api', __name__, url_prefix='/api')
 
     @api.before_request
-    def limit_api():
+    def before_api_request():
         retry_after = ratelimit.hit('api', *API_LIMIT)
         if retry_after:
             return ratelimit.too_many(retry_after)
-        if request.endpoint in PUBLIC_ENDPOINTS:
-            return None
         conn = connect()
         try:
-            user = current_user(conn)
+            g.user = load_user(conn)
         finally:
             conn.close()
-        if user is None:
-            # Also drops a cookie left over from a deleted account.
+        if g.user is None and 'user_id' in session:
+            # A cookie left over from a deleted account.
             session.clear()
-            return error('Sign in first.', 401)
 
     for module in (setup, auth, users, campaigns, invites):
         api.register_blueprint(module.bp)
     app.register_blueprint(api)
+    check_access_declared(app)
     return app

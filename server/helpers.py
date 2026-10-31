@@ -1,7 +1,7 @@
 import re
 import uuid
 
-from flask import jsonify, request, session
+from flask import g, jsonify, request, session
 
 NAME_MAX_LENGTH = 64
 
@@ -30,13 +30,16 @@ def json_body():
     body = request.get_json(silent=True)
     return body if isinstance(body, dict) else None
 
-# The signed-in user from the session cookie, or None. There is no fallback user:
-# anyone not signed in only reaches the public routes listed in create_app.
-def current_user(conn):
+# The signed-in user from the session cookie, or None. There is no fallback user.
+# create_app loads it once per request into g.user; the access decorators read that.
+def load_user(conn):
     user_id = session.get('user_id')
     if not user_id:
         return None
     return conn.execute('SELECT * FROM users WHERE id = ? AND deleted_at IS NULL', (user_id,)).fetchone()
+
+def current_user(conn):
+    return g.user if 'user' in g else load_user(conn)
 
 def sign_in(user_id):
     session.clear()
