@@ -17,10 +17,63 @@ export interface characterDraft {
     name: string,
     species: string | null,
     speciesChoices: choicePicks,
+    // Character Sandbox only: the origin rules the player picked (a campaign's GM sets them).
+    originRules: Partial<originRules>,
     background: string | null,
     backgroundChoices: choicePicks,
     class: string | null,
     classChoices: choicePicks,
+    // null: the campaign's only method (see abilityRules).
+    abilityMethod: abilityMethod | null,
+    // Base scores by ability code ("STR"), before the background's increases.
+    abilityScores: Record<string, number>,
+    hpMethod: hpMethod | null,
+    // The hit die rolled at each level after the first, for the manual method.
+    hpRolls: number[],
+    details: characterDetails,
+}
+
+// A character's description; every field optional. Limits: server/rules/details.py.
+export interface characterDetails {
+    alignment?: string, faith?: string, lifestyle?: string,
+    gender?: string, age?: string, height?: string, weight?: string,
+    hair?: string, eyes?: string, skin?: string, appearance?: string,
+    personalityTraits?: string, ideals?: string, bonds?: string, flaws?: string,
+    organizations?: string, allies?: string, enemies?: string, backstory?: string, other?: string,
+}
+
+export interface originRules {
+    // The increases may go to any ability, and the skills and tool are picked.
+    customizeOrigin: boolean,
+    // background: the background's own feat; any: any Origin feat.
+    originFeat: 'background' | 'any',
+    // choice: the player picks a package; equipment / gold: that package for everyone.
+    startingEquipment: 'choice' | 'equipment' | 'gold',
+}
+
+export type abilityMethod = 'standardArray' | 'pointBuy' | 'roll' | 'manual' | 'sharedManual'
+export type hpMethod = 'automatic' | 'manual'
+
+// How ability scores and hit points may be set: the campaign's methods (every method in
+// the Character Sandbox) and the numbers each uses.
+export interface abilityRules {
+    // Every method, so the wizard can show them all; allowed* are the ones that may be used.
+    methods: abilityMethod[],
+    allowedMethods: abilityMethod[],
+    hpMethods: hpMethod[],
+    allowedHpMethods: hpMethod[],
+    standardArray: number[],
+    pointBuyBudget: number,
+    // Score ("8".."15") -> its point cost.
+    pointCosts: Record<string, number>,
+    sharedScores: number[],
+    manualRange: { min: number, max: number },
+}
+
+// One of the six ability rolls the server makes: 4d6, the lowest dropped.
+export interface abilityRoll {
+    dice: number[],
+    total: number,
 }
 
 // A feature an option brings with it, e.g. the spells of an elven lineage.
@@ -127,6 +180,18 @@ export interface characterOptions {
     species: speciesOption[],
     backgrounds: backgroundOption[],
     classes: classSummary[],
+    abilityRules: abilityRules,
+    // The origin rules in force: the campaign's, or the sandbox defaults.
+    originRules: originRules,
+    // True in a campaign: the rules are the GM's, shown but not changeable.
+    rulesLocked: boolean,
+}
+
+// The Character Sandbox's backgrounds under the origin rules the player picked.
+export function getBackgroundOptions(campaignId: string | null, rules: originRules): Promise<backgroundOption[]> {
+    return apiClient.get("/characters/options/backgrounds", {
+        params: { campaign: campaignId ?? 'sandbox', ...rules, customizeOrigin: String(rules.customizeOrigin) },
+    }).then(response => response.data);
 }
 
 // campaignId null means the Character Sandbox.
@@ -188,15 +253,34 @@ export interface draftError {
 // the draft already has. Other choices leave these out.
 export type takenOptions = Record<string, string>
 
+export interface abilitySummary {
+    // null until the score is set.
+    base: number | null,
+    // From the background.
+    bonus: number,
+    total: number | null,
+    modifier: number | null,
+}
+
+export interface hitPointSummary {
+    max: number,
+    // Hit points gained at each level, Constitution included.
+    perLevel: number[],
+    conModifier: number,
+    bonuses: { name: string, amount: number }[],
+}
+
 export interface draftCheck {
     // Every problem the server finds with the draft; empty when it can be created.
     errors: draftError[],
     taken: takenOptions,
+    // The scores with the background's increases, and hit points once they can be worked out.
+    summary: { abilities: Record<string, abilitySummary>, hitPoints: hitPointSummary | null },
 }
 
-// Saves nothing.
-export function validateCharacter(campaignId: string | null, draft: characterDraft): Promise<draftCheck> {
-    return apiClient.post("/characters/validate", { campaignId, ...draft }).then(response => response.data);
+// Saves nothing. draftId: the saved draft, whose ability rolls the roll method checks against.
+export function validateCharacter(campaignId: string | null, draft: characterDraft, draftId?: string | null): Promise<draftCheck> {
+    return apiClient.post("/characters/validate", { campaignId, draftId, ...draft }).then(response => response.data);
 }
 
 // Creates a Character Sandbox character: in no campaign, using all the content the

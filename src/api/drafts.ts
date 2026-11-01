@@ -1,4 +1,4 @@
-import type { characterDraft } from "./characters";
+import type { abilityRoll, characterDraft } from "./characters";
 import { apiClient } from "./client";
 
 // A character still being made, as home lists it. Names are null until chosen.
@@ -24,7 +24,8 @@ export function listDrafts(): Promise<draftSummary[]> {
     return apiClient.get("/drafts").then(response => response.data);
 }
 
-export function getDraft(id: string): Promise<savedDraft & { id: string }> {
+// rolls: the ability scores the server rolled for it, or null.
+export function getDraft(id: string): Promise<savedDraft & { id: string, rolls: abilityRoll[] | null }> {
     return apiClient.get(`/drafts/${id}`).then(response => response.data);
 }
 
@@ -35,6 +36,11 @@ export function createDraft(saved: savedDraft): Promise<string> {
 
 export function saveDraft(id: string, saved: savedDraft): Promise<void> {
     return apiClient.put(`/drafts/${id}`, saved).then(() => undefined);
+}
+
+// Rolls the draft's ability scores on the server. In a campaign, only once per draft.
+export function rollAbilities(id: string): Promise<abilityRoll[]> {
+    return apiClient.post(`/drafts/${id}/roll`).then(response => response.data.rolls);
 }
 
 export function deleteDraft(id: string): Promise<void> {

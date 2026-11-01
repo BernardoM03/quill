@@ -1,7 +1,10 @@
-import type { backgroundOption, characterChoice, choicePicks, featDetail, takenOptions } from '../../api/characters';
+import type {
+  backgroundOption, characterChoice, choicePicks, featDetail, originRules, takenOptions,
+} from '../../api/characters';
 import { AbilityIncreaseField } from './AbilityIncreaseField';
 import { activeChoices } from './activeChoices';
 import { ChoiceField, PickCarousel } from './PickCard';
+import { RuleSwitch } from './RuleSwitch';
 
 // Choice ids the server gives these, so the card can show them in their own sections.
 const FEAT_CHOICE = 'origin-feat';
@@ -11,7 +14,11 @@ const EQUIPMENT_CHOICE = 'starting-equipment';
 // shows what the background gives and asks for every choice it brings: ability score
 // increases, its Origin feat (and that feat's own choices), equipment and languages.
 // errorsFor(field): the server's messages for a field ('background', 'backgroundChoice:<id>').
-export function BackgroundStep({ options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
+// rules: the origin rules in force; locked in a campaign (the GM's), the player's in the sandbox.
+export function BackgroundStep({ rules, locked, onRuleChange, options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
+  rules: originRules;
+  locked: boolean;
+  onRuleChange: (changes: Partial<originRules>) => void;
   options: backgroundOption[];
   selected: string | null;
   choices: choicePicks;
@@ -20,8 +27,23 @@ export function BackgroundStep({ options, selected, choices, taken, onSelect, on
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];
 }) {
+  const only = <T extends string>(value: T) => (locked ? [value] : undefined);
+  const switches = (
+    <div className="rule-switches">
+      <RuleSwitch label="Ability increases & proficiencies" value={rules.customizeOrigin ? 'custom' : 'background'}
+        allowed={only(rules.customizeOrigin ? 'custom' : 'background')}
+        options={[{ value: 'background', label: 'Background’s' }, { value: 'custom', label: 'Customize' }]}
+        onChange={v => onRuleChange({ customizeOrigin: v === 'custom' })} />
+      <RuleSwitch label="Origin feat" value={rules.originFeat} allowed={only(rules.originFeat)}
+        options={[{ value: 'background', label: 'Background’s' }, { value: 'any', label: 'Any Origin Feat' }]}
+        onChange={originFeat => onRuleChange({ originFeat })} />
+      <RuleSwitch label="Starting equipment" value={rules.startingEquipment} allowed={only(rules.startingEquipment)}
+        options={[{ value: 'choice', label: 'Choose' }, { value: 'equipment', label: 'Equipment' }, { value: 'gold', label: 'Gold' }]}
+        onChange={startingEquipment => onRuleChange({ startingEquipment })} />
+    </div>
+  );
   if (options.length === 0) {
-    return <p className="muted">This campaign doesn’t allow any backgrounds yet. Ask your GM.</p>;
+    return <>{switches}<p className="muted">This campaign doesn’t allow any backgrounds yet. Ask your GM.</p></>;
   }
   const background = options.find(b => b.id === selected) ?? options[0];
   const byId = (id: string) => background.choices.find(c => c.id === id);
@@ -51,6 +73,7 @@ export function BackgroundStep({ options, selected, choices, taken, onSelect, on
 
   return (
     <>
+      {switches}
       <PickCarousel caption="Background" items={options} selected={background.id} onSelect={onSelect}>
         <header className="pick-card__header">
           <h2>{background.name}</h2>

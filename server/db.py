@@ -160,6 +160,11 @@ MIGRATIONS = [
     );
     CREATE INDEX character_drafts_owner ON character_drafts(owner_id);
     ''',
+    # 8: ability score rolls, made by the server and kept with the draft so a player can't
+    # roll again until they like the result. Saving the draft never touches them.
+    '''
+    ALTER TABLE character_drafts ADD COLUMN rolls TEXT CHECK (rolls IS NULL OR json_valid(rolls));
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
 import {
-    CHARACTER_NAME_MAX_LENGTH, createCharacter, createSandboxCharacter, getCharacterOptions, validateCharacter,
-    type characterDraft, type characterOptions, type draftError, type takenOptions,
+    createCharacter, createSandboxCharacter, getCharacterOptions, validateCharacter,
+    getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type draftCheck, type draftError, type takenOptions,
 } from "../api/characters";
-import { createDraft, getDraft, saveDraft } from "../api/drafts";
+import { createDraft, getDraft, rollAbilities, saveDraft } from "../api/drafts";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
+import { AbilitiesStep } from "../components/characterWizard/AbilitiesStep";
+import { DetailsStep } from "../components/characterWizard/DetailsStep";
 import { BackgroundStep } from "../components/characterWizard/BackgroundStep";
 import { ClassStep } from "../components/characterWizard/ClassStep";
 import { SpeciesStep } from "../components/characterWizard/SpeciesStep";
@@ -32,16 +34,22 @@ interface wizardDraft {
     species: string | null,
     // Choice id -> the picked option's key. Starts over when the species changes.
     speciesChoices: Record<string, string | string[]>,
+    originRules: characterDraft['originRules'],
     background: string | null,
     // Choice id -> the picked option's key. Starts over when the background changes.
     backgroundChoices: Record<string, string | string[]>,
     class: string | null,
     // Choice id -> the picked option's key. Starts over when the class changes.
     classChoices: Record<string, string | string[]>,
+    abilityMethod: characterDraft['abilityMethod'],
+    abilityScores: Record<string, number>,
+    hpMethod: characterDraft['hpMethod'],
+    hpRolls: number[],
+    details: characterDraft['details'],
     name: string,
 }
 
-type stepId = 'campaign' | 'species' | 'background' | 'class' | 'name'
+type stepId = 'campaign' | 'species' | 'background' | 'class' | 'abilities' | 'name'
 
 interface wizardStep {
     id: stepId,
@@ -52,34 +60,46 @@ const CAMPAIGN_STEP: wizardStep = { id: 'campaign', label: 'Campaign' }
 const SPECIES_STEP: wizardStep = { id: 'species', label: 'Species' }
 const BACKGROUND_STEP: wizardStep = { id: 'background', label: 'Background' }
 const CLASS_STEP: wizardStep = { id: 'class', label: 'Class' }
-const NAME_STEP: wizardStep = { id: 'name', label: 'Name' }
+const ABILITIES_STEP: wizardStep = { id: 'abilities', label: 'Abilities & HP' }
+const ABILITY_FIELDS = ['abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls']
+// The id stays 'name' so drafts saved on it reopen there.
+const NAME_STEP: wizardStep = { id: 'name', label: 'Details' }
 
 // Which step a server error field belongs to. 'campaign' errors belong to every step.
 function stepOf(field: string): stepId | 'all' {
     if (field === 'campaign') return 'all'
     if (field === 'species' || field.startsWith('choice:')) return 'species'
     if (field === 'background' || field.startsWith('backgroundChoice:')) return 'background'
+    if (ABILITY_FIELDS.includes(field)) return 'abilities'
     if (field === 'class' || field.startsWith('classChoice:')) return 'class'
     return 'name'
 }
 
 // Opened from a campaign, the campaign is already known; opened from home, it's the first step.
 function stepsFor(campaignInUrl: boolean): wizardStep[] {
-    return campaignInUrl ? [SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, NAME_STEP]
-        : [CAMPAIGN_STEP, SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, NAME_STEP]
+    return campaignInUrl ? [SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, ABILITIES_STEP, NAME_STEP]
+        : [CAMPAIGN_STEP, SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, ABILITIES_STEP, NAME_STEP]
 }
 
 const serverCampaign = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
 // The steps whose card fills the page, with their errors shown beside each field.
-const WIDE_STEPS: stepId[] = ['species', 'background', 'class']
+const WIDE_STEPS: stepId[] = ['species', 'background', 'class', 'abilities', 'name']
 
 // What the server checks, saves and creates from: the draft without the campaign.
 function characterFields(d: wizardDraft): characterDraft {
     return {
-        name: d.name, species: d.species, speciesChoices: d.speciesChoices,
+        name: d.name, species: d.species, speciesChoices: d.speciesChoices, originRules: d.originRules,
         background: d.background, backgroundChoices: d.backgroundChoices,
         class: d.class, classChoices: d.classChoices,
+        abilityMethod: d.abilityMethod, abilityScores: d.abilityScores, hpMethod: d.hpMethod, hpRolls: d.hpRolls,
+        details: d.details,
     }
+}
+
+// What a campaign's content decides; a new campaign starts these over.
+const FRESH_CHOICES = {
+    species: null, speciesChoices: {}, originRules: {}, background: null, backgroundChoices: {}, class: null, classChoices: {},
+    abilityMethod: null, abilityScores: {}, hpMethod: null, hpRolls: [],
 }
 
 // A step-by-step character creation wizard, at /campaigns/:campaignID/characters/new
@@ -103,15 +123,20 @@ export default function NewCharacter() {
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
     const [notFound, setNotFound] = useState(false)
     const [draft, setDraft] = useState<wizardDraft>({
-        campaignId: campaignID ?? '', species: null, speciesChoices: {}, background: null, backgroundChoices: {},
-        class: null, classChoices: {}, name: '',
+        campaignId: campaignID ?? '', ...FRESH_CHOICES, details: {}, name: '',
     })
     const [stepIndex, setStepIndex] = useState(0)
     // What the chosen campaign (or the sandbox) offers, from the server.
     const [options, setOptions] = useState<characterOptions | null>(null)
+    const [optionsFailed, setOptionsFailed] = useState(false)
+    // The sandbox's backgrounds under the player's own origin rules; null: those in options.
+    const [ruledBackgrounds, setRuledBackgrounds] = useState<backgroundOption[] | null>(null)
     // The server's verdict on the current draft.
     const [errors, setErrors] = useState<draftError[]>([])
     const [taken, setTaken] = useState<takenOptions>({})
+    const [summary, setSummary] = useState<draftCheck['summary'] | null>(null)
+    // The ability scores the server rolled for this draft, for the roll method.
+    const [rolls, setRolls] = useState<abilityRoll[] | null>(null)
     // A field's errors show once the player has changed it, or tried to leave its step.
     const [touched, setTouched] = useState<Set<string>>(new Set())
     const [attempted, setAttempted] = useState<Set<stepId>>(new Set())
@@ -126,6 +151,7 @@ export default function NewCharacter() {
         getDraft(draftId.current)
             .then(saved => {
                 setDraft(d => ({ ...d, ...saved.draft, campaignId: saved.campaignId ?? SANDBOX }))
+                setRolls(saved.rolls)
                 const index = stepsFor(Boolean(campaignID)).findIndex(s => s.id === saved.step)
                 if (index > 0) setStepIndex(index)
             })
@@ -165,17 +191,34 @@ export default function NewCharacter() {
                     ...(d.class || o.classes.length === 0 ? {} : { class: o.classes[0].id, classChoices: {} }),
                 }))
             })
-            .catch(() => current && setOptions({ level: 1, species: [], backgrounds: [], classes: [] }))
+            .catch(() => current && setOptionsFailed(true))
         return () => { current = false }
     }, [draft.campaignId])
 
+    // The origin rules in force: the campaign's, or in the sandbox the player's picks.
+    const originRules = options && (options.rulesLocked ? options.originRules : { ...options.originRules, ...draft.originRules })
+    const rulesKey = options && !options.rulesLocked && Object.keys(draft.originRules).length > 0
+        ? JSON.stringify(originRules) : null
+
+    // Backgrounds change with the sandbox's origin rules, so fetch them for the rules picked.
+    useEffect(() => {
+        if (!rulesKey) return
+        let current = true
+        getBackgroundOptions(null, JSON.parse(rulesKey))
+            .then(found => current && setRuledBackgrounds(found))
+            .catch(() => {})
+        return () => { current = false }
+    }, [rulesKey])
+    const backgrounds = rulesKey ? ruledBackgrounds : options?.backgrounds ?? null
+
     function check(next: wizardDraft): Promise<draftError[]> {
         const request = ++latestCheck.current
-        return validateCharacter(serverCampaign(next.campaignId), characterFields(next))
+        return validateCharacter(serverCampaign(next.campaignId), characterFields(next), draftId.current)
             .then(found => {
                 if (request === latestCheck.current) {
                     setErrors(found.errors)
                     setTaken(found.taken)
+                    setSummary(found.summary)
                 }
                 return found.errors
             })
@@ -232,14 +275,49 @@ export default function NewCharacter() {
     function update(changes: Partial<wizardDraft>, field?: string) {
         // What's allowed depends on the campaign, so a new campaign starts the species over.
         const newCampaign = changes.campaignId !== undefined && changes.campaignId !== draft.campaignId
-        if (newCampaign) setOptions(null)
+        if (newCampaign) {
+            setOptions(null)
+            setOptionsFailed(false)
+        }
         setDraft(d => ({
             ...d, ...changes,
-            ...(newCampaign ? { species: null, speciesChoices: {}, background: null, backgroundChoices: {}, class: null, classChoices: {} } : {}),
+            ...(newCampaign ? FRESH_CHOICES : {}),
         }))
+        if (newCampaign) setRolls(null)
         if (field) setTouched(t => new Set(t).add(field))
         setCampaignError(null)
         setSaveError(null)
+    }
+
+    // For the abilities step, which sets point buy's starting scores from an effect, so it
+    // needs a function that stays the same between renders.
+    const changeAbilities = useCallback((changes: Partial<wizardDraft>, field: string) => {
+        setDraft(d => ({ ...d, ...changes }))
+        setTouched(t => new Set(t).add(field))
+        setSaveError(null)
+    }, [])
+
+    // The draft must be saved before the server can roll for it; make it now if it isn't yet.
+    function ensureDraft(): Promise<string> {
+        if (draftId.current) return Promise.resolve(draftId.current)
+        if (!creatingDraft.current) {
+            creatingDraft.current = createDraft({
+                campaignId: serverCampaign(draft.campaignId), draft: characterFields(draft), step: step.id,
+            }).then(id => {
+                draftId.current = id
+                setSearchParams({ draft: id }, { replace: true })
+                return id
+            })
+        }
+        return creatingDraft.current
+    }
+
+    function rollScores() {
+        return ensureDraft().then(rollAbilities).then(found => {
+            setRolls(found)
+            // Check again with the new rolls.
+            setDraft(d => ({ ...d }))
+        })
     }
 
     function handleNext(e: React.SubmitEvent<HTMLFormElement>) {
@@ -292,6 +370,9 @@ export default function NewCharacter() {
     }
 
     const blocked = stepErrors.some(e => e.field === 'campaign')
+    const waiting = optionsFailed
+        ? <p className="setting-error">Couldn’t load what this campaign offers. Reload to try again.</p>
+        : <p className="muted">Loading…</p>
 
     return (
         <div className="page wizard">
@@ -347,11 +428,17 @@ export default function NewCharacter() {
                             update({ speciesChoices: { ...draft.speciesChoices, [id]: value } }, `choice:${id}`)}
                         errorsFor={errorsFor}
                     />
-                ) : <p className="muted">Loading…</p>)}
+                ) : waiting)}
 
-                {step.id === 'background' && (options ? (
+                {step.id === 'background' && (options && originRules && backgrounds ? (
                     <BackgroundStep
-                        options={options.backgrounds}
+                        rules={originRules}
+                        locked={options.rulesLocked}
+                        // A new rule changes what the background asks for, so its choices start over.
+                        onRuleChange={changes => update({
+                            originRules: { ...draft.originRules, ...changes }, backgroundChoices: {},
+                        }, 'background')}
+                        options={backgrounds}
                         selected={draft.background}
                         choices={draft.backgroundChoices}
                         taken={taken}
@@ -360,7 +447,7 @@ export default function NewCharacter() {
                             update({ backgroundChoices: { ...draft.backgroundChoices, [id]: value } }, `backgroundChoice:${id}`)}
                         errorsFor={errorsFor}
                     />
-                ) : <p className="muted">Loading…</p>)}
+                ) : waiting)}
 
                 {step.id === 'class' && (options ? (
                     <ClassStep
@@ -375,22 +462,31 @@ export default function NewCharacter() {
                             update({ classChoices: { ...draft.classChoices, [id]: value } }, `classChoice:${id}`)}
                         errorsFor={errorsFor}
                     />
-                ) : <p className="muted">Loading…</p>)}
+                ) : waiting)}
+
+                {step.id === 'abilities' && (options ? (
+                    <AbilitiesStep
+                        rules={options.abilityRules}
+                        level={options.level}
+                        hitDie={options.classes.find(c => c.id === draft.class)?.hitDie ?? null}
+                        fields={draft}
+                        rolls={rolls}
+                        canReroll={draft.campaignId === SANDBOX}
+                        summary={summary}
+                        onChange={changeAbilities}
+                        onRoll={rollScores}
+                        errorsFor={errorsFor}
+                    />
+                ) : waiting)}
 
                 {step.id === 'name' && (
-                    <div className="campaign-name">
-                        <span className="setting-caption">Character Name</span>
-                        <div className="campaign-name__form">
-                            <input
-                                className="campaign-name__input"
-                                aria-label="Character name"
-                                value={draft.name}
-                                maxLength={CHARACTER_NAME_MAX_LENGTH}
-                                autoFocus
-                                onChange={e => update({ name: e.target.value }, 'name')}
-                            />
-                        </div>
-                    </div>
+                    <DetailsStep
+                        name={draft.name}
+                        details={draft.details}
+                        onName={name => update({ name }, 'name')}
+                        onDetail={(key, value) => update({ details: { ...draft.details, [key]: value } }, `details:${key}`)}
+                        errorsFor={errorsFor}
+                    />
                 )}
 
                 {campaignError && <p className="campaign-name__error">{campaignError}</p>}

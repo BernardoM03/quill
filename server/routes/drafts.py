@@ -9,6 +9,7 @@ from server.helpers import NOW, error, json_body
 from server.ratelimit import limit
 from server.routes.characters import NoCampaign, creation_setting
 from server.rules import packs
+from server.rules.abilities import roll_scores
 
 bp = Blueprint('drafts', __name__)
 
@@ -16,7 +17,7 @@ bp = Blueprint('drafts', __name__)
 # against the rules (that happens on /characters/validate and on create); it only has to
 # be the right shape and size.
 DRAFT_MAX_BYTES = 32_000
-STEPS = {'campaign', 'species', 'background', 'class', 'name'}
+STEPS = {'campaign', 'species', 'background', 'class', 'abilities', 'name'}
 
 # The draft fields worth keeping from a body, or None if they're the wrong shape.
 def clean_draft(raw):
@@ -26,15 +27,23 @@ def clean_draft(raw):
         'name': raw.get('name') or '',
         'species': raw.get('species'),
         'speciesChoices': raw.get('speciesChoices') or {},
+        'originRules': raw.get('originRules') or {},
         'background': raw.get('background'),
         'backgroundChoices': raw.get('backgroundChoices') or {},
         'class': raw.get('class'),
         'classChoices': raw.get('classChoices') or {},
+        'abilityMethod': raw.get('abilityMethod'),
+        'abilityScores': raw.get('abilityScores') or {},
+        'hpMethod': raw.get('hpMethod'),
+        'hpRolls': raw.get('hpRolls') or [],
+        'details': raw.get('details') or {},
     }
     if not isinstance(draft['name'], str) or not all(
-            draft[k] is None or isinstance(draft[k], str) for k in ('species', 'background', 'class')):
+            draft[k] is None or isinstance(draft[k], str) for k in ('species', 'background', 'class', 'abilityMethod', 'hpMethod')):
         return None
     if not all(isinstance(draft[k], dict) for k in ('speciesChoices', 'backgroundChoices', 'classChoices')):
+        return None
+    if not isinstance(draft['abilityScores'], dict) or not isinstance(draft['hpRolls'], list)             or not isinstance(draft['originRules'], dict) or not isinstance(draft['details'], dict):
         return None
     if len(json.dumps(draft)) > DRAFT_MAX_BYTES:
         return None
@@ -128,7 +137,28 @@ def get_draft(draft_id):
         'campaignId': row['campaign_id'],
         'draft': json.loads(row['draft']),
         'step': row['step'],
+        'rolls': json.loads(row['rolls']) if row['rolls'] else None,
     }), 200
+
+# Rolls the draft's ability scores: 4d6 drop the lowest, six times. In a campaign that's
+# once per draft; in the Character Sandbox the player may roll again.
+@bp.post('/drafts/<draft_id>/roll')
+@require_login
+@limit('ability-roll', 60, 60 * 60)
+def roll_abilities(draft_id):
+    conn = connect()
+    try:
+        with conn:
+            row = own_draft(conn, draft_id)
+            if row is None:
+                return error('Draft not found', 404)
+            if row['rolls'] and row['campaign_id'] is not None:
+                return error('You’ve already rolled for this character.', 409)
+            rolls = roll_scores()
+            conn.execute('UPDATE character_drafts SET rolls = ? WHERE id = ?', (json.dumps(rolls), draft_id))
+    finally:
+        conn.close()
+    return jsonify({'rolls': rolls}), 200
 
 # Body as for POST. Replaces the draft with the wizard's current state.
 @bp.put('/drafts/<draft_id>')
@@ -137,14 +167,19 @@ def put_draft(draft_id):
     conn = connect()
     try:
         with conn:
-            if own_draft(conn, draft_id) is None:
+            row = own_draft(conn, draft_id)
+            if row is None:
                 return error('Draft not found', 404)
             campaign_id, draft, step = read_body(conn)
             if campaign_id is None and draft is None:
                 return step
+            # Rolls belong to where they were made: moving the draft (say, out of the
+            # sandbox, where rerolling is allowed) drops them.
+            moved = campaign_id != row['campaign_id']
             conn.execute(
-                f'UPDATE character_drafts SET campaign_id = ?, draft = ?, step = ?, updated_at = {NOW} WHERE id = ?',
-                (campaign_id, draft, step, draft_id),
+                f'UPDATE character_drafts SET campaign_id = ?, draft = ?, step = ?, updated_at = {NOW}, '
+                f'rolls = CASE WHEN ? THEN NULL ELSE rolls END WHERE id = ?',
+                (campaign_id, draft, step, moved, draft_id),
             )
     finally:
         conn.close()

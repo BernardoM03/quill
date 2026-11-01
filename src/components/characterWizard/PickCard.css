@@ -225,6 +225,137 @@
   cursor: default;
 }
 
+/* A rule's options (RuleSwitch); the ones a campaign rules out are greyed. */
+.rule-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.rule-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rule-switch .segmented {
+  flex-wrap: wrap;
+}
+
+.rule-switch .segmented button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ability-box__base {
+  min-width: 1.75rem;
+  text-align: center;
+  color: var(--text-h);
+}
+
+.ability-box__input {
+  width: 4rem;
+  padding: 0.2rem 0.3rem;
+  font: inherit;
+  text-align: center;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.ability-box__select {
+  min-width: 4rem;
+}
+
+.ability-box__total {
+  font-size: 18px;
+  color: var(--text-h);
+}
+
+.ability-box__bonus {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.ability-rolls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.ability-roll {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.hp-rolls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.hp-roll {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hp-total {
+  margin: 0.75rem 0 0;
+}
+
+.hp-total strong {
+  font-size: 22px;
+  color: var(--text-h);
+}
+
+/* The details step: short fields in a grid, long ones across it. */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.details-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.details-field--wide {
+  grid-column: 1 / -1;
+}
+
+.details-input,
+.details-textarea {
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.details-textarea {
+  resize: vertical;
+}
+
+.details-input:focus,
+.details-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 /* Narrow screens: arrows above the card instead of beside it, so the text keeps its width. */
 @media (max-width: 560px) {
   .ability-boxes {

@@ -7,13 +7,22 @@
 
 from server.helpers import NAME_MAX_LENGTH, clean_name
 from server.rules import packs
-from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS, EQUIPMENT_CHOICE, all_background_choices, background_detail
+from server.rules.abilities import (
+    ability_errors, final_scores, hit_points, hp_bonuses, hp_errors, hp_features, hp_method,
+)
+from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS, EQUIPMENT_CHOICE, ability_increases, all_background_choices, background_detail
 from server.rules.choices import Context, active, allowed_entries, choice_errors, resolve_choice
 from server.rules.classes import active_choices, all_choices, class_detail
+from server.rules.campaign import RULE_CHECKS
+from server.rules.details import details_errors
 from server.rules.problems import campaign_problems
 from server.rules.settings import starting_level, with_rule_defaults
 
 SIZE_CHOICE_PREFIX = '$choice:'
+
+# Origin rules a Character Sandbox player picks for themselves (a campaign's GM sets them).
+# The ability score and hit point methods are picked the same way, as draft fields of their own.
+PLAYER_RULES = ('customizeOrigin', 'originFeat', 'startingEquipment')
 
 class Setting:
     def __init__(self, allowed_content, stored_rules):
@@ -21,6 +30,19 @@ class Setting:
         self.rules = with_rule_defaults(stored_rules)
         # A new character's level: the campaign's milestone level, else 1.
         self.level = starting_level(self.rules)
+        self.sandbox = allowed_content is None
+
+    # The setting with a sandbox draft's own origin rules (originRules) applied. A campaign's
+    # rules are its GM's, so there it's unchanged.
+    def for_draft(self, draft):
+        chosen = draft.get('originRules') if isinstance(draft, dict) else None
+        if not self.sandbox or not isinstance(chosen, dict):
+            return self
+        return Setting(None, {k: v for k, v in chosen.items() if k in PLAYER_RULES and RULE_CHECKS[k](v)})
+
+    # The origin rules in force, for the wizard and the saved sheet.
+    def origin_rules(self):
+        return {k: self.rules[k] for k in PLAYER_RULES}
 
 def allowed_species(setting):
     return allowed_entries('species', setting.allowed)
@@ -141,12 +163,16 @@ def _taken(sections):
 # draft: {name, species, speciesChoices, background, backgroundChoices, class, classChoices};
 # choices map choice id -> key(s). Fields: 'campaign', 'species', 'choice:<id>', 'background',
 # 'backgroundChoice:<id>', 'class', 'classChoice:<id>', 'name'.
-def validate_draft(draft, setting):
-    return check_draft(draft, setting)['errors']
+def validate_draft(draft, setting, rolls=None):
+    return check_draft(draft, setting, rolls)['errors']
 
 # validate_draft's errors, plus taken: {option key: field} for each once-only proficiency
-# the draft has picked, so the wizard can leave it out of every other choice.
-def check_draft(draft, setting):
+# the draft has picked, so the wizard can leave it out of every other choice; and summary:
+# the final ability scores and hit points as far as they can be worked out yet.
+# rolls: the draft's server-rolled ability scores, for the roll method (None if not rolled).
+# Fields also include 'abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls', 'details:<key>'.
+def check_draft(draft, setting, rolls=None):
+    setting = setting.for_draft(draft)
     errors = []
     sections = []
     if setting.allowed is not None:
@@ -196,13 +222,24 @@ def check_draft(draft, setting):
         errors.extend(choice_errors(draft.get('classChoices'), class_choices, 'classChoice:', 'class',
                                     proficient=proficient, known={c['id'] for c in all_choices(detail)}))
 
+    errors.extend(ability_errors(draft, setting, rolls))
+    increase = (draft.get('backgroundChoices') or {}).get(ABILITY_CHOICE) if isinstance(draft.get('backgroundChoices'), dict) else None
+    scores = final_scores(draft.get('abilityScores'), ability_increases(increase) or {} if isinstance(increase, str) else {})
+    cls = packs.collection('classes').get(draft.get('class')) if isinstance(draft.get('class'), str) else None
+    hit_die = cls.get('hitDie') if cls else None
+    class_picks = draft.get('classChoices') if isinstance(draft.get('classChoices'), dict) else {}
+    errors.extend(hp_errors(draft, setting, hit_die))
+    hp = hit_points(hit_die, setting.level, scores['CON']['modifier'], hp_method(draft, setting), draft.get('hpRolls'),
+                    hp_bonuses(hp_features(draft.get('species'), class_picks.get('subclass')), setting.level))
+
     taken, repeats = _taken(sections)
     flagged = {e['field'] for e in errors}
     errors.extend(e for e in repeats if e['field'] not in flagged)
 
+    errors.extend(details_errors(draft.get('details')))
     name = draft.get('name')
     if not isinstance(name, str) or not name.strip():
         errors.append(_error('name', 'Give your character a name.'))
     elif clean_name(name) is None:
         errors.append(_error('name', f'Name must be 1-{NAME_MAX_LENGTH} characters, with no control characters.'))
-    return {'errors': errors, 'taken': taken}
+    return {'errors': errors, 'taken': taken, 'summary': {'abilities': scores, 'hitPoints': hp}}

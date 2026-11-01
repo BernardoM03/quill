@@ -10,9 +10,11 @@ from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
 from server.rules.characters import (
     Setting, allowed_backgrounds, allowed_classes, allowed_species, background_detail_for, check_draft, class_detail_for,
-    kept_background_choices, kept_class_choices, species_detail, validate_draft,
+    kept_background_choices, kept_class_choices, species_detail,
 )
+from server.rules.abilities import ability_rules, hp_method
 from server.rules.classes import class_summary
+from server.rules.details import clean_details
 
 bp = Blueprint('characters', __name__)
 
@@ -34,6 +36,14 @@ def creation_setting(conn, campaign_id):
         raise NoCampaign()
     settings = json.loads(row['settings'])
     return Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
+
+# The ability score rolls kept with one of the signed-in player's drafts, or None.
+def draft_rolls(conn, draft_id):
+    if not isinstance(draft_id, str):
+        return None
+    row = conn.execute('SELECT rolls FROM character_drafts WHERE id = ? AND owner_id = ?',
+                       (draft_id, g.user['id'])).fetchone()
+    return json.loads(row['rolls']) if row and row['rolls'] else None
 
 def setting_from_query():
     campaign = request.args.get('campaign')
@@ -60,7 +70,26 @@ def get_options():
         'species': [species_detail(s, setting) for s in allowed_species(setting)],
         'backgrounds': [background_detail_for(b['id'], setting) for b in allowed_backgrounds(setting)],
         'classes': [class_summary(c) for c in allowed_classes(setting)],
+        'abilityRules': ability_rules(setting),
+        # The origin rules, and whether they're the campaign's (locked) or the player's to pick.
+        'originRules': setting.origin_rules(),
+        'rulesLocked': not setting.sandbox,
     }), 200
+
+# ?campaign=... as above, plus in the sandbox the player's origin rules (customizeOrigin=true,
+# originFeat=any, startingEquipment=gold). Every allowed background under those rules.
+@bp.get('/characters/options/backgrounds')
+@require_login
+def get_background_options():
+    setting, problem = setting_from_query()
+    if problem:
+        return problem
+    args = request.args
+    chosen = {k: args[k] for k in ('originFeat', 'startingEquipment') if k in args}
+    if 'customizeOrigin' in args:
+        chosen['customizeOrigin'] = args['customizeOrigin'] == 'true'
+    setting = setting.for_draft({'originRules': chosen})
+    return jsonify([background_detail_for(b['id'], setting) for b in allowed_backgrounds(setting)]), 200
 
 # ?campaign=... as above. One class in full at the starting level: features, choices, subclasses.
 @bp.get('/characters/options/classes/<path:class_id>')
@@ -85,11 +114,12 @@ def validate_character():
     conn = connect()
     try:
         setting = creation_setting(conn, draft.get('campaignId'))
+        rolls = draft_rolls(conn, draft.get('draftId'))
     except NoCampaign:
         return error('Campaign not found', 404)
     finally:
         conn.close()
-    return jsonify(check_draft(draft, setting)), 200
+    return jsonify(check_draft(draft, setting, rolls)), 200
 
 # Checks the body and saves the character. campaign_id None makes a sandbox character, which
 # is never active; in a campaign, the player's first character there becomes active.
@@ -100,12 +130,14 @@ def create(campaign_id):
     try:
         with conn:
             try:
-                setting = creation_setting(conn, campaign_id)
+                setting = creation_setting(conn, campaign_id).for_draft(draft)
             except NoCampaign:
                 return error('Only members of this campaign can create characters in it.', 403)
-            errors = validate_draft(draft, setting)
+            result = check_draft(draft, setting, draft_rolls(conn, draft.get('draftId')))
+            errors = result['errors']
             if errors:
                 return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
+            summary = result['summary']
             name = clean_name(draft['name'])
             has_active = campaign_id is None or conn.execute(
                 'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
@@ -119,10 +151,18 @@ def create(campaign_id):
                      'level': setting.level,
                      'species': draft['species'],
                      'speciesChoices': draft.get('speciesChoices') or {},
+                     'originRules': setting.origin_rules(),
                      'background': draft['background'],
                      'backgroundChoices': kept_background_choices(draft, setting),
                      'class': draft['class'],
                      'classChoices': kept_class_choices(draft, setting),
+                     'abilityMethod': draft.get('abilityMethod') or ability_rules(setting)['methods'][0],
+                     # Base scores as assigned; abilities has them with the background's increases.
+                     'abilityScores': draft['abilityScores'],
+                     'abilities': {a: s['total'] for a, s in summary['abilities'].items()},
+                     'hpMethod': hp_method(draft, setting),
+                     'hitPoints': summary['hitPoints'],
+                     'details': clean_details(draft.get('details')),
                  }),
                  0 if has_active else 1),
             )
