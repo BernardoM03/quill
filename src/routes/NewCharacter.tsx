@@ -11,6 +11,7 @@ import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
 import { AbilitiesStep } from "../components/characterWizard/AbilitiesStep";
 import { DetailsStep } from "../components/characterWizard/DetailsStep";
+import { StepIcon } from "../components/characterWizard/StepIcon";
 import { BackgroundStep } from "../components/characterWizard/BackgroundStep";
 import { ClassStep } from "../components/characterWizard/ClassStep";
 import { SpeciesStep } from "../components/characterWizard/SpeciesStep";
@@ -26,7 +27,7 @@ const VALIDATE_DELAY_MS = 250
 const SAVE_DELAY_MS = 800
 
 // Everything the wizard collects. Each later step (ability scores, ...) adds its
-// fields here and a step to stepsFor below. What each step offers, and whether the draft
+// fields here and a step to STEPS below. What each step offers, and whether the draft
 // is valid, comes from the server (server/rules/characters.py).
 interface wizardDraft {
     // A campaign id, SANDBOX, or '' while nothing is chosen.
@@ -75,11 +76,9 @@ function stepOf(field: string): stepId | 'all' {
     return 'name'
 }
 
-// Opened from a campaign, the campaign is already known; opened from home, it's the first step.
-function stepsFor(campaignInUrl: boolean): wizardStep[] {
-    return campaignInUrl ? [SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, ABILITIES_STEP, NAME_STEP]
-        : [CAMPAIGN_STEP, SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, ABILITIES_STEP, NAME_STEP]
-}
+// Every step, always shown in the bar. Campaign is greyed out when the campaign is already
+// decided (opened from a campaign, or editing a character), and the wizard starts after it.
+const STEPS: wizardStep[] = [CAMPAIGN_STEP, SPECIES_STEP, BACKGROUND_STEP, CLASS_STEP, ABILITIES_STEP, NAME_STEP]
 
 const serverCampaign = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
 // The steps whose card fills the page, with their errors shown beside each field.
@@ -124,14 +123,15 @@ export default function NewCharacter() {
     const [saveState, setSaveState] = useState<'saved' | 'saving' | 'failed' | null>(null)
     // Set once the character is created, so no save brings the draft back.
     const finished = useRef(false)
-    const steps = stepsFor(Boolean(campaignID) || editing)
+    const steps = STEPS
+    const campaignFixed = Boolean(campaignID) || editing
     // The campaigns a character can be made in: the one in the URL, or the user's memberships.
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
     const [notFound, setNotFound] = useState(false)
     const [draft, setDraft] = useState<wizardDraft>({
         campaignId: campaignID ?? '', ...FRESH_CHOICES, details: {}, name: '',
     })
-    const [stepIndex, setStepIndex] = useState(0)
+    const [stepIndex, setStepIndex] = useState(() => (campaignID || characterID ? 1 : 0))
     // What the chosen campaign (or the sandbox) offers, from the server.
     const [options, setOptions] = useState<characterOptions | null>(null)
     const [optionsFailed, setOptionsFailed] = useState(false)
@@ -164,9 +164,8 @@ export default function NewCharacter() {
                 setRolls(c.rolls)
                 setCharacterLevel(c.level)
                 setCampaigns(c.campaignId ? [{ id: c.campaignId, name: c.campaignName ?? '' }] : [])
-                const editSteps = stepsFor(true)
-                setAttempted(new Set(editSteps.map(s => s.id)))
-                const first = editSteps.findIndex(s => c.problems.some(p => stepOf(p.field) === s.id))
+                setAttempted(new Set(STEPS.map(s => s.id)))
+                const first = STEPS.findIndex(s => c.problems.some(p => stepOf(p.field) === s.id))
                 if (first > 0) setStepIndex(first)
                 setLoaded(true)
             })
@@ -179,7 +178,7 @@ export default function NewCharacter() {
             .then(saved => {
                 setDraft(d => ({ ...d, ...saved.draft, campaignId: saved.campaignId ?? SANDBOX }))
                 setRolls(saved.rolls)
-                const index = stepsFor(Boolean(campaignID)).findIndex(s => s.id === saved.step)
+                const index = STEPS.findIndex(s => s.id === saved.step)
                 if (index > 0) setStepIndex(index)
             })
             // Gone (created, deleted, or left the campaign): start a fresh one.
@@ -267,7 +266,7 @@ export default function NewCharacter() {
             const saved = {
                 campaignId: serverCampaign(draft.campaignId),
                 draft: characterFields(draft),
-                step: stepsFor(Boolean(campaignID))[stepIndex].id,
+                step: STEPS[stepIndex].id,
             }
             setSaveState('saving')
             let save: Promise<unknown>
@@ -428,18 +427,36 @@ export default function NewCharacter() {
                 </span>
             )}
 
-            <ol className="wizard__steps" aria-label="Steps">
-                {steps.map((s, i) => (
-                    <li key={s.id} className={i === stepIndex ? 'wizard__step wizard__step--current' : i < stepIndex ? 'wizard__step wizard__step--done' : 'wizard__step'}>
-                        {/* Any step can be opened, once there's a campaign to build for. */}
-                        <button type="button" className="wizard__step-button" aria-current={i === stepIndex ? 'step' : undefined}
-                            disabled={saving || (s.id !== 'campaign' && !draft.campaignId)}
-                            onClick={() => setStepIndex(i)}>
-                            <span className="wizard__step-number">{i + 1}</span> {s.label}
-                        </button>
-                    </li>
-                ))}
-            </ol>
+            <nav className="wizard__progress" aria-label="Steps">
+                <ol className="wizard__steps">
+                    {steps.map((s, i) => {
+                        const locked = s.id === 'campaign' ? campaignFixed : !draft.campaignId
+                        // Done: been there and nothing wrong with it. Anything else keeps its number.
+                        const problems = errors.some(e => stepOf(e.field) === s.id || stepOf(e.field) === 'all')
+                        const visited = i < stepIndex || attempted.has(s.id)
+                        const state = i === stepIndex ? 'current'
+                            : (s.id === 'campaign' && campaignFixed) || (visited && !problems) ? 'done'
+                            : 'todo'
+                        return (
+                            <li key={s.id} className={`wizard__step wizard__step--${state}`}
+                                title={s.id === 'campaign' && campaignFixed ? 'The campaign is already decided.' : undefined}>
+                                <button type="button" className="wizard__step-button"
+                                    aria-current={i === stepIndex ? 'step' : undefined}
+                                    disabled={saving || locked}
+                                    onClick={() => setStepIndex(i)}>
+                                    <span className="wizard__step-number" aria-hidden="true">{state === 'done' ? '✓' : i + 1}</span>
+                                    <StepIcon step={s.id} />
+                                    <span className="wizard__step-label">{s.label}</span>
+                                </button>
+                            </li>
+                        )
+                    })}
+                </ol>
+                {/* Fills to the current step. */}
+                <div className="wizard__progress-track" aria-hidden="true">
+                    <div className="wizard__progress-fill" style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }} />
+                </div>
+            </nav>
 
             <form className={WIDE_STEPS.includes(step.id) ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
                 {step.id === 'campaign' && campaigns && (
@@ -543,7 +560,7 @@ export default function NewCharacter() {
                 {saveError && <p className="campaign-name__error">{saveError}</p>}
 
                 <div className="wizard__actions">
-                    {stepIndex > 0 && (
+                    {stepIndex > (campaignFixed ? 1 : 0) && (
                         <button type="button" className="setting-button setting-button--quiet" disabled={saving}
                             onClick={() => setStepIndex(i => i - 1)}>
                             Back
