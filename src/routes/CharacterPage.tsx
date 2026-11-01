@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router";
 
 import { deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
 import BackButton from "../components/BackButton";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
 import { loadImage } from "../components/portrait/makePortrait";
 import { PortraitCropper } from "../components/portrait/PortraitCropper";
@@ -20,10 +21,11 @@ function errorMessage(err: unknown, fallback: string): string {
 export default function CharacterPage() {
     const { characterID = '' } = useParams();
     const [character, setCharacter] = useState<characterSummary | null | undefined>(undefined)
-    const [busy, setBusy] = useState(false)
     const [error, setError] = useState<string | null>(null)
     // The picked image while the player frames it.
     const [picked, setPicked] = useState<ImageBitmap | null>(null)
+    // True while the "Remove this portrait?" dialog is open.
+    const [confirmingRemove, setConfirmingRemove] = useState(false)
     const fileInput = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -55,13 +57,9 @@ export default function CharacterPage() {
         setPicked(null)
     }
 
+    // Called by the confirm dialog. A rejection keeps it open and shows the reason there.
     function handleRemove() {
-        setBusy(true)
-        setError(null)
-        deletePortrait(characterID)
-            .then(() => setVersion(null))
-            .catch(err => setError(errorMessage(err, 'Could not remove the portrait.')))
-            .finally(() => setBusy(false))
+        return deletePortrait(characterID).then(() => setVersion(null))
     }
 
     if (character === undefined) return <div className="page" />
@@ -97,13 +95,14 @@ export default function CharacterPage() {
                 <p className="setting-hint">
                     You’ll frame it as a square after choosing an image. Large photos are shrunk before uploading.
                 </p>
+                <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />
                 <div className="character-portrait__actions">
-                    <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />
-                    <button type="button" className="setting-button" disabled={busy} onClick={() => fileInput.current?.click()}>
-                        {busy ? 'Working…' : character.portraitVersion ? 'Replace Portrait' : 'Upload Portrait'}
+                    <button type="button" className="setting-button" onClick={() => fileInput.current?.click()}>
+                        {character.portraitVersion ? 'Replace Portrait' : 'Upload Portrait'}
                     </button>
                     {character.portraitVersion && (
-                        <button type="button" className="setting-button setting-button--quiet" disabled={busy} onClick={handleRemove}>
+                        <button type="button" className="setting-button setting-button--quiet"
+                            onClick={() => { setError(null); setConfirmingRemove(true) }}>
                             Remove
                         </button>
                     )}
@@ -111,6 +110,18 @@ export default function CharacterPage() {
                 {error && <p className="setting-error">{error}</p>}
             </div>
             {picked && <PortraitCropper image={picked} onConfirm={handleCropped} onClose={handleCropperClosed} />}
+            {confirmingRemove && (
+                <ConfirmDialog
+                    title="Remove this portrait?"
+                    confirmLabel="Remove"
+                    busyLabel="Removing…"
+                    danger
+                    onConfirm={handleRemove}
+                    onClose={() => setConfirmingRemove(false)}
+                >
+                    <p>{character.name} will show their initial instead. You can upload a new portrait any time.</p>
+                </ConfirmDialog>
+            )}
         </div>
     )
 }
