@@ -227,6 +227,11 @@ export default function CampaignSettings() {
                         allowed={campaignDetails.allowedContent.species ?? null}
                         onChange={ids => handleAllowedChange('species', ids)}
                     />
+                    <CollectionSettings
+                        collection="origins" caption="Allowed Backgrounds" noun="backgrounds" requireOne
+                        allowed={campaignDetails.allowedContent.origins ?? null}
+                        onChange={ids => handleAllowedChange('origins', ids)}
+                    />
                     <ClassSettings
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}
                         allowedSubclasses={campaignDetails.allowedContent.subclasses ?? null}

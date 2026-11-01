@@ -9,8 +9,8 @@ from server.db import connect
 from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
 from server.rules.characters import (
-    Setting, allowed_classes, allowed_species, check_draft, class_detail_for, kept_class_choices, species_detail,
-    validate_draft,
+    Setting, allowed_backgrounds, allowed_classes, allowed_species, background_detail_for, check_draft, class_detail_for,
+    kept_background_choices, kept_class_choices, species_detail, validate_draft,
 )
 from server.rules.classes import class_summary
 
@@ -48,7 +48,7 @@ def setting_from_query():
         conn.close()
 
 # ?campaign=<id> or ?campaign=sandbox. What the creation wizard may offer: the level a new
-# character starts at, every allowed species in full, and the allowed classes in brief.
+# character starts at, every allowed species and background in full, and the allowed classes in brief.
 @bp.get('/characters/options')
 @require_login
 def get_options():
@@ -58,6 +58,7 @@ def get_options():
     return jsonify({
         'level': setting.level,
         'species': [species_detail(s, setting) for s in allowed_species(setting)],
+        'backgrounds': [background_detail_for(b['id'], setting) for b in allowed_backgrounds(setting)],
         'classes': [class_summary(c) for c in allowed_classes(setting)],
     }), 200
 
@@ -72,7 +73,8 @@ def get_class_option(class_id):
         return error('Class not found', 404)
     return jsonify(class_detail_for(class_id, setting)), 200
 
-# Body: {campaignId (null for the sandbox), name, species, speciesChoices, class, classChoices}.
+# Body: {campaignId (null for the sandbox), name, species, speciesChoices, background, backgroundChoices,
+# class, classChoices}.
 # Returns {errors: [{field, message}], taken: {optionKey: field}}: errors is empty when the draft can
 # be created; taken is each skill, tool and language already picked, and which choice picked it,
 # so the wizard leaves it out of the other choices. Doesn't save anything.
@@ -117,6 +119,8 @@ def create(campaign_id):
                      'level': setting.level,
                      'species': draft['species'],
                      'speciesChoices': draft.get('speciesChoices') or {},
+                     'background': draft['background'],
+                     'backgroundChoices': kept_background_choices(draft, setting),
                      'class': draft['class'],
                      'classChoices': kept_class_choices(draft, setting),
                  }),
@@ -129,14 +133,14 @@ def create(campaign_id):
         conn.close()
     return jsonify({'id': character_id, 'name': name, 'isActive': not has_active}), 201
 
-# Body: {name, species, speciesChoices, class, classChoices}. A Character Sandbox character: in no campaign, owned by the
+# Body: {name, species, speciesChoices, background, backgroundChoices, class, classChoices}. A Character Sandbox character: in no campaign, owned by the
 # signed-in user alone, built from all the content the server has with the default rules.
 @bp.post('/sandbox/characters')
 @require_login
 def create_sandbox_character():
     return create(None)
 
-# Body: {name, species, speciesChoices, class, classChoices}. A character owned by the signed-in user in this campaign.
+# Body: {name, species, speciesChoices, background, backgroundChoices, class, classChoices}. A character owned by the signed-in user in this campaign.
 @bp.post('/campaigns/<campaign_id>/characters')
 @require_member
 def create_character(campaign_id):

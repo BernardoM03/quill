@@ -16,7 +16,7 @@ bp = Blueprint('drafts', __name__)
 # against the rules (that happens on /characters/validate and on create); it only has to
 # be the right shape and size.
 DRAFT_MAX_BYTES = 32_000
-STEPS = {'campaign', 'species', 'class', 'name'}
+STEPS = {'campaign', 'species', 'background', 'class', 'name'}
 
 # The draft fields worth keeping from a body, or None if they're the wrong shape.
 def clean_draft(raw):
@@ -26,13 +26,15 @@ def clean_draft(raw):
         'name': raw.get('name') or '',
         'species': raw.get('species'),
         'speciesChoices': raw.get('speciesChoices') or {},
+        'background': raw.get('background'),
+        'backgroundChoices': raw.get('backgroundChoices') or {},
         'class': raw.get('class'),
         'classChoices': raw.get('classChoices') or {},
     }
     if not isinstance(draft['name'], str) or not all(
-            draft[k] is None or isinstance(draft[k], str) for k in ('species', 'class')):
+            draft[k] is None or isinstance(draft[k], str) for k in ('species', 'background', 'class')):
         return None
-    if not all(isinstance(draft[k], dict) for k in ('speciesChoices', 'classChoices')):
+    if not all(isinstance(draft[k], dict) for k in ('speciesChoices', 'backgroundChoices', 'classChoices')):
         return None
     if len(json.dumps(draft)) > DRAFT_MAX_BYTES:
         return None

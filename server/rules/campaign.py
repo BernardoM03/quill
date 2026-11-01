@@ -75,6 +75,6 @@ def validate_campaign_patch(content):
             ):
                 return f'ids must be null or a list of at most {ALLOWED_IDS_MAX} strings.'
             # A campaign with no species or no classes can't make characters.
-            if collection in ('species', 'classes') and ids == []:
+            if collection in ('species', 'origins', 'classes') and ids == []:
                 return f'At least one entry in {collection} must stay allowed.'
     return None

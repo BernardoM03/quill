@@ -2,7 +2,7 @@
 # every choice those bring, including the subclass once the level reaches it.
 
 from server.rules import packs
-from server.rules.choices import ABILITY_NAMES, Context, allowed_entries, choice_refs, option, resolve_choice
+from server.rules.choices import ABILITY_NAMES, Context, active, allowed_entries, choice_refs, option, resolve_choice
 
 SUBCLASS_CHOICE = 'subclass'
 
@@ -183,13 +183,6 @@ def all_choices(detail):
     everything += [c for s in detail['subclasses'] for f in s['features'] for c in f['choices']]
     return everything
 
-# The choices that apply given the picks so far: those without a condition, and those whose
-# condition (subclass, or an option of another choice) has been picked.
+# The choices that apply given the picks so far (see choices.active).
 def active_choices(detail, picks):
-    def on(choice):
-        condition = choice.get('condition')
-        if not condition:
-            return True
-        picked = picks.get(condition['choice'])
-        return condition['option'] == picked or (isinstance(picked, list) and condition['option'] in picked)
-    return [c for c in all_choices(detail) if on(c)]
+    return active(all_choices(detail), picks)

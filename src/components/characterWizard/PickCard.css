@@ -167,8 +167,70 @@
   font-weight: 500;
 }
 
+/* A background's ability score increases: one box per ability, six across. */
+.ability-boxes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.ability-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.ability-box--locked {
+  opacity: 0.4;
+}
+
+.ability-box__code {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.ability-box__amount {
+  font-size: 20px;
+  color: var(--text-h);
+}
+
+.ability-box__buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.ability-box__buttons button {
+  width: 1.75rem;
+  height: 1.5rem;
+  padding: 0;
+  font: inherit;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.ability-box__buttons button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ability-box__buttons button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 /* Narrow screens: arrows above the card instead of beside it, so the text keeps its width. */
 @media (max-width: 560px) {
+  .ability-boxes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .pick-card-row {
     flex-wrap: wrap;
   }

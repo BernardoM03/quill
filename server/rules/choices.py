@@ -195,6 +195,17 @@ def resolve_choice(choice, context, count=None):
         'proficientOnly': proficient_only(choice, options),
     }
 
+# The choices that apply given the picks so far: those without a condition, and those whose
+# condition (an option of another choice, e.g. a subclass or an Origin feat) has been picked.
+def active(choices, picks):
+    def on(choice):
+        condition = choice.get('condition')
+        if not condition:
+            return True
+        picked = picks.get(condition['choice'])
+        return condition['option'] == picked or (isinstance(picked, list) and condition['option'] in picked)
+    return [c for c in choices if on(c)]
+
 def choice_refs(value):
     # The choice ids an item's effects read: "$choice:thaumaturge-cantrip" -> thaumaturge-cantrip.
     return set(re.findall(r'\$choice:([A-Za-z0-9_-]+)', repr(value)))

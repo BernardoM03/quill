@@ -17,6 +17,8 @@ export interface characterDraft {
     name: string,
     species: string | null,
     speciesChoices: choicePicks,
+    background: string | null,
+    backgroundChoices: choicePicks,
     class: string | null,
     classChoices: choicePicks,
 }
@@ -45,6 +47,12 @@ export interface characterChoice {
     proficientOnly?: boolean,
     // Only asked once this option of that choice is picked (Thaumaturge -> an extra cantrip).
     condition?: { choice: string, option: string },
+    // 'abilityIncrease': a background's increases, shown as one box per ability. Then
+    // abilities (codes like "WIS") may be raised, points are spent in all, at most max on one.
+    kind?: 'abilityIncrease',
+    abilities?: string[],
+    points?: number,
+    max?: number,
 }
 
 export interface speciesTrait {
@@ -68,6 +76,43 @@ export interface speciesOption {
     traits: speciesTrait[],
 }
 
+// An Origin feat, with what it does.
+export interface featDetail {
+    id: string,
+    name: string,
+    effects: { name: string, description: string }[],
+}
+
+export interface equipmentPackage {
+    // "A", "B": what's stored when it's picked.
+    label: string,
+    items: string[],
+}
+
+// A background (the packs' "origins") and the choices it asks for, as the campaign's rules have them.
+export interface backgroundOption {
+    id: string,
+    name: string,
+    description: string,
+    // The abilities its increases go to (any ability when the campaign customizes origins).
+    abilityScores: string[],
+    // Given outright, by name.
+    skills: string[],
+    tools: string[],
+    languages: string[],
+    // The background's own feat; null when the player picks any Origin feat instead.
+    feat: featDetail | null,
+    // When the player picks: every Origin feat on offer, to show the one picked.
+    originFeats: featDetail[],
+    equipment: equipmentPackage[],
+    // The package the campaign gives everyone; null when the player picks one.
+    givenEquipment: string | null,
+    // Ability increases, tool, Origin feat, equipment and languages, where they're picked.
+    choices: characterChoice[],
+    // The Origin feat's own choices (Magic Initiate's spells).
+    featChoices: characterChoice[],
+}
+
 export interface classSummary {
     id: string,
     name: string,
@@ -80,6 +125,7 @@ export interface characterOptions {
     // The level a new character starts at: the campaign's milestone level, else 1.
     level: number,
     species: speciesOption[],
+    backgrounds: backgroundOption[],
     classes: classSummary[],
 }
 
@@ -132,7 +178,7 @@ export function getClassOption(campaignId: string | null, classId: string): Prom
 }
 
 // field: which part of the draft it's about: 'campaign', 'species', 'choice:<id>' (species
-// choices), 'class', 'classChoice:<id>', 'name'.
+// choices), 'background', 'backgroundChoice:<id>', 'class', 'classChoice:<id>', 'name'.
 export interface draftError {
     field: string,
     message: string,

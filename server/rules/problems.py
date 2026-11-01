@@ -23,6 +23,8 @@ def campaign_problems(allowed_content):
     problems = []
     if not allowed_ids(allowed_content, 'species', species):
         problems.append('No species are allowed.')
+    if not allowed_ids(allowed_content, 'origins', packs.collection('origins')):
+        problems.append('No backgrounds are allowed.')
 
     allowed_classes = allowed_ids(allowed_content, 'classes', classes)
     if not allowed_classes:
