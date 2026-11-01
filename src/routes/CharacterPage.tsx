@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
-import { deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
+import { deleteCharacter, deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
 import BackButton from "../components/BackButton";
 import ConfirmDialog from "../components/ConfirmDialog";
+import TypeToConfirmDialog from "../components/TypeToConfirmDialog";
 import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
 import { loadImage } from "../components/portrait/makePortrait";
 import { PortraitCropper } from "../components/portrait/PortraitCropper";
@@ -20,12 +21,15 @@ function errorMessage(err: unknown, fallback: string): string {
 // the sheet comes later.
 export default function CharacterPage() {
     const { characterID = '' } = useParams();
+    const navigate = useNavigate();
     const [character, setCharacter] = useState<characterSummary | null | undefined>(undefined)
     const [error, setError] = useState<string | null>(null)
     // The picked image while the player frames it.
     const [picked, setPicked] = useState<ImageBitmap | null>(null)
     // True while the "Remove this portrait?" dialog is open.
     const [confirmingRemove, setConfirmingRemove] = useState(false)
+    // True while the Delete Character dialog is open.
+    const [confirmingDelete, setConfirmingDelete] = useState(false)
     const fileInput = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -121,6 +125,32 @@ export default function CharacterPage() {
                 >
                     <p>{character.name} will show their initial instead. You can upload a new portrait any time.</p>
                 </ConfirmDialog>
+            )}
+
+            <div className="settings-danger">
+                <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
+                    Delete Character
+                </button>
+            </div>
+            {confirmingDelete && (
+                <TypeToConfirmDialog
+                    title={`Delete ${character.name}?`}
+                    phrase={character.name}
+                    confirmLabel="Delete Character"
+                    busyLabel="Deleting…"
+                    onConfirm={() => deleteCharacter(character.id, character.name).then(() => navigate('/', { replace: true }))}
+                    onClose={() => setConfirmingDelete(false)}
+                >
+                    <div className="delete-dialog__body">
+                        <p>
+                            {character.name}, their portrait and everything on their sheet will be permanently deleted.
+                            This can’t be undone.
+                        </p>
+                        {character.isActive && (
+                            <p>They’re your active character in {character.campaignName}; your newest other character there, if any, becomes active instead.</p>
+                        )}
+                    </div>
+                </TypeToConfirmDialog>
             )}
         </div>
     )

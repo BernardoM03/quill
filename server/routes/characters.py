@@ -158,3 +158,32 @@ def delete_portrait(character_id):
     finally:
         conn.close()
     return jsonify({'portraitVersion': None}), 200
+
+# Body: {confirm}, which must be the character's name, checked here as well as in the dialog.
+# Deletes the character and its portrait for good. If it was its owner's active character in
+# a campaign, their newest remaining character there becomes active instead.
+@bp.delete('/characters/<character_id>')
+@require_login
+@limit('character-delete', 30, 60 * 60)
+def delete_character(character_id):
+    content = json_body()
+    confirm = content.get('confirm') if content else None
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if confirm != row['name']:
+                return error('The confirmation text doesn’t match the character’s name.', 400)
+            conn.execute('DELETE FROM characters WHERE id = ?', (character_id,))
+            if row['is_active'] and row['campaign_id'] is not None:
+                conn.execute(
+                    'UPDATE characters SET is_active = 1 WHERE id = ('
+                    '  SELECT id FROM characters WHERE campaign_id = ? AND owner_id = ? AND deleted_at IS NULL'
+                    '  ORDER BY created_at DESC LIMIT 1)',
+                    (row['campaign_id'], row['owner_id']),
+                )
+    finally:
+        conn.close()
+    return jsonify({'success': True}), 200

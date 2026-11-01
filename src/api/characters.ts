@@ -52,3 +52,8 @@ export function uploadPortrait(characterId: string, image: Blob): Promise<string
 export function deletePortrait(characterId: string): Promise<void> {
     return apiClient.delete(`/characters/${characterId}/portrait`).then(() => undefined);
 }
+
+// Deletes the character and its portrait for good. confirm must be its name.
+export function deleteCharacter(characterId: string, confirm: string): Promise<void> {
+    return apiClient.delete(`/characters/${characterId}`, { data: { confirm } }).then(() => undefined);
+}
