@@ -9,12 +9,16 @@ export interface createdCharacter {
     isActive: boolean,
 }
 
-// What the creation wizard has collected so far. speciesChoices: choice id -> the picked
-// option's key (a list of keys where a choice takes more than one).
+// Choice id -> the picked option's key (a list of keys where a choice takes more than one).
+export type choicePicks = Record<string, string | string[]>
+
+// What the creation wizard has collected so far.
 export interface characterDraft {
     name: string,
     species: string | null,
-    speciesChoices: Record<string, string | string[]>,
+    speciesChoices: choicePicks,
+    class: string | null,
+    classChoices: choicePicks,
 }
 
 // A feature an option brings with it, e.g. the spells of an elven lineage.
@@ -37,6 +41,10 @@ export interface characterChoice {
     prompt: string,
     count: number,
     options: choiceOption[],
+    // Expertise-style: only skills the character is already proficient in count.
+    proficientOnly?: boolean,
+    // Only asked once this option of that choice is picked (Thaumaturge -> an extra cantrip).
+    condition?: { choice: string, option: string },
 }
 
 export interface speciesTrait {
@@ -60,10 +68,19 @@ export interface speciesOption {
     traits: speciesTrait[],
 }
 
+export interface classSummary {
+    id: string,
+    name: string,
+    hitDie: number | null,
+}
+
 // What a new character may be built from: the campaign's allowed content, or everything
 // in the Character Sandbox. Decided by the server (server/rules/characters.py).
 export interface characterOptions {
+    // The level a new character starts at: the campaign's milestone level, else 1.
+    level: number,
     species: speciesOption[],
+    classes: classSummary[],
 }
 
 // campaignId null means the Character Sandbox.
@@ -72,7 +89,50 @@ export function getCharacterOptions(campaignId: string | null): Promise<characte
         .then(response => response.data);
 }
 
-// field: which part of the draft it's about ('campaign', 'species', 'choice:<id>', 'name').
+// A class or subclass feature the character has by the starting level.
+export interface classFeature {
+    id: string,
+    name: string,
+    level: number,
+    shortDescription: string,
+    description: string,
+    choices: characterChoice[],
+}
+
+export interface subclassDetail {
+    id: string,
+    name: string,
+    description: string,
+    features: classFeature[],
+}
+
+// A class as it is at the starting level, with every choice resolved for the campaign.
+export interface classDetail {
+    id: string,
+    name: string,
+    level: number,
+    hitDie: number | null,
+    primaryAbility: string[],
+    savingThrows: string[],
+    armor: string[],
+    weapons: string[],
+    tools: string[],
+    subclassLevel: number | null,
+    // Skill and tool proficiencies to pick.
+    choices: characterChoice[],
+    features: classFeature[],
+    // The subclass pick, once the level reaches it; null before.
+    subclassChoice: characterChoice | null,
+    subclasses: subclassDetail[],
+}
+
+export function getClassOption(campaignId: string | null, classId: string): Promise<classDetail> {
+    return apiClient.get(`/characters/options/classes/${classId}`, { params: { campaign: campaignId ?? 'sandbox' } })
+        .then(response => response.data);
+}
+
+// field: which part of the draft it's about: 'campaign', 'species', 'choice:<id>' (species
+// choices), 'class', 'classChoice:<id>', 'name'.
 export interface draftError {
     field: string,
     message: string,

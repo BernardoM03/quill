@@ -8,19 +8,23 @@ from server.access import require_login, require_member
 from server.db import connect
 from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
-from server.rules.characters import allowed_species, species_detail, validate_draft
+from server.rules import packs
+from server.rules.characters import (
+    Setting, allowed_classes, allowed_species, class_detail_for, kept_class_choices, species_detail, validate_draft,
+)
+from server.rules.classes import class_summary
 
 bp = Blueprint('characters', __name__)
 
 class NoCampaign(Exception):
     pass
 
-# The allowedContent a new character must follow: the campaign's, or None for the
-# Character Sandbox (campaign_id None), which allows everything. A character belongs to a
-# membership, so even the admin must be in the campaign. Raises NoCampaign otherwise.
-def creation_content(conn, campaign_id):
+# Where a new character is made: the campaign's allowed content and rules, or the Character
+# Sandbox (campaign_id None: everything installed, the default rules). A character belongs
+# to a membership, so even the admin must be in the campaign. Raises NoCampaign otherwise.
+def creation_setting(conn, campaign_id):
     if campaign_id is None:
-        return None
+        return Setting(None, {})
     row = conn.execute(
         'SELECT c.settings FROM campaigns c JOIN memberships m ON m.campaign_id = c.id '
         'WHERE c.id = ? AND m.user_id = ?',
@@ -28,38 +32,60 @@ def creation_content(conn, campaign_id):
     ).fetchone()
     if row is None:
         raise NoCampaign()
-    return json.loads(row['settings']).get('allowedContent', {})
+    settings = json.loads(row['settings'])
+    return Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
 
-# ?campaign=<id> or ?campaign=sandbox. What the creation wizard may offer.
+def setting_from_query():
+    campaign = request.args.get('campaign')
+    if not campaign:
+        return None, error('Say which campaign, or "sandbox".', 400)
+    conn = connect()
+    try:
+        return creation_setting(conn, None if campaign == 'sandbox' else campaign), None
+    except NoCampaign:
+        return None, error('Campaign not found', 404)
+    finally:
+        conn.close()
+
+# ?campaign=<id> or ?campaign=sandbox. What the creation wizard may offer: the level a new
+# character starts at, every allowed species in full, and the allowed classes in brief.
 @bp.get('/characters/options')
 @require_login
 def get_options():
-    campaign = request.args.get('campaign')
-    if not campaign:
-        return error('Say which campaign, or "sandbox".', 400)
-    conn = connect()
-    try:
-        content = creation_content(conn, None if campaign == 'sandbox' else campaign)
-    except NoCampaign:
-        return error('Campaign not found', 404)
-    finally:
-        conn.close()
-    return jsonify({'species': [species_detail(s, content) for s in allowed_species(content)]}), 200
+    setting, problem = setting_from_query()
+    if problem:
+        return problem
+    return jsonify({
+        'level': setting.level,
+        'species': [species_detail(s, setting) for s in allowed_species(setting)],
+        'classes': [class_summary(c) for c in allowed_classes(setting)],
+    }), 200
 
-# Body: {campaignId (null for the sandbox), name, species, speciesChoices}. Returns {errors: [{field, message}]},
-# empty when the draft can be created. Doesn't save anything.
+# ?campaign=... as above. One class in full at the starting level: features, choices, subclasses.
+@bp.get('/characters/options/classes/<path:class_id>')
+@require_login
+def get_class_option(class_id):
+    setting, problem = setting_from_query()
+    if problem:
+        return problem
+    if class_id not in {c['id'] for c in allowed_classes(setting)}:
+        return error('Class not found', 404)
+    return jsonify(class_detail_for(class_id, setting)), 200
+
+# Body: {campaignId (null for the sandbox), name, species, speciesChoices, class, classChoices}.
+# Returns {errors: [{field, message}]}, empty when the draft can be created. Doesn't save anything.
 @bp.post('/characters/validate')
 @require_login
 def validate_character():
     draft = json_body() or {}
     conn = connect()
     try:
-        content = creation_content(conn, draft.get('campaignId'))
+        setting = creation_setting(conn, draft.get('campaignId'))
     except NoCampaign:
         return error('Campaign not found', 404)
     finally:
         conn.close()
-    return jsonify({'errors': validate_draft(draft, content)}), 200
+    return jsonify({'errors': validate_draft(draft, setting)}), 200
 
 # Checks the body and saves the character. campaign_id None makes a sandbox character, which
 # is never active; in a campaign, the player's first character there becomes active.
@@ -69,10 +95,10 @@ def create(campaign_id):
     try:
         with conn:
             try:
-                content = creation_content(conn, campaign_id)
+                setting = creation_setting(conn, campaign_id)
             except NoCampaign:
                 return error('Only members of this campaign can create characters in it.', 403)
-            errors = validate_draft(draft, content)
+            errors = validate_draft(draft, setting)
             if errors:
                 return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
             name = clean_name(draft['name'])
@@ -84,21 +110,27 @@ def create(campaign_id):
             conn.execute(
                 'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active) VALUES (?, ?, ?, ?, ?, ?)',
                 (character_id, campaign_id, g.user['id'], name,
-                 json.dumps({'species': draft['species'], 'speciesChoices': draft.get('speciesChoices') or {}}),
+                 json.dumps({
+                     'level': setting.level,
+                     'species': draft['species'],
+                     'speciesChoices': draft.get('speciesChoices') or {},
+                     'class': draft['class'],
+                     'classChoices': kept_class_choices(draft, setting),
+                 }),
                  0 if has_active else 1),
             )
     finally:
         conn.close()
     return jsonify({'id': character_id, 'name': name, 'isActive': not has_active}), 201
 
-# Body: {name, species, speciesChoices}. A Character Sandbox character: in no campaign, owned by the
+# Body: {name, species, speciesChoices, class, classChoices}. A Character Sandbox character: in no campaign, owned by the
 # signed-in user alone, built from all the content the server has with the default rules.
 @bp.post('/sandbox/characters')
 @require_login
 def create_sandbox_character():
     return create(None)
 
-# Body: {name, species, speciesChoices}. A character owned by the signed-in user in this campaign.
+# Body: {name, species, speciesChoices, class, classChoices}. A character owned by the signed-in user in this campaign.
 @bp.post('/campaigns/<campaign_id>/characters')
 @require_member
 def create_character(campaign_id):

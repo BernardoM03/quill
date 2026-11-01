@@ -8,6 +8,7 @@ import {
 } from "../api/characters";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
+import { ClassStep } from "../components/characterWizard/ClassStep";
 import { SpeciesStep } from "../components/characterWizard/SpeciesStep";
 import type { campaign } from "../datatypes/campaign";
 import "../components/campaignSettings/CampaignSettings.css";
@@ -18,7 +19,7 @@ const SANDBOX = 'sandbox'
 // How long typing pauses before the draft is checked with the server.
 const VALIDATE_DELAY_MS = 250
 
-// Everything the wizard collects. Each later step (class, ability scores, ...) adds its
+// Everything the wizard collects. Each later step (ability scores, ...) adds its
 // fields here and a step to stepsFor below. What each step offers, and whether the draft
 // is valid, comes from the server (server/rules/characters.py).
 interface wizardDraft {
@@ -27,10 +28,13 @@ interface wizardDraft {
     species: string | null,
     // Choice id -> the picked option's key. Starts over when the species changes.
     speciesChoices: Record<string, string | string[]>,
+    class: string | null,
+    // Choice id -> the picked option's key. Starts over when the class changes.
+    classChoices: Record<string, string | string[]>,
     name: string,
 }
 
-type stepId = 'campaign' | 'species' | 'name'
+type stepId = 'campaign' | 'species' | 'class' | 'name'
 
 interface wizardStep {
     id: stepId,
@@ -39,18 +43,20 @@ interface wizardStep {
 
 const CAMPAIGN_STEP: wizardStep = { id: 'campaign', label: 'Campaign' }
 const SPECIES_STEP: wizardStep = { id: 'species', label: 'Species' }
+const CLASS_STEP: wizardStep = { id: 'class', label: 'Class' }
 const NAME_STEP: wizardStep = { id: 'name', label: 'Name' }
 
 // Which step a server error field belongs to. 'campaign' errors belong to every step.
 function stepOf(field: string): stepId | 'all' {
     if (field === 'campaign') return 'all'
     if (field === 'species' || field.startsWith('choice:')) return 'species'
+    if (field === 'class' || field.startsWith('classChoice:')) return 'class'
     return 'name'
 }
 
 // Opened from a campaign, the campaign is already known; opened from home, it's the first step.
 function stepsFor(campaignInUrl: boolean): wizardStep[] {
-    return campaignInUrl ? [SPECIES_STEP, NAME_STEP] : [CAMPAIGN_STEP, SPECIES_STEP, NAME_STEP]
+    return campaignInUrl ? [SPECIES_STEP, CLASS_STEP, NAME_STEP] : [CAMPAIGN_STEP, SPECIES_STEP, CLASS_STEP, NAME_STEP]
 }
 
 const serverCampaign = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
@@ -64,7 +70,9 @@ export default function NewCharacter() {
     // The campaigns a character can be made in: the one in the URL, or the user's memberships.
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
     const [notFound, setNotFound] = useState(false)
-    const [draft, setDraft] = useState<wizardDraft>({ campaignId: campaignID ?? '', species: null, speciesChoices: {}, name: '' })
+    const [draft, setDraft] = useState<wizardDraft>({
+        campaignId: campaignID ?? '', species: null, speciesChoices: {}, class: null, classChoices: {}, name: '',
+    })
     const [stepIndex, setStepIndex] = useState(0)
     // What the chosen campaign (or the sandbox) offers, from the server.
     const [options, setOptions] = useState<characterOptions | null>(null)
@@ -100,16 +108,21 @@ export default function NewCharacter() {
                 if (!current) return
                 setOptions(o)
                 // The card on show is the pick, so start on the first species.
-                setDraft(d => (d.species || o.species.length === 0 ? d : { ...d, species: o.species[0].id, speciesChoices: {} }))
+                setDraft(d => ({
+                    ...d,
+                    ...(d.species || o.species.length === 0 ? {} : { species: o.species[0].id, speciesChoices: {} }),
+                    ...(d.class || o.classes.length === 0 ? {} : { class: o.classes[0].id, classChoices: {} }),
+                }))
             })
-            .catch(() => current && setOptions({ species: [] }))
+            .catch(() => current && setOptions({ level: 1, species: [], classes: [] }))
         return () => { current = false }
     }, [draft.campaignId])
 
     function check(next: wizardDraft): Promise<draftError[]> {
         const request = ++latestCheck.current
         return validateCharacter(serverCampaign(next.campaignId),
-            { name: next.name, species: next.species, speciesChoices: next.speciesChoices })
+            { name: next.name, species: next.species, speciesChoices: next.speciesChoices,
+              class: next.class, classChoices: next.classChoices })
             .then(found => {
                 if (request === latestCheck.current) setErrors(found)
                 return found
@@ -140,7 +153,10 @@ export default function NewCharacter() {
         // What's allowed depends on the campaign, so a new campaign starts the species over.
         const newCampaign = changes.campaignId !== undefined && changes.campaignId !== draft.campaignId
         if (newCampaign) setOptions(null)
-        setDraft(d => ({ ...d, ...changes, ...(newCampaign ? { species: null, speciesChoices: {} } : {}) }))
+        setDraft(d => ({
+            ...d, ...changes,
+            ...(newCampaign ? { species: null, speciesChoices: {}, class: null, classChoices: {} } : {}),
+        }))
         if (field) setTouched(t => new Set(t).add(field))
         setCampaignError(null)
         setSaveError(null)
@@ -167,7 +183,10 @@ export default function NewCharacter() {
                     setStepIndex(i => i + 1)
                     return
                 }
-                const body = { name: draft.name, species: draft.species, speciesChoices: draft.speciesChoices }
+                const body = {
+                    name: draft.name, species: draft.species, speciesChoices: draft.speciesChoices,
+                    class: draft.class, classChoices: draft.classChoices,
+                }
                 const create = draft.campaignId === SANDBOX
                     ? createSandboxCharacter(body)
                     : createCharacter(draft.campaignId, body)
@@ -210,7 +229,7 @@ export default function NewCharacter() {
                 ))}
             </ol>
 
-            <form className={step.id === 'species' ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
+            <form className={step.id === 'species' || step.id === 'class' ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
                 {step.id === 'campaign' && campaigns && (
                     <fieldset className="wizard__choices">
                         <legend className="setting-caption">Campaign</legend>
@@ -245,6 +264,20 @@ export default function NewCharacter() {
                     />
                 ) : <p className="muted">Loading…</p>)}
 
+                {step.id === 'class' && (options ? (
+                    <ClassStep
+                        campaignId={serverCampaign(draft.campaignId)}
+                        level={options.level}
+                        classes={options.classes}
+                        selected={draft.class}
+                        choices={draft.classChoices}
+                        onSelect={id => update({ class: id, classChoices: {} }, 'class')}
+                        onChoose={(id, value) =>
+                            update({ classChoices: { ...draft.classChoices, [id]: value } }, `classChoice:${id}`)}
+                        errorsFor={errorsFor}
+                    />
+                ) : <p className="muted">Loading…</p>)}
+
                 {step.id === 'name' && (
                     <div className="campaign-name">
                         <span className="setting-caption">Character Name</span>
@@ -263,7 +296,7 @@ export default function NewCharacter() {
 
                 {campaignError && <p className="campaign-name__error">{campaignError}</p>}
                 {stepErrors
-                    .filter(err => step.id !== 'species' || stepOf(err.field) === 'all')
+                    .filter(err => (step.id !== 'species' && step.id !== 'class') || stepOf(err.field) === 'all')
                     .map(err => <p key={err.field + err.message} className="campaign-name__error">{err.message}</p>)}
                 {saveError && <p className="campaign-name__error">{saveError}</p>}
 
