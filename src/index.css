@@ -192,8 +192,12 @@ code {
   background: transparent;
 }
 
-/* Sits above the page title, flush with its left edge. */
+/* Sits above the page title. Even padding keeps the label centred in its hover border; the
+   negative margin (padding plus border) still lines the text up with the title's left edge. */
 .back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   margin-top: 1rem;
-  padding-left: 0;
+  margin-left: calc(-0.8rem - 1px);
 }

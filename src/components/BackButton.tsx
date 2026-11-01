@@ -15,7 +15,7 @@ export default function BackButton({ disabled = false }: { disabled?: boolean })
       disabled={disabled}
       onClick={() => (hasHistory ? navigate(-1) : navigate('/'))}
     >
-      ← Back
+      <span aria-hidden="true">←</span>Back
     </button>
   )
 }

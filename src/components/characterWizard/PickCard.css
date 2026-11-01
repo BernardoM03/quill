@@ -27,9 +27,12 @@
 }
 
 .pick-card-row__arrow {
+  display: flex;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
   width: 1.5rem;
-  padding: 0;
+  padding: 0 0 0.15em;  /* the glyph sits low in its line; lift it to the optical centre */
   font: inherit;
   font-size: 26px;
   line-height: 1;
