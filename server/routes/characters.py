@@ -1,3 +1,4 @@
+import json
 import uuid
 
 from flask import Blueprint, Response, g, jsonify, request
@@ -5,66 +6,103 @@ from flask import Blueprint, Response, g, jsonify, request
 from server import portraits
 from server.access import require_login, require_member
 from server.db import connect
-from server.helpers import NAME_MAX_LENGTH, NOW, clean_name, error, json_body
+from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
+from server.rules.characters import allowed_species, species_detail, validate_draft
 
 bp = Blueprint('characters', __name__)
 
-def name_from_body():
-    content = json_body()
-    return clean_name(content.get('name')) if content else None
+class NoCampaign(Exception):
+    pass
 
-# Body: {name}. Creates a Character Sandbox character: in no campaign, owned by the
-# signed-in user alone, and built from all the content the server has with default rules.
-@bp.post('/sandbox/characters')
+# The allowedContent a new character must follow: the campaign's, or None for the
+# Character Sandbox (campaign_id None), which allows everything. A character belongs to a
+# membership, so even the admin must be in the campaign. Raises NoCampaign otherwise.
+def creation_content(conn, campaign_id):
+    if campaign_id is None:
+        return None
+    row = conn.execute(
+        'SELECT c.settings FROM campaigns c JOIN memberships m ON m.campaign_id = c.id '
+        'WHERE c.id = ? AND m.user_id = ?',
+        (campaign_id, g.user['id']),
+    ).fetchone()
+    if row is None:
+        raise NoCampaign()
+    return json.loads(row['settings']).get('allowedContent', {})
+
+# ?campaign=<id> or ?campaign=sandbox. What the creation wizard may offer.
+@bp.get('/characters/options')
 @require_login
-def create_sandbox_character():
-    name = name_from_body()
-    if name is None:
-        return error(f'Name must be 1-{NAME_MAX_LENGTH} characters.', 400)
-    character_id = str(uuid.uuid4())
+def get_options():
+    campaign = request.args.get('campaign')
+    if not campaign:
+        return error('Say which campaign, or "sandbox".', 400)
     conn = connect()
     try:
-        with conn:
-            conn.execute(
-                'INSERT INTO characters (id, campaign_id, owner_id, name, is_active) VALUES (?, NULL, ?, ?, 0)',
-                (character_id, g.user['id'], name),
-            )
+        content = creation_content(conn, None if campaign == 'sandbox' else campaign)
+    except NoCampaign:
+        return error('Campaign not found', 404)
     finally:
         conn.close()
-    return jsonify({'id': character_id, 'name': name, 'isActive': False}), 201
+    return jsonify({'species': [species_detail(s, content) for s in allowed_species(content)]}), 200
 
-# Body: {name}. Creates a character owned by the signed-in user in this campaign. Their
-# first character here becomes the active one; later ones start inactive.
-@bp.post('/campaigns/<campaign_id>/characters')
-@require_member
-def create_character(campaign_id):
-    name = name_from_body()
-    if name is None:
-        return error(f'Name must be 1-{NAME_MAX_LENGTH} characters.', 400)
+# Body: {campaignId (null for the sandbox), name, species, speciesChoices}. Returns {errors: [{field, message}]},
+# empty when the draft can be created. Doesn't save anything.
+@bp.post('/characters/validate')
+@require_login
+def validate_character():
+    draft = json_body() or {}
+    conn = connect()
+    try:
+        content = creation_content(conn, draft.get('campaignId'))
+    except NoCampaign:
+        return error('Campaign not found', 404)
+    finally:
+        conn.close()
+    return jsonify({'errors': validate_draft(draft, content)}), 200
 
-    character_id = str(uuid.uuid4())
+# Checks the body and saves the character. campaign_id None makes a sandbox character, which
+# is never active; in a campaign, the player's first character there becomes active.
+def create(campaign_id):
+    draft = json_body() or {}
     conn = connect()
     try:
         with conn:
-            # A character belongs to a membership, so the admin passing @require_member
-            # isn't enough: they must be in the campaign too.
-            member = conn.execute(
-                'SELECT 1 FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, g.user['id'])
-            ).fetchone()
-            if member is None:
+            try:
+                content = creation_content(conn, campaign_id)
+            except NoCampaign:
                 return error('Only members of this campaign can create characters in it.', 403)
-            has_active = conn.execute(
+            errors = validate_draft(draft, content)
+            if errors:
+                return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
+            name = clean_name(draft['name'])
+            has_active = campaign_id is None or conn.execute(
                 'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
                 (campaign_id, g.user['id']),
             ).fetchone() is not None
+            character_id = str(uuid.uuid4())
             conn.execute(
-                'INSERT INTO characters (id, campaign_id, owner_id, name, is_active) VALUES (?, ?, ?, ?, ?)',
-                (character_id, campaign_id, g.user['id'], name, 0 if has_active else 1),
+                'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+                (character_id, campaign_id, g.user['id'], name,
+                 json.dumps({'species': draft['species'], 'speciesChoices': draft.get('speciesChoices') or {}}),
+                 0 if has_active else 1),
             )
     finally:
         conn.close()
     return jsonify({'id': character_id, 'name': name, 'isActive': not has_active}), 201
+
+# Body: {name, species, speciesChoices}. A Character Sandbox character: in no campaign, owned by the
+# signed-in user alone, built from all the content the server has with the default rules.
+@bp.post('/sandbox/characters')
+@require_login
+def create_sandbox_character():
+    return create(None)
+
+# Body: {name, species, speciesChoices}. A character owned by the signed-in user in this campaign.
+@bp.post('/campaigns/<campaign_id>/characters')
+@require_member
+def create_character(campaign_id):
+    return create(campaign_id)
 
 # The character if the signed-in user may see and change it, else None. For now that's
 # its owner and the admin; who else sees a character comes with the party-visibility rules.

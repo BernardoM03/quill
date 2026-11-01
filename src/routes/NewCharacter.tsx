@@ -1,59 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
-import { CHARACTER_NAME_MAX_LENGTH, createCharacter, createSandboxCharacter } from "../api/characters";
+import {
+    CHARACTER_NAME_MAX_LENGTH, createCharacter, createSandboxCharacter, getCharacterOptions, validateCharacter,
+    type characterOptions, type draftError,
+} from "../api/characters";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
+import { SpeciesStep } from "../components/characterWizard/SpeciesStep";
 import type { campaign } from "../datatypes/campaign";
 import "../components/campaignSettings/CampaignSettings.css";
 import "./NewCharacter.css";
 
 // Stands in for a campaign id when the character goes in the Character Sandbox.
 const SANDBOX = 'sandbox'
+// How long typing pauses before the draft is checked with the server.
+const VALIDATE_DELAY_MS = 250
 
-// Everything the wizard collects. Each later step (species, class, ability scores, ...)
-// adds its fields here and a step to stepsFor below. Those steps offer what the chosen
-// campaign allows; in the sandbox that's everything the server has, with the default rules.
-interface characterDraft {
+// Everything the wizard collects. Each later step (class, ability scores, ...) adds its
+// fields here and a step to stepsFor below. What each step offers, and whether the draft
+// is valid, comes from the server (server/rules/characters.py).
+interface wizardDraft {
     // A campaign id, SANDBOX, or '' while nothing is chosen.
     campaignId: string,
+    species: string | null,
+    // Choice id -> the picked option's key. Starts over when the species changes.
+    speciesChoices: Record<string, string | string[]>,
     name: string,
 }
 
-// A step returns an error message while its part of the draft isn't finished, else null.
+type stepId = 'campaign' | 'species' | 'name'
+
 interface wizardStep {
-    id: 'campaign' | 'name',
+    id: stepId,
     label: string,
-    validate: (draft: characterDraft) => string | null,
 }
 
-const CAMPAIGN_STEP: wizardStep = {
-    id: 'campaign',
-    label: 'Campaign',
-    validate: draft => draft.campaignId ? null : 'Choose a campaign, or the Character Sandbox.',
-}
+const CAMPAIGN_STEP: wizardStep = { id: 'campaign', label: 'Campaign' }
+const SPECIES_STEP: wizardStep = { id: 'species', label: 'Species' }
+const NAME_STEP: wizardStep = { id: 'name', label: 'Name' }
 
-const NAME_STEP: wizardStep = {
-    id: 'name',
-    label: 'Name',
-    validate: draft => {
-        const name = draft.name.trim()
-        if (!name) return 'Give your character a name.'
-        if (name.length > CHARACTER_NAME_MAX_LENGTH) return `Name must be at most ${CHARACTER_NAME_MAX_LENGTH} characters.`
-        return null
-    },
+// Which step a server error field belongs to. 'campaign' errors belong to every step.
+function stepOf(field: string): stepId | 'all' {
+    if (field === 'campaign') return 'all'
+    if (field === 'species' || field.startsWith('choice:')) return 'species'
+    return 'name'
 }
 
 // Opened from a campaign, the campaign is already known; opened from home, it's the first step.
 function stepsFor(campaignInUrl: boolean): wizardStep[] {
-    return campaignInUrl ? [NAME_STEP] : [CAMPAIGN_STEP, NAME_STEP]
+    return campaignInUrl ? [SPECIES_STEP, NAME_STEP] : [CAMPAIGN_STEP, SPECIES_STEP, NAME_STEP]
 }
 
-function errorMessage(err: unknown, fallback: string): string {
-    const response = (err as { response?: { data?: { error?: string } } }).response;
-    return response?.data?.error ?? fallback;
-}
+const serverCampaign = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
 
 // A step-by-step character creation wizard, at /campaigns/:campaignID/characters/new
 // or, choosing the campaign first, at /characters/new.
@@ -64,12 +64,20 @@ export default function NewCharacter() {
     // The campaigns a character can be made in: the one in the URL, or the user's memberships.
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
     const [notFound, setNotFound] = useState(false)
-    const [draft, setDraft] = useState<characterDraft>({ campaignId: campaignID ?? '', name: '' })
+    const [draft, setDraft] = useState<wizardDraft>({ campaignId: campaignID ?? '', species: null, speciesChoices: {}, name: '' })
     const [stepIndex, setStepIndex] = useState(0)
-    // Shown only after the user tries to move on, not while they're still typing.
-    const [stepError, setStepError] = useState<string | null>(null)
+    // What the chosen campaign (or the sandbox) offers, from the server.
+    const [options, setOptions] = useState<characterOptions | null>(null)
+    // The server's verdict on the current draft.
+    const [errors, setErrors] = useState<draftError[]>([])
+    // A field's errors show once the player has changed it, or tried to leave its step.
+    const [touched, setTouched] = useState<Set<string>>(new Set())
+    const [attempted, setAttempted] = useState<Set<stepId>>(new Set())
+    const [campaignError, setCampaignError] = useState<string | null>(null)
     const [saveError, setSaveError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
+    // Counts validation requests, so a slow answer can't replace a newer one.
+    const latestCheck = useRef(0)
 
     useEffect(() => {
         if (campaignID) {
@@ -83,39 +91,94 @@ export default function NewCharacter() {
         }
     }, [campaignID])
 
+    // What the chosen campaign offers changes with the campaign.
+    useEffect(() => {
+        if (!draft.campaignId) return
+        let current = true
+        getCharacterOptions(serverCampaign(draft.campaignId))
+            .then(o => {
+                if (!current) return
+                setOptions(o)
+                // The card on show is the pick, so start on the first species.
+                setDraft(d => (d.species || o.species.length === 0 ? d : { ...d, species: o.species[0].id, speciesChoices: {} }))
+            })
+            .catch(() => current && setOptions({ species: [] }))
+        return () => { current = false }
+    }, [draft.campaignId])
+
+    function check(next: wizardDraft): Promise<draftError[]> {
+        const request = ++latestCheck.current
+        return validateCharacter(serverCampaign(next.campaignId),
+            { name: next.name, species: next.species, speciesChoices: next.speciesChoices })
+            .then(found => {
+                if (request === latestCheck.current) setErrors(found)
+                return found
+            })
+    }
+
+    // Check the draft with the server as the player goes, once typing pauses.
+    useEffect(() => {
+        if (!draft.campaignId) return
+        const timer = setTimeout(() => { check(draft).catch(() => {}) }, VALIDATE_DELAY_MS)
+        return () => clearTimeout(timer)
+    }, [draft])
+
     const step = steps[stepIndex]
     const isLast = stepIndex === steps.length - 1
     const chosenName = draft.campaignId === SANDBOX
         ? 'Character Sandbox'
         : campaigns?.find(c => c.id === draft.campaignId)?.name
 
-    function update(changes: Partial<characterDraft>) {
-        setDraft(d => ({ ...d, ...changes }))
-        setStepError(null)
+    // Errors this step shows: anything wrong with the campaign, and its own fields once
+    // touched or once the player has tried to move on.
+    const stepErrors = draft.campaignId ? errors.filter(e =>
+        stepOf(e.field) === 'all'
+        || (stepOf(e.field) === step.id && (touched.has(e.field) || attempted.has(step.id)))) : []
+    const errorsFor = (field: string) => stepErrors.filter(e => e.field === field).map(e => e.message)
+
+    function update(changes: Partial<wizardDraft>, field?: string) {
+        // What's allowed depends on the campaign, so a new campaign starts the species over.
+        const newCampaign = changes.campaignId !== undefined && changes.campaignId !== draft.campaignId
+        if (newCampaign) setOptions(null)
+        setDraft(d => ({ ...d, ...changes, ...(newCampaign ? { species: null, speciesChoices: {} } : {}) }))
+        if (field) setTouched(t => new Set(t).add(field))
+        setCampaignError(null)
+        setSaveError(null)
     }
 
     function handleNext(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
-        const problem = step.validate(draft)
-        if (problem) {
-            setStepError(problem)
-            return
-        }
-        if (!isLast) {
+        if (step.id === 'campaign') {
+            if (!draft.campaignId) return setCampaignError('Choose a campaign, or the Character Sandbox.')
             setStepIndex(i => i + 1)
             return
         }
-        setSaving(true)
-        setSaveError(null)
-        const name = draft.name.trim()
-        const create = draft.campaignId === SANDBOX
-            ? createSandboxCharacter(name)
-            : createCharacter(draft.campaignId, name)
-        create
-            // From a campaign, go back to it; from home, go home, where the new character is listed.
-            .then(() => navigate(campaignID ? `/campaign/${campaignID}` : '/', { replace: true }))
+        // Check again now, so an answer still on its way can't let the player through.
+        setAttempted(a => new Set(a).add(step.id))
+        setSaving(isLast)
+        check(draft)
+            .then(found => {
+                const blocking = found.filter(err => stepOf(err.field) === 'all' || stepOf(err.field) === step.id)
+                if (blocking.length > 0) {
+                    setSaving(false)
+                    return
+                }
+                if (!isLast) {
+                    setStepIndex(i => i + 1)
+                    return
+                }
+                const body = { name: draft.name, species: draft.species, speciesChoices: draft.speciesChoices }
+                const create = draft.campaignId === SANDBOX
+                    ? createSandboxCharacter(body)
+                    : createCharacter(draft.campaignId, body)
+                return create
+                    // From a campaign, go back to it; from home, go home, where the new character is listed.
+                    .then(() => navigate(campaignID ? `/campaign/${campaignID}` : '/', { replace: true }))
+            })
             .catch(err => {
-                setSaveError(errorMessage(err, 'Could not create the character.'))
+                const data = err.response?.data
+                if (data?.errors) setErrors(data.errors)
+                setSaveError(data?.errors ? null : (data?.error ?? 'Could not reach the server.'))
                 setSaving(false)
             })
     }
@@ -130,10 +193,12 @@ export default function NewCharacter() {
         )
     }
 
+    const blocked = stepErrors.some(e => e.field === 'campaign')
+
     return (
         <div className="page wizard">
             <BackButton/>
-            <span className="setting-caption">{chosenName ?? '\u00a0'}</span>
+            <span className="setting-caption">{chosenName ?? ' '}</span>
             <h1>New Character</h1>
 
             <ol className="wizard__steps" aria-label="Steps">
@@ -145,7 +210,7 @@ export default function NewCharacter() {
                 ))}
             </ol>
 
-            <form className="wizard__form" onSubmit={handleNext}>
+            <form className={step.id === 'species' ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
                 {step.id === 'campaign' && campaigns && (
                     <fieldset className="wizard__choices">
                         <legend className="setting-caption">Campaign</legend>
@@ -168,6 +233,18 @@ export default function NewCharacter() {
                     </fieldset>
                 )}
 
+                {step.id === 'species' && (options ? (
+                    <SpeciesStep
+                        options={options.species}
+                        selected={draft.species}
+                        choices={draft.speciesChoices}
+                        onSelect={id => update({ species: id, speciesChoices: {} }, 'species')}
+                        onChoose={(id, value) =>
+                            update({ speciesChoices: { ...draft.speciesChoices, [id]: value } }, `choice:${id}`)}
+                        errorsFor={errorsFor}
+                    />
+                ) : <p className="muted">Loading…</p>)}
+
                 {step.id === 'name' && (
                     <div className="campaign-name">
                         <span className="setting-caption">Character Name</span>
@@ -178,23 +255,26 @@ export default function NewCharacter() {
                                 value={draft.name}
                                 maxLength={CHARACTER_NAME_MAX_LENGTH}
                                 autoFocus
-                                onChange={e => update({ name: e.target.value })}
+                                onChange={e => update({ name: e.target.value }, 'name')}
                             />
                         </div>
                     </div>
                 )}
 
-                {stepError && <p className="campaign-name__error">{stepError}</p>}
+                {campaignError && <p className="campaign-name__error">{campaignError}</p>}
+                {stepErrors
+                    .filter(err => step.id !== 'species' || stepOf(err.field) === 'all')
+                    .map(err => <p key={err.field + err.message} className="campaign-name__error">{err.message}</p>)}
                 {saveError && <p className="campaign-name__error">{saveError}</p>}
 
                 <div className="wizard__actions">
                     {stepIndex > 0 && (
                         <button type="button" className="setting-button setting-button--quiet" disabled={saving}
-                            onClick={() => { setStepIndex(i => i - 1); setStepError(null) }}>
+                            onClick={() => setStepIndex(i => i - 1)}>
                             Back
                         </button>
                     )}
-                    <button type="submit" className="setting-button" disabled={saving || !campaigns}>
+                    <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked}>
                         {isLast ? (saving ? 'Creating…' : 'Create Character') : 'Next'}
                     </button>
                 </div>

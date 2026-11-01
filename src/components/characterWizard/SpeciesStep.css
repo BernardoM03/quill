@@ -1,0 +1,162 @@
+/* ---- Species step: dropdown above, one card with arrows on either side ---- */
+
+.species-step__picker {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.species-step__select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.species-step__select .rules-select {
+  min-width: 12rem;
+}
+
+/* Quiet chevrons just outside the card. They stay full height so they're easy to hit,
+   but show no box: only the chevron, which brightens on hover. */
+.species-card-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.species-card-row__arrow {
+  flex-shrink: 0;
+  width: 1.5rem;
+  padding: 0;
+  font: inherit;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+  opacity: 0.55;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease-out, color 120ms ease-out;
+}
+
+.species-card-row__arrow:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.species-card-row__arrow:focus-visible {
+  outline: 1px solid var(--accent);
+  opacity: 1;
+}
+
+.species-card {
+  flex: 1;
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.species-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.species-card__header h2 {
+  margin: 0;
+}
+
+.species-card__traits {
+  margin: 0;
+}
+
+.species-trait {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.species-trait:first-child {
+  border-top: 0;
+}
+
+.species-trait dt {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.species-trait dd {
+  margin: 0.2rem 0 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.species-trait dd > p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* A choice inside a trait, or the species' own (size) above the traits. */
+.species-choice {
+  margin: 0.6rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--code-bg);
+}
+
+.species-choice__single {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.species-choice__many {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.species-choice__many legend {
+  margin-bottom: 0.3rem;
+}
+
+.species-choice__grant {
+  margin-top: 0.5rem;
+  font-size: 13px;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.species-choice__grant strong {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+/* Narrow screens: arrows above the card instead of beside it, so the text keeps its width. */
+@media (max-width: 560px) {
+  .species-card-row {
+    flex-wrap: wrap;
+  }
+
+  .species-card {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  .species-card-row__arrow {
+    flex: 1;
+    height: 2rem;
+  }
+}

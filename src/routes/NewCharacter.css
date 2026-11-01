@@ -54,6 +54,11 @@
   max-width: 560px;
 }
 
+/* Steps with a card (species) use the page's full width. */
+.wizard__form--wide {
+  max-width: none;
+}
+
 .wizard__actions {
   display: flex;
   gap: 0.5rem;

@@ -9,15 +9,89 @@ export interface createdCharacter {
     isActive: boolean,
 }
 
+// What the creation wizard has collected so far. speciesChoices: choice id -> the picked
+// option's key (a list of keys where a choice takes more than one).
+export interface characterDraft {
+    name: string,
+    species: string | null,
+    speciesChoices: Record<string, string | string[]>,
+}
+
+// A feature an option brings with it, e.g. the spells of an elven lineage.
+export interface grantedFeature {
+    name: string,
+    description: string,
+}
+
+export interface choiceOption {
+    // What gets stored when it's picked.
+    key: string,
+    label: string,
+    description?: string,
+    grants?: grantedFeature[],
+}
+
+// Something the player decides, already narrowed by the server to what the campaign allows.
+export interface characterChoice {
+    id: string,
+    prompt: string,
+    count: number,
+    options: choiceOption[],
+}
+
+export interface speciesTrait {
+    id: string,
+    name: string,
+    shortDescription: string,
+    description: string,
+    choices: characterChoice[],
+}
+
+// A species the wizard may offer, with everything its card shows.
+export interface speciesOption {
+    id: string,
+    name: string,
+    creatureType: string | null,
+    // The fixed sizes; empty when the player chooses one (then it's among choices).
+    size: string[],
+    speed: number | null,
+    // Choices of the species itself rather than of a trait, e.g. Human size.
+    choices: characterChoice[],
+    traits: speciesTrait[],
+}
+
+// What a new character may be built from: the campaign's allowed content, or everything
+// in the Character Sandbox. Decided by the server (server/rules/characters.py).
+export interface characterOptions {
+    species: speciesOption[],
+}
+
+// campaignId null means the Character Sandbox.
+export function getCharacterOptions(campaignId: string | null): Promise<characterOptions> {
+    return apiClient.get("/characters/options", { params: { campaign: campaignId ?? 'sandbox' } })
+        .then(response => response.data);
+}
+
+// field: which part of the draft it's about ('campaign', 'species', 'choice:<id>', 'name').
+export interface draftError {
+    field: string,
+    message: string,
+}
+
+// Every problem the server finds with the draft; empty when it can be created. Saves nothing.
+export function validateCharacter(campaignId: string | null, draft: characterDraft): Promise<draftError[]> {
+    return apiClient.post("/characters/validate", { campaignId, ...draft }).then(response => response.data.errors);
+}
+
 // Creates a Character Sandbox character: in no campaign, using all the content the
 // server has and the default rules.
-export function createSandboxCharacter(name: string): Promise<createdCharacter> {
-    return apiClient.post("/sandbox/characters", { name }).then(response => response.data);
+export function createSandboxCharacter(draft: characterDraft): Promise<createdCharacter> {
+    return apiClient.post("/sandbox/characters", draft).then(response => response.data);
 }
 
 // Creates a character for the signed-in player in this campaign.
-export function createCharacter(campaignId: string, name: string): Promise<createdCharacter> {
-    return apiClient.post(`/campaigns/${campaignId}/characters`, { name }).then(response => response.data);
+export function createCharacter(campaignId: string, draft: characterDraft): Promise<createdCharacter> {
+    return apiClient.post(`/campaigns/${campaignId}/characters`, draft).then(response => response.data);
 }
 
 // A character as its owner (or the admin) sees it.
