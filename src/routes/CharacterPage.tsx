@@ -4,7 +4,8 @@ import { Link, useParams } from "react-router";
 import { deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
 import BackButton from "../components/BackButton";
 import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
-import { makePortrait } from "../components/portrait/makePortrait";
+import { loadImage } from "../components/portrait/makePortrait";
+import { PortraitCropper } from "../components/portrait/PortraitCropper";
 import "../components/campaignSettings/CampaignSettings.css";
 import "./CharacterPage.css";
 
@@ -21,6 +22,8 @@ export default function CharacterPage() {
     const [character, setCharacter] = useState<characterSummary | null | undefined>(undefined)
     const [busy, setBusy] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    // The picked image while the player frames it.
+    const [picked, setPicked] = useState<ImageBitmap | null>(null)
     const fileInput = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
@@ -35,13 +38,21 @@ export default function CharacterPage() {
         const file = e.target.files?.[0]
         e.target.value = ''  // so picking the same file again still fires
         if (!file) return
-        setBusy(true)
         setError(null)
-        makePortrait(file)
-            .then(image => uploadPortrait(characterID, image))
-            .then(setVersion)
-            .catch(err => setError(errorMessage(err, 'Could not upload the portrait.')))
-            .finally(() => setBusy(false))
+        loadImage(file)
+            .then(setPicked)
+            .catch(err => setError(errorMessage(err, 'Could not open that image.')))
+    }
+
+    // Called by the cropper with the framed 256x256 portrait. A rejection keeps the cropper
+    // open and shows the server's reason there.
+    function handleCropped(portrait: Blob) {
+        return uploadPortrait(characterID, portrait).then(setVersion)
+    }
+
+    function handleCropperClosed() {
+        picked?.close()
+        setPicked(null)
     }
 
     function handleRemove() {
@@ -84,7 +95,7 @@ export default function CharacterPage() {
             <div className="setting-section">
                 <span className="setting-caption">Portrait</span>
                 <p className="setting-hint">
-                    The centre of the image is used, as a square. Large photos are shrunk before uploading.
+                    You’ll frame it as a square after choosing an image. Large photos are shrunk before uploading.
                 </p>
                 <div className="character-portrait__actions">
                     <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />
@@ -99,6 +110,7 @@ export default function CharacterPage() {
                 </div>
                 {error && <p className="setting-error">{error}</p>}
             </div>
+            {picked && <PortraitCropper image={picked} onConfirm={handleCropped} onClose={handleCropperClosed} />}
         </div>
     )
 }
