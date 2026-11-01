@@ -208,10 +208,10 @@ export default function CampaignSettings() {
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
             {campaignDetails && campaignID && general && !readOnly && (
-                <CampaignInviteSettings campaignId={campaignID}/>
+                <CampaignMemberSettings campaignId={campaignID}/>
             )}
             {campaignDetails && campaignID && general && !readOnly && (
-                <CampaignMemberSettings campaignId={campaignID}/>
+                <CampaignInviteSettings campaignId={campaignID}/>
             )}
             {campaignDetails && tab === 'rules' && (
                 <>
