@@ -77,6 +77,8 @@ h2 {
 
 h1 {
   font-size: 56px;
+  /* Unitless, so it scales with the heading: the root's 145% is fixed at the body size. */
+  line-height: 1.1;
   letter-spacing: -1.68px;
   margin: 32px 0;
   @media (max-width: 1024px) {
