@@ -11,6 +11,7 @@ import Login from './routes/Login';
 import AccountSettings from './routes/AccountSettings';
 import Admin from './routes/Admin';
 import NewCharacter from './routes/NewCharacter';
+import CharacterPage from './routes/CharacterPage';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path : "/characters/new",
     element: <NewCharacter />
+  },
+  {
+    path : "/characters/:characterID",
+    element: <CharacterPage />
   },
   {
     path : "/setup/campaign",

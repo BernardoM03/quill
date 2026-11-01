@@ -1,3 +1,4 @@
+import base64
 import json
 
 from flask import Blueprint, jsonify
@@ -88,6 +89,12 @@ def restore_account(account_id):
                     (c['id'], c['campaign_id'], user['id'], c['name'], json.dumps(c['sheet']), c['personal_notes'],
                      c['is_active'], c['created_at'], c['updated_at'], c['deleted_at']),
                 )
+                # Snapshots from before portraits existed have no 'portrait' key.
+                if c.get('portrait'):
+                    conn.execute(
+                        'INSERT INTO character_portraits (character_id, image) VALUES (?, ?)',
+                        (c['id'], base64.b64decode(c['portrait'])),
+                    )
                 restored_characters += 1
             conn.execute('DELETE FROM deleted_accounts WHERE id = ?', (account_id,))
     finally:

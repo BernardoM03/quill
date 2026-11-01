@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import type { user } from './datatypes/user'
 import CampaignCard from './components/CampaignCard'
 import LegalFooter from './components/LegalFooter'
+import { CharacterPortrait } from './components/portrait/CharacterPortrait'
 import { getUser } from './api/users'
 import { logout } from './api/auth'
 
@@ -113,8 +114,9 @@ export default function App() {
             <ul className="character-list">
               {userData.characters.map(character => (
                 <li key={character.id} className="character-row">
+                  <CharacterPortrait characterId={character.id} name={character.name} version={character.portraitVersion} size={40} />
                   <div className="character-row__info">
-                    <span className="character-row__name">{character.name}</span>
+                    <Link to={`/characters/${character.id}`} className="character-row__name">{character.name}</Link>
                     {character.campaignId ? (
                       <Link to={`/campaign/${character.campaignId}`} className="character-row__campaign">
                         {character.campaignName}

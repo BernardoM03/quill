@@ -1,0 +1,37 @@
+/* ---- Character page: portrait beside the name, then the portrait controls ---- */
+
+/* Takes over the page h1's spacing and rule, with the portrait on the left. */
+.character-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1rem 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.character-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.character-header__text h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.character-header__text a {
+  color: inherit;
+}
+
+.character-header__text a:hover {
+  color: var(--accent);
+}
+
+.character-portrait__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

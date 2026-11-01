@@ -9,6 +9,8 @@ export interface userCharacter {
   // Both null for a Character Sandbox character.
   campaignId: string | null,
   campaignName: string | null,
+  // Changes whenever the portrait does; null when there isn't one.
+  portraitVersion: string | null,
 }
 
 export interface user {

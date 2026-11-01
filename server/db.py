@@ -135,6 +135,15 @@ MIGRATIONS = [
     CREATE UNIQUE INDEX characters_one_active
         ON characters(campaign_id, owner_id) WHERE is_active = 1 AND deleted_at IS NULL;
     ''',
+    # 6: character portraits. A separate table keeps characters rows small; the cascade
+    # removes a portrait with its character, however the character goes.
+    '''
+    CREATE TABLE character_portraits (
+        character_id TEXT PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,
+        image        BLOB NOT NULL,                     -- 256x256 WebP, re-encoded by the server
+        updated_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    );
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

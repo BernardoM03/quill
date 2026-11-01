@@ -19,3 +19,36 @@ export function createSandboxCharacter(name: string): Promise<createdCharacter> 
 export function createCharacter(campaignId: string, name: string): Promise<createdCharacter> {
     return apiClient.post(`/campaigns/${campaignId}/characters`, { name }).then(response => response.data);
 }
+
+// A character as its owner (or the admin) sees it.
+export interface characterSummary {
+    id: string,
+    name: string,
+    isActive: boolean,
+    // Both null for a Character Sandbox character.
+    campaignId: string | null,
+    campaignName: string | null,
+    // Changes whenever the portrait does; null when there isn't one.
+    portraitVersion: string | null,
+}
+
+export function getCharacter(id: string): Promise<characterSummary> {
+    return apiClient.get(`/characters/${id}`).then(response => response.data);
+}
+
+// The portrait's address. version (from portraitVersion) makes a replaced portrait a new
+// URL, so the browser can cache each one without showing an old picture.
+export function portraitUrl(characterId: string, version: string): string {
+    return `/api/characters/${characterId}/portrait?v=${encodeURIComponent(version)}`;
+}
+
+// Uploads an image already cropped and shrunk in the browser (see makePortrait). Resolves
+// with the new portraitVersion; rejects with the server's reason if it refuses the image.
+export function uploadPortrait(characterId: string, image: Blob): Promise<string> {
+    return apiClient.put(`/characters/${characterId}/portrait`, image, { headers: { 'Content-Type': image.type || 'application/octet-stream' } })
+        .then(response => response.data.portraitVersion);
+}
+
+export function deletePortrait(characterId: string): Promise<void> {
+    return apiClient.delete(`/characters/${characterId}/portrait`).then(() => undefined);
+}
