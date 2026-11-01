@@ -5,7 +5,9 @@ import './PickCard.css';
 
 // A wizard step that picks one thing from a list (species, class): a dropdown to jump to
 // any of them, and one card at a time with quiet arrows to step through. Whatever card is
-// showing is the pick. children: the card's contents for the current item.
+// showing is the pick. children: the card's contents for the current item. A selected id
+// that isn't among items (a character's pick the campaign no longer allows) shows no item
+// as picked; children then say so.
 export function PickCarousel({ caption, items, selected, onSelect, extra, children }: {
   caption: string;
   items: { id: string; name: string }[];
@@ -15,8 +17,10 @@ export function PickCarousel({ caption, items, selected, onSelect, extra, childr
   extra?: ReactNode;
   children: ReactNode;
 }) {
-  const index = Math.max(0, items.findIndex(i => i.id === selected));
-  const step = (by: number) => onSelect(items[(index + by + items.length) % items.length].id);
+  const index = items.findIndex(i => i.id === selected);
+  const step = (by: number) => onSelect(index < 0
+    ? items[by > 0 ? 0 : items.length - 1].id
+    : items[(index + by + items.length) % items.length].id);
   const several = items.length > 1;
 
   return (
@@ -24,11 +28,12 @@ export function PickCarousel({ caption, items, selected, onSelect, extra, childr
       <div className="pick-step__picker">
         <label className="pick-step__select">
           <span className="setting-caption">{caption}</span>
-          <select className="rules-select" value={items[index].id} onChange={e => onSelect(e.target.value)}>
+          <select className="rules-select" value={index < 0 ? '' : items[index].id} onChange={e => onSelect(e.target.value)}>
+            {index < 0 && <option value="" disabled>Choose…</option>}
             {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
           </select>
         </label>
-        {several && <span className="setting-hint">{index + 1} of {items.length}</span>}
+        {several && index >= 0 && <span className="setting-hint">{index + 1} of {items.length}</span>}
         {extra}
       </div>
       <div className="pick-card-row">

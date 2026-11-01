@@ -12,8 +12,9 @@ from server.rules.characters import (
     Setting, allowed_backgrounds, allowed_classes, allowed_species, background_detail_for, check_draft, class_detail_for,
     kept_background_choices, kept_class_choices, species_detail,
 )
-from server.rules.abilities import ability_rules, hp_method
+from server.rules.abilities import ability_rules, hp_method, roll_scores
 from server.rules.classes import class_summary
+from server.rules.settings import MAX_LEVEL
 from server.rules.details import clean_details
 
 bp = Blueprint('characters', __name__)
@@ -36,6 +37,67 @@ def creation_setting(conn, campaign_id):
         raise NoCampaign()
     settings = json.loads(row['settings'])
     return Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
+
+# The setting a character was made under, as its campaign has it now: the campaign's content
+# and rules (the sandbox's for no campaign), the character's own origin rules in the sandbox,
+# at the character's level. Unlike creation_setting, membership isn't checked (the admin may
+# look at anyone's character).
+def character_setting(conn, row, sheet):
+    if row['campaign_id'] is None:
+        setting = Setting(None, {})
+    else:
+        campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (row['campaign_id'],)).fetchone()
+        settings = json.loads(campaign['settings']) if campaign else {}
+        setting = Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
+    return setting.for_draft(sheet).at_level(sheet.get('level'))
+
+# The rolls a character's scores were assigned from. Characters made before rolls were kept
+# with the sheet count their own scores as the rolls.
+def sheet_rolls(sheet):
+    if sheet.get('abilityRolls'):
+        return sheet['abilityRolls']
+    if sheet.get('abilityMethod') == 'roll' and isinstance(sheet.get('abilityScores'), dict):
+        return [{'dice': [], 'total': v} for v in sheet['abilityScores'].values()]
+    return None
+
+# A saved character as the wizard's draft, to check it or edit it.
+def sheet_draft(row, sheet):
+    keys = ('species', 'speciesChoices', 'originRules', 'background', 'backgroundChoices', 'class', 'classChoices',
+            'abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls', 'details')
+    draft = {k: sheet[k] for k in keys if k in sheet}
+    draft['name'] = row['name']
+    draft.setdefault('hpRolls', [])
+    return draft
+
+# Whatever no longer fits the character's campaign (its content or rules changed since it
+# was made), as [{field, message}]. Nothing about the character is changed.
+def character_problems(conn, row):
+    sheet = json.loads(row['sheet'])
+    if not sheet.get('species'):
+        return []  # made before the wizard had steps; there's nothing to check
+    return check_draft(sheet_draft(row, sheet), character_setting(conn, row, sheet), sheet_rolls(sheet))['errors']
+
+# The sheet a valid draft saves as. summary: check_draft's; rolls: the ability rolls it used.
+def build_sheet(draft, setting, summary, rolls):
+    return {
+        'level': setting.level,
+        'species': draft['species'],
+        'speciesChoices': draft.get('speciesChoices') or {},
+        'originRules': setting.origin_rules(),
+        'background': draft['background'],
+        'backgroundChoices': kept_background_choices(draft, setting),
+        'class': draft['class'],
+        'classChoices': kept_class_choices(draft, setting),
+        'abilityMethod': draft.get('abilityMethod') or ability_rules(setting)['allowedMethods'][0],
+        # Base scores as assigned; abilities has them with the background's increases.
+        'abilityScores': draft['abilityScores'],
+        'abilityRolls': rolls,
+        'abilities': {a: s['total'] for a, s in summary['abilities'].items()},
+        'hpMethod': hp_method(draft, setting),
+        'hpRolls': draft.get('hpRolls') or [],
+        'hitPoints': summary['hitPoints'],
+        'details': clean_details(draft.get('details')),
+    }
 
 # The ability score rolls kept with one of the signed-in player's drafts, or None.
 def draft_rolls(conn, draft_id):
@@ -92,18 +154,25 @@ def get_background_options():
     return jsonify([background_detail_for(b['id'], setting) for b in allowed_backgrounds(setting)]), 200
 
 # ?campaign=... as above. One class in full at the starting level: features, choices, subclasses.
+# &level=<n> instead shows it at that level, for editing a character that has it.
 @bp.get('/characters/options/classes/<path:class_id>')
 @require_login
 def get_class_option(class_id):
     setting, problem = setting_from_query()
     if problem:
         return problem
+    level = request.args.get('level', type=int)
+    if level is not None:
+        if not 1 <= level <= MAX_LEVEL:
+            return error(f'level must be from 1 to {MAX_LEVEL}.', 400)
+        setting = setting.at_level(level)
     if class_id not in {c['id'] for c in allowed_classes(setting)}:
         return error('Class not found', 404)
     return jsonify(class_detail_for(class_id, setting)), 200
 
 # Body: {campaignId (null for the sandbox), name, species, speciesChoices, background, backgroundChoices,
-# class, classChoices}.
+# class, classChoices, ...}. With characterId, checks an edit of that character instead: its
+# campaign, level and rolls (campaignId and draftId are ignored).
 # Returns {errors: [{field, message}], taken: {optionKey: field}}: errors is empty when the draft can
 # be created; taken is each skill, tool and language already picked, and which choice picked it,
 # so the wizard leaves it out of the other choices. Doesn't save anything.
@@ -113,8 +182,15 @@ def validate_character():
     draft = json_body() or {}
     conn = connect()
     try:
-        setting = creation_setting(conn, draft.get('campaignId'))
-        rolls = draft_rolls(conn, draft.get('draftId'))
+        if draft.get('characterId'):
+            row = own_character(conn, draft['characterId'])
+            if row is None:
+                return error('Character not found', 404)
+            sheet = json.loads(row['sheet'])
+            setting, rolls = character_setting(conn, row, sheet).for_draft(draft), sheet_rolls(sheet)
+        else:
+            setting = creation_setting(conn, draft.get('campaignId'))
+            rolls = draft_rolls(conn, draft.get('draftId'))
     except NoCampaign:
         return error('Campaign not found', 404)
     finally:
@@ -133,7 +209,8 @@ def create(campaign_id):
                 setting = creation_setting(conn, campaign_id).for_draft(draft)
             except NoCampaign:
                 return error('Only members of this campaign can create characters in it.', 403)
-            result = check_draft(draft, setting, draft_rolls(conn, draft.get('draftId')))
+            rolls = draft_rolls(conn, draft.get('draftId'))
+            result = check_draft(draft, setting, rolls)
             errors = result['errors']
             if errors:
                 return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
@@ -147,23 +224,7 @@ def create(campaign_id):
             conn.execute(
                 'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active) VALUES (?, ?, ?, ?, ?, ?)',
                 (character_id, campaign_id, g.user['id'], name,
-                 json.dumps({
-                     'level': setting.level,
-                     'species': draft['species'],
-                     'speciesChoices': draft.get('speciesChoices') or {},
-                     'originRules': setting.origin_rules(),
-                     'background': draft['background'],
-                     'backgroundChoices': kept_background_choices(draft, setting),
-                     'class': draft['class'],
-                     'classChoices': kept_class_choices(draft, setting),
-                     'abilityMethod': draft.get('abilityMethod') or ability_rules(setting)['methods'][0],
-                     # Base scores as assigned; abilities has them with the background's increases.
-                     'abilityScores': draft['abilityScores'],
-                     'abilities': {a: s['total'] for a, s in summary['abilities'].items()},
-                     'hpMethod': hp_method(draft, setting),
-                     'hitPoints': summary['hitPoints'],
-                     'details': clean_details(draft.get('details')),
-                 }),
+                 json.dumps(build_sheet(draft, setting, summary, rolls)),
                  0 if has_active else 1),
             )
             if isinstance(draft.get('draftId'), str):
@@ -206,10 +267,12 @@ def get_character(character_id):
     conn = connect()
     try:
         row = own_character(conn, character_id)
+        problems = character_problems(conn, row) if row else []
     finally:
         conn.close()
     if row is None:
         return error('Character not found', 404)
+    sheet = json.loads(row['sheet'])
     return jsonify({
         'id': row['id'],
         'name': row['name'],
@@ -218,7 +281,62 @@ def get_character(character_id):
         'campaignName': row['campaign_name'],
         # Changes whenever the portrait does; null when there isn't one.
         'portraitVersion': row['portrait_version'],
+        # What no longer fits the campaign's current settings; fixed by editing in the wizard.
+        'problems': problems,
+        # The character as the wizard edits it, and the ability rolls its scores came from.
+        'draft': sheet_draft(row, sheet),
+        'rolls': sheet_rolls(sheet),
+        'level': sheet.get('level', 1),
     }), 200
+
+# Body: the wizard's draft (name, species, ..., details). Saves an edit of the character,
+# checked against its campaign as it is now, at the character's level. Refused unless
+# everything fits, so a flagged character keeps its old sheet until it's fully fixed.
+@bp.put('/characters/<character_id>')
+@require_login
+def update_character(character_id):
+    draft = json_body() or {}
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            sheet = json.loads(row['sheet'])
+            setting, rolls = character_setting(conn, row, sheet).for_draft(draft), sheet_rolls(sheet)
+            result = check_draft(draft, setting, rolls)
+            if result['errors']:
+                return jsonify({'error': result['errors'][0]['message'], 'errors': result['errors']}), 400
+            # Keys the wizard doesn't manage (anything added later in play) are kept.
+            sheet.update(build_sheet(draft, setting, result['summary'], rolls))
+            name = clean_name(draft['name'])
+            conn.execute(f'UPDATE characters SET name = ?, sheet = ?, updated_at = {NOW} WHERE id = ?',
+                         (name, json.dumps(sheet), character_id))
+    finally:
+        conn.close()
+    return jsonify({'id': character_id, 'name': name}), 200
+
+# Rolls ability scores for a character switching to the roll method while being edited.
+# Like a draft's: once in a campaign (a character that has rolls keeps them), again in the sandbox.
+@bp.post('/characters/<character_id>/roll')
+@require_login
+@limit('ability-roll', 60, 60 * 60)
+def roll_character_abilities(character_id):
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            sheet = json.loads(row['sheet'])
+            if sheet_rolls(sheet) and row['campaign_id'] is not None:
+                return error('You’ve already rolled for this character.', 409)
+            sheet['abilityRolls'] = roll_scores()
+            conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
+                         (json.dumps(sheet), character_id))
+    finally:
+        conn.close()
+    return jsonify({'rolls': sheet['abilityRolls']}), 200
 
 @bp.get('/characters/<character_id>/portrait')
 @require_login

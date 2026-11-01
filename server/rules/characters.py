@@ -40,6 +40,15 @@ class Setting:
             return self
         return Setting(None, {k: v for k, v in chosen.items() if k in PLAYER_RULES and RULE_CHECKS[k](v)})
 
+    # The setting for an existing character, checked at the level it has rather than the
+    # campaign's starting level (raising the milestone level doesn't make it wrong).
+    def at_level(self, level):
+        if not isinstance(level, int) or isinstance(level, bool) or level == self.level:
+            return self
+        setting = Setting(self.allowed, {})
+        setting.rules, setting.level = self.rules, level
+        return setting
+
     # The origin rules in force, for the wizard and the saved sheet.
     def origin_rules(self):
         return {k: self.rules[k] for k in PLAYER_RULES}

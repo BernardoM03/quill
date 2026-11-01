@@ -25,19 +25,26 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
 }) {
   // Loaded class details, by id, so stepping back and forth doesn't fetch again.
   const [details, setDetails] = useState<Record<string, classDetail | 'failed'>>({});
-  const current = classes.find(c => c.id === selected) ?? classes[0];
+  const current = selected ? classes.find(c => c.id === selected) : classes[0];
 
   useEffect(() => {
     if (!current || details[current.id]) return;
     let live = true;
-    getClassOption(campaignId, current.id)
+    getClassOption(campaignId, current.id, level)
       .then(d => live && setDetails(all => ({ ...all, [current.id]: d })))
       .catch(() => live && setDetails(all => ({ ...all, [current.id]: 'failed' })));
     return () => { live = false; };
-  }, [campaignId, current, details]);
+  }, [campaignId, current, details, level]);
 
   if (classes.length === 0) {
     return <p className="muted">This campaign doesn’t allow any classes yet. Ask your GM.</p>;
+  }
+  if (!current) {
+    return (
+      <PickCarousel caption="Class" items={classes} selected={selected ?? ''} onSelect={onSelect}>
+        <p className="setting-error">This character’s class isn’t allowed in this campaign anymore. Choose another.</p>
+      </PickCarousel>
+    );
   }
   const detail = details[current.id];
 

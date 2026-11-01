@@ -22,6 +22,10 @@ POINT_COSTS = {8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9}
 MANUAL_RANGE = (3, 18)
 SCORE_MAX = 20
 HP_TARGET = 'hitPointMaximum'
+METHOD_LABELS = {
+    'standardArray': 'Standard Array', 'pointBuy': 'Point Buy', 'roll': 'Roll', 'manual': 'Manual',
+    'sharedManual': 'the GM’s scores',
+}
 
 def methods(setting):
     if setting.allowed is None:
@@ -76,6 +80,10 @@ def ability_errors(draft, setting, rolls):
     ability_methods, _ = methods(setting)
     method = draft.get('abilityMethod') or (ability_methods[0] if len(ability_methods) == 1 else None)
     if method not in ability_methods:
+        if method in METHOD_LABELS and len(ability_methods) == 1:
+            # A saved character whose campaign has since changed its method.
+            return [_error('abilityMethod', f'This campaign uses {METHOD_LABELS[ability_methods[0]]} for ability '
+                                            f'scores now, not {METHOD_LABELS[method]}. Set your scores again.')]
         return [_error('abilityMethod', 'Choose how to set your ability scores.')]
     scores = draft.get('abilityScores')
     if not isinstance(scores, dict) or not all(_is_int(scores.get(a)) for a in ABILITIES):

@@ -36,3 +36,27 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+/* A character that no longer fits its campaign's settings: what's wrong, and a way to fix it. */
+.character-flag {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--danger);
+  background: var(--code-bg);
+}
+
+.character-flag strong {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.character-flag p,
+.character-flag ul {
+  margin: 0.4rem 0;
+  font-size: 14px;
+}
+
+.character-header__edit {
+  align-self: flex-start;
+  margin-left: calc(-0.8rem - 1px);
+}

@@ -134,6 +134,9 @@ export default function App() {
                       <span className="character-row__campaign">Character Sandbox</span>
                     )}
                   </div>
+                  {character.needsChanges && (
+                    <Link to={`/characters/${character.id}`} className="character-row__badge character-row__badge--warning">Needs changes</Link>
+                  )}
                   {character.isActive && <span className="character-row__badge">Active</span>}
                 </li>
               ))}

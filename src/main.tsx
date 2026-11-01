@@ -61,6 +61,10 @@ const router = createBrowserRouter([
     element: <CharacterPage />
   },
   {
+    path : "/characters/:characterID/edit",
+    element: <NewCharacter />
+  },
+  {
     path : "/setup/campaign",
     element : <CampaignSettings />
   },

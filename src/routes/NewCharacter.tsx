@@ -3,8 +3,8 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
 import {
-    createCharacter, createSandboxCharacter, getCharacterOptions, validateCharacter,
-    getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type draftCheck, type draftError, type takenOptions,
+    createCharacter, createSandboxCharacter, getCharacter, getCharacterOptions, rollCharacterAbilities,
+    updateCharacter, validateCharacter, getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type draftCheck, type draftError, type takenOptions,
 } from "../api/characters";
 import { createDraft, getDraft, rollAbilities, saveDraft } from "../api/drafts";
 import { getUser } from "../api/users";
@@ -105,8 +105,12 @@ const FRESH_CHOICES = {
 // A step-by-step character creation wizard, at /campaigns/:campaignID/characters/new
 // or, choosing the campaign first, at /characters/new. Once a campaign is chosen, progress
 // is saved as a draft as the player goes; ?draft=<id> reopens it where they left off.
+// At /characters/:characterID/edit it edits a saved character instead: everything it has,
+// checked against its campaign as it is now. Nothing is saved until every step fits; then
+// Save Changes replaces the character's sheet. There are no drafts while editing.
 export default function NewCharacter() {
-    const { campaignID } = useParams();
+    const { campaignID, characterID } = useParams();
+    const editing = Boolean(characterID)
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams()
     // The saved draft's id: from the URL when reopening, or once the first save makes it.
@@ -114,11 +118,13 @@ export default function NewCharacter() {
     // Resolves once the first save has made the draft, so later saves don't make another.
     const creatingDraft = useRef<Promise<string> | null>(null)
     // False while a reopened draft loads, so nothing is saved over it first.
-    const [loaded, setLoaded] = useState(() => !searchParams.get('draft'))
+    const [loaded, setLoaded] = useState(() => !searchParams.get('draft') && !characterID)
+    // The edited character's level, which may differ from the campaign's starting level.
+    const [characterLevel, setCharacterLevel] = useState<number | null>(null)
     const [saveState, setSaveState] = useState<'saved' | 'saving' | 'failed' | null>(null)
     // Set once the character is created, so no save brings the draft back.
     const finished = useRef(false)
-    const steps = stepsFor(Boolean(campaignID))
+    const steps = stepsFor(Boolean(campaignID) || editing)
     // The campaigns a character can be made in: the one in the URL, or the user's memberships.
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
     const [notFound, setNotFound] = useState(false)
@@ -146,6 +152,27 @@ export default function NewCharacter() {
     // Counts validation requests, so a slow answer can't replace a newer one.
     const latestCheck = useRef(0)
 
+    // Editing: start from the character as saved, with every step's problems showing, on
+    // the first step that has one.
+    useEffect(() => {
+        if (!characterID) return
+        getCharacter(characterID)
+            .then(c => {
+                setDraft({
+                    ...FRESH_CHOICES, ...c.draft, details: c.draft.details ?? {}, campaignId: c.campaignId ?? SANDBOX,
+                })
+                setRolls(c.rolls)
+                setCharacterLevel(c.level)
+                setCampaigns(c.campaignId ? [{ id: c.campaignId, name: c.campaignName ?? '' }] : [])
+                const editSteps = stepsFor(true)
+                setAttempted(new Set(editSteps.map(s => s.id)))
+                const first = editSteps.findIndex(s => c.problems.some(p => stepOf(p.field) === s.id))
+                if (first > 0) setStepIndex(first)
+                setLoaded(true)
+            })
+            .catch(() => setNotFound(true))
+    }, [characterID])
+
     useEffect(() => {
         if (!draftId.current) return
         getDraft(draftId.current)
@@ -164,6 +191,7 @@ export default function NewCharacter() {
     }, [campaignID, setSearchParams])
 
     useEffect(() => {
+        if (characterID) return  // the character says which campaign
         if (campaignID) {
             getCampaign(campaignID)
                 .then(c => setCampaigns([{ id: campaignID, name: c.name }]))
@@ -173,7 +201,7 @@ export default function NewCharacter() {
                 .then(user => setCampaigns(user.campaigns))
                 .catch(() => setCampaigns([]))
         }
-    }, [campaignID])
+    }, [campaignID, characterID])
 
     // What the chosen campaign offers changes with the campaign.
     useEffect(() => {
@@ -211,9 +239,9 @@ export default function NewCharacter() {
     }, [rulesKey])
     const backgrounds = rulesKey ? ruledBackgrounds : options?.backgrounds ?? null
 
-    function check(next: wizardDraft): Promise<draftError[]> {
+    const check = useCallback((next: wizardDraft): Promise<draftError[]> => {
         const request = ++latestCheck.current
-        return validateCharacter(serverCampaign(next.campaignId), characterFields(next), draftId.current)
+        return validateCharacter(serverCampaign(next.campaignId), characterFields(next), draftId.current, characterID)
             .then(found => {
                 if (request === latestCheck.current) {
                     setErrors(found.errors)
@@ -222,19 +250,19 @@ export default function NewCharacter() {
                 }
                 return found.errors
             })
-    }
+    }, [characterID])
 
     // Check the draft with the server as the player goes, once typing pauses.
     useEffect(() => {
         if (!draft.campaignId) return
         const timer = setTimeout(() => { check(draft).catch(() => {}) }, VALIDATE_DELAY_MS)
         return () => clearTimeout(timer)
-    }, [draft])
+    }, [draft, check])
 
     // Save the draft once the player pauses. The first save makes it and puts its id in
     // the URL, so reloading or coming back from home reopens it.
     useEffect(() => {
-        if (!loaded || !draft.campaignId || finished.current) return
+        if (editing || !loaded || !draft.campaignId || finished.current) return
         const timer = setTimeout(() => {
             const saved = {
                 campaignId: serverCampaign(draft.campaignId),
@@ -257,7 +285,7 @@ export default function NewCharacter() {
             save.then(() => setSaveState('saved'), () => setSaveState('failed'))
         }, SAVE_DELAY_MS)
         return () => clearTimeout(timer)
-    }, [draft, stepIndex, loaded, campaignID, setSearchParams])
+    }, [draft, stepIndex, loaded, campaignID, setSearchParams, editing])
 
     const step = steps[stepIndex]
     const isLast = stepIndex === steps.length - 1
@@ -313,7 +341,8 @@ export default function NewCharacter() {
     }
 
     function rollScores() {
-        return ensureDraft().then(rollAbilities).then(found => {
+        const roll = characterID ? rollCharacterAbilities(characterID) : ensureDraft().then(rollAbilities)
+        return roll.then(found => {
             setRolls(found)
             // Check again with the new rolls.
             setDraft(d => ({ ...d }))
@@ -337,9 +366,23 @@ export default function NewCharacter() {
                     setSaving(false)
                     return
                 }
+                // Steps can be skipped from the bar, so before creating, send the player to
+                // the first step that still has a problem.
+                const unfinished = isLast ? steps.findIndex(s => found.some(err => stepOf(err.field) === s.id)) : -1
+                if (unfinished >= 0) {
+                    setAttempted(a => new Set(a).add(steps[unfinished].id))
+                    setStepIndex(unfinished)
+                    setSaving(false)
+                    return
+                }
                 if (!isLast) {
                     setStepIndex(i => i + 1)
                     return
+                }
+                if (characterID) {
+                    finished.current = true
+                    return updateCharacter(characterID, characterFields(draft))
+                        .then(() => navigate(`/characters/${characterID}`, { replace: true }))
                 }
                 const body = { draftId: draftId.current ?? undefined, ...characterFields(draft) }
                 const create = draft.campaignId === SANDBOX
@@ -363,8 +406,8 @@ export default function NewCharacter() {
         return (
             <div className="page">
                 <BackButton/>
-                <h1>Campaign not found</h1>
-                <p className="muted">It may have been deleted, or you aren’t a member.</p>
+                <h1>{editing ? 'Character not found' : 'Campaign not found'}</h1>
+                <p className="muted">{editing ? 'It may have been deleted, or it isn’t yours.' : 'It may have been deleted, or you aren’t a member.'}</p>
             </div>
         )
     }
@@ -378,7 +421,7 @@ export default function NewCharacter() {
         <div className="page wizard">
             <BackButton/>
             <span className="setting-caption">{chosenName ?? ' '}</span>
-            <h1>New Character</h1>
+            <h1>{editing ? `Edit ${draft.name || 'Character'}` : 'New Character'}</h1>
             {saveState && (
                 <span className="setting-hint" aria-live="polite">
                     {saveState === 'saving' ? 'Saving draft…' : saveState === 'saved' ? 'Draft saved' : 'Couldn’t save the draft'}
@@ -387,9 +430,13 @@ export default function NewCharacter() {
 
             <ol className="wizard__steps" aria-label="Steps">
                 {steps.map((s, i) => (
-                    <li key={s.id} className={i === stepIndex ? 'wizard__step wizard__step--current' : i < stepIndex ? 'wizard__step wizard__step--done' : 'wizard__step'}
-                        aria-current={i === stepIndex ? 'step' : undefined}>
-                        <span className="wizard__step-number">{i + 1}</span> {s.label}
+                    <li key={s.id} className={i === stepIndex ? 'wizard__step wizard__step--current' : i < stepIndex ? 'wizard__step wizard__step--done' : 'wizard__step'}>
+                        {/* Any step can be opened, once there's a campaign to build for. */}
+                        <button type="button" className="wizard__step-button" aria-current={i === stepIndex ? 'step' : undefined}
+                            disabled={saving || (s.id !== 'campaign' && !draft.campaignId)}
+                            onClick={() => setStepIndex(i)}>
+                            <span className="wizard__step-number">{i + 1}</span> {s.label}
+                        </button>
                     </li>
                 ))}
             </ol>
@@ -452,7 +499,7 @@ export default function NewCharacter() {
                 {step.id === 'class' && (options ? (
                     <ClassStep
                         campaignId={serverCampaign(draft.campaignId)}
-                        level={options.level}
+                        level={characterLevel ?? options.level}
                         classes={options.classes}
                         selected={draft.class}
                         choices={draft.classChoices}
@@ -467,7 +514,7 @@ export default function NewCharacter() {
                 {step.id === 'abilities' && (options ? (
                     <AbilitiesStep
                         rules={options.abilityRules}
-                        level={options.level}
+                        level={characterLevel ?? options.level}
                         hitDie={options.classes.find(c => c.id === draft.class)?.hitDie ?? null}
                         fields={draft}
                         rolls={rolls}
@@ -503,7 +550,9 @@ export default function NewCharacter() {
                         </button>
                     )}
                     <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked || !loaded}>
-                        {isLast ? (saving ? 'Creating…' : 'Create Character') : 'Next'}
+                        {isLast
+                            ? (editing ? (saving ? 'Saving…' : 'Save Changes') : (saving ? 'Creating…' : 'Create Character'))
+                            : 'Next'}
                     </button>
                 </div>
             </form>

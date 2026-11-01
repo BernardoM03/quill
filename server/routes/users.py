@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 
 from server.db import connect
 from server.helpers import current_user, list_campaigns
+from server.routes.characters import character_problems
 from server.access import require_login
 
 bp = Blueprint('users', __name__)
@@ -17,7 +18,7 @@ def get_user():
         campaigns = list_campaigns(conn, user['id'])
         characters = conn.execute(
             # Character Sandbox characters have no campaign; they're listed after the rest.
-            'SELECT ch.id, ch.name, ch.is_active, ch.campaign_id, c.name AS campaign_name, '
+            'SELECT ch.id, ch.name, ch.is_active, ch.campaign_id, ch.sheet, c.name AS campaign_name, '
             'p.updated_at AS portrait_version '
             'FROM characters ch LEFT JOIN campaigns c ON c.id = ch.campaign_id '
             'LEFT JOIN character_portraits p ON p.character_id = ch.id '
@@ -25,6 +26,7 @@ def get_user():
             'ORDER BY ch.campaign_id IS NULL, c.created_at, ch.created_at',
             (user['id'],),
         ).fetchall()
+        flagged = {ch['id'] for ch in characters if character_problems(conn, ch)}
     finally:
         conn.close()
     return jsonify({
@@ -38,5 +40,7 @@ def get_user():
             'campaignId': ch['campaign_id'],
             'campaignName': ch['campaign_name'],
             'portraitVersion': ch['portrait_version'],
+            # True when it no longer fits its campaign's settings and needs editing.
+            'needsChanges': ch['id'] in flagged,
         } for ch in characters],
     }), 200

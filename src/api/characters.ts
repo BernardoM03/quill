@@ -237,8 +237,9 @@ export interface classDetail {
     subclasses: subclassDetail[],
 }
 
-export function getClassOption(campaignId: string | null, classId: string): Promise<classDetail> {
-    return apiClient.get(`/characters/options/classes/${classId}`, { params: { campaign: campaignId ?? 'sandbox' } })
+// level: show it at that level instead of the campaign's starting level (editing a character).
+export function getClassOption(campaignId: string | null, classId: string, level?: number): Promise<classDetail> {
+    return apiClient.get(`/characters/options/classes/${classId}`, { params: { campaign: campaignId ?? 'sandbox', level } })
         .then(response => response.data);
 }
 
@@ -279,8 +280,22 @@ export interface draftCheck {
 }
 
 // Saves nothing. draftId: the saved draft, whose ability rolls the roll method checks against.
-export function validateCharacter(campaignId: string | null, draft: characterDraft, draftId?: string | null): Promise<draftCheck> {
-    return apiClient.post("/characters/validate", { campaignId, draftId, ...draft }).then(response => response.data);
+// characterId: checks an edit of that character instead (its campaign, level and rolls).
+export function validateCharacter(campaignId: string | null, draft: characterDraft, draftId?: string | null,
+                                  characterId?: string | null): Promise<draftCheck> {
+    return apiClient.post("/characters/validate", { campaignId, draftId, characterId, ...draft })
+        .then(response => response.data);
+}
+
+// Saves an edit made in the wizard. Refused (with errors) unless everything fits the
+// character's campaign as it is now.
+export function updateCharacter(characterId: string, draft: characterDraft): Promise<void> {
+    return apiClient.put(`/characters/${characterId}`, draft).then(() => undefined);
+}
+
+// Rolls ability scores for a character switched to the roll method while being edited.
+export function rollCharacterAbilities(characterId: string): Promise<abilityRoll[]> {
+    return apiClient.post(`/characters/${characterId}/roll`).then(response => response.data.rolls);
 }
 
 // Creates a Character Sandbox character: in no campaign, using all the content the
@@ -304,6 +319,13 @@ export interface characterSummary {
     campaignName: string | null,
     // Changes whenever the portrait does; null when there isn't one.
     portraitVersion: string | null,
+    // What no longer fits its campaign's current settings. Fixed by editing it in the wizard;
+    // until then the character keeps everything as it was.
+    problems: draftError[],
+    // The character as the wizard edits it, and the ability rolls its scores came from.
+    draft: characterDraft,
+    rolls: abilityRoll[] | null,
+    level: number,
 }
 
 export function getCharacter(id: string): Promise<characterSummary> {

@@ -11,6 +11,8 @@ export interface userCharacter {
   campaignName: string | null,
   // Changes whenever the portrait does; null when there isn't one.
   portraitVersion: string | null,
+  // It no longer fits its campaign's settings and needs editing.
+  needsChanges: boolean,
 }
 
 export interface user {

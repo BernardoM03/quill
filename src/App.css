@@ -126,3 +126,9 @@
   display: block;
   margin-top: 1rem;
 }
+
+.character-row__badge--warning {
+  color: var(--danger);
+  border-color: var(--danger);
+  text-decoration: none;
+}

@@ -26,7 +26,14 @@ export function SpeciesStep({ options, selected, choices, taken, onSelect, onCho
   if (options.length === 0) {
     return <p className="muted">This campaign doesn’t allow any species yet. Ask your GM.</p>;
   }
-  const species = options.find(s => s.id === selected) ?? options[0];
+  const species = selected ? options.find(s => s.id === selected) : options[0];
+  if (!species) {
+    return (
+      <PickCarousel caption="Species" items={options} selected={selected ?? ''} onSelect={onSelect}>
+        <p className="setting-error">This character’s species isn’t allowed in this campaign anymore. Choose another.</p>
+      </PickCarousel>
+    );
+  }
 
   return (
     <>

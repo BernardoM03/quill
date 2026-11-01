@@ -91,8 +91,25 @@ export default function CharacterPage() {
                             : 'Character Sandbox'}
                         {character.isActive && ' · Active'}
                     </span>
+                    <Link to={`/characters/${character.id}/edit`} className="setting-button setting-button--quiet character-header__edit">
+                        Edit Character
+                    </Link>
                 </div>
             </div>
+
+            {character.problems.length > 0 && (
+                <div className="character-flag" role="alert">
+                    <strong>This character no longer matches {character.campaignName ?? 'the Character Sandbox'}.</strong>
+                    <p>
+                        The campaign’s settings have changed since it was made. Nothing has been changed or
+                        removed. Edit the character to fix these:
+                    </p>
+                    <ul>
+                        {[...new Set(character.problems.map(p => p.message))].map(m => <li key={m}>{m}</li>)}
+                    </ul>
+                    <Link to={`/characters/${character.id}/edit`} className="setting-button">Fix in Character Wizard</Link>
+                </div>
+            )}
 
             <div className="setting-section">
                 <span className="setting-caption">Portrait</span>

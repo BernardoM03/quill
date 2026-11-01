@@ -45,7 +45,17 @@ export function BackgroundStep({ rules, locked, onRuleChange, options, selected,
   if (options.length === 0) {
     return <>{switches}<p className="muted">This campaign doesn’t allow any backgrounds yet. Ask your GM.</p></>;
   }
-  const background = options.find(b => b.id === selected) ?? options[0];
+  const background = selected ? options.find(b => b.id === selected) : options[0];
+  if (!background) {
+    return (
+      <>
+        {switches}
+        <PickCarousel caption="Background" items={options} selected={selected ?? ''} onSelect={onSelect}>
+          <p className="setting-error">This character’s background isn’t allowed in this campaign anymore. Choose another.</p>
+        </PickCarousel>
+      </>
+    );
+  }
   const byId = (id: string) => background.choices.find(c => c.id === id);
   const featChoice = byId(FEAT_CHOICE);
   const equipmentChoice = byId(EQUIPMENT_CHOICE);
