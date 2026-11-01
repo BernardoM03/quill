@@ -8,9 +8,9 @@ from server.access import require_login, require_member
 from server.db import connect
 from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
-from server.rules import packs
 from server.rules.characters import (
-    Setting, allowed_classes, allowed_species, class_detail_for, kept_class_choices, species_detail, validate_draft,
+    Setting, allowed_classes, allowed_species, check_draft, class_detail_for, kept_class_choices, species_detail,
+    validate_draft,
 )
 from server.rules.classes import class_summary
 
@@ -73,7 +73,9 @@ def get_class_option(class_id):
     return jsonify(class_detail_for(class_id, setting)), 200
 
 # Body: {campaignId (null for the sandbox), name, species, speciesChoices, class, classChoices}.
-# Returns {errors: [{field, message}]}, empty when the draft can be created. Doesn't save anything.
+# Returns {errors: [{field, message}], taken: {optionKey: field}}: errors is empty when the draft can
+# be created; taken is each skill, tool and language already picked, and which choice picked it,
+# so the wizard leaves it out of the other choices. Doesn't save anything.
 @bp.post('/characters/validate')
 @require_login
 def validate_character():
@@ -85,10 +87,11 @@ def validate_character():
         return error('Campaign not found', 404)
     finally:
         conn.close()
-    return jsonify({'errors': validate_draft(draft, setting)}), 200
+    return jsonify(check_draft(draft, setting)), 200
 
 # Checks the body and saves the character. campaign_id None makes a sandbox character, which
 # is never active; in a campaign, the player's first character there becomes active.
+# A draftId in the body names the draft it was made from, which is deleted with the save.
 def create(campaign_id):
     draft = json_body() or {}
     conn = connect()
@@ -119,6 +122,9 @@ def create(campaign_id):
                  }),
                  0 if has_active else 1),
             )
+            if isinstance(draft.get('draftId'), str):
+                conn.execute('DELETE FROM character_drafts WHERE id = ? AND owner_id = ?',
+                             (draft['draftId'], g.user['id']))
     finally:
         conn.close()
     return jsonify({'id': character_id, 'name': name, 'isActive': not has_active}), 201

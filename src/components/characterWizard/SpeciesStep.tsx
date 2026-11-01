@@ -1,4 +1,4 @@
-import type { choicePicks, speciesOption } from '../../api/characters';
+import type { choicePicks, speciesOption, takenOptions } from '../../api/characters';
 import { ChoiceField, PickCarousel } from './PickCard';
 
 const titleCase = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
@@ -14,10 +14,11 @@ function details(species: speciesOption): string {
 // The species step: every species the campaign allows, one card at a time. The card shows
 // everything about the species and every choice it asks for, made right here.
 // errorsFor(field): the server's messages to show for a field ('species', 'choice:<id>').
-export function SpeciesStep({ options, selected, choices, onSelect, onChoose, errorsFor }: {
+export function SpeciesStep({ options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
   options: speciesOption[];
   selected: string | null;
   choices: choicePicks;
+  taken: takenOptions;
   onSelect: (speciesId: string) => void;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];
@@ -36,7 +37,8 @@ export function SpeciesStep({ options, selected, choices, onSelect, onChoose, er
         </header>
 
         {species.choices.map(choice => (
-          <ChoiceField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
+          <ChoiceField key={choice.id} choice={choice} field={`choice:${choice.id}`} value={choices[choice.id]}
+            taken={taken} onChoose={onChoose}
             errors={errorsFor(`choice:${choice.id}`)} />
         ))}
 
@@ -47,7 +49,8 @@ export function SpeciesStep({ options, selected, choices, onSelect, onChoose, er
               <dd>
                 <p>{trait.description || trait.shortDescription}</p>
                 {trait.choices.map(choice => (
-                  <ChoiceField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
+                  <ChoiceField key={choice.id} choice={choice} field={`choice:${choice.id}`} value={choices[choice.id]}
+                    taken={taken} onChoose={onChoose}
                     errors={errorsFor(`choice:${choice.id}`)} />
                 ))}
               </dd>

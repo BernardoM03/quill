@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import {
   getClassOption, type characterChoice, type choicePicks, type classDetail, type classFeature, type classSummary,
+  type takenOptions,
 } from '../../api/characters';
 import { activeChoices } from './activeChoices';
 import { ChoiceField, PickCarousel } from './PickCard';
@@ -11,12 +12,13 @@ import { ChoiceField, PickCarousel } from './PickCard';
 // proficiencies, each feature up to the level, the subclass once the level reaches it,
 // and every choice those bring, made right here.
 // errorsFor(field): the server's messages for a field ('class', 'classChoice:<id>').
-export function ClassStep({ campaignId, level, classes, selected, choices, onSelect, onChoose, errorsFor }: {
+export function ClassStep({ campaignId, level, classes, selected, choices, taken, onSelect, onChoose, errorsFor }: {
   campaignId: string | null;
   level: number;
   classes: classSummary[];
   selected: string | null;
   choices: choicePicks;
+  taken: takenOptions;
   onSelect: (classId: string) => void;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];
@@ -40,7 +42,8 @@ export function ClassStep({ campaignId, level, classes, selected, choices, onSel
   const detail = details[current.id];
 
   const field = (choice: characterChoice) => (
-    <ChoiceField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
+    <ChoiceField key={choice.id} choice={choice} field={`classChoice:${choice.id}`} value={choices[choice.id]}
+      taken={taken} onChoose={onChoose}
       errors={errorsFor(`classChoice:${choice.id}`)} />
   );
   const featureList = (features: classFeature[]) => (

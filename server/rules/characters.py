@@ -84,21 +84,44 @@ def _pick_error(field, entry_id, collection, noun, setting):
         return _error(field, f'This campaign doesn’t allow {entries[entry_id]["name"]}.')
     return None
 
-# Skill ids the draft already has: picked as class skills or through a species choice.
-# Expertise-style choices may only pick from these.
-def _proficient_skills(draft, species_choice_list):
-    skills = set()
-    for value in list((draft.get('speciesChoices') or {}).values()) + [(draft.get('classChoices') or {}).get('class-skills')]:
-        for v in value if isinstance(value, list) else [value]:
-            if isinstance(v, str) and ':skill/' in v:
-                skills.add(v)
-    return frozenset(skills)
+# Proficiencies a character can only have once: picking one already gained elsewhere is refused.
+ONCE_ONLY = (':skill/', ':tool/', ':language/')
+
+def _values(value):
+    return value if isinstance(value, list) else ([] if value in (None, '') else [value])
+
+# Walks the picks in wizard order (species, then class) and returns ({key: field}, errors):
+# every once-only proficiency picked, with the field that took it first, and an error for each
+# later field that picks it again. Expertise-style choices pick from these, so they take nothing.
+def _taken(sections):
+    taken, errors = {}, []
+    for prefix, choices, picks in sections:
+        for choice in choices:
+            if choice.get('proficientOnly'):
+                continue
+            field = prefix + choice['id']
+            labels = {o['key']: o['label'] for o in choice['options']}
+            for key in _values(picks.get(choice['id'])):
+                if not isinstance(key, str) or not any(t in key for t in ONCE_ONLY):
+                    continue
+                if key not in taken:
+                    taken[key] = field
+                elif taken[key] != field:
+                    errors.append(_error(field, f'You already have {labels.get(key, key)} from another choice. '
+                                                f'Pick something else.'))
+    return taken, errors
 
 # Every problem with a draft, as [{field, message}]; empty when it can be created.
 # draft: {name, species, speciesChoices, class, classChoices}; choices map choice id -> key(s).
 # Fields: 'campaign', 'species', 'choice:<id>', 'class', 'classChoice:<id>', 'name'.
 def validate_draft(draft, setting):
+    return check_draft(draft, setting)['errors']
+
+# validate_draft's errors, plus taken: {option key: field} for each once-only proficiency
+# the draft has picked, so the wizard can leave it out of every other choice.
+def check_draft(draft, setting):
     errors = []
+    sections = []
     if setting.allowed is not None:
         problems = campaign_problems(setting.allowed)
         if problems:
@@ -112,6 +135,8 @@ def validate_draft(draft, setting):
     else:
         species_choice_list = species_choices(species_detail(packs.collection('species')[draft['species']], setting))
         errors.extend(choice_errors(draft.get('speciesChoices'), species_choice_list, 'choice:', 'species'))
+        picks = draft.get('speciesChoices')
+        sections.append(('choice:', species_choice_list, picks if isinstance(picks, dict) else {}))
 
     problem = _pick_error('class', draft.get('class'), 'classes', 'class', setting)
     if problem:
@@ -119,13 +144,19 @@ def validate_draft(draft, setting):
     else:
         picks = draft.get('classChoices') if isinstance(draft.get('classChoices'), dict) else {}
         detail = class_detail_for(draft['class'], setting)
-        errors.extend(choice_errors(draft.get('classChoices'), active_choices(detail, picks), 'classChoice:', 'class',
-                                    proficient=_proficient_skills(draft, species_choice_list),
-                                    known={c['id'] for c in all_choices(detail)}))
+        active = active_choices(detail, picks)
+        sections.append(('classChoice:', active, picks))
+        proficient = frozenset(k for k in _taken(sections)[0] if ':skill/' in k)
+        errors.extend(choice_errors(draft.get('classChoices'), active, 'classChoice:', 'class',
+                                    proficient=proficient, known={c['id'] for c in all_choices(detail)}))
+
+    taken, repeats = _taken(sections)
+    flagged = {e['field'] for e in errors}
+    errors.extend(e for e in repeats if e['field'] not in flagged)
 
     name = draft.get('name')
     if not isinstance(name, str) or not name.strip():
         errors.append(_error('name', 'Give your character a name.'))
     elif clean_name(name) is None:
         errors.append(_error('name', f'Name must be 1-{NAME_MAX_LENGTH} characters, with no control characters.'))
-    return errors
+    return {'errors': errors, 'taken': taken}

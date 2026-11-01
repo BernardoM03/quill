@@ -138,19 +138,29 @@ export interface draftError {
     message: string,
 }
 
-// Every problem the server finds with the draft; empty when it can be created. Saves nothing.
-export function validateCharacter(campaignId: string | null, draft: characterDraft): Promise<draftError[]> {
-    return apiClient.post("/characters/validate", { campaignId, ...draft }).then(response => response.data.errors);
+// Option key -> the field of the choice that picked it, for each skill, tool and language
+// the draft already has. Other choices leave these out.
+export type takenOptions = Record<string, string>
+
+export interface draftCheck {
+    // Every problem the server finds with the draft; empty when it can be created.
+    errors: draftError[],
+    taken: takenOptions,
+}
+
+// Saves nothing.
+export function validateCharacter(campaignId: string | null, draft: characterDraft): Promise<draftCheck> {
+    return apiClient.post("/characters/validate", { campaignId, ...draft }).then(response => response.data);
 }
 
 // Creates a Character Sandbox character: in no campaign, using all the content the
-// server has and the default rules.
-export function createSandboxCharacter(draft: characterDraft): Promise<createdCharacter> {
+// server has and the default rules. draftId: the saved draft it came from, deleted with the save.
+export function createSandboxCharacter(draft: characterDraft & { draftId?: string }): Promise<createdCharacter> {
     return apiClient.post("/sandbox/characters", draft).then(response => response.data);
 }
 
 // Creates a character for the signed-in player in this campaign.
-export function createCharacter(campaignId: string, draft: characterDraft): Promise<createdCharacter> {
+export function createCharacter(campaignId: string, draft: characterDraft & { draftId?: string }): Promise<createdCharacter> {
     return apiClient.post(`/campaigns/${campaignId}/characters`, draft).then(response => response.data);
 }
 

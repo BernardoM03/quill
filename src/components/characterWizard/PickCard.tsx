@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import type { characterChoice } from '../../api/characters';
+import type { characterChoice, takenOptions } from '../../api/characters';
 import './PickCard.css';
 
 // A wizard step that picks one thing from a list (species, class): a dropdown to jump to
@@ -47,13 +47,21 @@ export function PickCarousel({ caption, items, selected, onSelect, extra, childr
 // One choice. A single pick is a dropdown; a choice of several shows that many dropdowns,
 // each leaving out what the others already took. An option that brings features (a
 // lineage's spells) or has a description shows it once picked.
-export function ChoiceField({ choice, value, onChoose, errors }: {
+// field: this choice's draft field ('choice:<id>', 'classChoice:<id>'). taken: proficiencies
+// other choices already picked (from the server), left out here; an Expertise-style choice
+// offers only those instead.
+export function ChoiceField({ choice, field, value, taken, onChoose, errors }: {
   choice: characterChoice;
+  field: string;
   value: string | string[] | undefined;
+  taken: takenOptions;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errors: string[];
 }) {
   const picked = Array.isArray(value) ? value : value ? [value] : [];
+  const offered = choice.options.filter(o => picked.includes(o.key) || (choice.proficientOnly
+    ? taken[o.key] !== undefined
+    : taken[o.key] === undefined || taken[o.key] === field));
   const chosen = choice.options.filter(o => picked.includes(o.key));
   const slots = Array.from({ length: choice.count }, (_, i) => picked[i] ?? '');
 
@@ -76,7 +84,7 @@ export function ChoiceField({ choice, value, onChoose, errors }: {
           <select key={slot} className="rules-select" value={current} aria-label={`${choice.prompt} ${slot + 1}`}
             onChange={e => setSlot(slot, e.target.value)}>
             <option value="">Choose…</option>
-            {choice.options
+            {offered
               .filter(o => o.key === current || !picked.includes(o.key))
               .map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>

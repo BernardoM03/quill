@@ -144,6 +144,22 @@ MIGRATIONS = [
         updated_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
     );
     ''',
+    # 7: character drafts: a creation wizard in progress, saved as the player goes so they
+    # can come back to it. Like characters, a campaign draft hangs off the membership, so
+    # leaving or being removed from the campaign removes it; campaign_id NULL is the sandbox.
+    '''
+    CREATE TABLE character_drafts (
+        id          TEXT PRIMARY KEY,
+        owner_id    TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        campaign_id TEXT REFERENCES campaigns(id) ON DELETE CASCADE,  -- NULL: Character Sandbox
+        draft       TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(draft)),
+        step        TEXT,                               -- the wizard step to reopen on
+        created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        updated_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        FOREIGN KEY (campaign_id, owner_id) REFERENCES memberships(campaign_id, user_id) ON DELETE CASCADE
+    );
+    CREATE INDEX character_drafts_owner ON character_drafts(owner_id);
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

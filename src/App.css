@@ -121,3 +121,8 @@
   color: var(--accent);
   border: 1px solid var(--accent);
 }
+
+.character-drafts__caption {
+  display: block;
+  margin-top: 1rem;
+}

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
 import {
     CHARACTER_NAME_MAX_LENGTH, createCharacter, createSandboxCharacter, getCharacterOptions, validateCharacter,
-    type characterOptions, type draftError,
+    type characterOptions, type draftError, type takenOptions,
 } from "../api/characters";
+import { createDraft, getDraft, saveDraft } from "../api/drafts";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
 import { ClassStep } from "../components/characterWizard/ClassStep";
@@ -18,6 +19,8 @@ import "./NewCharacter.css";
 const SANDBOX = 'sandbox'
 // How long typing pauses before the draft is checked with the server.
 const VALIDATE_DELAY_MS = 250
+// How long the player pauses before the draft is saved.
+const SAVE_DELAY_MS = 800
 
 // Everything the wizard collects. Each later step (ability scores, ...) adds its
 // fields here and a step to stepsFor below. What each step offers, and whether the draft
@@ -62,10 +65,21 @@ function stepsFor(campaignInUrl: boolean): wizardStep[] {
 const serverCampaign = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
 
 // A step-by-step character creation wizard, at /campaigns/:campaignID/characters/new
-// or, choosing the campaign first, at /characters/new.
+// or, choosing the campaign first, at /characters/new. Once a campaign is chosen, progress
+// is saved as a draft as the player goes; ?draft=<id> reopens it where they left off.
 export default function NewCharacter() {
     const { campaignID } = useParams();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams()
+    // The saved draft's id: from the URL when reopening, or once the first save makes it.
+    const draftId = useRef<string | null>(searchParams.get('draft'))
+    // Resolves once the first save has made the draft, so later saves don't make another.
+    const creatingDraft = useRef<Promise<string> | null>(null)
+    // False while a reopened draft loads, so nothing is saved over it first.
+    const [loaded, setLoaded] = useState(() => !searchParams.get('draft'))
+    const [saveState, setSaveState] = useState<'saved' | 'saving' | 'failed' | null>(null)
+    // Set once the character is created, so no save brings the draft back.
+    const finished = useRef(false)
     const steps = stepsFor(Boolean(campaignID))
     // The campaigns a character can be made in: the one in the URL, or the user's memberships.
     const [campaigns, setCampaigns] = useState<campaign[] | null>(null)
@@ -78,6 +92,7 @@ export default function NewCharacter() {
     const [options, setOptions] = useState<characterOptions | null>(null)
     // The server's verdict on the current draft.
     const [errors, setErrors] = useState<draftError[]>([])
+    const [taken, setTaken] = useState<takenOptions>({})
     // A field's errors show once the player has changed it, or tried to leave its step.
     const [touched, setTouched] = useState<Set<string>>(new Set())
     const [attempted, setAttempted] = useState<Set<stepId>>(new Set())
@@ -86,6 +101,22 @@ export default function NewCharacter() {
     const [saving, setSaving] = useState(false)
     // Counts validation requests, so a slow answer can't replace a newer one.
     const latestCheck = useRef(0)
+
+    useEffect(() => {
+        if (!draftId.current) return
+        getDraft(draftId.current)
+            .then(saved => {
+                setDraft(d => ({ ...d, ...saved.draft, campaignId: saved.campaignId ?? SANDBOX }))
+                const index = stepsFor(Boolean(campaignID)).findIndex(s => s.id === saved.step)
+                if (index > 0) setStepIndex(index)
+            })
+            // Gone (created, deleted, or left the campaign): start a fresh one.
+            .catch(() => {
+                draftId.current = null
+                setSearchParams({}, { replace: true })
+            })
+            .finally(() => setLoaded(true))
+    }, [campaignID, setSearchParams])
 
     useEffect(() => {
         if (campaignID) {
@@ -124,8 +155,11 @@ export default function NewCharacter() {
             { name: next.name, species: next.species, speciesChoices: next.speciesChoices,
               class: next.class, classChoices: next.classChoices })
             .then(found => {
-                if (request === latestCheck.current) setErrors(found)
-                return found
+                if (request === latestCheck.current) {
+                    setErrors(found.errors)
+                    setTaken(found.taken)
+                }
+                return found.errors
             })
     }
 
@@ -135,6 +169,35 @@ export default function NewCharacter() {
         const timer = setTimeout(() => { check(draft).catch(() => {}) }, VALIDATE_DELAY_MS)
         return () => clearTimeout(timer)
     }, [draft])
+
+    // Save the draft once the player pauses. The first save makes it and puts its id in
+    // the URL, so reloading or coming back from home reopens it.
+    useEffect(() => {
+        if (!loaded || !draft.campaignId || finished.current) return
+        const timer = setTimeout(() => {
+            const saved = {
+                campaignId: serverCampaign(draft.campaignId),
+                draft: { name: draft.name, species: draft.species, speciesChoices: draft.speciesChoices,
+                         class: draft.class, classChoices: draft.classChoices },
+                step: stepsFor(Boolean(campaignID))[stepIndex].id,
+            }
+            setSaveState('saving')
+            let save: Promise<unknown>
+            if (draftId.current) {
+                save = saveDraft(draftId.current, saved)
+            } else if (creatingDraft.current) {
+                save = creatingDraft.current.then(id => saveDraft(id, saved))
+            } else {
+                creatingDraft.current = createDraft(saved)
+                save = creatingDraft.current.then(id => {
+                    draftId.current = id
+                    if (!finished.current) setSearchParams({ draft: id }, { replace: true })
+                })
+            }
+            save.then(() => setSaveState('saved'), () => setSaveState('failed'))
+        }, SAVE_DELAY_MS)
+        return () => clearTimeout(timer)
+    }, [draft, stepIndex, loaded, campaignID, setSearchParams])
 
     const step = steps[stepIndex]
     const isLast = stepIndex === steps.length - 1
@@ -184,12 +247,14 @@ export default function NewCharacter() {
                     return
                 }
                 const body = {
+                    draftId: draftId.current ?? undefined,
                     name: draft.name, species: draft.species, speciesChoices: draft.speciesChoices,
                     class: draft.class, classChoices: draft.classChoices,
                 }
                 const create = draft.campaignId === SANDBOX
                     ? createSandboxCharacter(body)
                     : createCharacter(draft.campaignId, body)
+                finished.current = true
                 return create
                     // From a campaign, go back to it; from home, go home, where the new character is listed.
                     .then(() => navigate(campaignID ? `/campaign/${campaignID}` : '/', { replace: true }))
@@ -198,6 +263,7 @@ export default function NewCharacter() {
                 const data = err.response?.data
                 if (data?.errors) setErrors(data.errors)
                 setSaveError(data?.errors ? null : (data?.error ?? 'Could not reach the server.'))
+                finished.current = false
                 setSaving(false)
             })
     }
@@ -219,6 +285,11 @@ export default function NewCharacter() {
             <BackButton/>
             <span className="setting-caption">{chosenName ?? ' '}</span>
             <h1>New Character</h1>
+            {saveState && (
+                <span className="setting-hint" aria-live="polite">
+                    {saveState === 'saving' ? 'Saving draft…' : saveState === 'saved' ? 'Draft saved' : 'Couldn’t save the draft'}
+                </span>
+            )}
 
             <ol className="wizard__steps" aria-label="Steps">
                 {steps.map((s, i) => (
@@ -257,6 +328,7 @@ export default function NewCharacter() {
                         options={options.species}
                         selected={draft.species}
                         choices={draft.speciesChoices}
+                        taken={taken}
                         onSelect={id => update({ species: id, speciesChoices: {} }, 'species')}
                         onChoose={(id, value) =>
                             update({ speciesChoices: { ...draft.speciesChoices, [id]: value } }, `choice:${id}`)}
@@ -271,6 +343,7 @@ export default function NewCharacter() {
                         classes={options.classes}
                         selected={draft.class}
                         choices={draft.classChoices}
+                        taken={taken}
                         onSelect={id => update({ class: id, classChoices: {} }, 'class')}
                         onChoose={(id, value) =>
                             update({ classChoices: { ...draft.classChoices, [id]: value } }, `classChoice:${id}`)}
@@ -307,7 +380,7 @@ export default function NewCharacter() {
                             Back
                         </button>
                     )}
-                    <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked}>
+                    <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked || !loaded}>
                         {isLast ? (saving ? 'Creating…' : 'Create Character') : 'Next'}
                     </button>
                 </div>
