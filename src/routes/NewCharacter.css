@@ -1,0 +1,105 @@
+/* ---- New character wizard: numbered steps, then the current step's form ---- */
+
+.wizard > .setting-caption {
+  display: block;
+  margin-top: 1rem;
+}
+
+.wizard > h1 {
+  margin-top: 0.3rem;
+}
+
+.wizard__steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.wizard__step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.wizard__step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  font-size: 12px;
+  border: 1px solid var(--border);
+}
+
+.wizard__step--current {
+  color: var(--text-h);
+}
+
+.wizard__step--current .wizard__step-number {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.wizard__step--done .wizard__step-number {
+  color: var(--text-h);
+  border-color: var(--text);
+}
+
+.wizard__form {
+  max-width: 560px;
+}
+
+/* Steps with a card (species) use the page's full width. */
+.wizard__form--wide {
+  max-width: none;
+}
+
+.wizard__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Campaign step: one radio row per campaign. */
+.wizard__choices {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.wizard__choices > legend {
+  padding: 0 0 0.5rem;
+}
+
+.wizard__choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.25rem;
+  font-size: 15px;
+  color: var(--text-h);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.wizard__choice:hover {
+  background: var(--code-bg);
+}
+
+.wizard__choice input {
+  accent-color: var(--accent);
+}
+
+.wizard__choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}

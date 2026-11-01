@@ -49,6 +49,8 @@ export default function CampaignSettings() {
     const deleted = useRef(false)
     // Counts allowed-content saves, so only the newest one's problems are shown.
     const latestAllowedSave = useRef(0)
+    // Why the last rules change didn't save, shown on the Rules tab.
+    const [rulesError, setRulesError] = useState<string | null>(null)
 
     // Creating a campaign is admin-only for now; anyone else gets a message instead of a
     // form whose save the server would refuse. An existing campaign goes by role below.
@@ -126,16 +128,18 @@ export default function CampaignSettings() {
         return handleAllowedChanges({ [collection]: ids })
     }
 
-    // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
+    // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails,
+    // and say so at the top of the Rules tab.
     function handleRulesChange(changed: Partial<campaignRules>) {
+        setRulesError(null)
         const previous = Object.fromEntries(
             Object.keys(changed).map(key => [key, campaignDetails?.rules[key as keyof campaignRules]]))
         const setRules = (patch: Partial<campaignRules>) => setCampaignDetails(details =>
             details && { ...details, rules: { ...details.rules, ...patch } })
         setRules(changed)
-        updateCampaignRules(campaignID as string, changed).catch(() => {
+        updateCampaignRules(campaignID as string, changed).catch(err => {
             setRules(previous)
-            alert('Could not save.')
+            setRulesError(err.response?.data?.error ?? 'Could not save that change. Check your connection and try again.')
         })
     }
 
@@ -211,6 +215,7 @@ export default function CampaignSettings() {
             )}
             {campaignDetails && tab === 'rules' && (
                 <>
+                    {rulesError && <p className="setting-error" role="alert">{rulesError}</p>}
                     <RulesSettings rules={campaignDetails.rules} limits={campaignDetails.ruleLimits} onChange={handleRulesChange}/>
                     <AdvancedRulesSettings rules={campaignDetails.rules} onChange={handleRulesChange}/>
                 </>
@@ -221,6 +226,11 @@ export default function CampaignSettings() {
                         collection="species" caption="Allowed Species" noun="species" requireOne
                         allowed={campaignDetails.allowedContent.species ?? null}
                         onChange={ids => handleAllowedChange('species', ids)}
+                    />
+                    <CollectionSettings
+                        collection="origins" caption="Allowed Backgrounds" noun="backgrounds" requireOne
+                        allowed={campaignDetails.allowedContent.origins ?? null}
+                        onChange={ids => handleAllowedChange('origins', ids)}
                     />
                     <ClassSettings
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}

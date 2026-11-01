@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { getCampaign } from "../api/campaigns";
@@ -36,6 +36,12 @@ export default function CampaignView() {
             <div className="campaign-description__body markdown">
                 {campaign.description ? <Markdown>{campaign.description}</Markdown> : <p className="muted">No description provided.</p>}
             </div>
+            {/* Characters belong to a membership; an admin who isn't in the campaign can't make one. */}
+            {campaign.role !== 'admin' && (
+                <div className="home-actions campaign-view__actions">
+                    <Link to={`/campaigns/${campaignID}/characters/new`} className="setting-button">Create Character</Link>
+                </div>
+            )}
         </div>
     )
 }

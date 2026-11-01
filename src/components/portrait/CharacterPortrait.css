@@ -1,0 +1,20 @@
+/* ---- Character portrait: a framed square, or the initial in an empty frame ---- */
+
+.portrait {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  aspect-ratio: 1;
+  /* Server images are already square; cover is the safety net if one isn't. */
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+}
+
+.portrait--empty {
+  font-family: var(--heading);
+  color: var(--text);
+  user-select: none;
+}

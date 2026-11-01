@@ -1,3 +1,4 @@
+import base64
 import json
 import threading
 from datetime import datetime, timezone
@@ -27,9 +28,16 @@ def collect_account(conn, user_id, include_secrets):
         (user_id,),
     )]
     characters = []
-    for row in conn.execute('SELECT * FROM characters WHERE owner_id = ? ORDER BY created_at', (user_id,)):
+    for row in conn.execute(
+        'SELECT ch.*, p.image AS portrait FROM characters ch '
+        'LEFT JOIN character_portraits p ON p.character_id = ch.id WHERE ch.owner_id = ? ORDER BY ch.created_at',
+        (user_id,),
+    ):
         character = dict(row)
         character['sheet'] = json.loads(character['sheet'])
+        # The portrait as base64 WebP text, so it fits in JSON; null when there isn't one.
+        if character['portrait'] is not None:
+            character['portrait'] = base64.b64encode(character['portrait']).decode('ascii')
         characters.append(character)
     return {'user': user, 'memberships': memberships, 'characters': characters}
 

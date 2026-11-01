@@ -1,0 +1,382 @@
+/* ---- Wizard pick steps (species, class): dropdown above, one card with quiet arrows ---- */
+
+.pick-step__picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.pick-step__select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.pick-step__select .rules-select {
+  min-width: 12rem;
+}
+
+/* Quiet chevrons just outside the card. They stay full height so they're easy to hit,
+   but show no box: only the chevron, which brightens on hover. */
+.pick-card-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.pick-card-row__arrow {
+  flex-shrink: 0;
+  width: 1.5rem;
+  padding: 0;
+  font: inherit;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+  opacity: 0.55;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease-out, color 120ms ease-out;
+}
+
+.pick-card-row__arrow:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.pick-card-row__arrow:focus-visible {
+  outline: 1px solid var(--accent);
+  opacity: 1;
+}
+
+.pick-card {
+  flex: 1;
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.pick-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pick-card__header h2 {
+  margin: 0;
+}
+
+/* Short facts in two columns: Hit Die, Saving Throws, Armor, ... */
+.pick-card__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.3rem 1rem;
+  margin: 0 0 1rem;
+  font-size: 14px;
+}
+
+.pick-card__facts dt {
+  color: var(--text-h);
+}
+
+.pick-card__facts dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.pick-card__section-title {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.pick-card__entries {
+  margin: 0;
+}
+
+/* One trait or feature: name, description, and any choices it brings. */
+.pick-entry {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.pick-entry:first-child {
+  border-top: 0;
+}
+
+.pick-entry dt {
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.pick-entry__level {
+  margin-left: 0.5rem;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.pick-entry dd {
+  margin: 0.2rem 0 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.pick-entry dd > p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* A choice, inside the entry it belongs to or above the entries. */
+.pick-choice {
+  margin: 0.6rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--code-bg);
+}
+
+.pick-choice__prompt {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.pick-choice__selects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pick-choice__option-note {
+  margin-top: 0.4rem;
+  font-size: 13px;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+.pick-choice__option-note strong {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+/* A background's ability score increases: one box per ability, six across. */
+.ability-boxes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.ability-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.ability-box--locked {
+  opacity: 0.4;
+}
+
+.ability-box__code {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.ability-box__amount {
+  font-size: 20px;
+  color: var(--text-h);
+}
+
+.ability-box__buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.ability-box__buttons button {
+  width: 1.75rem;
+  height: 1.5rem;
+  padding: 0;
+  font: inherit;
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.ability-box__buttons button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ability-box__buttons button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* A rule's options (RuleSwitch); the ones a campaign rules out are greyed. */
+.rule-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.rule-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rule-switch .segmented {
+  flex-wrap: wrap;
+}
+
+.rule-switch .segmented button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ability-box__base {
+  min-width: 1.75rem;
+  text-align: center;
+  color: var(--text-h);
+}
+
+.ability-box__input {
+  width: 4rem;
+  padding: 0.2rem 0.3rem;
+  font: inherit;
+  text-align: center;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.ability-box__select {
+  min-width: 4rem;
+}
+
+.ability-box__total {
+  font-size: 18px;
+  color: var(--text-h);
+}
+
+.ability-box__bonus {
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.ability-rolls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.ability-roll {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.hp-rolls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.hp-roll {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hp-total {
+  margin: 0.75rem 0 0;
+}
+
+.hp-total strong {
+  font-size: 22px;
+  color: var(--text-h);
+}
+
+/* The details step: short fields in a grid, long ones across it. */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.details-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.details-field--wide {
+  grid-column: 1 / -1;
+}
+
+.details-input,
+.details-textarea {
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.details-textarea {
+  resize: vertical;
+}
+
+.details-input:focus,
+.details-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Narrow screens: arrows above the card instead of beside it, so the text keeps its width. */
+@media (max-width: 560px) {
+  .ability-boxes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pick-card-row {
+    flex-wrap: wrap;
+  }
+
+  .pick-card {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  .pick-card-row__arrow {
+    flex: 1;
+    height: 2rem;
+  }
+
+  .pick-card__facts {
+    grid-template-columns: 1fr;
+  }
+}
