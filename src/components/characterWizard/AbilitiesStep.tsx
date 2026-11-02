@@ -151,41 +151,44 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
         {(method === 'standardArray' || method === 'sharedManual') && pool && ` (${pool.join(', ')})`}
       </p>
 
-      {method === 'roll' && (
-        <div className="ability-rolls">
-          {rolls ? (
-            <span className="setting-hint">
-              Your rolls: {rolls.map((r, i) => (
-                <span key={i} className="ability-roll" title={`Dice: ${r.dice.join(', ')}`}>{r.total}</span>
-              ))}
-            </span>
-          ) : <span className="setting-hint">You roll once{canReroll ? '' : ' — the result stays with this character'}.</span>}
-          {(!rolls || canReroll) && (
-            <button type="button" className="setting-button" disabled={rolling}
-              onClick={() => { roll(); onChange({ abilityScores: {} }, 'abilityScores'); }}>
-              {rolling ? 'Rolling…' : rolls ? 'Roll Again' : 'Roll'}
-            </button>
-          )}
-          {rollError && <p className="campaign-name__error">{rollError}</p>}
-        </div>
-      )}
-
-      <div className="ability-boxes">
-        {ABILITIES.map(([code, name]) => {
-          const s = summary?.abilities[code];
-          return (
-            <div key={code} className="ability-box">
-              <span className="ability-box__code" title={name}>{code}</span>
-              {control(code, name)}
-              <span className="ability-box__total">
-                {s?.total != null ? <>{s.total} <span className="muted">({signed(s.modifier ?? 0)})</span></> : '—'}
+      {/* Required, so highlighted like the required choices on the other steps. */}
+      <div className="pick-choice">
+        {method === 'roll' && (
+          <div className="ability-rolls">
+            {rolls ? (
+              <span className="setting-hint">
+                Your rolls: {rolls.map((r, i) => (
+                  <span key={i} className="ability-roll" title={`Dice: ${r.dice.join(', ')}`}>{r.total}</span>
+                ))}
               </span>
-              {s && s.bonus > 0 && <span className="ability-box__bonus">+{s.bonus} background</span>}
-            </div>
-          );
-        })}
+            ) : <span className="setting-hint">You roll once{canReroll ? '' : ' — the result stays with this character'}.</span>}
+            {(!rolls || canReroll) && (
+              <button type="button" className="setting-button" disabled={rolling}
+                onClick={() => { roll(); onChange({ abilityScores: {} }, 'abilityScores'); }}>
+                {rolling ? 'Rolling…' : rolls ? 'Roll Again' : 'Roll'}
+              </button>
+            )}
+            {rollError && <p className="campaign-name__error">{rollError}</p>}
+          </div>
+        )}
+
+        <div className="ability-boxes">
+          {ABILITIES.map(([code, name]) => {
+            const s = summary?.abilities[code];
+            return (
+              <div key={code} className="ability-box">
+                <span className="ability-box__code" title={name}>{code}</span>
+                {control(code, name)}
+                <span className="ability-box__total">
+                  {s?.total != null ? <>{s.total} <span className="muted">({signed(s.modifier ?? 0)})</span></> : '—'}
+                </span>
+                {s && s.bonus > 0 && <span className="ability-box__bonus">+{s.bonus} background</span>}
+              </div>
+            );
+          })}
+        </div>
+        {[...errorsFor('abilityMethod'), ...errorsFor('abilityScores')].map(m => <p key={m} className="campaign-name__error">{m}</p>)}
       </div>
-      {[...errorsFor('abilityMethod'), ...errorsFor('abilityScores')].map(m => <p key={m} className="campaign-name__error">{m}</p>)}
 
       <h3 className="pick-card__section-title">Hit Points</h3>
       <div className="rule-switches">
@@ -203,19 +206,22 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
             {' '}Every level adds your Constitution modifier.
           </p>
           {hp === 'manual' && level > 1 && (
-            <div className="hp-rolls">
-              {Array.from({ length: level - 1 }, (_, i) => (
-                <label key={i} className="hp-roll">
-                  <span className="setting-hint">Level {i + 2}</span>
-                  <input className="ability-box__input" type="number" min={1} max={hitDie}
-                    value={hpRolls[i] || ''} aria-label={`Hit die roll at level ${i + 2}`}
-                    onChange={e => setHpRoll(i, e.target.value === '' ? undefined : Number(e.target.value))} />
-                </label>
-              ))}
-              <button type="button" className="setting-button setting-button--quiet"
-                onClick={() => onChange({ hpRolls: Array.from({ length: level - 1 }, rollDie) }, 'hpRolls')}>
-                Roll {level - 1}d{hitDie}
-              </button>
+            <div className="pick-choice">
+              <div className="hp-rolls">
+                {Array.from({ length: level - 1 }, (_, i) => (
+                  <label key={i} className="hp-roll">
+                    <span className="setting-hint">Level {i + 2}</span>
+                    <input className="ability-box__input" type="number" min={1} max={hitDie}
+                      value={hpRolls[i] || ''} aria-label={`Hit die roll at level ${i + 2}`}
+                      onChange={e => setHpRoll(i, e.target.value === '' ? undefined : Number(e.target.value))} />
+                  </label>
+                ))}
+                <button type="button" className="setting-button setting-button--quiet"
+                  onClick={() => onChange({ hpRolls: Array.from({ length: level - 1 }, rollDie) }, 'hpRolls')}>
+                  Roll {level - 1}d{hitDie}
+                </button>
+              </div>
+              {errorsFor('hpRolls').map(m => <p key={m} className="campaign-name__error">{m}</p>)}
             </div>
           )}
           {hitPoints ? (
@@ -229,7 +235,7 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
           ) : <p className="muted">Set your Constitution{hp === 'manual' && level > 1 ? ' and hit die rolls' : ''} to see your hit points.</p>}
         </>
       )}
-      {[...errorsFor('hpMethod'), ...errorsFor('hpRolls')].map(m => <p key={m} className="campaign-name__error">{m}</p>)}
+      {[...errorsFor('hpMethod'), ...(hp === 'manual' && level > 1 && hitDie ? [] : errorsFor('hpRolls'))].map(m => <p key={m} className="campaign-name__error">{m}</p>)}
     </div>
   );
 }

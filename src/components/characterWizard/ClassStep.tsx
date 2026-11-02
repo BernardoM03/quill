@@ -5,6 +5,7 @@ import {
   type takenOptions,
 } from '../../api/characters';
 import { activeChoices } from './activeChoices';
+import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 
 // The class step: every class the campaign allows, one card at a time, as it is at the
@@ -59,7 +60,7 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
         <div key={`${feature.id}@${feature.level}`} className="pick-entry">
           <dt>{feature.name}<span className="pick-entry__level">Level {feature.level}</span></dt>
           <dd>
-            <p>{feature.description || feature.shortDescription}</p>
+            <RulesText>{feature.description || feature.shortDescription}</RulesText>
             {activeChoices(feature.choices, choices).map(field)}
           </dd>
         </div>
@@ -101,7 +102,7 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
                 {field(detail.subclassChoice)}
                 {subclass && (
                   <>
-                    {subclass.description && <p className="setting-hint">{subclass.description}</p>}
+                    {subclass.description && <RulesText className="pick-card__intro">{subclass.description}</RulesText>}
                     {featureList(subclass.features)}
                   </>
                 )}

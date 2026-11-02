@@ -132,9 +132,9 @@
   color: var(--text);
 }
 
-.pick-entry dd > p {
-  margin: 0;
-  white-space: pre-line;
+/* A card's opening description (a background's, a subclass's), above its facts. */
+.pick-card__intro {
+  margin-bottom: 1rem;
 }
 
 /* A choice, inside the entry it belongs to or above the entries. */
@@ -162,7 +162,6 @@
   margin-top: 0.4rem;
   font-size: 13px;
   color: var(--text);
-  white-space: pre-line;
 }
 
 .pick-choice__option-note strong {
@@ -337,6 +336,13 @@
 
 .details-field--wide {
   grid-column: 1 / -1;
+}
+
+/* Required: highlighted like a required choice (.pick-choice). */
+.details-field--required {
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--code-bg);
 }
 
 .details-input,

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import type { characterChoice, takenOptions } from '../../api/characters';
+import { RulesText } from '../RulesText';
 import './PickCard.css';
 
 // A wizard step that picks one thing from a list (species, class): a dropdown to jump to
@@ -98,10 +99,10 @@ export function ChoiceField({ choice, field, value, taken, onChoose, errors }: {
       {chosen.map(o => (
         <div key={o.key}>
           {o.description && choice.options.some(x => x.description) && (
-            <div className="pick-choice__option-note"><strong>{o.label}.</strong> {o.description}</div>
+            <div className="pick-choice__option-note"><strong>{o.label}.</strong> <RulesText inline>{o.description}</RulesText></div>
           )}
           {(o.grants ?? []).map(g => (
-            <div key={g.name} className="pick-choice__option-note"><strong>{g.name}.</strong> {g.description}</div>
+            <div key={g.name} className="pick-choice__option-note"><strong>{g.name}.</strong> <RulesText inline>{g.description}</RulesText></div>
           ))}
         </div>
       ))}

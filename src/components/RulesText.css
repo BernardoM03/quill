@@ -1,0 +1,78 @@
+/* ---- Rules text (RulesText): readable paragraphs, and the keywords a player scans for ---- */
+
+.rules-text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* Inside a sentence (an option's note): the surrounding text's size. */
+span.rules-text {
+  font-size: inherit;
+}
+
+span.rules-text > span + span::before {
+  content: ' ';
+}
+
+.rules-text p {
+  margin: 0 0 0.55em;
+}
+
+.rules-text > :last-child,
+.rules-text p:last-child {
+  margin-bottom: 0;
+}
+
+.rules-text ul,
+.rules-text ol {
+  margin: 0.2em 0 0.55em;
+  padding-left: 1.25em;
+}
+
+.rules-text li + li {
+  margin-top: 0.15em;
+}
+
+.rules-text li::marker {
+  color: var(--accent);
+}
+
+/* The bold lead-ins: "Damage Resistance." */
+.rules-text strong {
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.rules-text em {
+  font-style: italic;
+}
+
+/* Dice and DCs: what's rolled, in the accent. */
+.rules-dice {
+  padding: 0 0.25em;
+  font-family: var(--mono);
+  font-size: 0.92em;
+  color: var(--accent);
+  background: var(--accent-bg);
+  white-space: nowrap;
+}
+
+/* Distances and sizes: a quiet emphasis. */
+.rules-measure {
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+/* Conditions: named states, underlined so they read as rules words. */
+.rules-condition {
+  color: var(--text-h);
+  text-decoration: underline dotted var(--accent-border);
+  text-underline-offset: 3px;
+}
+
+/* Game terms: Bonus Action, Advantage, Short Rest, ... */
+.rules-term {
+  color: var(--text-h);
+  font-weight: 500;
+}

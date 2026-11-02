@@ -3,6 +3,7 @@ import type {
 } from '../../api/characters';
 import { AbilityIncreaseField } from './AbilityIncreaseField';
 import { activeChoices } from './activeChoices';
+import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 import { RuleSwitch } from './RuleSwitch';
 
@@ -75,7 +76,7 @@ export function BackgroundStep({ rules, locked, onRuleChange, options, selected,
       {f.effects.map(e => (
         <div key={e.name} className="pick-entry">
           <dt>{e.name}</dt>
-          <dd><p>{e.description}</p></dd>
+          <dd><RulesText>{e.description}</RulesText></dd>
         </div>
       ))}
     </dl>
@@ -88,7 +89,7 @@ export function BackgroundStep({ rules, locked, onRuleChange, options, selected,
         <header className="pick-card__header">
           <h2>{background.name}</h2>
         </header>
-        {background.description && <p>{background.description}</p>}
+        {background.description && <RulesText className="pick-card__intro">{background.description}</RulesText>}
 
         <dl className="pick-card__facts">
           <dt>Ability scores</dt><dd>{background.abilityScores.join(', ')}</dd>

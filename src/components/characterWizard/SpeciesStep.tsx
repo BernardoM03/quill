@@ -1,4 +1,5 @@
 import type { choicePicks, speciesOption, takenOptions } from '../../api/characters';
+import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 
 const titleCase = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
@@ -54,7 +55,7 @@ export function SpeciesStep({ options, selected, choices, taken, onSelect, onCho
             <div key={trait.id} className="pick-entry">
               <dt>{trait.name}</dt>
               <dd>
-                <p>{trait.description || trait.shortDescription}</p>
+                <RulesText>{trait.description || trait.shortDescription}</RulesText>
                 {trait.choices.map(choice => (
                   <ChoiceField key={choice.id} choice={choice} field={`choice:${choice.id}`} value={choices[choice.id]}
                     taken={taken} onChoose={onChoose}
