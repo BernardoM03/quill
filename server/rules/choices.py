@@ -158,8 +158,18 @@ def _literal_option(item, context, allowed_cache):
         if collection not in allowed_cache:
             allowed_cache[collection] = {e['id']: e for e in allowed_entries(collection, context.allowed_content)}
         entry = allowed_cache[collection].get(item)
-        return option(item, entry['name']) if entry else None
+        return option(item, entry['name'], entry_description(entry)) if entry else None
     return option(str(item), str(item).replace('-', ' ').capitalize())
+
+# What the wizard shows under a picked option that names a spell, feat or language: the
+# spell's short description, the feat's effects, the language's description. None for others.
+def entry_description(entry):
+    if entry.get('shortDescription'):
+        return entry['shortDescription']
+    groups = entry.get('effectGroups')
+    if groups:
+        return '\n\n'.join(f'**{g["name"]}.** {g.get("description", "")}' for g in groups)
+    return entry.get('description')
 
 def _by_name(entries):
     return sorted(entries, key=lambda e: e['name'])
@@ -180,7 +190,7 @@ def resolve_options(choice, context):
         collection = ID_TYPES.get(kind)
         if collection:
             entries = _qualified(allowed_entries(collection, context.allowed_content), choice, context)
-            options.extend(option(e['id'], e['name']) for e in _by_name(entries))
+            options.extend(option(e['id'], e['name'], entry_description(e)) for e in _by_name(entries))
     return options
 
 # A choice ready for the wizard: {id, prompt, count, options}. count may be "$column:x" or

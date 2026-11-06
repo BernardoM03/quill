@@ -12,8 +12,14 @@ import './RulesText.css';
 //   distances   15-foot, 30 feet       .rules-measure
 //   conditions  Frightened, Prone      .rules-condition
 //   terms       Bonus Action, Advantage, Short Rest, saving throw, ...   .rules-term
-// Words the pack's glossary defines (glossary.ts) show their definition on hover, focus or
-// tap. Raw HTML in the text is never rendered (react-markdown's default).
+//   spells      Find Familiar, the Light cantrip                          .rules-spell
+//   feats       Magic Initiate, the Alert feat                            .rules-feat
+//   languages   the Draconic language                                     .rules-language
+// Spell, feat and language names come from the packs once loaded. A multi-word name matches
+// anywhere; a one-word name (Light, Shield, Alert) only where the text says what it is
+// ("the Light cantrip", "cast Shield", "the Alert feat"), since it's usually an ordinary word.
+// Words the packs define (glossary.ts) show their definition on hover, focus or tap. Raw HTML
+// in the text is never rendered (react-markdown's default).
 
 const CONDITIONS = [
   'Blinded', 'Charmed', 'Deafened', 'Exhaustion', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible',
@@ -28,16 +34,81 @@ const TERMS = [
   'Heroic Inspiration', 'Cone', 'Cube', 'Cylinder', 'Emanation', 'Line', 'Sphere', 'Darkvision', 'Blindsight',
   'Tremorsense', 'Truesight', 'Difficult Terrain', 'Unarmed Strike', 'Opportunity Attacks?', 'Critical Hit',
   'Initiative', 'Expertise', 'Bloodied', 'Armor Class', 'Difficulty Class', 'Cover',
+  // "Action" itself only as a rules phrase; on its own "action" is usually plain English.
+  'Action', 'an action',
+  // Rolls
+  'Ability Checks?', 'Attack Rolls?', 'D20 Tests?', 'Damage Rolls?', 'Death Saving Throws?', 'Spell Attacks?',
+  'Weapon Attacks?',
+  // Movement and senses
+  'Speed', 'Fly Speed', 'Swim Speed', 'Climb Speed', 'Burrow Speed', 'Hover', 'Reach', 'Telepathy', 'Teleportation',
+  'Passive Perception',
+  // Combat
+  'Grappling', 'Surprise', 'Improvised Weapons?', 'Occupied Space', 'Unoccupied Space', 'Area of Effect',
+  'Damage Threshold', 'Armor Training',
+  // Light, vision and hazards
+  'Bright Light', 'Dim Light', 'Darkness', 'Lightly Obscured', 'Heavily Obscured', 'Burning', 'Falling',
+  'Suffocation', 'Dehydration', 'Malnutrition',
+  // Social
+  'Friendly', 'Indifferent', 'Hostile', 'Influence',
+  // Magic and creatures
+  'Cantrips?', 'Ritual', 'Spellcasting Focus', 'Attunement', 'Shape-Shifting', 'Creature Type', 'Challenge Rating',
+  'Experience Points', 'Carrying Capacity', 'Dead', 'Stable',
 ];
 
-// The patterns, in the order they're tried at each position; the first group that matches names the class.
-const PATTERNS: [string, RegExp][] = [
+type pattern = [kind: string, source: RegExp];
+
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const longestFirst = (names: string[]) => [...names].sort((a, b) => b.length - a.length);
+
+// Names of one kind: multi-word ones anywhere, one-word ones only before one of nouns
+// ("Light cantrip") or after "cast ". Matches the name alone, so it's what gets the link.
+function namePattern(names: string[], nouns: string): RegExp | null {
+  const multi = longestFirst(names.filter(n => /\s/.test(n))).map(escape);
+  const single = longestFirst(names.filter(n => !/\s/.test(n))).map(escape);
+  const parts = [];
+  if (multi.length) parts.push(`\\b(?:${multi.join('|')})(?![\\w(])`);
+  if (single.length) parts.push(`(?:(?<=\\bcast )|\\b)(?:${single.join('|')})(?= (?:${nouns})\\b)`, `(?<=\\bcast )(?:${single.join('|')})\\b`);
+  return parts.length ? new RegExp(parts.join('|')) : null;
+}
+
+// The patterns, in the order they're tried at each position; the first group that matches
+// names the class. Names go before terms, so "Cone of Cold" is a spell rather than "Cone".
+const STATIC_BEFORE: pattern[] = [
   ['rules-dice', /\b\d*d(?:4|6|8|10|12|20|100)\b(?:\s?[+−-]\s?\d+\b)?|\bDC \d+\b/],
   ['rules-measure', /\b\d+(?:-foot|-mile|\s(?:feet|foot|miles?))\b/],
-  ['rules-condition', new RegExp(`\\b(?:${CONDITIONS.join('|')})\\b`)],
-  ['rules-term', new RegExp(`\\b(?:${[...TERMS].sort((a, b) => b.length - a.length).join('|')})\\b`)],
 ];
-const ANY = new RegExp(PATTERNS.map(([, p]) => `(${p.source})`).join('|'), 'g');
+const STATIC_AFTER: pattern[] = [
+  ['rules-condition', new RegExp(`\\b(?:${CONDITIONS.join('|')})\\b`)],
+  ['rules-term', new RegExp(`\\b(?:${longestFirst(TERMS).join('|')})\\b`)],
+];
+
+interface compiled { patterns: pattern[]; any: RegExp }
+const compile = (patterns: pattern[]): compiled =>
+  ({ patterns, any: new RegExp(patterns.map(([, p]) => `(${p.source})`).join('|'), 'g') });
+const BASIC = compile([...STATIC_BEFORE, ...STATIC_AFTER]);
+// Built once per loaded glossary.
+const withNames = new WeakMap<glossary, compiled>();
+function patternsFor(terms: glossary | null): compiled {
+  if (!terms) return BASIC;
+  let found = withNames.get(terms);
+  if (!found) {
+    const named: pattern[] = [];
+    const add = (kind: string, p: RegExp | null) => p && named.push([kind, p]);
+    add('rules-spell', namePattern(terms.spells, 'spell|cantrip|spells'));
+    add('rules-feat', namePattern(terms.feats, 'feat'));
+    add('rules-language', namePattern(terms.languages, 'language'));
+    found = compile([...STATIC_BEFORE, ...named, ...STATIC_AFTER]);
+    withNames.set(terms, found);
+  }
+  return found;
+}
+
+// The glossary key for a match of a kind, or null.
+function keyFor(terms: glossary, kind: string, text: string): string | null {
+  const prefix = { 'rules-spell': 'spell:', 'rules-feat': 'feat:', 'rules-language': 'language:' }[kind];
+  if (prefix) return terms.terms.has(prefix + text.toLowerCase()) ? prefix + text.toLowerCase() : null;
+  return kind === 'rules-measure' ? null : termKey(terms, text);
+}
 
 // The bits of the HTML tree (hast) this touches; kept local rather than importing its types.
 interface textNode { type: 'text'; value: string }
@@ -49,11 +120,12 @@ type treeNode = textNode | elementNode | { type: string; children?: treeNode[] }
 function highlight(text: string, terms: glossary | null): treeNode[] {
   const out: treeNode[] = [];
   let last = 0;
-  for (const match of text.matchAll(ANY)) {
+  const { patterns, any } = patternsFor(terms);
+  for (const match of text.matchAll(any)) {
     const at = match.index ?? 0;
     if (at > last) out.push({ type: 'text', value: text.slice(last, at) });
-    const kind = PATTERNS[match.slice(1).findIndex(Boolean)][0];
-    const key = terms && kind !== 'rules-measure' ? termKey(terms, match[0]) : null;
+    const kind = patterns[match.slice(1).findIndex(Boolean)][0];
+    const key = terms ? keyFor(terms, kind, match[0]) : null;
     out.push({
       type: 'element', tagName: 'span',
       properties: key ? { className: [kind, 'rules-defined'], dataTerm: key, tabIndex: 0 } : { className: [kind] },
@@ -141,7 +213,7 @@ export function RulesText({ children, inline = false, className, definitions = t
     },
   };
 
-  const entry = open && terms?.get(open.key);
+  const entry = open && terms?.terms.get(open.key);
   let popover = null;
   if (open && entry) {
     const left = Math.max(8, Math.min(open.rect.left, window.innerWidth - POPOVER_WIDTH - 8));
@@ -153,6 +225,7 @@ export function RulesText({ children, inline = false, className, definitions = t
     popover = createPortal(
       <div className="rules-popover" role="tooltip" style={{ left, width: POPOVER_WIDTH, ...position }}>
         <strong className="rules-popover__name">{entry.name}</strong>
+        {entry.meta && <span className="rules-popover__meta">{entry.meta}</span>}
         <RulesText definitions={false}>{entry.text}</RulesText>
       </div>,
       document.body,

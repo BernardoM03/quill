@@ -77,6 +77,14 @@ span.rules-text > span + span::before {
   font-weight: 500;
 }
 
+/* Spells, feats and languages named in the text: italic, as the books set spell names. */
+.rules-spell,
+.rules-feat,
+.rules-language {
+  color: var(--text-h);
+  font-style: italic;
+}
+
 /* A word with a definition: hover, focus or tap it to read it. */
 .rules-defined {
   cursor: help;
@@ -114,6 +122,14 @@ span.rules-text > span + span::before {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+.rules-popover__meta {
+  display: block;
+  margin: -0.15rem 0 0.35rem;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text);
 }
 
 .rules-popover .rules-text {
