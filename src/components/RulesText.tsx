@@ -180,17 +180,25 @@ export function RulesText({ children, inline = false, className, definitions = t
   // The word whose definition is showing, and where it is on screen.
   const [open, setOpen] = useState<{ key: string; rect: DOMRect } | null>(null);
   const pinned = useRef(false);
+  const popRef = useRef<HTMLDivElement>(null);
+  // Leaving the word waits a moment, so the pointer can cross into the popover to scroll it.
+  const closeTimer = useRef<number | undefined>(undefined);
+  const cancelClose = () => window.clearTimeout(closeTimer.current);
+  const closeSoon = () => { cancelClose(); closeTimer.current = window.setTimeout(() => setOpen(null), 150); };
+  useEffect(() => cancelClose, []);
 
   // A popover is placed for where the word was; scrolling or Escape closes it.
   useEffect(() => {
     if (!open) return;
     const close = () => { pinned.current = false; setOpen(null); };
+    // Scrolling the popover itself keeps it open; scrolling the page closes it.
+    const onScroll = (e: Event) => { if (!popRef.current?.contains(e.target as Node)) close(); };
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
-    window.addEventListener('scroll', close, true);
+    window.addEventListener('scroll', onScroll, true);
     window.addEventListener('resize', close);
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('scroll', onScroll, true);
       window.removeEventListener('resize', close);
       window.removeEventListener('keydown', onKey);
     };
@@ -199,8 +207,8 @@ export function RulesText({ children, inline = false, className, definitions = t
   const termAt = (target: EventTarget) => (target as HTMLElement).closest?.<HTMLElement>('[data-term]') ?? null;
   const show = (el: HTMLElement) => setOpen({ key: el.dataset.term ?? '', rect: el.getBoundingClientRect() });
   const handlers = terms && {
-    onMouseOver: (e: React.MouseEvent) => { const el = termAt(e.target); if (el && !pinned.current) show(el); },
-    onMouseOut: (e: React.MouseEvent) => { if (termAt(e.target) && !pinned.current) setOpen(null); },
+    onMouseOver: (e: React.MouseEvent) => { const el = termAt(e.target); if (el && !pinned.current) { cancelClose(); show(el); } },
+    onMouseOut: (e: React.MouseEvent) => { if (termAt(e.target) && !pinned.current) closeSoon(); },
     onFocus: (e: React.FocusEvent) => { const el = termAt(e.target); if (el) show(el); },
     onBlur: (e: React.FocusEvent) => { if (termAt(e.target)) { pinned.current = false; setOpen(null); } },
     // A tap (no hover on touch screens) keeps it open until tapped again or elsewhere.
@@ -223,7 +231,13 @@ export function RulesText({ children, inline = false, className, definitions = t
       ? { top: open.rect.bottom + GAP }
       : { bottom: window.innerHeight - open.rect.top + GAP };
     popover = createPortal(
-      <div className="rules-popover" role="tooltip" style={{ left, width: POPOVER_WIDTH, ...position }}>
+      <div
+        ref={popRef}
+        className="rules-popover"
+        role="tooltip"
+        onMouseEnter={cancelClose}
+        onMouseLeave={() => { if (!pinned.current) closeSoon(); }}
+        style={{ left, width: POPOVER_WIDTH, ...position }}>
         <strong className="rules-popover__name">{entry.name}</strong>
         {entry.meta && <span className="rules-popover__meta">{entry.meta}</span>}
         <RulesText definitions={false}>{entry.text}</RulesText>
