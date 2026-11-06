@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/records/campaign-settings.schema.json",
+  "title": "Campaign settings",
+  "description": "The JSON stored in campaigns.settings. Stored sparsely: rules holds only what the GM changed, and the server fills in the defaults when a campaign is read (server/rules/settings.py with_rule_defaults). Allowed content isn't here: it lives in the campaign_content_limits and campaign_content tables (server/db.py migration 9).",
+  "type": "object",
+  "properties": {
+    "rules": {
+      "$ref": "#/$defs/rules"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "rules": {
+      "description": "The source of truth for campaign rules. The server reads each rule's default, limits and allowed values from here (server/rules/settings.py), and the TypeScript type is generated from it (npm run gen-types). Stored, every rule is optional: only what the GM changed. To add a rule, add it here with a default; the server refuses to start on a rule without one, or one using a keyword it can't check.",
+      "type": "object",
+      "properties": {
+        "optionalClassFeatures": {
+          "description": "Allow the optional class features (extra options some classes gain at certain levels).",
+          "type": "boolean",
+          "default": false
+        },
+        "customizeOrigin": {
+          "description": "Let players move their origin's ability score increases and swap its proficiencies.",
+          "type": "boolean",
+          "default": false
+        },
+        "advancement": {
+          "description": "xp: characters start at level 1 and level up from experience points. milestone: the GM sets the level; new characters start at milestoneLevel.",
+          "enum": [
+            "xp",
+            "milestone"
+          ],
+          "default": "xp"
+        },
+        "milestoneLevel": {
+          "description": "The level new characters start at under milestone advancement.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "default": 1
+        },
+        "hitPoints": {
+          "description": "automatic: each level past 1st gives the hit die's fixed average. manual: players roll or enter it.",
+          "enum": [
+            "automatic",
+            "manual"
+          ],
+          "default": "automatic"
+        },
+        "featPrerequisites": {
+          "description": "When off, any feat can be picked regardless of its prerequisites.",
+          "type": "boolean",
+          "default": true
+        },
+        "allowMulticlass": {
+          "description": "When off, characters keep to one class and multiclassPrerequisites doesn't apply.",
+          "type": "boolean",
+          "default": true
+        },
+        "multiclassPrerequisites": {
+          "description": "Multiclassing requires the ability score minimums.",
+          "type": "boolean",
+          "default": true
+        },
+        "encumbrance": {
+          "description": "Track carrying capacity and apply the encumbered penalties.",
+          "type": "boolean",
+          "default": false
+        },
+        "ignoreCoinWeight": {
+          "description": "Coins count for nothing toward carried weight.",
+          "type": "boolean",
+          "default": false
+        },
+        "abilityScoreMethod": {
+          "description": "How ability scores are set. sharedManual: every player assigns the six sharedScores the GM set.",
+          "enum": [
+            "standardArray",
+            "pointBuy",
+            "roll",
+            "manual",
+            "sharedManual"
+          ],
+          "default": "standardArray"
+        },
+        "pointBuyBudget": {
+          "description": "Points to spend under pointBuy.",
+          "type": "integer",
+          "minimum": 15,
+          "maximum": 40,
+          "default": 27
+        },
+        "sharedScores": {
+          "description": "The six scores every player assigns under sharedManual.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "minItems": 6,
+          "maxItems": 6,
+          "default": [
+            15,
+            14,
+            13,
+            12,
+            10,
+            8
+          ]
+        },
+        "startingEquipment": {
+          "description": "equipment / gold: every class and background uses that option. choice: players pick per option.",
+          "enum": [
+            "choice",
+            "equipment",
+            "gold"
+          ],
+          "default": "choice"
+        },
+        "originFeat": {
+          "description": "background: the Origin feat the background grants. any: players pick any Origin feat.",
+          "enum": [
+            "background",
+            "any"
+          ],
+          "default": "background"
+        },
+        "characterApproval": {
+          "description": "New characters wait for the GM's approval before they can be played.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

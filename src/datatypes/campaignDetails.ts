@@ -6,8 +6,8 @@ export interface campaignDetails {
     role: 'gm' | 'player' | 'admin',
     description: string | null,
     characters: string[],
-    alternateRules: string[],
-    // Per collection ("species", ...): the allowed pack ids, or null/missing for "everything".
+    // Per collection ("species", ...): the allowed pack ids; missing for "everything".
+    // Stored in the campaign_content tables, not in settings.
     allowedContent: Record<string, string[] | null>
     // Every rule, with the server's defaults filled in for any the GM hasn't changed.
     rules: campaignRules,

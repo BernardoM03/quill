@@ -5,6 +5,7 @@ from flask import Blueprint, Response, g, jsonify, request
 
 from server import portraits
 from server.access import require_login, require_member
+from server.campaign_content import load_allowed
 from server.db import connect
 from server.helpers import NOW, clean_name, error, json_body
 from server.ratelimit import limit
@@ -13,6 +14,7 @@ from server.rules.characters import (
     kept_background_choices, kept_class_choices, species_detail,
 )
 from server.rules.abilities import ability_rules, hp_method, roll_scores
+from server.records import record_problems
 from server.rules.scores import apply_adjustments, clean_adjustments
 from server.rules.classes import class_summary
 from server.rules.settings import MAX_LEVEL
@@ -36,8 +38,7 @@ def creation_setting(conn, campaign_id):
     ).fetchone()
     if row is None:
         raise NoCampaign()
-    settings = json.loads(row['settings'])
-    return Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
+    return Setting(load_allowed(conn, campaign_id), json.loads(row['settings']).get('rules', {}))
 
 # The setting a character was made under, as its campaign has it now: the campaign's content
 # and rules (the sandbox's for no campaign), the character's own origin rules in the sandbox,
@@ -49,31 +50,21 @@ def character_setting(conn, row, sheet):
     else:
         campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (row['campaign_id'],)).fetchone()
         settings = json.loads(campaign['settings']) if campaign else {}
-        setting = Setting(settings.get('allowedContent', {}), settings.get('rules', {}))
-    return setting.for_draft(sheet).at_level(sheet.get('level'))
+        setting = Setting(load_allowed(conn, row['campaign_id']), settings.get('rules', {}))
+    return setting.for_draft(sheet.get('build') or {}).at_level(sheet.get('level'))
 
-# The rolls a character's scores were assigned from. Characters made before rolls were kept
-# with the sheet count their own scores as the rolls.
+# The rolls a character's scores were assigned from, or None.
 def sheet_rolls(sheet):
-    if sheet.get('abilityRolls'):
-        return sheet['abilityRolls']
-    if sheet.get('abilityMethod') == 'roll' and isinstance(sheet.get('abilityScores'), dict):
-        return [{'dice': [], 'total': v} for v in sheet['abilityScores'].values()]
-    return None
+    return sheet.get('rolls')
 
-# A saved character as the wizard's draft, to check it or edit it.
+# A saved character as the wizard's draft, to check it or edit it: its build and name.
 def sheet_draft(row, sheet):
-    keys = ('species', 'speciesChoices', 'originRules', 'background', 'backgroundChoices', 'class', 'classChoices',
-            'abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls', 'details')
-    draft = {k: sheet[k] for k in keys if k in sheet}
-    draft['name'] = row['name']
-    draft.setdefault('hpRolls', [])
-    return draft
+    return {**(sheet.get('build') or {}), 'name': row['name']}
 
 # The character checked against its campaign as it is now: check_draft's result, or None
-# for a character made before the wizard had steps (there's nothing to check).
+# for a character with no build (made before the sheet had one; there's nothing to check).
 def check_character(conn, row, sheet):
-    if not sheet.get('species'):
+    if not sheet.get('build'):
         return None
     return check_draft(sheet_draft(row, sheet), character_setting(conn, row, sheet), sheet_rolls(sheet))
 
@@ -84,31 +75,46 @@ def character_problems(conn, row):
     return result['errors'] if result else []
 
 # Each ability as the sheet shows it: base, the permanent increases by source, the score,
-# and current with the sheet's temporary effects (scoreAdjustments) applied.
+# and current with the sheet's temporary effects (play.scoreAdjustments) applied.
 def sheet_abilities(summary, sheet):
-    return apply_adjustments(summary['abilities'], sheet.get('scoreAdjustments') or [])
+    return apply_adjustments(summary['abilities'], (sheet.get('play') or {}).get('scoreAdjustments') or [])
 
-# The sheet a valid draft saves as. summary: check_draft's; rolls: the ability rolls it used.
-def build_sheet(draft, setting, summary, rolls):
+SHEET_VERSION = 1
+
+def _picked(choices):
+    return {k: v for k, v in choices.items() if v not in ('', [], None)}
+
+# The build a valid draft saves as (schemas/records/sheet.schema.json $defs.build): the
+# draft's picks, with only the choices that apply and the campaign's methods filled in.
+def build_from_draft(draft, setting):
     return {
-        'level': setting.level,
         'species': draft['species'],
-        'speciesChoices': draft.get('speciesChoices') or {},
+        'speciesChoices': _picked(draft.get('speciesChoices') or {}),
         'originRules': setting.origin_rules(),
         'background': draft['background'],
-        'backgroundChoices': kept_background_choices(draft, setting),
+        'backgroundChoices': _picked(kept_background_choices(draft, setting)),
         'class': draft['class'],
-        'classChoices': kept_class_choices(draft, setting),
+        'classChoices': _picked(kept_class_choices(draft, setting)),
         'abilityMethod': draft.get('abilityMethod') or ability_rules(setting)['allowedMethods'][0],
-        # Base scores as assigned; abilities has them with every permanent increase (background, feats).
+        # Base scores as assigned; increases are worked out from the picks when read.
         'abilityScores': draft['abilityScores'],
-        'abilityRolls': rolls,
-        'abilities': {a: s['total'] for a, s in summary['abilities'].items()},
         'hpMethod': hp_method(draft, setting),
         'hpRolls': draft.get('hpRolls') or [],
-        'hitPoints': summary['hitPoints'],
         'details': clean_details(draft.get('details')),
     }
+
+# A new character's sheet. rolls: the ability rolls its scores came from (or None).
+def new_sheet(draft, setting, rolls):
+    return {'version': SHEET_VERSION, 'level': setting.level, 'build': build_from_draft(draft, setting),
+            'rolls': rolls, 'play': {}}
+
+# The sheet as JSON for the characters.sheet column, refused (ValueError) if it doesn't fit
+# its schema. Every write goes through here.
+def sheet_json(sheet):
+    problems = record_problems('sheet', sheet)
+    if problems:
+        raise ValueError(f'The sheet doesn’t fit its schema: {problems[0]}')
+    return json.dumps(sheet)
 
 # The ability score rolls kept with one of the signed-in player's drafts, or None.
 def draft_rolls(conn, draft_id):
@@ -225,7 +231,6 @@ def create(campaign_id):
             errors = result['errors']
             if errors:
                 return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
-            summary = result['summary']
             name = clean_name(draft['name'])
             has_active = campaign_id is None or conn.execute(
                 'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
@@ -235,7 +240,7 @@ def create(campaign_id):
             conn.execute(
                 'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active) VALUES (?, ?, ?, ?, ?, ?)',
                 (character_id, campaign_id, g.user['id'], name,
-                 json.dumps(build_sheet(draft, setting, summary, rolls)),
+                 sheet_json(new_sheet(draft, setting, rolls)),
                  0 if has_active else 1),
             )
             if isinstance(draft.get('draftId'), str):
@@ -301,7 +306,7 @@ def get_character(character_id):
         'level': sheet.get('level', 1),
         # Each ability's base, increases, score and current; null for a character without scores.
         'abilities': sheet_abilities(result['summary'], sheet) if result else None,
-        'scoreAdjustments': sheet.get('scoreAdjustments') or [],
+        'scoreAdjustments': (sheet.get('play') or {}).get('scoreAdjustments') or [],
     }), 200
 
 # Body: {adjustments: [{id, name, ability, mode, value}]}. Replaces the character's temporary
@@ -319,9 +324,9 @@ def put_adjustments(character_id):
             if row is None:
                 return error('Character not found', 404)
             sheet = json.loads(row['sheet'])
-            sheet['scoreAdjustments'] = adjustments
+            sheet.setdefault('play', {})['scoreAdjustments'] = adjustments
             conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
-                         (json.dumps(sheet), character_id))
+                         (sheet_json(sheet), character_id))
             result = check_character(conn, row, sheet)
     finally:
         conn.close()
@@ -347,10 +352,11 @@ def update_character(character_id):
             if result['errors']:
                 return jsonify({'error': result['errors'][0]['message'], 'errors': result['errors']}), 400
             # Keys the wizard doesn't manage (anything added later in play) are kept.
-            sheet.update(build_sheet(draft, setting, result['summary'], rolls))
+            # The wizard owns build: replaced whole. rolls and play are kept as they are.
+            sheet['build'] = build_from_draft(draft, setting)
             name = clean_name(draft['name'])
             conn.execute(f'UPDATE characters SET name = ?, sheet = ?, updated_at = {NOW} WHERE id = ?',
-                         (name, json.dumps(sheet), character_id))
+                         (name, sheet_json(sheet), character_id))
     finally:
         conn.close()
     return jsonify({'id': character_id, 'name': name}), 200
@@ -370,12 +376,12 @@ def roll_character_abilities(character_id):
             sheet = json.loads(row['sheet'])
             if sheet_rolls(sheet) and row['campaign_id'] is not None:
                 return error('You’ve already rolled for this character.', 409)
-            sheet['abilityRolls'] = roll_scores()
+            sheet['rolls'] = roll_scores()
             conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
-                         (json.dumps(sheet), character_id))
+                         (sheet_json(sheet), character_id))
     finally:
         conn.close()
-    return jsonify({'rolls': sheet['abilityRolls']}), 200
+    return jsonify({'rolls': sheet['rolls']}), 200
 
 @bp.get('/characters/<character_id>/portrait')
 @require_login

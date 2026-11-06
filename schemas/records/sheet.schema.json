@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/records/sheet.schema.json",
+  "title": "Character sheet",
+  "description": "The JSON stored in characters.sheet. Three parts, each with one owner: build (what the wizard decides; replaced whole on every edit), rolls (made by the server, never sent in by the player) and play (what changes at the table; the wizard never touches it). Nothing derived is stored: scores, modifiers and hit points are worked out from build and play each time the sheet is read, so they can't go stale. Kept in other columns: name, personal_notes, is_active; the portrait is in character_portraits.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "The sheet format's version. Bumped when the shape changes; a migration upgrades stored sheets (server/db.py).",
+      "const": 1
+    },
+    "level": {
+      "description": "Character level. Set at creation from the campaign (milestone level, else 1). Planned: per-class levels when multiclassing arrives.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 20
+    },
+    "build": {
+      "$ref": "#/$defs/build"
+    },
+    "rolls": {
+      "description": "The server's ability score rolls the scores were assigned from (roll method), or null.",
+      "oneOf": [
+        { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/abilityRolls" },
+        { "type": "null" }
+      ]
+    },
+    "play": {
+      "$ref": "#/$defs/play"
+    }
+  },
+  "required": ["version", "level", "build", "rolls", "play"],
+  "additionalProperties": false,
+  "$defs": {
+    "build": {
+      "description": "The character as the wizard made it: the draft's fields, complete and checked against the campaign when saved. Editing the character replaces this whole object.",
+      "type": "object",
+      "properties": {
+        "species": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId" },
+        "speciesChoices": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks" },
+        "originRules": {
+          "description": "The origin rules the character was made under: the sandbox player's picks, or the campaign's at the time.",
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/originRules"
+        },
+        "background": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId" },
+        "backgroundChoices": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks" },
+        "class": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId" },
+        "classChoices": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks" },
+        "abilityMethod": {
+          "description": "The method the scores were set with (never null here: the campaign's only method is filled in).",
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/abilityScoreMethod"
+        },
+        "abilityScores": {
+          "description": "All six base scores.",
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/abilityScores",
+          "required": ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
+        },
+        "hpMethod": {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/hitPoints"
+        },
+        "hpRolls": {
+          "description": "The hit die rolled at each level after the first (manual method); empty otherwise.",
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "maxItems": 19
+        },
+        "details": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/details" }
+      },
+      "required": [
+        "species", "speciesChoices", "originRules", "background", "backgroundChoices", "class", "classChoices",
+        "abilityMethod", "abilityScores", "hpMethod", "hpRolls", "details"
+      ],
+      "additionalProperties": false
+    },
+    "play": {
+      "description": "What changes at the table. Each field is optional, missing meaning its empty state, so adding a field needs no migration. Planned: xp, current and temporary hit points, spent hit dice, death saves, conditions, inventory and coins, spell slots, limited-use features.",
+      "type": "object",
+      "properties": {
+        "scoreAdjustments": {
+          "description": "Temporary ability score effects (server/rules/scores.py).",
+          "type": "array",
+          "items": { "$ref": "#/$defs/scoreAdjustment" },
+          "maxItems": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "scoreAdjustment": {
+      "description": "set: the score becomes value. atLeast: raised to value unless already higher (most magic items). add: plus value (negative lowers it). The current score is kept within 1-30.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "ability": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/ability" },
+        "mode": { "enum": ["set", "atLeast", "add"] },
+        "value": { "type": "integer", "minimum": -30, "maximum": 30 }
+      },
+      "required": ["id", "name", "ability", "mode", "value"],
+      "additionalProperties": false
+    }
+  }
+}

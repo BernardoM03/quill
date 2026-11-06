@@ -3,11 +3,13 @@ import sqlite3
 
 from flask import Blueprint, jsonify
 
+from server.campaign_content import load_allowed, save_allowed
 from server.db import connect
 from server.helpers import (
-    NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
+    NAME_MAX_LENGTH, NOW, canonical_uuid, revalidated_json, clean_name, current_user, error, is_gm, json_body, list_campaigns,
 )
 from server.rules import validate_campaign_patch
+from server.rules.campaign import known_content
 from server.rules.settings import LIMITS, with_rule_defaults
 from server.rules.problems import campaign_problems, spell_change_problem, subclass_change_problem
 from server.access import require_admin, require_login, require_member
@@ -47,7 +49,7 @@ def create_campaign():
     campaign_id = canonical_uuid(content.get('id'))
     if campaign_id is None:
         return error('Invalid campaign id.', 400)
-    settings = {'alternateRules': [], 'allowedContent': {}, 'rules': {}}
+    settings = {'rules': {}}
 
     conn = connect()
     try:
@@ -76,6 +78,7 @@ def get_campaign(campaign_id):
     conn = connect()
     try:
         row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+        allowed = load_allowed(conn, campaign_id)
         membership = conn.execute(
             'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, current_user(conn)['id'])
         ).fetchone()
@@ -86,15 +89,16 @@ def get_campaign(campaign_id):
     role = membership['role'] if membership else 'admin'
     details = json.loads(row['settings'])
     details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role})
-    # Campaigns made before allowedContent existed: missing means everything is allowed.
-    details.setdefault('allowedContent', {})
+    # A collection missing from allowedContent allows everything in it.
+    details['allowedContent'] = allowed
     # Stored: only what the GM changed. Sent: every rule, defaults filled in, with the limits
     # the settings page should offer.
     details['rules'] = with_rule_defaults(details.get('rules'))
     details['ruleLimits'] = LIMITS
     # What the settings are missing before characters can be made; the page shows these.
     details['problems'] = campaign_problems(details['allowedContent'])
-    return jsonify(details), 200
+    # Unchanged since this browser last loaded it: a 304 with no body.
+    return revalidated_json(details)
 
 # Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
 # Returns the campaign's problems after the change, so the page needn't work them out.
@@ -113,11 +117,12 @@ def update_campaign(campaign_id):
             if row is None or not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
             settings = json.loads(row['settings'])
+            allowed = load_allowed(conn, campaign_id)
             # While the campaign has problems, only the fix can be saved: allowed content (and
             # rules, which can't affect problems). Matches the settings page, which locks the
             # name and description until the problems are gone.
             if 'name' in content or 'description' in content:
-                problems = campaign_problems(settings.get('allowedContent', {}))
+                problems = campaign_problems(allowed)
                 if problems:
                     return error('Fix the campaign’s problems first: ' + ' '.join(problems), 409)
             name = clean_name(content['name']) if 'name' in content else row['name']
@@ -125,25 +130,31 @@ def update_campaign(campaign_id):
             if 'rules' in content:
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:
-                before = dict(settings.get('allowedContent', {}))
-                settings.setdefault('allowedContent', {}).update(content['allowedContent'])
+                changes = known_content(content['allowedContent'])
+                before = dict(allowed)
+                for collection, ids in changes.items():
+                    if ids is None:
+                        allowed.pop(collection, None)
+                    else:
+                        allowed[collection] = ids
                 # Refused outright, unlike the problems list: the class and spell pickers
                 # never need to pass through these states.
-                if 'classes' in content['allowedContent'] or 'subclasses' in content['allowedContent']:
-                    message = subclass_change_problem(before, settings['allowedContent'])
+                if 'classes' in changes or 'subclasses' in changes:
+                    message = subclass_change_problem(before, allowed)
                     if message:
                         return error(message, 400)
-                if 'spells' in content['allowedContent']:
-                    message = spell_change_problem(before, settings['allowedContent'])
+                if 'spells' in changes:
+                    message = spell_change_problem(before, allowed)
                     if message:
                         return error(message, 400)
+                save_allowed(conn, campaign_id, changes)
             conn.execute(
                 f'UPDATE campaigns SET name = ?, description = ?, settings = ?, updated_at = {NOW} WHERE id = ?',
                 (name, description, json.dumps(settings), campaign_id),
             )
     finally:
         conn.close()
-    return jsonify({'success': True, 'problems': campaign_problems(settings.get('allowedContent', {}))}), 200
+    return jsonify({'success': True, 'problems': campaign_problems(allowed)}), 200
 
 @bp.delete('/campaigns/<campaign_id>')
 @require_login

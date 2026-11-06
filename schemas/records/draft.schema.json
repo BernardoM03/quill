@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/records/draft.schema.json",
+  "title": "Character draft",
+  "description": "The JSON stored in character_drafts.draft: the creation wizard's progress, saved as the player goes. Only its shape is checked when saved (server/routes/drafts.py clean_draft, at most 32 KB); whether it fits the campaign's rules is checked on /characters/validate and when the character is created. Every field is always written, empty until its step is done. The same shape is what the wizard edits for an existing character (the sheet's fields, see server/routes/characters.py sheet_draft). Kept in other columns: campaign_id (null: Character Sandbox), step (the wizard step to reopen on) and rolls (the server's ability rolls, common abilityRolls).",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "The draft format's version. Bumped when the shape changes; a migration upgrades stored drafts (server/db.py).",
+      "const": 1
+    },
+    "name": {
+      "description": "Empty until the Details step. At most 64 characters (server/helpers.py NAME_MAX_LENGTH); create also requires at least one.",
+      "type": "string",
+      "maxLength": 64
+    },
+    "species": {
+      "description": "null until picked.",
+      "oneOf": [
+        {
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "speciesChoices": {
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks"
+    },
+    "originRules": {
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/originRules"
+    },
+    "background": {
+      "description": "null until picked. A pack origin id (srd-5.2:origin/acolyte).",
+      "oneOf": [
+        {
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "backgroundChoices": {
+      "description": "Includes ability-scores (the background's increases, e.g. \"STR+2,CON+1\") and starting-equipment.",
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks"
+    },
+    "class": {
+      "description": "null until picked.",
+      "oneOf": [
+        {
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "classChoices": {
+      "description": "Includes subclass, and each feat's ability increase (\"STR+1,DEX+1\").",
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/choicePicks"
+    },
+    "abilityMethod": {
+      "description": "null: the campaign's only method. Otherwise the method picked, one of the campaign's allowed ones.",
+      "oneOf": [
+        {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/abilityScoreMethod"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "abilityScores": {
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/abilityScores"
+    },
+    "hpMethod": {
+      "description": "null: the campaign's only method.",
+      "oneOf": [
+        {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/hitPoints"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "hpRolls": {
+      "description": "The hit die rolled (or entered) at each level after the first, for the manual method.",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "maxItems": 19
+    },
+    "details": {
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/details"
+    }
+  },
+  "required": [
+    "version",
+    "name",
+    "species",
+    "speciesChoices",
+    "originRules",
+    "background",
+    "backgroundChoices",
+    "class",
+    "classChoices",
+    "abilityMethod",
+    "abilityScores",
+    "hpMethod",
+    "hpRolls",
+    "details"
+  ],
+  "additionalProperties": false
+}

@@ -1,25 +1,23 @@
 # A character's description: who they are, how they look, their personality, and notes.
 # Every field is optional free text, except alignment, which is one of ALIGNMENTS.
 
-SHORT_MAX = 100
-LONG_MAX = 5000
-ALIGNMENTS = [
-    'Lawful Good', 'Neutral Good', 'Chaotic Good',
-    'Lawful Neutral', 'Neutral', 'Chaotic Neutral',
-    'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
-]
+from server.records import definition
+
+# The fields, their limits and the alignments come from the schema
+# (schemas/records/common.schema.json $defs.details), the source of truth for them.
+def _fields():
+    fields, alignments = {}, []
+    for key, field in definition('common', 'details')['properties'].items():
+        if 'enum' in field:
+            alignments = [a for a in field['enum'] if a]
+            fields[key] = max(len(a) for a in alignments)
+        else:
+            text = definition('common', field['$ref'].rsplit('/', 1)[-1]) if '$ref' in field else field
+            fields[key] = text['maxLength']
+    return fields, alignments
+
 # Field -> its longest length. alignment is checked against ALIGNMENTS instead.
-FIELDS = {
-    # Character details
-    'alignment': SHORT_MAX, 'faith': SHORT_MAX, 'lifestyle': SHORT_MAX,
-    # Physical characteristics
-    'gender': SHORT_MAX, 'age': SHORT_MAX, 'height': SHORT_MAX, 'weight': SHORT_MAX,
-    'hair': SHORT_MAX, 'eyes': SHORT_MAX, 'skin': SHORT_MAX, 'appearance': LONG_MAX,
-    # Personal characteristics
-    'personalityTraits': LONG_MAX, 'ideals': LONG_MAX, 'bonds': LONG_MAX, 'flaws': LONG_MAX,
-    # Notes
-    'organizations': LONG_MAX, 'allies': LONG_MAX, 'enemies': LONG_MAX, 'backstory': LONG_MAX, 'other': LONG_MAX,
-}
+FIELDS, ALIGNMENTS = _fields()
 
 def _error(field, message):
     return {'field': field, 'message': message}

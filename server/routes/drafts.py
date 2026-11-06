@@ -6,6 +6,7 @@ from flask import Blueprint, g, jsonify
 from server.access import require_login
 from server.db import connect
 from server.helpers import NOW, error, json_body
+from server.records import record_problems
 from server.ratelimit import limit
 from server.routes.characters import NoCampaign, creation_setting
 from server.rules import packs
@@ -15,49 +16,56 @@ bp = Blueprint('drafts', __name__)
 
 # A draft is the creation wizard's progress, saved as the player goes. It isn't checked
 # against the rules (that happens on /characters/validate and on create); it only has to
-# be the right shape and size.
+# fit its schema (schemas/records/draft.schema.json) and size.
 DRAFT_MAX_BYTES = 32_000
 STEPS = {'campaign', 'species', 'background', 'class', 'abilities', 'name'}
 
-# The draft fields worth keeping from a body, or None if they're the wrong shape.
+DRAFT_VERSION = 1
+
+# A choice with nothing picked is left out rather than stored empty.
+def _picked(choices):
+    if not isinstance(choices, dict):
+        return choices
+    return {k: v for k, v in choices.items() if v not in ('', [], None)}
+
+# The draft fields worth keeping from a body, as (draft, None), or (None, problem) when it
+# doesn't fit schemas/records/draft.schema.json or is too big. Missing fields get their
+# empty value, so a draft always has every field.
 def clean_draft(raw):
     if not isinstance(raw, dict):
-        return None
+        return None, 'A draft must be an object.'
     draft = {
+        'version': DRAFT_VERSION,
         'name': raw.get('name') or '',
         'species': raw.get('species'),
-        'speciesChoices': raw.get('speciesChoices') or {},
+        'speciesChoices': _picked(raw.get('speciesChoices') or {}),
         'originRules': raw.get('originRules') or {},
         'background': raw.get('background'),
-        'backgroundChoices': raw.get('backgroundChoices') or {},
+        'backgroundChoices': _picked(raw.get('backgroundChoices') or {}),
         'class': raw.get('class'),
-        'classChoices': raw.get('classChoices') or {},
+        'classChoices': _picked(raw.get('classChoices') or {}),
         'abilityMethod': raw.get('abilityMethod'),
         'abilityScores': raw.get('abilityScores') or {},
         'hpMethod': raw.get('hpMethod'),
         'hpRolls': raw.get('hpRolls') or [],
         'details': raw.get('details') or {},
     }
-    if not isinstance(draft['name'], str) or not all(
-            draft[k] is None or isinstance(draft[k], str) for k in ('species', 'background', 'class', 'abilityMethod', 'hpMethod')):
-        return None
-    if not all(isinstance(draft[k], dict) for k in ('speciesChoices', 'backgroundChoices', 'classChoices')):
-        return None
-    if not isinstance(draft['abilityScores'], dict) or not isinstance(draft['hpRolls'], list)             or not isinstance(draft['originRules'], dict) or not isinstance(draft['details'], dict):
-        return None
+    problems = record_problems('draft', draft)
+    if problems:
+        return None, f'The draft doesn’t fit: {problems[0]}'
     if len(json.dumps(draft)) > DRAFT_MAX_BYTES:
-        return None
-    return draft
+        return None, f'A draft must be under {DRAFT_MAX_BYTES // 1000} KB.'
+    return draft, None
 
 # Body: {campaignId (null for the sandbox), draft, step}. Checks it, and that the player may
 # make characters in that campaign. Returns (campaign_id, draft json, step), or (None, None, problem).
 def read_body(conn):
     body = json_body() or {}
     campaign_id = body.get('campaignId')
-    draft = clean_draft(body.get('draft'))
+    draft, problem = clean_draft(body.get('draft'))
     step = body.get('step')
     if draft is None:
-        return None, None, error(f'A draft must be an object under {DRAFT_MAX_BYTES // 1000} KB.', 400)
+        return None, None, error(problem, 400)
     if step is not None and step not in STEPS:
         return None, None, error('Unknown step.', 400)
     try:

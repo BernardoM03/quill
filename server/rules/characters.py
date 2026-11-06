@@ -13,7 +13,7 @@ from server.rules.abilities import (
 from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS, EQUIPMENT_CHOICE, all_background_choices, background_detail
 from server.rules.choices import ABILITY_NAMES, Context, Facts, active, allowed_entries, choice_errors, resolve_choice, unmet_prerequisite
 from server.rules.classes import active_choices, all_choices, class_detail
-from server.rules.campaign import RULE_CHECKS
+from server.rules.settings import RULE_CHECKS
 from server.rules.details import details_errors
 from server.rules.problems import campaign_problems
 from server.rules.scores import SCORE_CAP, apply_increases, parse_spread, source

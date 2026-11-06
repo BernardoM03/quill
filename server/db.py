@@ -26,7 +26,7 @@ MIGRATIONS = [
         owner_id    TEXT NOT NULL REFERENCES users(id),
         name        TEXT NOT NULL,
         description TEXT NOT NULL DEFAULT '',
-        settings    TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(settings)),  -- allowedContent, alternate rules, visibility
+        settings    TEXT NOT NULL DEFAULT '{}' CHECK (json_valid(settings)),  -- rules; allowed content moved to tables in migration 9
         created_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
         updated_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
     );
@@ -164,6 +164,52 @@ MIGRATIONS = [
     # roll again until they like the result. Saving the draft never touches them.
     '''
     ALTER TABLE character_drafts ADD COLUMN rolls TEXT CHECK (rolls IS NULL OR json_valid(rolls));
+    ''',
+    # 9: allowed content moves out of campaigns.settings into rows. A collection in
+    # campaign_content_limits is limited to its rows in campaign_content; a collection that
+    # isn't there allows everything in it. Settings keep only the rules (and lose the unused
+    # alternate rules keys).
+    '''
+    CREATE TABLE campaign_content_limits (
+        campaign_id TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        collection  TEXT NOT NULL,                      -- a pack collection: species, spells, ...
+        PRIMARY KEY (campaign_id, collection)
+    ) WITHOUT ROWID;
+    CREATE TABLE campaign_content (
+        campaign_id TEXT NOT NULL,
+        collection  TEXT NOT NULL,
+        entry_id    TEXT NOT NULL,                      -- a pack id: srd-5.2:spell/fireball
+        PRIMARY KEY (campaign_id, collection, entry_id),
+        FOREIGN KEY (campaign_id, collection) REFERENCES campaign_content_limits(campaign_id, collection) ON DELETE CASCADE
+    ) WITHOUT ROWID;
+    INSERT INTO campaign_content_limits (campaign_id, collection)
+        SELECT c.id, coll.key FROM campaigns c, json_each(c.settings, '$.allowedContent') coll
+        WHERE coll.type = 'array';
+    INSERT OR IGNORE INTO campaign_content (campaign_id, collection, entry_id)
+        SELECT c.id, coll.key, ids.value FROM campaigns c, json_each(c.settings, '$.allowedContent') coll,
+            json_each(coll.value) ids
+        WHERE coll.type = 'array' AND ids.type = 'text';
+    UPDATE campaigns SET settings = json_remove(settings, '$.allowedContent', '$.alternateRules', '$."alternate-rules"');
+    ''',
+    # 10: drafts get a format version (schemas/records/draft.schema.json), and choices the
+    # player cleared are left out instead of stored as "" or [].
+    '''
+    UPDATE character_drafts SET draft = json_set(draft, '$.speciesChoices', (
+        SELECT json_group_object(key, CASE WHEN type IN ('array', 'object') THEN json(value) ELSE value END)
+        FROM json_each(character_drafts.draft, '$.speciesChoices')
+        WHERE NOT (type = 'text' AND value = '') AND NOT (type = 'array' AND json_array_length(value) = 0)
+    ));
+    UPDATE character_drafts SET draft = json_set(draft, '$.backgroundChoices', (
+        SELECT json_group_object(key, CASE WHEN type IN ('array', 'object') THEN json(value) ELSE value END)
+        FROM json_each(character_drafts.draft, '$.backgroundChoices')
+        WHERE NOT (type = 'text' AND value = '') AND NOT (type = 'array' AND json_array_length(value) = 0)
+    ));
+    UPDATE character_drafts SET draft = json_set(draft, '$.classChoices', (
+        SELECT json_group_object(key, CASE WHEN type IN ('array', 'object') THEN json(value) ELSE value END)
+        FROM json_each(character_drafts.draft, '$.classChoices')
+        WHERE NOT (type = 'text' AND value = '') AND NOT (type = 'array' AND json_array_length(value) = 0)
+    ));
+    UPDATE character_drafts SET draft = json_set(draft, '$.version', 1);
     ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)

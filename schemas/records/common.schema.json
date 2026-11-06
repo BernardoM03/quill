@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/records/common.schema.json",
+  "title": "Shared record definitions",
+  "description": "Pieces the stored records (draft, sheet) have in common. Only referenced, never a record itself.",
+  "$defs": {
+    "ability": {
+      "description": "An ability code.",
+      "enum": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ]
+    },
+    "packId": {
+      "description": "An entry in an installed pack: <pack>:<type>/<slug>, e.g. srd-5.2:species/human. Whether it exists, and whether the campaign allows it, is checked by the rules, not here.",
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^[a-z0-9][a-z0-9.-]*:[a-z][a-z-]*/[a-z0-9][a-z0-9-]*$"
+    },
+    "choicePicks": {
+      "description": "Choice id -> the picked option's key, or a list of keys where a choice takes more than one. Choice ids come from the pack (barbarian-ability-score-improvement); repeats of a feature add @<level> (barbarian-ability-score-improvement@8), and a feat's ability increase adds ~<feat> (barbarian-ability-score-improvement~grappler). A cleared choice is left out, never stored empty.",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "minItems": 1
+          }
+        ]
+      }
+    },
+    "abilityScores": {
+      "description": "Base ability scores by ability, as assigned (standard array, point buy, roll, manual), before any increase. Partial while the player is still assigning them; the method's ranges are checked by the rules.",
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/ability"
+      },
+      "additionalProperties": {
+        "type": "integer"
+      }
+    },
+    "abilityRoll": {
+      "description": "One of the six ability rolls the server makes: 4d6, the lowest dropped. Rolls made before the dice were kept have dice: [].",
+      "type": "object",
+      "properties": {
+        "dice": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "maxItems": 4
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 18
+        }
+      },
+      "required": [
+        "dice",
+        "total"
+      ],
+      "additionalProperties": false
+    },
+    "abilityRolls": {
+      "description": "The six rolls the scores are assigned from (roll method).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/abilityRoll"
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "originRules": {
+      "description": "Character Sandbox only: the origin rules the player picked. In a campaign the GM's rules apply and this is ignored. A subset of the campaign rules (server/rules/characters.py PLAYER_RULES).",
+      "type": "object",
+      "properties": {
+        "customizeOrigin": {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/customizeOrigin"
+        },
+        "originFeat": {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/originFeat"
+        },
+        "startingEquipment": {
+          "$ref": "https://quill.local/schemas/records/campaign-settings.schema.json#/$defs/rules/properties/startingEquipment"
+        }
+      },
+      "additionalProperties": false
+    },
+    "details": {
+      "description": "Who the character is: every field optional free text, except alignment. The source of truth for these fields and their limits; server/rules/details.py reads them from here.",
+      "type": "object",
+      "properties": {
+        "alignment": {
+          "description": "Empty while unset.",
+          "enum": [
+            "",
+            "Lawful Good",
+            "Neutral Good",
+            "Chaotic Good",
+            "Lawful Neutral",
+            "Neutral",
+            "Chaotic Neutral",
+            "Lawful Evil",
+            "Neutral Evil",
+            "Chaotic Evil"
+          ]
+        },
+        "faith": {
+          "$ref": "#/$defs/shortText"
+        },
+        "lifestyle": {
+          "$ref": "#/$defs/shortText"
+        },
+        "gender": {
+          "$ref": "#/$defs/shortText"
+        },
+        "age": {
+          "$ref": "#/$defs/shortText"
+        },
+        "height": {
+          "$ref": "#/$defs/shortText"
+        },
+        "weight": {
+          "$ref": "#/$defs/shortText"
+        },
+        "hair": {
+          "$ref": "#/$defs/shortText"
+        },
+        "eyes": {
+          "$ref": "#/$defs/shortText"
+        },
+        "skin": {
+          "$ref": "#/$defs/shortText"
+        },
+        "appearance": {
+          "$ref": "#/$defs/longText"
+        },
+        "personalityTraits": {
+          "$ref": "#/$defs/longText"
+        },
+        "ideals": {
+          "$ref": "#/$defs/longText"
+        },
+        "bonds": {
+          "$ref": "#/$defs/longText"
+        },
+        "flaws": {
+          "$ref": "#/$defs/longText"
+        },
+        "organizations": {
+          "$ref": "#/$defs/longText"
+        },
+        "allies": {
+          "$ref": "#/$defs/longText"
+        },
+        "enemies": {
+          "$ref": "#/$defs/longText"
+        },
+        "backstory": {
+          "$ref": "#/$defs/longText"
+        },
+        "other": {
+          "$ref": "#/$defs/longText"
+        }
+      },
+      "additionalProperties": false
+    },
+    "shortText": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "longText": {
+      "type": "string",
+      "maxLength": 5000
+    }
+  }
+}

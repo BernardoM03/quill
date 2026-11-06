@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { getCampaign } from "../api/campaigns";
 import {
     createCharacter, createSandboxCharacter, getCharacter, getCharacterOptions, rollCharacterAbilities,
-    updateCharacter, validateCharacter, getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type draftCheck, type draftError, type takenOptions,
+    updateCharacter, validateCharacter, getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type choicePicks, type draftCheck, type draftError, type takenOptions,
 } from "../api/characters";
 import { createDraft, getDraft, rollAbilities, saveDraft } from "../api/drafts";
 import { getUser } from "../api/users";
@@ -34,20 +34,30 @@ interface wizardDraft {
     campaignId: string,
     species: string | null,
     // Choice id -> the picked option's key. Starts over when the species changes.
-    speciesChoices: Record<string, string | string[]>,
+    speciesChoices: choicePicks,
     originRules: characterDraft['originRules'],
     background: string | null,
     // Choice id -> the picked option's key. Starts over when the background changes.
-    backgroundChoices: Record<string, string | string[]>,
+    backgroundChoices: choicePicks,
     class: string | null,
     // Choice id -> the picked option's key. Starts over when the class changes.
-    classChoices: Record<string, string | string[]>,
+    classChoices: choicePicks,
     abilityMethod: characterDraft['abilityMethod'],
     abilityScores: Record<string, number>,
     hpMethod: characterDraft['hpMethod'],
     hpRolls: number[],
     details: characterDraft['details'],
     name: string,
+}
+
+// The picks with one choice set, or left out when it's cleared ('' or nothing picked), so a
+// cleared choice is never saved empty (schemas/records/common.schema.json choicePicks).
+function withPick(picks: choicePicks, id: string, value: string | string[]): choicePicks {
+    const rest = { ...picks }
+    delete rest[id]
+    if (value === '' || (Array.isArray(value) && value.length === 0)) return rest
+    // Checked just above: a list here has at least one key, as choicePicks requires.
+    return { ...rest, [id]: value as choicePicks[string] }
 }
 
 type stepId = 'campaign' | 'species' | 'background' | 'class' | 'abilities' | 'name'
@@ -489,7 +499,7 @@ export default function NewCharacter() {
                         taken={taken}
                         onSelect={id => update({ species: id, speciesChoices: {} }, 'species')}
                         onChoose={(id, value) =>
-                            update({ speciesChoices: { ...draft.speciesChoices, [id]: value } }, `choice:${id}`)}
+                            update({ speciesChoices: withPick(draft.speciesChoices, id, value) }, `choice:${id}`)}
                         errorsFor={errorsFor}
                     />
                 ) : waiting)}
@@ -508,7 +518,7 @@ export default function NewCharacter() {
                         taken={taken}
                         onSelect={id => update({ background: id, backgroundChoices: {} }, 'background')}
                         onChoose={(id, value) =>
-                            update({ backgroundChoices: { ...draft.backgroundChoices, [id]: value } }, `backgroundChoice:${id}`)}
+                            update({ backgroundChoices: withPick(draft.backgroundChoices, id, value) }, `backgroundChoice:${id}`)}
                         errorsFor={errorsFor}
                     />
                 ) : waiting)}
@@ -523,7 +533,7 @@ export default function NewCharacter() {
                         taken={taken}
                         onSelect={id => update({ class: id, classChoices: {} }, 'class')}
                         onChoose={(id, value) =>
-                            update({ classChoices: { ...draft.classChoices, [id]: value } }, `classChoice:${id}`)}
+                            update({ classChoices: withPick(draft.classChoices, id, value) }, `classChoice:${id}`)}
                         errorsFor={errorsFor}
                     />
                 ) : waiting)}

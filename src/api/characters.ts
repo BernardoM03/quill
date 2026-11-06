@@ -1,3 +1,5 @@
+import type { ChoicePicks, Details, DraftSchema } from "../datatypes/generated/draft";
+import type { AbilityRoll, ScoreAdjustment } from "../datatypes/generated/sheet";
 import { apiClient } from "./client";
 
 export const CHARACTER_NAME_MAX_LENGTH = 64;
@@ -10,37 +12,15 @@ export interface createdCharacter {
 }
 
 // Choice id -> the picked option's key (a list of keys where a choice takes more than one).
-export type choicePicks = Record<string, string | string[]>
+// A cleared choice is left out.
+export type choicePicks = ChoicePicks
 
-// What the creation wizard has collected so far.
-export interface characterDraft {
-    name: string,
-    species: string | null,
-    speciesChoices: choicePicks,
-    // Character Sandbox only: the origin rules the player picked (a campaign's GM sets them).
-    originRules: Partial<originRules>,
-    background: string | null,
-    backgroundChoices: choicePicks,
-    class: string | null,
-    classChoices: choicePicks,
-    // null: the campaign's only method (see abilityRules).
-    abilityMethod: abilityMethod | null,
-    // Base scores by ability code ("STR"), before any increases.
-    abilityScores: Record<string, number>,
-    hpMethod: hpMethod | null,
-    // The hit die rolled at each level after the first, for the manual method.
-    hpRolls: number[],
-    details: characterDetails,
-}
+// What the creation wizard has collected so far. Defined by schemas/records/draft.schema.json
+// (generated: npm run gen-types); the server adds version when it saves one.
+export type characterDraft = Omit<DraftSchema, 'version'>
 
-// A character's description; every field optional. Limits: server/rules/details.py.
-export interface characterDetails {
-    alignment?: string, faith?: string, lifestyle?: string,
-    gender?: string, age?: string, height?: string, weight?: string,
-    hair?: string, eyes?: string, skin?: string, appearance?: string,
-    personalityTraits?: string, ideals?: string, bonds?: string, flaws?: string,
-    organizations?: string, allies?: string, enemies?: string, backstory?: string, other?: string,
-}
+// A character's description; every field optional. Defined in schemas/records/common.schema.json.
+export type characterDetails = Details
 
 export interface originRules {
     // The increases may go to any ability, and the skills and tool are picked.
@@ -71,10 +51,8 @@ export interface abilityRules {
 }
 
 // One of the six ability rolls the server makes: 4d6, the lowest dropped.
-export interface abilityRoll {
-    dice: number[],
-    total: number,
-}
+// Defined in schemas/records/common.schema.json.
+export type abilityRoll = AbilityRoll
 
 // A feature an option brings with it, e.g. the spells of an elven lineage.
 export interface grantedFeature {
@@ -277,15 +255,10 @@ export interface sheetAbility extends abilitySummary {
     adjustments: string[],
 }
 
-// A temporary effect on one score. set: becomes value; atLeast: raised to value unless
-// already higher (most magic items); add: plus value (negative lowers it).
-export interface scoreAdjustment {
-    id: string,
-    name: string,
-    ability: string,
-    mode: 'set' | 'atLeast' | 'add',
-    value: number,
-}
+// A temporary effect on one score (a sheet's play.scoreAdjustments). set: becomes value;
+// atLeast: raised to value unless already higher (most magic items); add: plus value
+// (negative lowers it). Defined in schemas/records/sheet.schema.json.
+export type scoreAdjustment = ScoreAdjustment
 
 export interface hitPointSummary {
     max: number,

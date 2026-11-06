@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { saveScoreAdjustments, type scoreAdjustment, type sheetAbility } from '../../api/characters';
 import './AbilityScores.css';
 
-const ABILITIES: [string, string][] = [
+const ABILITIES: [scoreAdjustment['ability'], string][] = [
   ['STR', 'Strength'], ['DEX', 'Dexterity'], ['CON', 'Constitution'],
   ['INT', 'Intelligence'], ['WIS', 'Wisdom'], ['CHA', 'Charisma'],
 ];
@@ -35,7 +35,7 @@ export function AbilityScores({ characterId, abilities, adjustments, onChange }:
 }) {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
-  const [ability, setAbility] = useState('STR');
+  const [ability, setAbility] = useState<scoreAdjustment['ability']>('STR');
   const [mode, setMode] = useState<scoreAdjustment['mode']>('atLeast');
   const [value, setValue] = useState('19');
   const [saving, setSaving] = useState(false);
@@ -104,7 +104,7 @@ export function AbilityScores({ characterId, abilities, adjustments, onChange }:
         <form className="sheet-effects__form" onSubmit={handleAdd}>
           <input className="sheet-effects__name" aria-label="Effect name" placeholder="Belt of Hill Giant Strength"
             value={name} maxLength={60} required autoFocus onChange={e => setName(e.target.value)} />
-          <select className="rules-select" aria-label="Ability" value={ability} onChange={e => setAbility(e.target.value)}>
+          <select className="rules-select" aria-label="Ability" value={ability} onChange={e => setAbility(e.target.value as scoreAdjustment['ability'])}>
             {ABILITIES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
           </select>
           <select className="rules-select" aria-label="How it changes the score" value={mode}
