@@ -25,9 +25,9 @@ function format(spread: Record<string, number>): string {
     .join(',');
 }
 
-// A background's ability score increases: one box per ability with − and +, spending the
-// choice's points (3) with at most max (+2) on one ability. Abilities the background doesn't
-// raise are shown but locked. A half-spent spread is saved too; the server says what's missing.
+// Ability score increases, from a background (3 points, at most +2 on one) or a feat
+// (Ability Score Improvement: 2 points; most others: +1): one box per ability with − and +.
+// Abilities it can't raise are shown but locked. A half-spent spread is saved too; the server says what's missing.
 export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
   choice: characterChoice;
   value: string | string[] | undefined;
@@ -49,8 +49,13 @@ export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
   return (
     <div className="pick-choice">
       <span className="pick-choice__prompt">
-        Ability score increases
-        <span className="setting-hint"> — {points - spent} of {points} points left, at most +{max} to one ability</span>
+        {choice.source ? `${choice.source}: ability score increase` : 'Ability score increases'}
+        <span className="setting-hint">
+          {points === 1
+            ? ` — +1 to one ability${spent ? '' : ', not yet chosen'}`
+            : ` — ${points - spent} of ${points} points left, at most +${max} to one ability`}
+          {choice.maximum && ` (to a maximum of ${choice.maximum})`}
+        </span>
       </span>
       <div className="ability-boxes">
         {ABILITIES.map(([code, name]) => {

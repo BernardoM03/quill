@@ -4,6 +4,7 @@ import {
   getClassOption, type characterChoice, type choicePicks, type classDetail, type classFeature, type classSummary,
   type takenOptions,
 } from '../../api/characters';
+import { AbilityIncreaseField } from './AbilityIncreaseField';
 import { activeChoices } from './activeChoices';
 import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
@@ -49,7 +50,10 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
   }
   const detail = details[current.id];
 
-  const field = (choice: characterChoice) => (
+  const field = (choice: characterChoice) => choice.kind === 'abilityIncrease' ? (
+    <AbilityIncreaseField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
+      errors={errorsFor(`classChoice:${choice.id}`)} />
+  ) : (
     <ChoiceField key={choice.id} choice={choice} field={`classChoice:${choice.id}`} value={choices[choice.id]}
       taken={taken} onChoose={onChoose}
       errors={errorsFor(`classChoice:${choice.id}`)} />

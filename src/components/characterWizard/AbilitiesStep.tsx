@@ -182,7 +182,9 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
                 <span className="ability-box__total">
                   {s?.total != null ? <>{s.total} <span className="muted">({signed(s.modifier ?? 0)})</span></> : '—'}
                 </span>
-                {s && s.bonus > 0 && <span className="ability-box__bonus">+{s.bonus} background</span>}
+                {s?.increases.map((inc, i) => (
+                  <span key={i} className="ability-box__bonus">+{inc.amount} {inc.source}</span>
+                ))}
               </div>
             );
           })}

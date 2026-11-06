@@ -8,14 +8,15 @@
 from server.helpers import NAME_MAX_LENGTH, clean_name
 from server.rules import packs
 from server.rules.abilities import (
-    ability_errors, final_scores, hit_points, hp_bonuses, hp_errors, hp_features, hp_method,
+    ability_errors, hit_points, hp_bonuses, hp_errors, hp_features, hp_method,
 )
-from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS, EQUIPMENT_CHOICE, ability_increases, all_background_choices, background_detail
-from server.rules.choices import Context, active, allowed_entries, choice_errors, resolve_choice
+from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS, EQUIPMENT_CHOICE, all_background_choices, background_detail
+from server.rules.choices import ABILITY_NAMES, Context, Facts, active, allowed_entries, choice_errors, resolve_choice, unmet_prerequisite
 from server.rules.classes import active_choices, all_choices, class_detail
 from server.rules.campaign import RULE_CHECKS
 from server.rules.details import details_errors
 from server.rules.problems import campaign_problems
+from server.rules.scores import SCORE_CAP, apply_increases, parse_spread, source
 from server.rules.settings import starting_level, with_rule_defaults
 
 SIZE_CHOICE_PREFIX = '$choice:'
@@ -168,6 +169,69 @@ def _taken(sections):
                                                 f'Pick something else.'))
     return taken, errors
 
+# The level each class choice is gained at, from the class card: choice id -> level.
+def _choice_levels(detail):
+    levels = {}
+    for f in detail['features'] + [f for s in detail['subclasses'] for f in s['features']]:
+        for c in f['choices']:
+            levels[c['id']] = f['level']
+    return levels
+
+# Errors for feats picked whose prerequisites the finished draft doesn't meet: ability
+# scores (known only once scores are set), other feats, and proficiencies. Level and
+# Spellcasting are already left out of the options, but are checked again here.
+def prerequisite_errors(draft, setting, sections, sources, taken, cls):
+    feats = packs.collection('feats')
+    picked = []  # (field, feat id, level gained at)
+    levels = _choice_levels(class_detail_for(draft['class'], setting)) if cls else {}
+    for prefix, choices, picks in sections:
+        if choices is None:
+            continue
+        for choice in choices:
+            for key in _values(picks.get(choice['id'])):
+                if isinstance(key, str) and key in feats:
+                    level = levels.get(choice['id'], 1) if prefix == 'classChoice:' else 1
+                    picked.append((prefix + choice['id'], key, level))
+    background = packs.collection('origins').get(draft.get('background')) if isinstance(draft.get('background'), str) else None
+    own_feat = (background or {}).get('featId')
+    proficiencies = {k.lower() for k in taken}
+    if cls:
+        detail = class_detail_for(cls['id'], setting)
+        proficiencies |= {n.lower() for key in ('armor', 'weapons', 'tools') for n in detail[key]}
+    errors = []
+    for field, feat_id, level in picked:
+        # Feats gained earlier (or at the same level, from origin) count; a feat can't satisfy itself.
+        others = {own_feat} | {f for fl, f, lv in picked if lv <= level and fl != field}
+        # Scores as they are before this feat: base, the background, and earlier feats.
+        scores, _ = apply_increases(draft.get('abilityScores'), sources, before_level=level)
+        facts = Facts(level, bool(cls and cls.get('spellcasting')),
+                      scores={a: v['total'] for a, v in scores.items()},
+                      feats=others, proficiencies=proficiencies)
+        unmet = unmet_prerequisite(feats[feat_id], facts)
+        if unmet:
+            errors.append(_error(field, f'{feats[feat_id]["name"]} requires {unmet}.'))
+    return errors
+
+# Every permanent increase the draft's picks give, as scores.source()s: the background's,
+# then each feat's (Ability Score Improvement at 4, 8, ...) at the level it's gained.
+def increase_sources(draft, setting, background_key):
+    sources = []
+    spread = parse_spread(background_key) if isinstance(background_key, str) else None
+    if spread:
+        sources.append(source('Background', spread, 1, SCORE_CAP))
+    if isinstance(draft.get('class'), str) and draft['class'] in packs.collection('classes'):
+        picks = draft.get('classChoices') if isinstance(draft.get('classChoices'), dict) else {}
+        detail = class_detail_for(draft['class'], setting)
+        levels = _choice_levels(detail)
+        for choice in active_choices(detail, picks):
+            if choice.get('kind') != 'abilityIncrease':
+                continue
+            spread = parse_spread(picks.get(choice['id']))
+            if spread and set(spread) <= set(choice['abilities']):
+                sources.append(source(choice['source'], spread, levels.get(choice['id'], 1),
+                                      choice['maximum'], 'classChoice:' + choice['id']))
+    return sources
+
 # Every problem with a draft, as [{field, message}]; empty when it can be created.
 # draft: {name, species, speciesChoices, background, backgroundChoices, class, classChoices};
 # choices map choice id -> key(s). Fields: 'campaign', 'species', 'choice:<id>', 'background',
@@ -233,7 +297,12 @@ def check_draft(draft, setting, rolls=None):
 
     errors.extend(ability_errors(draft, setting, rolls))
     increase = (draft.get('backgroundChoices') or {}).get(ABILITY_CHOICE) if isinstance(draft.get('backgroundChoices'), dict) else None
-    scores = final_scores(draft.get('abilityScores'), ability_increases(increase) or {} if isinstance(increase, str) else {})
+    sources = increase_sources(draft, setting, increase)
+    scores, overflow = apply_increases(draft.get('abilityScores'), sources)
+    for s, a in overflow:
+        if s['field']:
+            errors.append(_error(s['field'], f'{s["name"]} can’t raise {ABILITY_NAMES[a]} above {s["maximum"]}. '
+                                             f'Put the increase somewhere else.'))
     cls = packs.collection('classes').get(draft.get('class')) if isinstance(draft.get('class'), str) else None
     hit_die = cls.get('hitDie') if cls else None
     class_picks = draft.get('classChoices') if isinstance(draft.get('classChoices'), dict) else {}
@@ -242,6 +311,8 @@ def check_draft(draft, setting, rolls=None):
                     hp_bonuses(hp_features(draft.get('species'), class_picks.get('subclass')), setting.level))
 
     taken, repeats = _taken(sections)
+    if setting.rules['featPrerequisites']:
+        errors.extend(prerequisite_errors(draft, setting, sections, sources, taken, cls))
     flagged = {e['field'] for e in errors}
     errors.extend(e for e in repeats if e['field'] not in flagged)
 

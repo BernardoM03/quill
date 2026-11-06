@@ -25,7 +25,7 @@ export interface characterDraft {
     classChoices: choicePicks,
     // null: the campaign's only method (see abilityRules).
     abilityMethod: abilityMethod | null,
-    // Base scores by ability code ("STR"), before the background's increases.
+    // Base scores by ability code ("STR"), before any increases.
     abilityScores: Record<string, number>,
     hpMethod: hpMethod | null,
     // The hit die rolled at each level after the first, for the manual method.
@@ -106,6 +106,9 @@ export interface characterChoice {
     abilities?: string[],
     points?: number,
     max?: number,
+    // A feat's increase: the feat's name, and the cap it raises scores to.
+    source?: string,
+    maximum?: number,
 }
 
 export interface speciesTrait {
@@ -255,12 +258,33 @@ export interface draftError {
 export type takenOptions = Record<string, string>
 
 export interface abilitySummary {
-    // null until the score is set.
+    // As assigned at creation; null until the score is set.
     base: number | null,
-    // From the background.
+    // Permanent increases in the order gained: the background, then feats.
+    increases: { source: string, amount: number }[],
     bonus: number,
+    // base + increases: the character's own score.
     total: number | null,
     modifier: number | null,
+}
+
+// An ability on a saved character: abilitySummary plus temporary effects.
+export interface sheetAbility extends abilitySummary {
+    // The score with temporary effects applied.
+    current: number | null,
+    currentModifier: number | null,
+    // Ids of the scoreAdjustments that touch this ability.
+    adjustments: string[],
+}
+
+// A temporary effect on one score. set: becomes value; atLeast: raised to value unless
+// already higher (most magic items); add: plus value (negative lowers it).
+export interface scoreAdjustment {
+    id: string,
+    name: string,
+    ability: string,
+    mode: 'set' | 'atLeast' | 'add',
+    value: number,
 }
 
 export interface hitPointSummary {
@@ -326,10 +350,19 @@ export interface characterSummary {
     draft: characterDraft,
     rolls: abilityRoll[] | null,
     level: number,
+    // null for a character made before it had ability scores.
+    abilities: Record<string, sheetAbility> | null,
+    scoreAdjustments: scoreAdjustment[],
 }
 
 export function getCharacter(id: string): Promise<characterSummary> {
     return apiClient.get(`/characters/${id}`).then(response => response.data);
+}
+
+// Replaces the character's temporary ability score effects; returns the abilities with them applied.
+export function saveScoreAdjustments(characterId: string, adjustments: scoreAdjustment[]):
+    Promise<{ scoreAdjustments: scoreAdjustment[], abilities: Record<string, sheetAbility> | null }> {
+    return apiClient.put(`/characters/${characterId}/adjustments`, { adjustments }).then(response => response.data);
 }
 
 // The portrait's address. version (from portraitVersion) makes a replaced portrait a new

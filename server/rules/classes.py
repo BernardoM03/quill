@@ -2,6 +2,7 @@
 # every choice those bring, including the subclass once the level reaches it.
 
 from server.rules import packs
+from server.rules.scores import feat_increase_choices
 from server.rules.choices import ABILITY_NAMES, Context, active, allowed_entries, choice_refs, option, resolve_choice
 
 SUBCLASS_CHOICE = 'subclass'
@@ -105,7 +106,14 @@ def _features_up_to(owner, cls, level, context, from_table):
     for at_level, fid in occurrences:
         seen[fid] = seen.get(fid, 0) + 1
         suffix = '' if seen[fid] == 1 else f'@{at_level}'
-        views.append(_feature_view(by_id[fid], at_level, feature_choices(by_id[fid], cls, level, context, suffix)))
+        context.choice_level = at_level
+        try:
+            choices = feature_choices(by_id[fid], cls, level, context, suffix)
+        finally:
+            context.choice_level = None
+        # A feat that raises scores (Ability Score Improvement) asks where, once it's picked.
+        choices += feat_increase_choices(choices, packs.collection('feats'))
+        views.append(_feature_view(by_id[fid], at_level, choices))
     return views
 
 def _context(cls, level, allowed_content, feat_prerequisites, extra_features=()):

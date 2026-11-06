@@ -1,0 +1,127 @@
+/* ---- Sheet ability scores: current score large, the breakdown beneath ---- */
+
+.sheet-abilities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.sheet-ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+/* A temporary effect is changing this one. */
+.sheet-ability--changed {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.sheet-ability__name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sheet-ability__mod {
+  font-family: var(--heading);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--text-h);
+}
+
+.sheet-ability__current {
+  min-width: 2.4em;
+  padding: 0 0.4em;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.sheet-ability--changed .sheet-ability__current {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.sheet-ability__breakdown {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.3rem;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.sheet-ability__own {
+  color: var(--text-h);
+}
+
+.sheet-effects__title {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.sheet-effects {
+  margin: 0.4rem 0 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-effects li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-effects strong {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.sheet-effects__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.sheet-effects__name,
+.sheet-effects__value {
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.sheet-effects__name {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.sheet-effects__value {
+  width: 4.5rem;
+}
+
+.sheet-effects__name:focus,
+.sheet-effects__value:focus {
+  outline: none;
+  border-color: var(--accent);
+}

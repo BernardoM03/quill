@@ -6,9 +6,8 @@
 #   originFeat         'background': the background's feat; 'any': any Origin feat
 #   startingEquipment  'equipment' / 'gold': that package for everyone; 'choice': the player's pick
 
-from itertools import combinations, permutations
-
 from server.rules import packs
+from server.rules.scores import spread_options
 from server.rules.choices import ABILITY_NAMES, Context, allowed_entries, option, resolve_choice
 
 ABILITY_CHOICE = 'ability-scores'
@@ -26,19 +25,7 @@ ABILITY_POINTS = 3
 ABILITY_MAX = 2
 
 def ability_options(abilities):
-    abilities = [a for a in ABILITY_NAMES if a in abilities]
-    def spread(parts):
-        return option(','.join(f'{a}+{n}' for a, n in parts),
-                      ', '.join(f'+{n} {ABILITY_NAMES[a]}' for a, n in parts))
-    return ([spread([(a, 2), (b, 1)]) for a, b in permutations(abilities, 2)]
-            + [spread([(a, 1) for a in trio]) for trio in combinations(abilities, 3)])
-
-# The increases a picked key gives, {ability: amount}, or None if the key isn't one.
-def ability_increases(key):
-    try:
-        return {a: int(n) for a, n in (part.split('+') for part in key.split(','))}
-    except (AttributeError, ValueError):
-        return None
+    return spread_options(abilities, ABILITY_POINTS, ABILITY_MAX)
 
 def _name(entry_id):
     for collection in ('equipment', 'tools'):

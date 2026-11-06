@@ -20,7 +20,6 @@ HP_METHODS = ['automatic', 'manual']
 STANDARD_ARRAY = [15, 14, 13, 12, 10, 8]
 POINT_COSTS = {8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9}
 MANUAL_RANGE = (3, 18)
-SCORE_MAX = 20
 HP_TARGET = 'hitPointMaximum'
 METHOD_LABELS = {
     'standardArray': 'Standard Array', 'pointBuy': 'Point Buy', 'roll': 'Roll', 'manual': 'Manual',
@@ -108,16 +107,6 @@ def ability_errors(draft, setting, rolls):
         return [_error('abilityScores', f'Each score must be from {MANUAL_RANGE[0]} to {MANUAL_RANGE[1]}.')]
     return []
 
-# The base scores plus the background's increases, at most 20: {ability: {base, bonus, total, modifier}}.
-def final_scores(base, increases):
-    result = {}
-    for a in ABILITIES:
-        b = base.get(a) if isinstance(base, dict) and _is_int(base.get(a)) else None
-        bonus = increases.get(a, 0) if b is not None else 0
-        total = min(SCORE_MAX, b + bonus) if b is not None else None
-        result[a] = {'base': b, 'bonus': bonus, 'total': total,
-                     'modifier': modifier(total) if total is not None else None}
-    return result
 
 def hp_method(draft, setting):
     _, hp_methods = methods(setting)

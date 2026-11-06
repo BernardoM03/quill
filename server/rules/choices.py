@@ -48,6 +48,8 @@ class Context:
                  feat_prerequisites=True, spellcasting=False, weapon_proficiencies=()):
         self.allowed_content = allowed_content
         self.level = level
+        # The level the choice being resolved is gained at, when not the character's level.
+        self.choice_level = None
         # The campaign's "Feat Prerequisites" rule: when off, any feat can be picked.
         self.feat_prerequisites = feat_prerequisites
         # Whether the class being built has the Spellcasting feature (a feat prerequisite).
@@ -99,18 +101,70 @@ def _passes(entry, qualifier, context):
         result = True
     return not result if qualifier.get('negate') else result
 
-# Whether the character meets a feat's prerequisites. Ability-score prerequisites count as
-# met for now: scores are set in a later step.
+# What a feat's prerequisites are checked against. None means "not known yet": while the
+# wizard builds its options, scores, other feats and most proficiencies aren't settled, so
+# those prerequisites count as met there and are checked again when the draft is validated.
+class Facts:
+    def __init__(self, level, spellcasting, scores=None, feats=None, proficiencies=None):
+        self.level = level
+        self.spellcasting = spellcasting
+        self.scores = scores                # {'STR': 15, ...}; a None score is unknown
+        self.feats = feats                  # set of feat ids the character has
+        self.proficiencies = proficiencies  # set of lowercased ids and names
+
+def _describe(prerequisite):
+    kind = prerequisite.get('type')
+    if kind == 'ability':
+        return f'{ABILITY_NAMES.get(prerequisite.get("ability"), prerequisite.get("ability"))} {prerequisite.get("minimum")}+'
+    if kind == 'level':
+        return f'level {prerequisite.get("minimum")}+'
+    if kind == 'feat':
+        feat = packs.collection('feats').get(prerequisite.get('featId')) or {}
+        return f'the {feat.get("name", prerequisite.get("featId"))} feat'
+    if kind == 'proficiency':
+        return f'proficiency with {prerequisite.get("proficiency")}'
+    if kind == 'spellcasting':
+        return 'the Spellcasting feature'
+    if kind == 'any':
+        return ' or '.join(_describe(p) for p in prerequisite.get('of') or [])
+    return str(kind)
+
+def _proficiency_matches(wanted, proficiencies):
+    wanted = str(wanted).lower()
+    return any(wanted == p or p.endswith('/' + wanted.replace(' ', '-')) for p in proficiencies)
+
+def _met(prerequisite, facts):
+    kind = prerequisite.get('type')
+    if kind == 'level':
+        return facts.level >= prerequisite.get('minimum', 0)
+    if kind == 'spellcasting':
+        return facts.spellcasting
+    if kind == 'ability':
+        score = (facts.scores or {}).get(prerequisite.get('ability'))
+        return score is None or score >= prerequisite.get('minimum', 0)
+    if kind == 'feat':
+        return facts.feats is None or prerequisite.get('featId') in facts.feats
+    if kind == 'proficiency':
+        return facts.proficiencies is None or _proficiency_matches(prerequisite.get('proficiency'), facts.proficiencies)
+    if kind == 'any':
+        return any(_met(p, facts) for p in prerequisite.get('of') or [])
+    return True
+
+# The first prerequisite of a feat the character doesn't meet, described for a message
+# ("Strength 13+ or Dexterity 13+"), or None when every one is met.
+def unmet_prerequisite(entry, facts):
+    for prerequisite in entry.get('prerequisites') or []:
+        if not _met(prerequisite, facts):
+            return _describe(prerequisite)
+    return None
+
+# Whether the character could meet a feat's prerequisites, as far as the context knows.
+# The level is the one the choice is gained at (an Ability Score Improvement at 4 can't
+# take a level-19 Epic Boon, however high the character goes).
 def meets_prerequisites(entry, context):
     if not context.feat_prerequisites:
         return True
-    for prerequisite in entry.get('prerequisites') or []:
-        kind = prerequisite.get('type')
-        if kind == 'level' and context.level < prerequisite.get('minimum', 0):
-            return False
-        if kind == 'spellcasting' and not context.spellcasting:
-            return False
-    return True
+    return unmet_prerequisite(entry, Facts(context.choice_level or context.level, context.spellcasting)) is None
 
 def _qualified(entries, choice, context):
     qualifiers = choice.get('qualifiers') or []

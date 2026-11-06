@@ -13,6 +13,7 @@ from server.rules.characters import (
     kept_background_choices, kept_class_choices, species_detail,
 )
 from server.rules.abilities import ability_rules, hp_method, roll_scores
+from server.rules.scores import apply_adjustments, clean_adjustments
 from server.rules.classes import class_summary
 from server.rules.settings import MAX_LEVEL
 from server.rules.details import clean_details
@@ -69,13 +70,23 @@ def sheet_draft(row, sheet):
     draft.setdefault('hpRolls', [])
     return draft
 
+# The character checked against its campaign as it is now: check_draft's result, or None
+# for a character made before the wizard had steps (there's nothing to check).
+def check_character(conn, row, sheet):
+    if not sheet.get('species'):
+        return None
+    return check_draft(sheet_draft(row, sheet), character_setting(conn, row, sheet), sheet_rolls(sheet))
+
 # Whatever no longer fits the character's campaign (its content or rules changed since it
 # was made), as [{field, message}]. Nothing about the character is changed.
 def character_problems(conn, row):
-    sheet = json.loads(row['sheet'])
-    if not sheet.get('species'):
-        return []  # made before the wizard had steps; there's nothing to check
-    return check_draft(sheet_draft(row, sheet), character_setting(conn, row, sheet), sheet_rolls(sheet))['errors']
+    result = check_character(conn, row, json.loads(row['sheet']))
+    return result['errors'] if result else []
+
+# Each ability as the sheet shows it: base, the permanent increases by source, the score,
+# and current with the sheet's temporary effects (scoreAdjustments) applied.
+def sheet_abilities(summary, sheet):
+    return apply_adjustments(summary['abilities'], sheet.get('scoreAdjustments') or [])
 
 # The sheet a valid draft saves as. summary: check_draft's; rolls: the ability rolls it used.
 def build_sheet(draft, setting, summary, rolls):
@@ -89,7 +100,7 @@ def build_sheet(draft, setting, summary, rolls):
         'class': draft['class'],
         'classChoices': kept_class_choices(draft, setting),
         'abilityMethod': draft.get('abilityMethod') or ability_rules(setting)['allowedMethods'][0],
-        # Base scores as assigned; abilities has them with the background's increases.
+        # Base scores as assigned; abilities has them with every permanent increase (background, feats).
         'abilityScores': draft['abilityScores'],
         'abilityRolls': rolls,
         'abilities': {a: s['total'] for a, s in summary['abilities'].items()},
@@ -267,12 +278,13 @@ def get_character(character_id):
     conn = connect()
     try:
         row = own_character(conn, character_id)
-        problems = character_problems(conn, row) if row else []
+        sheet = json.loads(row['sheet']) if row else {}
+        result = check_character(conn, row, sheet) if row else None
     finally:
         conn.close()
     if row is None:
         return error('Character not found', 404)
-    sheet = json.loads(row['sheet'])
+    problems = result['errors'] if result else []
     return jsonify({
         'id': row['id'],
         'name': row['name'],
@@ -287,7 +299,34 @@ def get_character(character_id):
         'draft': sheet_draft(row, sheet),
         'rolls': sheet_rolls(sheet),
         'level': sheet.get('level', 1),
+        # Each ability's base, increases, score and current; null for a character without scores.
+        'abilities': sheet_abilities(result['summary'], sheet) if result else None,
+        'scoreAdjustments': sheet.get('scoreAdjustments') or [],
     }), 200
+
+# Body: {adjustments: [{id, name, ability, mode, value}]}. Replaces the character's temporary
+# ability score effects (see server/rules/scores.py). Returns the abilities with them applied.
+@bp.put('/characters/<character_id>/adjustments')
+@require_login
+def put_adjustments(character_id):
+    adjustments, message = clean_adjustments((json_body() or {}).get('adjustments'))
+    if message:
+        return error(message, 400)
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            sheet = json.loads(row['sheet'])
+            sheet['scoreAdjustments'] = adjustments
+            conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
+                         (json.dumps(sheet), character_id))
+            result = check_character(conn, row, sheet)
+    finally:
+        conn.close()
+    return jsonify({'scoreAdjustments': adjustments,
+                    'abilities': sheet_abilities(result['summary'], sheet) if result else None}), 200
 
 # Body: the wizard's draft (name, species, ..., details). Saves an edit of the character,
 # checked against its campaign as it is now, at the character's level. Refused unless

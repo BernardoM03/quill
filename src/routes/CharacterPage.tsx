@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 
 import { deleteCharacter, deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
 import BackButton from "../components/BackButton";
+import { AbilityScores } from "../components/sheet/AbilityScores";
 import ConfirmDialog from "../components/ConfirmDialog";
 import TypeToConfirmDialog from "../components/TypeToConfirmDialog";
 import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
@@ -17,8 +18,8 @@ function errorMessage(err: unknown, fallback: string): string {
     return err instanceof Error && err.message ? err.message : fallback;
 }
 
-// /characters/:characterID: one character. For now its name, campaign and portrait;
-// the sheet comes later.
+// /characters/:characterID: one character: its name, campaign, ability scores and portrait.
+// The rest of the sheet comes later.
 export default function CharacterPage() {
     const { characterID = '' } = useParams();
     const navigate = useNavigate();
@@ -109,6 +110,12 @@ export default function CharacterPage() {
                     </ul>
                     <Link to={`/characters/${character.id}/edit`} className="setting-button">Fix in Character Wizard</Link>
                 </div>
+            )}
+
+            {character.abilities && (
+                <AbilityScores characterId={character.id} abilities={character.abilities}
+                    adjustments={character.scoreAdjustments}
+                    onChange={(abilities, scoreAdjustments) => setCharacter(c => c && { ...c, abilities, scoreAdjustments })} />
             )}
 
             <div className="setting-section">
