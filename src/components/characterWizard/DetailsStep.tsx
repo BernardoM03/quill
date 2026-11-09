@@ -1,7 +1,10 @@
 import { CHARACTER_NAME_MAX_LENGTH, type characterDetails } from '../../api/characters';
+import type { campaignQuestion } from '../../datatypes/campaignDetails';
 
 const SHORT_MAX = 100;
 const LONG_MAX = 5000;
+// server/rules/details.py ANSWER_MAX_LENGTH
+const ANSWER_MAX = 2000;
 const ALIGNMENTS = [
   'Lawful Good', 'Neutral Good', 'Chaotic Good',
   'Lawful Neutral', 'Neutral', 'Chaotic Neutral',
@@ -17,12 +20,16 @@ const fieldClass = (wide: boolean, required = false) =>
 
 // The last step: the character's name and description, every part but the name optional.
 // The server checks the same limits (server/rules/details.py).
-// errorsFor(field): the server's messages for 'name' and 'details:<key>'.
-export function DetailsStep({ name, details, onName, onDetail, errorsFor }: {
+// questions: the GM's custom questions, asked under the name; answers: question id -> answer.
+// errorsFor(field): the server's messages for 'name', 'details:<key>' and 'answer:<id>'.
+export function DetailsStep({ name, details, questions, answers, onName, onDetail, onAnswer, errorsFor }: {
   name: string;
   details: characterDetails;
+  questions: campaignQuestion[];
+  answers: Record<string, string>;
   onName: (name: string) => void;
   onDetail: (key: detailKey, value: string) => void;
+  onAnswer: (id: string, value: string) => void;
   errorsFor: (field: string) => string[];
 }) {
   const errors = (field: string) => errorsFor(field).map(m => <p key={m} className="campaign-name__error">{m}</p>);
@@ -54,6 +61,14 @@ export function DetailsStep({ name, details, onName, onDetail, errorsFor }: {
             maxLength={CHARACTER_NAME_MAX_LENGTH} autoFocus onChange={e => onName(e.target.value)} />
           {errors('name')}
         </label>
+        {questions.map(q => (
+          <label key={q.id} className={fieldClass(true, q.required)}>
+            <span className="setting-caption">{q.prompt}{!q.required && <span className="muted"> (optional)</span>}</span>
+            <textarea className="details-textarea" value={answers[q.id] ?? ''} maxLength={ANSWER_MAX} rows={2}
+              aria-required={q.required} onChange={e => onAnswer(q.id, e.target.value)} />
+            {errors(`answer:${q.id}`)}
+          </label>
+        ))}
         <label className={fieldClass(false)}>
           <span className="setting-caption">Alignment</span>
           <select className="rules-select" value={details.alignment ?? ''} onChange={e => onDetail('alignment', e.target.value)}>

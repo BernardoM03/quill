@@ -18,7 +18,7 @@ from server.records import record_problems
 from server.rules.scores import apply_adjustments, clean_adjustments
 from server.rules.classes import class_summary
 from server.rules.settings import MAX_LEVEL
-from server.rules.details import clean_details
+from server.rules.details import clean_answers, clean_details
 
 bp = Blueprint('characters', __name__)
 
@@ -38,7 +38,8 @@ def creation_setting(conn, campaign_id):
     ).fetchone()
     if row is None:
         raise NoCampaign()
-    return Setting(load_allowed(conn, campaign_id), json.loads(row['settings']).get('rules', {}))
+    settings = json.loads(row['settings'])
+    return Setting(load_allowed(conn, campaign_id), settings.get('rules', {}), settings.get('questions'))
 
 # The setting a character was made under, as its campaign has it now: the campaign's content
 # and rules (the sandbox's for no campaign), the character's own origin rules in the sandbox,
@@ -50,7 +51,7 @@ def character_setting(conn, row, sheet):
     else:
         campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (row['campaign_id'],)).fetchone()
         settings = json.loads(campaign['settings']) if campaign else {}
-        setting = Setting(load_allowed(conn, row['campaign_id']), settings.get('rules', {}))
+        setting = Setting(load_allowed(conn, row['campaign_id']), settings.get('rules', {}), settings.get('questions'))
     return setting.for_draft(sheet.get('build') or {}).at_level(sheet.get('level'))
 
 # The rolls a character's scores were assigned from, or None.
@@ -86,7 +87,8 @@ def _picked(choices):
 
 # The build a valid draft saves as (schemas/records/sheet.schema.json $defs.build): the
 # draft's picks, with only the choices that apply and the campaign's methods filled in.
-def build_from_draft(draft, setting):
+# old: the build being replaced, whose answers to questions no longer asked are kept.
+def build_from_draft(draft, setting, old=None):
     return {
         'species': draft['species'],
         'speciesChoices': _picked(draft.get('speciesChoices') or {}),
@@ -101,6 +103,7 @@ def build_from_draft(draft, setting):
         'hpMethod': hp_method(draft, setting),
         'hpRolls': draft.get('hpRolls') or [],
         'details': clean_details(draft.get('details')),
+        'answers': clean_answers(draft.get('answers'), setting.questions, (old or {}).get('answers')),
     }
 
 # A new character's sheet. rolls: the ability rolls its scores came from (or None).
@@ -153,6 +156,8 @@ def get_options():
         # The origin rules, and whether they're the campaign's (locked) or the player's to pick.
         'originRules': setting.origin_rules(),
         'rulesLocked': not setting.sandbox,
+        # The GM's custom questions, asked on the Details step.
+        'questions': setting.questions,
     }), 200
 
 # ?campaign=... as above, plus in the sandbox the player's origin rules (customizeOrigin=true,
@@ -353,7 +358,7 @@ def update_character(character_id):
                 return jsonify({'error': result['errors'][0]['message'], 'errors': result['errors']}), 400
             # Keys the wizard doesn't manage (anything added later in play) are kept.
             # The wizard owns build: replaced whole. rolls and play are kept as they are.
-            sheet['build'] = build_from_draft(draft, setting)
+            sheet['build'] = build_from_draft(draft, setting, sheet.get('build'))
             name = clean_name(draft['name'])
             conn.execute(f'UPDATE characters SET name = ?, sheet = ?, updated_at = {NOW} WHERE id = ?',
                          (name, sheet_json(sheet), character_id))

@@ -7,6 +7,14 @@
   "properties": {
     "rules": {
       "$ref": "#/$defs/rules"
+    },
+    "questions": {
+      "description": "The GM's custom questions, asked on the wizard's Details step under the character's name, in this order. Missing means none.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/question"
+      },
+      "maxItems": 20
     }
   },
   "additionalProperties": false,
@@ -133,6 +141,34 @@
           "default": false
         }
       },
+      "additionalProperties": false
+    },
+    "question": {
+      "description": "One custom question. id stays the same when the prompt is reworded, so answers keep matching it.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9-]+$"
+        },
+        "prompt": {
+          "description": "What's asked. Trimmed; never empty.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "required": {
+          "description": "A character can't be created (or saved after an edit) without an answer.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "required"
+      ],
       "additionalProperties": false
     }
   }

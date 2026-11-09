@@ -95,12 +95,13 @@ def get_campaign(campaign_id):
     # the settings page should offer.
     details['rules'] = with_rule_defaults(details.get('rules'))
     details['ruleLimits'] = LIMITS
+    details['questions'] = details.get('questions') or []
     # What the settings are missing before characters can be made; the page shows these.
     details['problems'] = campaign_problems(details['allowedContent'])
     # Unchanged since this browser last loaded it: a 304 with no body.
     return revalidated_json(details)
 
-# Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
+# Body: any of {name, description, rules, allowedContent, questions}. All are checked before any is saved.
 # Returns the campaign's problems after the change, so the page needn't work them out.
 @bp.patch('/campaigns/<campaign_id>')
 @require_login
@@ -127,6 +128,8 @@ def update_campaign(campaign_id):
                     return error('Fix the campaign’s problems first: ' + ' '.join(problems), 409)
             name = clean_name(content['name']) if 'name' in content else row['name']
             description = content['description'].strip() if 'description' in content else row['description']
+            if 'questions' in content:
+                settings['questions'] = [{**q, 'prompt': q['prompt'].strip()} for q in content['questions']]
             if 'rules' in content:
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:

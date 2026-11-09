@@ -49,6 +49,7 @@ def clean_draft(raw):
         'hpMethod': raw.get('hpMethod'),
         'hpRolls': raw.get('hpRolls') or [],
         'details': raw.get('details') or {},
+        'answers': raw.get('answers') or {},
     }
     problems = record_problems('draft', draft)
     if problems:

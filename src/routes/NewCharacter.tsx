@@ -47,6 +47,8 @@ interface wizardDraft {
     hpMethod: characterDraft['hpMethod'],
     hpRolls: number[],
     details: characterDraft['details'],
+    // Question id -> answer, for the campaign's custom questions. Missing on older drafts.
+    answers?: characterDraft['answers'],
     name: string,
 }
 
@@ -101,7 +103,7 @@ function characterFields(d: wizardDraft): characterDraft {
         background: d.background, backgroundChoices: d.backgroundChoices,
         class: d.class, classChoices: d.classChoices,
         abilityMethod: d.abilityMethod, abilityScores: d.abilityScores, hpMethod: d.hpMethod, hpRolls: d.hpRolls,
-        details: d.details,
+        details: d.details, answers: d.answers ?? {},
     }
 }
 
@@ -557,6 +559,9 @@ export default function NewCharacter() {
                     <DetailsStep
                         name={draft.name}
                         details={draft.details}
+                        questions={options?.questions ?? []}
+                        answers={draft.answers ?? {}}
+                        onAnswer={(id, value) => update({ answers: { ...draft.answers, [id]: value } }, `answer:${id}`)}
                         onName={name => update({ name }, 'name')}
                         onDetail={(key, value) => update({ details: { ...draft.details, [key]: value } }, `details:${key}`)}
                         errorsFor={errorsFor}

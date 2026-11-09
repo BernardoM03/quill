@@ -18,6 +18,8 @@ import { CampaignDescriptionSettings } from "../components/campaignSettings/Camp
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
 import { ReadOnlyContext } from "../components/campaignSettings/ReadOnly";
+import { CampaignQuestionsSettings } from "../components/campaignSettings/CampaignQuestionsSettings";
+import type { campaignQuestion } from "../datatypes/campaignDetails";
 
 const proficiencies = [
     { collection: 'skills', caption: 'Allowed Skills' },
@@ -92,6 +94,10 @@ export default function CampaignSettings() {
 
     function handleRenamed(name: string) {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, name })
+    }
+
+    function handleQuestionsSaved(questions: campaignQuestion[]) {
+        setCampaignDetails(details => details && { ...details, questions })
     }
 
     function handleDescriptionSaved(description: string | null) {
@@ -218,6 +224,7 @@ export default function CampaignSettings() {
                     {rulesError && <p className="setting-error" role="alert">{rulesError}</p>}
                     <RulesSettings rules={campaignDetails.rules} limits={campaignDetails.ruleLimits} onChange={handleRulesChange}/>
                     <AdvancedRulesSettings rules={campaignDetails.rules} onChange={handleRulesChange}/>
+                    <CampaignQuestionsSettings questions={campaignDetails.questions} onSaved={handleQuestionsSaved}/>
                 </>
             )}
             {campaignDetails && content && (

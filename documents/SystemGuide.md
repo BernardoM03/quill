@@ -249,7 +249,7 @@ request. Chapter 5 covers how it reads pack data.
 | `backgrounds.py` | What a background grants and asks for, under the origin rules |
 | `abilities.py` | Ability score methods and hit points |
 | `scores.py` | Ability score layers: base, increases, score, current |
-| `details.py` | Description fields and alignment, read from `records/common.schema.json` |
+| `details.py` | Description fields and alignment, read from `records/common.schema.json`; custom question answers |
 | `spells.py` | Spell-list rules (classes left without cantrips) |
 
 ### 1.6 Packs at runtime
@@ -293,7 +293,7 @@ separate database server. Quill's file is `data/quill.db`, created on first run.
 |---|---|---|
 | `meta` | `schema_version` | 1 |
 | `users` | Accounts; `deleted_at` for soft delete | 2 |
-| `campaigns` | Name, description, `settings` JSON (rules only since migration 9) | 2 |
+| `campaigns` | Name, description, `settings` JSON (rules and custom questions; content limits moved out in migration 9) | 2 |
 | `memberships` | `(campaign_id, user_id, role)`, role `gm` or `player` | 2 |
 | `characters` | `sheet` JSON; `campaign_id` NULL for the Character Sandbox; one active character per player per campaign | 2, rebuilt in 4 and 5 |
 | `invites` | Invite links, stored as a SHA-256 hash of the token | 2 |

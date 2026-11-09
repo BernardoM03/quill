@@ -1,5 +1,6 @@
 import type { ChoicePicks, Details, DraftSchema } from "../datatypes/generated/draft";
 import type { AbilityRoll, ScoreAdjustment } from "../datatypes/generated/sheet";
+import type { campaignQuestion } from "../datatypes/campaignDetails";
 import { apiClient } from "./client";
 
 export const CHARACTER_NAME_MAX_LENGTH = 64;
@@ -166,6 +167,8 @@ export interface characterOptions {
     originRules: originRules,
     // True in a campaign: the rules are the GM's, shown but not changeable.
     rulesLocked: boolean,
+    // The GM's custom questions, asked on the Details step; empty in the sandbox.
+    questions: campaignQuestion[],
 }
 
 // The Character Sandbox's backgrounds under the origin rules the player picked.

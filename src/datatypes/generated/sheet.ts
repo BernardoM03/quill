@@ -29,6 +29,7 @@ export interface Build {
    */
   hpRolls: number[];
   details: Details;
+  answers?: Answers;
 }
 export interface ChoicePicks {
   [k: string]: string | [string, ...string[]];
@@ -72,6 +73,9 @@ export interface Details {
   enemies?: string;
   backstory?: string;
   other?: string;
+}
+export interface Answers {
+  [k: string]: string;
 }
 export interface AbilityRoll {
   /**

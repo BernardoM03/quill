@@ -97,6 +97,9 @@
     },
     "details": {
       "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/details"
+    },
+    "answers": {
+      "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/answers"
     }
   },
   "required": [

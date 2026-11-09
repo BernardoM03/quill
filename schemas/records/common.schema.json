@@ -189,6 +189,19 @@
     "longText": {
       "type": "string",
       "maxLength": 5000
+    },
+    "answers": {
+      "description": "Answers to the campaign's custom questions (campaign-settings $defs.question): question id -> answer text. Unanswered questions are left out. Answers to questions the GM has since removed are kept but not shown.",
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "maxLength": 64
+      },
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 2000
+      },
+      "maxProperties": 40
     }
   }
 }

@@ -14,7 +14,7 @@ from server.rules.backgrounds import ABILITY_CHOICE, ABILITY_MAX, ABILITY_POINTS
 from server.rules.choices import ABILITY_NAMES, Context, Facts, active, allowed_entries, choice_errors, resolve_choice, unmet_prerequisite
 from server.rules.classes import active_choices, all_choices, class_detail
 from server.rules.settings import RULE_CHECKS
-from server.rules.details import details_errors
+from server.rules.details import answer_errors, details_errors
 from server.rules.problems import campaign_problems
 from server.rules.scores import SCORE_CAP, apply_increases, parse_spread, source
 from server.rules.settings import starting_level, with_rule_defaults
@@ -26,8 +26,10 @@ SIZE_CHOICE_PREFIX = '$choice:'
 PLAYER_RULES = ('customizeOrigin', 'originFeat', 'startingEquipment')
 
 class Setting:
-    def __init__(self, allowed_content, stored_rules):
+    def __init__(self, allowed_content, stored_rules, questions=None):
         self.allowed = allowed_content
+        # The campaign's custom questions (campaign-settings $defs.question); none in the sandbox.
+        self.questions = questions or []
         self.rules = with_rule_defaults(stored_rules)
         # A new character's level: the campaign's milestone level, else 1.
         self.level = starting_level(self.rules)
@@ -46,7 +48,7 @@ class Setting:
     def at_level(self, level):
         if not isinstance(level, int) or isinstance(level, bool) or level == self.level:
             return self
-        setting = Setting(self.allowed, {})
+        setting = Setting(self.allowed, {}, self.questions)
         setting.rules, setting.level = self.rules, level
         return setting
 
@@ -243,7 +245,7 @@ def validate_draft(draft, setting, rolls=None):
 # the draft has picked, so the wizard can leave it out of every other choice; and summary:
 # the final ability scores and hit points as far as they can be worked out yet.
 # rolls: the draft's server-rolled ability scores, for the roll method (None if not rolled).
-# Fields also include 'abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls', 'details:<key>'.
+# Fields also include 'abilityMethod', 'abilityScores', 'hpMethod', 'hpRolls', 'details:<key>', 'answer:<id>'.
 def check_draft(draft, setting, rolls=None):
     setting = setting.for_draft(draft)
     errors = []
@@ -317,6 +319,7 @@ def check_draft(draft, setting, rolls=None):
     errors.extend(e for e in repeats if e['field'] not in flagged)
 
     errors.extend(details_errors(draft.get('details')))
+    errors.extend(answer_errors(draft.get('answers'), setting.questions))
     name = draft.get('name')
     if not isinstance(name, str) or not name.strip():
         errors.append(_error('name', 'Give your character a name.'))

@@ -64,7 +64,11 @@
           "items": { "type": "integer", "minimum": 1 },
           "maxItems": 19
         },
-        "details": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/details" }
+        "details": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/details" },
+        "answers": {
+          "description": "Missing on characters made before custom questions existed: no answers.",
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/answers"
+        }
       },
       "required": [
         "species", "speciesChoices", "originRules", "background", "backgroundChoices", "class", "classChoices",

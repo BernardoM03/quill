@@ -2,6 +2,10 @@
 
 export interface CampaignSettingsSchema {
   rules?: Rules;
+  /**
+   * @maxItems 20
+   */
+  questions?: Question[];
 }
 export interface Rules {
   optionalClassFeatures?: boolean;
@@ -24,4 +28,9 @@ export interface Rules {
   startingEquipment?: 'choice' | 'equipment' | 'gold';
   originFeat?: 'background' | 'any';
   characterApproval?: boolean;
+}
+export interface Question {
+  id: string;
+  prompt: string;
+  required: boolean;
 }

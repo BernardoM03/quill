@@ -1,5 +1,6 @@
 from server.rules import packs
 from server.helpers import NAME_MAX_LENGTH, clean_name
+from server.records import record_problems
 from server.rules.settings import RULE_CHECKS
 
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
@@ -8,7 +9,7 @@ CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
 def validate_campaign_patch(content):
     if not isinstance(content, dict) or not content:
         return 'Body must be a non-empty object.'
-    unknown = set(content) - {'name', 'description', 'rules', 'allowedContent'}
+    unknown = set(content) - {'name', 'description', 'rules', 'allowedContent', 'questions'}
     if unknown:
         return f'Unknown field: {sorted(unknown)[0]}'
     if 'name' in content and clean_name(content['name']) is None:
@@ -28,6 +29,16 @@ def validate_campaign_patch(content):
                 return f'Unknown rule: {key}'
             if not check(value):
                 return f'Invalid value for {key}.'
+    if 'questions' in content:
+        # The whole list, replacing the saved one (schemas/records/campaign-settings.schema.json).
+        questions = content['questions']
+        problems = record_problems('campaign-settings', {'questions': questions})
+        if problems:
+            return f'Invalid questions: {problems[0]}'
+        if any(not q['prompt'].strip() for q in questions):
+            return 'Every question needs a prompt.'
+        if len({q['id'] for q in questions}) != len(questions):
+            return 'Question ids must be unique.'
     if 'allowedContent' in content:
         # {collection: ids}. ids is a list of pack ids, or null for "everything allowed".
         # Only installed collections; ids are kept to installed entries (known_content), so
