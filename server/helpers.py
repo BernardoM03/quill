@@ -41,7 +41,7 @@ def json_body():
     body = request.get_json(silent=True)
     return body if isinstance(body, dict) else None
 
-# The signed-in user from the session cookie, or None. There is no fallback user.
+# The signed-in user from the session cookie, or None.
 # create_app loads it once per request into g.user; the access decorators read that.
 def load_user(conn):
     user_id = session.get('user_id')

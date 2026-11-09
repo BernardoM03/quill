@@ -181,8 +181,7 @@ def put_draft(draft_id):
             campaign_id, draft, step = read_body(conn)
             if campaign_id is None and draft is None:
                 return step
-            # Rolls belong to where they were made: moving the draft (say, out of the
-            # sandbox, where rerolling is allowed) drops them.
+            # Rolls belong to where they were made: moving the draft drops them.
             moved = campaign_id != row['campaign_id']
             conn.execute(
                 f'UPDATE character_drafts SET campaign_id = ?, draft = ?, step = ?, updated_at = {NOW}, '
