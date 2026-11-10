@@ -56,6 +56,21 @@
   font-size: 14px;
 }
 
+/* Approval: waiting or unsubmitted is a note, not a problem; rejected keeps the danger rule. */
+.character-flag--pending,
+.character-flag--draft {
+  border-left-color: var(--accent);
+}
+
+.character-flag__reason {
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.character-activate {
+  margin: 0 0 1.5rem;
+}
+
 .character-header__edit {
   align-self: flex-start;
   margin-left: calc(-0.8rem - 1px);

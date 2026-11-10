@@ -7,7 +7,7 @@ from server import portraits
 from server.access import require_login, require_member
 from server.campaign_content import load_allowed
 from server.db import connect
-from server.helpers import NOW, clean_name, error, json_body
+from server.helpers import NOW, clean_name, error, is_gm, json_body
 from server.ratelimit import limit
 from server.rules.characters import (
     Setting, allowed_backgrounds, allowed_classes, allowed_species, background_detail_for, check_draft, class_detail_for,
@@ -17,7 +17,7 @@ from server.rules.abilities import ability_rules, hp_method, roll_scores
 from server.records import record_problems
 from server.rules.scores import apply_adjustments, clean_adjustments
 from server.rules.classes import class_summary
-from server.rules.settings import MAX_LEVEL
+from server.rules.settings import MAX_LEVEL, with_rule_defaults
 from server.rules.details import clean_answers, clean_details
 
 bp = Blueprint('characters', __name__)
@@ -220,7 +220,9 @@ def validate_character():
     return jsonify(check_draft(draft, setting, rolls)), 200
 
 # Checks the body and saves the character. campaign_id None makes a sandbox character, which
-# is never active; in a campaign, the player's first character there becomes active.
+# is never active and needs no approval. A campaign character is saved with status 'draft':
+# it isn't playable until submitted (POST /characters/<id>/submit), which approves it or
+# sends it to the GM, depending on the campaign's characterApproval rule.
 # A draftId in the body names the draft it was made from, which is deleted with the save.
 def create(campaign_id):
     draft = json_body() or {}
@@ -237,23 +239,20 @@ def create(campaign_id):
             if errors:
                 return jsonify({'error': errors[0]['message'], 'errors': errors}), 400
             name = clean_name(draft['name'])
-            has_active = campaign_id is None or conn.execute(
-                'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
-                (campaign_id, g.user['id']),
-            ).fetchone() is not None
+            status = 'approved' if campaign_id is None else 'draft'
             character_id = str(uuid.uuid4())
             conn.execute(
-                'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+                'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, is_active, status) '
+                'VALUES (?, ?, ?, ?, ?, 0, ?)',
                 (character_id, campaign_id, g.user['id'], name,
-                 sheet_json(new_sheet(draft, setting, rolls)),
-                 0 if has_active else 1),
+                 sheet_json(new_sheet(draft, setting, rolls)), status),
             )
             if isinstance(draft.get('draftId'), str):
                 conn.execute('DELETE FROM character_drafts WHERE id = ? AND owner_id = ?',
                              (draft['draftId'], g.user['id']))
     finally:
         conn.close()
-    return jsonify({'id': character_id, 'name': name, 'isActive': not has_active}), 201
+    return jsonify({'id': character_id, 'name': name, 'isActive': False, 'status': status}), 201
 
 # Body: {name, species, speciesChoices, background, backgroundChoices, class, classChoices}. A Character Sandbox character: in no campaign, owned by the
 # signed-in user alone, built from all the content the server has with the default rules.
@@ -299,6 +298,10 @@ def get_character(character_id):
         'id': row['id'],
         'name': row['name'],
         'isActive': bool(row['is_active']),
+        # draft, pending (waiting for the GM), approved or rejected; see db.py migration 11.
+        'status': row['status'],
+        # Why the GM rejected it; null unless rejected with a reason.
+        'reviewReason': row['review_reason'],
         'campaignId': row['campaign_id'],
         'campaignName': row['campaign_name'],
         # Changes whenever the portrait does; null when there isn't one.
@@ -358,8 +361,18 @@ def update_character(character_id):
                 return jsonify({'error': result['errors'][0]['message'], 'errors': result['errors']}), 400
             # Keys the wizard doesn't manage (anything added later in play) are kept.
             # The wizard owns build: replaced whole. rolls and play are kept as they are.
-            sheet['build'] = build_from_draft(draft, setting, sheet.get('build'))
+            old_build = sheet.get('build') or {}
+            sheet['build'] = build_from_draft(draft, setting, old_build)
             name = clean_name(draft['name'])
+            # An approved character stays approved, but the GM hears about changed picks.
+            if row['status'] == 'approved' and row['campaign_id'] is not None \
+                    and approval_required(conn, row['campaign_id']):
+                changes = build_changes(old_build, sheet['build'])
+                if changes:
+                    conn.execute(
+                        'INSERT INTO character_changes (id, campaign_id, character_id, changes) VALUES (?, ?, ?, ?)',
+                        (str(uuid.uuid4()), row['campaign_id'], character_id, json.dumps(changes)),
+                    )
             conn.execute(f'UPDATE characters SET name = ?, sheet = ?, updated_at = {NOW} WHERE id = ?',
                          (name, sheet_json(sheet), character_id))
     finally:
@@ -449,7 +462,7 @@ def delete_portrait(character_id):
 
 # Body: {confirm}, which must be the character's name, checked here as well as in the dialog.
 # Deletes the character and its portrait for good. If it was its owner's active character in
-# a campaign, their newest remaining character there becomes active instead.
+# a campaign, their newest remaining approved character there becomes active instead.
 @bp.delete('/characters/<character_id>')
 @require_login
 @limit('character-delete', 30, 60 * 60)
@@ -469,9 +482,198 @@ def delete_character(character_id):
                 conn.execute(
                     'UPDATE characters SET is_active = 1 WHERE id = ('
                     '  SELECT id FROM characters WHERE campaign_id = ? AND owner_id = ? AND deleted_at IS NULL'
-                    '  ORDER BY created_at DESC LIMIT 1)',
+                    "  AND status = 'approved' ORDER BY created_at DESC LIMIT 1)",
                     (row['campaign_id'], row['owner_id']),
                 )
     finally:
         conn.close()
+    return jsonify({'success': True}), 200
+
+# Whether the campaign's GM must approve new characters (its characterApproval rule).
+def approval_required(conn, campaign_id):
+    row = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+    rules = json.loads(row['settings']).get('rules', {}) if row else {}
+    return with_rule_defaults(rules)['characterApproval']
+
+# Makes a newly approved campaign character its owner's active one there if they have none
+# yet, so a player's first playable character is the one they play. Returns whether it did.
+def activate_if_first(conn, row):
+    has_active = conn.execute(
+        'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
+        (row['campaign_id'], row['owner_id']),
+    ).fetchone()
+    if has_active:
+        return False
+    conn.execute('UPDATE characters SET is_active = 1 WHERE id = ?', (row['id'],))
+    return True
+
+# Finishes creating a campaign character, or sends a rejected one back after editing. With
+# the campaign's characterApproval on it becomes pending until reviewed; otherwise it's
+# approved straight away (and active, if it's the owner's first). Returns {status, isActive}.
+# A pending or approved character can't be submitted again (409).
+@bp.post('/characters/<character_id>/submit')
+@require_login
+def submit_character(character_id):
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if row['campaign_id'] is None:
+                return error('Character Sandbox characters don’t need approval.', 409)
+            if row['status'] not in ('draft', 'rejected'):
+                return error('This character has already been submitted.', 409)
+            if character_problems(conn, row):
+                return error('Fix this character’s problems before submitting it.', 409)
+            status = 'pending' if approval_required(conn, row['campaign_id']) else 'approved'
+            conn.execute(f'UPDATE characters SET status = ?, review_reason = NULL, updated_at = {NOW} WHERE id = ?',
+                         (status, character_id))
+            active = status == 'approved' and activate_if_first(conn, row)
+    finally:
+        conn.close()
+    return jsonify({'status': status, 'isActive': active}), 200
+
+REVIEW_REASON_MAX_LENGTH = 1000
+
+# The build fields the GM approves; changing any of them on an approved character is logged.
+REVIEWED_PICKS = ('species', 'background', 'class')
+REVIEWED_CHOICES = ('speciesChoices', 'backgroundChoices', 'classChoices')
+
+# What changed between two builds in the picks the GM approved: [{field, from, to}]. field is
+# 'species', 'background', 'class', 'abilityScores', or '<choices key>:<choice id>' (skills,
+# subclass, feats...). Only picks the old build had count: a choice made for the first time,
+# as on levelling up, isn't a change to anything approved.
+def build_changes(old, new):
+    changes = []
+    for field in REVIEWED_PICKS + ('abilityScores',):
+        if old.get(field) is not None and old.get(field) != new.get(field):
+            changes.append({'field': field, 'from': old.get(field), 'to': new.get(field)})
+    for key in REVIEWED_CHOICES:
+        before, after = old.get(key) or {}, new.get(key) or {}
+        for choice, value in before.items():
+            if after.get(choice) != value:
+                changes.append({'field': f'{key}:{choice}', 'from': value, 'to': after.get(choice)})
+    return changes
+
+# Whether the signed-in user is the campaign's GM, or the admin.
+def can_review(conn, campaign_id):
+    return is_gm(conn, campaign_id, g.user)
+
+# Body: {decision: 'approve' | 'reject', reason?}. The campaign's GM (or the admin) reviews
+# a pending character. Approving makes it playable (and active, if it's the owner's first);
+# rejecting sends it back to its owner with the reason, to edit and submit again.
+@bp.post('/characters/<character_id>/review')
+@require_login
+def review_character(character_id):
+    content = json_body() or {}
+    decision = content.get('decision')
+    if decision not in ('approve', 'reject'):
+        return error('decision must be "approve" or "reject".', 400)
+    reason = content.get('reason')
+    if reason is not None and not isinstance(reason, str):
+        return error('reason must be text.', 400)
+    reason = (reason or '').strip()[:REVIEW_REASON_MAX_LENGTH] or None
+    conn = connect()
+    try:
+        with conn:
+            row = conn.execute('SELECT * FROM characters WHERE id = ? AND deleted_at IS NULL',
+                               (character_id,)).fetchone()
+            if row is None or row['campaign_id'] is None or not can_review(conn, row['campaign_id']):
+                return error('Character not found', 404)
+            if row['status'] != 'pending':
+                return error('This character isn’t waiting for review.', 409)
+            status = 'approved' if decision == 'approve' else 'rejected'
+            conn.execute(f'UPDATE characters SET status = ?, review_reason = ?, updated_at = {NOW} WHERE id = ?',
+                         (status, reason, character_id))
+            active = status == 'approved' and activate_if_first(conn, row)
+    finally:
+        conn.close()
+    return jsonify({'status': status, 'reviewReason': reason, 'isActive': active}), 200
+
+# Makes an approved campaign character its owner's active one there, in place of any other.
+@bp.post('/characters/<character_id>/activate')
+@require_login
+def activate_character(character_id):
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if row['campaign_id'] is None:
+                return error('Character Sandbox characters can’t be active.', 409)
+            if row['status'] != 'approved':
+                return error('Only an approved character can be made active.', 409)
+            # Off first: the unique index allows one active character per player per campaign.
+            conn.execute('UPDATE characters SET is_active = 0 WHERE campaign_id = ? AND owner_id = ? AND is_active = 1',
+                         (row['campaign_id'], row['owner_id']))
+            conn.execute('UPDATE characters SET is_active = 1 WHERE id = ?', (character_id,))
+    finally:
+        conn.close()
+    return jsonify({'isActive': True}), 200
+
+# The campaign's characters waiting for review, oldest submission first: the GM's queue.
+@bp.get('/campaigns/<campaign_id>/characters/pending')
+@require_member
+def pending_characters(campaign_id):
+    conn = connect()
+    try:
+        if not can_review(conn, campaign_id):
+            return error('Not found', 404)
+        rows = conn.execute(
+            'SELECT ch.id, ch.name, ch.updated_at, u.display_name AS owner_name, p.updated_at AS portrait_version '
+            'FROM characters ch JOIN users u ON u.id = ch.owner_id '
+            'LEFT JOIN character_portraits p ON p.character_id = ch.id '
+            "WHERE ch.campaign_id = ? AND ch.status = 'pending' AND ch.deleted_at IS NULL ORDER BY ch.updated_at",
+            (campaign_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify([{
+        'id': r['id'], 'name': r['name'], 'ownerName': r['owner_name'],
+        'submittedAt': r['updated_at'], 'portraitVersion': r['portrait_version'],
+    } for r in rows]), 200
+
+# The GM's log of changes players made to approved characters in this campaign, newest
+# first. ?all=true includes the ones already dismissed (the newest 100).
+@bp.get('/campaigns/<campaign_id>/character-changes')
+@require_member
+def character_changes(campaign_id):
+    show_all = request.args.get('all') == 'true'
+    conn = connect()
+    try:
+        if not can_review(conn, campaign_id):
+            return error('Not found', 404)
+        rows = conn.execute(
+            'SELECT x.id, x.character_id, x.changes, x.created_at, x.dismissed_at, ch.name, u.display_name AS owner_name '
+            'FROM character_changes x JOIN characters ch ON ch.id = x.character_id JOIN users u ON u.id = ch.owner_id '
+            'WHERE x.campaign_id = ?' + ('' if show_all else ' AND x.dismissed_at IS NULL') +
+            ' ORDER BY x.created_at DESC LIMIT 100',
+            (campaign_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify([{
+        'id': r['id'], 'characterId': r['character_id'], 'characterName': r['name'], 'ownerName': r['owner_name'],
+        'changes': json.loads(r['changes']), 'createdAt': r['created_at'], 'dismissed': r['dismissed_at'] is not None,
+    } for r in rows]), 200
+
+# The GM has seen this change; it leaves the log (but stays under ?all=true).
+@bp.post('/campaigns/<campaign_id>/character-changes/<change_id>/dismiss')
+@require_member
+def dismiss_character_change(campaign_id, change_id):
+    conn = connect()
+    try:
+        with conn:
+            if not can_review(conn, campaign_id):
+                return error('Not found', 404)
+            updated = conn.execute(
+                f'UPDATE character_changes SET dismissed_at = {NOW} WHERE id = ? AND campaign_id = ? AND dismissed_at IS NULL',
+                (change_id, campaign_id),
+            ).rowcount
+    finally:
+        conn.close()
+    if not updated:
+        return error('Change not found', 404)
     return jsonify({'success': True}), 200

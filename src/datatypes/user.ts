@@ -1,4 +1,5 @@
 import type { campaign } from "./campaign";
+import type { characterStatus } from "../api/characters";
 
 // One of the user's characters, with the campaign it belongs to.
 export interface userCharacter {
@@ -6,6 +7,7 @@ export interface userCharacter {
   name: string,
   // The one character the player is playing in that campaign. Never true in the sandbox.
   isActive: boolean,
+  status: characterStatus,
   // Both null for a Character Sandbox character.
   campaignId: string | null,
   campaignName: string | null,

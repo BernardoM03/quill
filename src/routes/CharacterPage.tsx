@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
-import { deleteCharacter, deletePortrait, getCharacter, uploadPortrait, type characterSummary } from "../api/characters";
+import {
+    activateCharacter, deleteCharacter, deletePortrait, getCharacter, submitCharacter, uploadPortrait, type characterSummary,
+} from "../api/characters";
 import BackButton from "../components/BackButton";
 import { AbilityScores } from "../components/sheet/AbilityScores";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -36,6 +38,28 @@ export default function CharacterPage() {
     useEffect(() => {
         getCharacter(characterID).then(setCharacter).catch(() => setCharacter(null))
     }, [characterID])
+
+    // Errors and busy state for the approval banner's buttons.
+    const [statusError, setStatusError] = useState<string | null>(null)
+    const [statusBusy, setStatusBusy] = useState(false)
+
+    function handleSubmit() {
+        setStatusBusy(true)
+        setStatusError(null)
+        submitCharacter(characterID)
+            .then(({ status, isActive }) => setCharacter(c => c && { ...c, status, isActive, reviewReason: null }))
+            .catch(err => setStatusError(errorMessage(err, 'Could not submit the character.')))
+            .finally(() => setStatusBusy(false))
+    }
+
+    function handleActivate() {
+        setStatusBusy(true)
+        setStatusError(null)
+        activateCharacter(characterID)
+            .then(() => setCharacter(c => c && { ...c, isActive: true }))
+            .catch(err => setStatusError(errorMessage(err, 'Could not make this character active.')))
+            .finally(() => setStatusBusy(false))
+    }
 
     function setVersion(portraitVersion: string | null) {
         setCharacter(c => c && { ...c, portraitVersion })
@@ -97,6 +121,42 @@ export default function CharacterPage() {
                     </Link>
                 </div>
             </div>
+
+            {character.campaignId && character.status !== 'approved' && (
+                <div className={`character-flag character-flag--${character.status}`} role="status">
+                    {character.status === 'pending' && <>
+                        <strong>Waiting for the GM’s approval.</strong>
+                        <p>{character.campaignName} needs the GM to approve new characters before they can be played.</p>
+                    </>}
+                    {character.status === 'draft' && <>
+                        <strong>Not submitted yet.</strong>
+                        <p>Submit this character to finish creating it.</p>
+                    </>}
+                    {character.status === 'rejected' && <>
+                        <strong>The GM sent this character back.</strong>
+                        {character.reviewReason
+                            ? <p className="character-flag__reason">{character.reviewReason}</p>
+                            : <p>No reason was given.</p>}
+                        <p>Edit it, then submit it again.</p>
+                    </>}
+                    {(character.status === 'draft' || character.status === 'rejected') && (
+                        <button type="button" className="setting-button" onClick={handleSubmit}
+                            disabled={statusBusy || character.problems.length > 0}>
+                            {statusBusy ? 'Submitting…' : character.status === 'rejected' ? 'Resubmit' : 'Submit'}
+                        </button>
+                    )}
+                    {statusError && <p className="setting-error">{statusError}</p>}
+                </div>
+            )}
+
+            {character.campaignId && character.status === 'approved' && !character.isActive && (
+                <div className="character-portrait__actions character-activate">
+                    <button type="button" className="setting-button setting-button--quiet" onClick={handleActivate} disabled={statusBusy}>
+                        Make Active Character
+                    </button>
+                    {statusError && <p className="setting-error">{statusError}</p>}
+                </div>
+            )}
 
             {character.problems.length > 0 && (
                 <div className="character-flag" role="alert">
@@ -171,7 +231,7 @@ export default function CharacterPage() {
                             This can’t be undone.
                         </p>
                         {character.isActive && (
-                            <p>They’re your active character in {character.campaignName}; your newest other character there, if any, becomes active instead.</p>
+                            <p>They’re your active character in {character.campaignName}; your newest other approved character there, if any, becomes active instead.</p>
                         )}
                     </div>
                 </TypeToConfirmDialog>

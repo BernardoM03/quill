@@ -137,6 +137,13 @@ export default function App() {
                   {character.needsChanges && (
                     <Link to={`/characters/${character.id}`} className="character-row__badge character-row__badge--warning">Needs changes</Link>
                   )}
+                  {character.status === 'pending' && <span className="character-row__badge">Awaiting approval</span>}
+                  {character.status === 'draft' && (
+                    <Link to={`/characters/${character.id}`} className="character-row__badge character-row__badge--warning">Not submitted</Link>
+                  )}
+                  {character.status === 'rejected' && (
+                    <Link to={`/characters/${character.id}`} className="character-row__badge character-row__badge--warning">Sent back</Link>
+                  )}
                   {character.isActive && <span className="character-row__badge">Active</span>}
                 </li>
               ))}

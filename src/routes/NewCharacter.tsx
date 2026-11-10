@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getCampaign } from "../api/campaigns";
 import {
-    createCharacter, createSandboxCharacter, getCharacter, getCharacterOptions, rollCharacterAbilities,
+    createCharacter, createSandboxCharacter, submitCharacter,getCharacter, getCharacterOptions, rollCharacterAbilities,
     updateCharacter, validateCharacter, getBackgroundOptions, type abilityRoll, type backgroundOption, type characterDraft, type characterOptions, type choicePicks, type draftCheck, type draftError, type takenOptions,
 } from "../api/characters";
 import { createDraft, getDraft, rollAbilities, saveDraft } from "../api/drafts";
@@ -396,9 +396,13 @@ export default function NewCharacter() {
                         .then(() => navigate(`/characters/${characterID}`, { replace: true }))
                 }
                 const body = { draftId: draftId.current ?? undefined, ...characterFields(draft) }
+                // A campaign character is saved as a draft, then submitted: approved straight
+                // away, or sent to the GM when the campaign needs approval.
                 const create = draft.campaignId === SANDBOX
                     ? createSandboxCharacter(body)
-                    : createCharacter(draft.campaignId, body)
+                    // If the submit fails, the character is still saved (as a draft, submittable
+                    // from its page), so don't offer a retry here that would make a second one.
+                    : createCharacter(draft.campaignId, body).then(created => submitCharacter(created.id).catch(() => undefined))
                 finished.current = true
                 return create
                     // From a campaign, go back to it; from home, go home, where the new character is listed.

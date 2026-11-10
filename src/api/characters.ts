@@ -5,11 +5,76 @@ import { apiClient } from "./client";
 
 export const CHARACTER_NAME_MAX_LENGTH = 64;
 
+// draft: saved but not yet submitted. pending: waiting for the GM's approval. approved:
+// playable. rejected: sent back by the GM (see reviewReason); edit it and submit again.
+export type characterStatus = 'draft' | 'pending' | 'approved' | 'rejected'
+
 export interface createdCharacter {
     id: string,
     name: string,
-    // True when this is the player's first character in the campaign.
+    // Always false: a campaign character becomes active once submitted and approved.
     isActive: boolean,
+    // approved in the sandbox; draft in a campaign until submitCharacter.
+    status: characterStatus,
+}
+
+// Finishes a campaign character: pending if the campaign needs the GM's approval, else
+// approved (and active if it's the player's first there). Also resubmits a rejected one.
+export function submitCharacter(characterId: string): Promise<{ status: characterStatus, isActive: boolean }> {
+    return apiClient.post(`/characters/${characterId}/submit`).then(response => response.data);
+}
+
+// The campaign's GM (or the admin). Approves or rejects a pending character, with an optional reason.
+export function reviewCharacter(characterId: string, decision: 'approve' | 'reject', reason?: string):
+    Promise<{ status: characterStatus, reviewReason: string | null, isActive: boolean }> {
+    return apiClient.post(`/characters/${characterId}/review`, { decision, reason }).then(response => response.data);
+}
+
+// Makes an approved campaign character the player's active one there.
+export function activateCharacter(characterId: string): Promise<void> {
+    return apiClient.post(`/characters/${characterId}/activate`).then(() => undefined);
+}
+
+export interface pendingCharacter {
+    id: string,
+    name: string,
+    ownerName: string,
+    submittedAt: string,
+    portraitVersion: string | null,
+}
+
+// The GM (or the admin) only. The campaign's characters waiting for review, oldest first.
+export function getPendingCharacters(campaignId: string): Promise<pendingCharacter[]> {
+    return apiClient.get(`/campaigns/${campaignId}/characters/pending`).then(response => response.data);
+}
+
+// One changed pick. field: 'species', 'background', 'class', 'abilityScores', or
+// '<speciesChoices|backgroundChoices|classChoices>:<choice id>'. to is null when it was cleared.
+export interface pickChange {
+    field: string,
+    from: unknown,
+    to: unknown,
+}
+
+// A player's edit to an approved character, logged for the GM.
+export interface characterChange {
+    id: string,
+    characterId: string,
+    characterName: string,
+    ownerName: string,
+    changes: pickChange[],
+    createdAt: string,
+    dismissed: boolean,
+}
+
+// The GM (or the admin) only. Newest first; all: include dismissed ones.
+export function getCharacterChanges(campaignId: string, all = false): Promise<characterChange[]> {
+    return apiClient.get(`/campaigns/${campaignId}/character-changes`, { params: all ? { all: 'true' } : {} })
+        .then(response => response.data);
+}
+
+export function dismissCharacterChange(campaignId: string, changeId: string): Promise<void> {
+    return apiClient.post(`/campaigns/${campaignId}/character-changes/${changeId}/dismiss`).then(() => undefined);
 }
 
 // Choice id -> the picked option's key (a list of keys where a choice takes more than one).
@@ -314,6 +379,9 @@ export interface characterSummary {
     id: string,
     name: string,
     isActive: boolean,
+    status: characterStatus,
+    // Why the GM rejected it; null unless rejected with a reason.
+    reviewReason: string | null,
     // Both null for a Character Sandbox character.
     campaignId: string | null,
     campaignName: string | null,

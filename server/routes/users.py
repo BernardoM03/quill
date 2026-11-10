@@ -18,7 +18,7 @@ def get_user():
         campaigns = list_campaigns(conn, user['id'])
         characters = conn.execute(
             # Character Sandbox characters have no campaign; they're listed after the rest.
-            'SELECT ch.id, ch.name, ch.is_active, ch.campaign_id, ch.sheet, c.name AS campaign_name, '
+            'SELECT ch.id, ch.name, ch.is_active, ch.status, ch.campaign_id, ch.sheet, c.name AS campaign_name, '
             'p.updated_at AS portrait_version '
             'FROM characters ch LEFT JOIN campaigns c ON c.id = ch.campaign_id '
             'LEFT JOIN character_portraits p ON p.character_id = ch.id '
@@ -37,6 +37,7 @@ def get_user():
             'id': ch['id'],
             'name': ch['name'],
             'isActive': bool(ch['is_active']),
+            'status': ch['status'],
             'campaignId': ch['campaign_id'],
             'campaignName': ch['campaign_name'],
             'portraitVersion': ch['portrait_version'],

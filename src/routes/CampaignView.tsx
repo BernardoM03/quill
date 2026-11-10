@@ -5,6 +5,8 @@ import Markdown from "react-markdown";
 import { getCampaign } from "../api/campaigns";
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
+import PendingCharacters from "../components/PendingCharacters";
+import CharacterChangeLog from "../components/CharacterChangeLog";
 import "../components/campaignSettings/CampaignSettings.css";
 
 // Read-only campaign page for members; where a player lands after joining.
@@ -36,6 +38,8 @@ export default function CampaignView() {
             <div className="campaign-description__body markdown">
                 {campaign.description ? <Markdown>{campaign.description}</Markdown> : <p className="muted">No description provided.</p>}
             </div>
+            {campaignID && <PendingCharacters campaignId={campaignID} />}
+            {campaignID && <CharacterChangeLog campaignId={campaignID} />}
             {/* Characters belong to a membership; an admin who isn't in the campaign can't make one. */}
             {campaign.role !== 'admin' && (
                 <div className="home-actions campaign-view__actions">

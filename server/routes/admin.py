@@ -85,9 +85,11 @@ def restore_account(account_id):
                     continue
                 conn.execute(
                     'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, personal_notes, is_active, '
-                    'created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    'created_at, updated_at, deleted_at, status, review_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     (c['id'], c['campaign_id'], user['id'], c['name'], json.dumps(c['sheet']), c['personal_notes'],
-                     c['is_active'], c['created_at'], c['updated_at'], c['deleted_at']),
+                     c['is_active'], c['created_at'], c['updated_at'], c['deleted_at'],
+                     # Snapshots from before approval existed have no status: those were all playable.
+                     c.get('status', 'approved'), c.get('review_reason')),
                 )
                 # Snapshots from before portraits existed have no 'portrait' key.
                 if c.get('portrait'):

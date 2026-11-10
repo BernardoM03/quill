@@ -211,6 +211,31 @@ MIGRATIONS = [
     ));
     UPDATE character_drafts SET draft = json_set(draft, '$.version', 1);
     ''',
+    # 11: character approval. draft: saved but not yet submitted. pending: waiting for the
+    # GM (the campaign has characterApproval on). approved: playable. rejected: sent back,
+    # with review_reason; the owner edits and submits again. Only an approved character can
+    # be active. Every existing character was playable, so they start approved.
+    '''
+    ALTER TABLE characters ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'
+        CHECK (status IN ('draft', 'pending', 'approved', 'rejected'));
+    ALTER TABLE characters ADD COLUMN review_reason TEXT;
+    CREATE INDEX characters_pending ON characters(campaign_id) WHERE status = 'pending';
+    ''',
+    # 12: changes to an approved character's approved picks (species, background, class and
+    # their choices, ability scores), logged for the GM of a campaign with characterApproval
+    # on. changes: [{field, from, to}]. dismissed_at: the GM has seen it. Picks made for the
+    # first time (a choice gained on levelling up) aren't changes and aren't logged.
+    '''
+    CREATE TABLE character_changes (
+        id           TEXT PRIMARY KEY,
+        campaign_id  TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+        changes      TEXT NOT NULL CHECK (json_valid(changes)),
+        created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        dismissed_at TEXT
+    );
+    CREATE INDEX character_changes_campaign ON character_changes(campaign_id, created_at);
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

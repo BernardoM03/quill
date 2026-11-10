@@ -1,0 +1,72 @@
+/* ---- The admin's queue of characters waiting for approval, on the campaign page ---- */
+
+.pending-characters {
+  margin-top: 1.5rem;
+}
+
+.pending-character {
+  list-style: none;
+}
+
+.pending-character__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.pending-character__reject {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0 0 0.75rem 3.25rem;
+}
+
+.pending-character__reject textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+/* ---- The GM's log of changes to approved characters ---- */
+
+.change-log {
+  list-style: none;
+  margin: 0.5rem 0;
+  padding: 0;
+}
+
+.change-log__entry {
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border-left: 2px solid var(--accent);
+  background: var(--code-bg);
+}
+
+.change-log__entry--dismissed {
+  opacity: 0.6;
+  border-left-color: var(--border);
+}
+
+.change-log__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.change-log__changes {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .pending-character__reject {
+    padding-left: 0;
+  }
+}
