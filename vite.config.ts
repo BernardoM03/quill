@@ -54,6 +54,9 @@ function hideServerOnlyFolders(): Plugin {
 export default defineConfig({
   plugins: [react(), hideServerOnlyFolders()],
   server: {
+    // Fail if 5173 is taken rather than moving up to 5174, which is the API's port.
+    port: 5173,
+    strictPort: true,
     // Same-origin requests to the Flask API, so it needs no CORS.
     proxy: { '/api': 'http://localhost:5174' },
     // Vite's own file-access block list, as a second layer.
