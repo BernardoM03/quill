@@ -1,3 +1,4 @@
+import base64
 import json
 
 from flask import Blueprint, jsonify
@@ -79,14 +80,23 @@ def restore_account(account_id):
                     )
             restored_characters = 0
             for c in snapshot['characters']:
-                if c['campaign_id'] not in existing:
+                # Sandbox characters (no campaign) always come back.
+                if c['campaign_id'] is not None and c['campaign_id'] not in existing:
                     continue
                 conn.execute(
                     'INSERT INTO characters (id, campaign_id, owner_id, name, sheet, personal_notes, is_active, '
-                    'created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    'created_at, updated_at, deleted_at, status, review_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     (c['id'], c['campaign_id'], user['id'], c['name'], json.dumps(c['sheet']), c['personal_notes'],
-                     c['is_active'], c['created_at'], c['updated_at'], c['deleted_at']),
+                     c['is_active'], c['created_at'], c['updated_at'], c['deleted_at'],
+                     # Snapshots from before approval existed have no status: those were all playable.
+                     c.get('status', 'approved'), c.get('review_reason')),
                 )
+                # Snapshots from before portraits existed have no 'portrait' key.
+                if c.get('portrait'):
+                    conn.execute(
+                        'INSERT INTO character_portraits (character_id, image) VALUES (?, ?)',
+                        (c['id'], base64.b64decode(c['portrait'])),
+                    )
                 restored_characters += 1
             conn.execute('DELETE FROM deleted_accounts WHERE id = ?', (account_id,))
     finally:

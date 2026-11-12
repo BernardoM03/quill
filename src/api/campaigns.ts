@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { apiClient } from "./client";
 import type { campaign } from "../datatypes/campaign";
-import type { campaignDetails } from "../datatypes/campaignDetails";
+import type { campaignDetails, campaignQuestion } from "../datatypes/campaignDetails";
 import type { campaignRules } from "../datatypes/campaignRules";
 
 export const CAMPAIGN_NAME_MAX_LENGTH = 64;
@@ -36,6 +36,14 @@ export function updateCampaignAllowed(id: string, changes: Record<string, string
 // Saves only the rules given; the rest stay as they are.
 export function updateCampaignRules(id: string, rules: Partial<campaignRules>): Promise<void> {
     return apiClient.patch(`/campaigns/${id}`, { rules }).then(() => undefined);
+}
+
+export const QUESTION_PROMPT_MAX_LENGTH = 200;
+export const MAX_QUESTIONS = 20;
+
+// Replaces the campaign's custom questions with these, in this order.
+export function updateCampaignQuestions(id: string, questions: campaignQuestion[]): Promise<void> {
+    return apiClient.patch(`/campaigns/${id}`, { questions }).then(() => undefined);
 }
 
 export const CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000;

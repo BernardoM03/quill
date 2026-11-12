@@ -205,13 +205,14 @@ function NumberRow({ label, hint, value, min, max, onChange }: {
 
 // The six scores every player assigns under Shared Manual, highest first.
 function SharedScoresRow({ scores, range, onChange }: {
-  scores: number[];
+  scores: campaignRules['sharedScores'];
   range: { min: number; max: number };
-  onChange: (scores: number[]) => void;
+  onChange: (scores: campaignRules['sharedScores']) => void;
 }) {
   const readOnly = useReadOnly();
+  // Mapping a 6-tuple keeps 6 entries; TypeScript just can't see that through map and sort.
   const setScore = (index: number, value: number) =>
-    onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a));
+    onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a) as campaignRules['sharedScores']);
 
   return (
     <div className="setting-row rules-subrow">

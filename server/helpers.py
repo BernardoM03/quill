@@ -7,6 +7,17 @@ NAME_MAX_LENGTH = 64
 
 NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"
 
+# A JSON response the browser keeps and revalidates instead of downloading again. The ETag
+# is a hash of the body, so it changes exactly when anything in the response does (including
+# what depends on the viewer, like their role). The browser sends it back as If-None-Match;
+# an unchanged response is answered with an empty 304. private: only this user's browser
+# keeps it. no-cache: it must ask every time, so a change shows up on the next load.
+def revalidated_json(data):
+    response = jsonify(data)
+    response.add_etag()
+    response.headers['Cache-Control'] = 'private, no-cache'
+    return response.make_conditional(request)
+
 def clean_name(raw):
     if not isinstance(raw, str):
         return None
@@ -30,7 +41,7 @@ def json_body():
     body = request.get_json(silent=True)
     return body if isinstance(body, dict) else None
 
-# The signed-in user from the session cookie, or None. There is no fallback user.
+# The signed-in user from the session cookie, or None.
 # create_app loads it once per request into g.user; the access decorators read that.
 def load_user(conn):
     user_id = session.get('user_id')

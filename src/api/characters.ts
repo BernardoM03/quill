@@ -1,0 +1,574 @@
+import type { ChoicePicks, Details, DraftSchema } from "../datatypes/generated/draft";
+import type { AbilityRoll, ScoreAdjustment } from "../datatypes/generated/sheet";
+import type { campaignQuestion } from "../datatypes/campaignDetails";
+import { apiClient } from "./client";
+
+export const CHARACTER_NAME_MAX_LENGTH = 64;
+
+// draft: saved but not yet submitted. pending: waiting for the GM's approval. approved:
+// playable. rejected: sent back by the GM (see reviewReason); edit it and submit again.
+export type characterStatus = 'draft' | 'pending' | 'approved' | 'rejected'
+
+export interface createdCharacter {
+    id: string,
+    name: string,
+    // Always false: a campaign character becomes active once submitted and approved.
+    isActive: boolean,
+    // approved in the sandbox; draft in a campaign until submitCharacter.
+    status: characterStatus,
+}
+
+// Finishes a campaign character: pending if the campaign needs the GM's approval, else
+// approved (and active if it's the player's first there). Also resubmits a rejected one.
+export function submitCharacter(characterId: string): Promise<{ status: characterStatus, isActive: boolean }> {
+    return apiClient.post(`/characters/${characterId}/submit`).then(response => response.data);
+}
+
+// The campaign's GM (or the admin). Approves or rejects a pending character, with an optional reason.
+export function reviewCharacter(characterId: string, decision: 'approve' | 'reject', reason?: string):
+    Promise<{ status: characterStatus, reviewReason: string | null, isActive: boolean }> {
+    return apiClient.post(`/characters/${characterId}/review`, { decision, reason }).then(response => response.data);
+}
+
+// Makes an approved campaign character the player's active one there.
+export function activateCharacter(characterId: string): Promise<void> {
+    return apiClient.post(`/characters/${characterId}/activate`).then(() => undefined);
+}
+
+export interface pendingCharacter {
+    id: string,
+    name: string,
+    ownerName: string,
+    submittedAt: string,
+    portraitVersion: string | null,
+}
+
+// The GM (or the admin) only. The campaign's characters waiting for review, oldest first.
+export function getPendingCharacters(campaignId: string): Promise<pendingCharacter[]> {
+    return apiClient.get(`/campaigns/${campaignId}/characters/pending`).then(response => response.data);
+}
+
+// One changed pick. field: 'species', 'background', 'class', 'abilityScores', or
+// '<speciesChoices|backgroundChoices|classChoices>:<choice id>'. to is null when it was cleared.
+export interface pickChange {
+    field: string,
+    from: unknown,
+    to: unknown,
+}
+
+// A player's edit to an approved character, logged for the GM.
+export interface characterChange {
+    id: string,
+    characterId: string,
+    characterName: string,
+    ownerName: string,
+    changes: pickChange[],
+    createdAt: string,
+    dismissed: boolean,
+}
+
+// The GM (or the admin) only. Newest first; all: include dismissed ones.
+export function getCharacterChanges(campaignId: string, all = false): Promise<characterChange[]> {
+    return apiClient.get(`/campaigns/${campaignId}/character-changes`, { params: all ? { all: 'true' } : {} })
+        .then(response => response.data);
+}
+
+export function dismissCharacterChange(campaignId: string, changeId: string): Promise<void> {
+    return apiClient.post(`/campaigns/${campaignId}/character-changes/${changeId}/dismiss`).then(() => undefined);
+}
+
+// Choice id -> the picked option's key (a list of keys where a choice takes more than one).
+// A cleared choice is left out.
+export type choicePicks = ChoicePicks
+
+// What the creation wizard has collected so far. Defined by schemas/records/draft.schema.json
+// (generated: npm run gen-types); the server adds version when it saves one.
+export type characterDraft = Omit<DraftSchema, 'version'>
+
+// A character's description; every field optional. Defined in schemas/records/common.schema.json.
+export type characterDetails = Details
+
+export interface originRules {
+    // The increases may go to any ability, and the skills and tool are picked.
+    customizeOrigin: boolean,
+    // background: the background's own feat; any: any Origin feat.
+    originFeat: 'background' | 'any',
+    // choice: the player picks a package; equipment / gold: that package for everyone.
+    startingEquipment: 'choice' | 'equipment' | 'gold',
+}
+
+export type abilityMethod = 'standardArray' | 'pointBuy' | 'roll' | 'manual' | 'sharedManual'
+export type hpMethod = 'automatic' | 'manual'
+
+// How ability scores and hit points may be set: the campaign's methods (every method in
+// the Character Sandbox) and the numbers each uses.
+export interface abilityRules {
+    // Every method, so the wizard can show them all; allowed* are the ones that may be used.
+    methods: abilityMethod[],
+    allowedMethods: abilityMethod[],
+    hpMethods: hpMethod[],
+    allowedHpMethods: hpMethod[],
+    standardArray: number[],
+    pointBuyBudget: number,
+    // Score ("8".."15") -> its point cost.
+    pointCosts: Record<string, number>,
+    sharedScores: number[],
+    manualRange: { min: number, max: number },
+}
+
+// One of the six ability rolls the server makes: 4d6, the lowest dropped.
+// Defined in schemas/records/common.schema.json.
+export type abilityRoll = AbilityRoll
+
+// A feature an option brings with it, e.g. the spells of an elven lineage.
+export interface grantedFeature {
+    name: string,
+    description: string,
+}
+
+export interface choiceOption {
+    // What gets stored when it's picked.
+    key: string,
+    label: string,
+    description?: string,
+    grants?: grantedFeature[],
+}
+
+// Something the player decides, already narrowed by the server to what the campaign allows.
+export interface characterChoice {
+    id: string,
+    prompt: string,
+    count: number,
+    options: choiceOption[],
+    // Expertise-style: only skills the character is already proficient in count.
+    proficientOnly?: boolean,
+    // Only asked once this option of that choice is picked (Thaumaturge -> an extra cantrip).
+    condition?: { choice: string, option: string },
+    // 'abilityIncrease': a background's increases, shown as one box per ability. Then
+    // abilities (codes like "WIS") may be raised, points are spent in all, at most max on one.
+    kind?: 'abilityIncrease',
+    abilities?: string[],
+    points?: number,
+    max?: number,
+    // A feat's increase: the feat's name, and the cap it raises scores to.
+    source?: string,
+    maximum?: number,
+}
+
+export interface speciesTrait {
+    id: string,
+    name: string,
+    shortDescription: string,
+    description: string,
+    choices: characterChoice[],
+}
+
+// A species the wizard may offer, with everything its card shows.
+export interface speciesOption {
+    id: string,
+    name: string,
+    creatureType: string | null,
+    // The fixed sizes; empty when the player chooses one (then it's among choices).
+    size: string[],
+    speed: number | null,
+    // Choices of the species itself rather than of a trait, e.g. Human size.
+    choices: characterChoice[],
+    traits: speciesTrait[],
+}
+
+// An Origin feat, with what it does.
+export interface featDetail {
+    id: string,
+    name: string,
+    effects: { name: string, description: string }[],
+}
+
+export interface equipmentPackage {
+    // "A", "B": what's stored when it's picked.
+    label: string,
+    items: string[],
+}
+
+// A background (the packs' "origins") and the choices it asks for, as the campaign's rules have them.
+export interface backgroundOption {
+    id: string,
+    name: string,
+    description: string,
+    // The abilities its increases go to (any ability when the campaign customizes origins).
+    abilityScores: string[],
+    // Given outright, by name.
+    skills: string[],
+    tools: string[],
+    languages: string[],
+    // The background's own feat; null when the player picks any Origin feat instead.
+    feat: featDetail | null,
+    // When the player picks: every Origin feat on offer, to show the one picked.
+    originFeats: featDetail[],
+    equipment: equipmentPackage[],
+    // The package the campaign gives everyone; null when the player picks one.
+    givenEquipment: string | null,
+    // Ability increases, tool, Origin feat, equipment and languages, where they're picked.
+    choices: characterChoice[],
+    // The Origin feat's own choices (Magic Initiate's spells).
+    featChoices: characterChoice[],
+}
+
+export interface classSummary {
+    id: string,
+    name: string,
+    hitDie: number | null,
+}
+
+// What a new character may be built from: the campaign's allowed content, or everything
+// in the Character Sandbox. Decided by the server (server/rules/characters.py).
+export interface characterOptions {
+    // The level a new character starts at: the campaign's milestone level, else 1.
+    level: number,
+    species: speciesOption[],
+    backgrounds: backgroundOption[],
+    classes: classSummary[],
+    abilityRules: abilityRules,
+    // The origin rules in force: the campaign's, or the sandbox defaults.
+    originRules: originRules,
+    // True in a campaign: the rules are the GM's, shown but not changeable.
+    rulesLocked: boolean,
+    // The GM's custom questions, asked on the Details step; empty in the sandbox.
+    questions: campaignQuestion[],
+}
+
+// The Character Sandbox's backgrounds under the origin rules the player picked.
+export function getBackgroundOptions(campaignId: string | null, rules: originRules): Promise<backgroundOption[]> {
+    return apiClient.get("/characters/options/backgrounds", {
+        params: { campaign: campaignId ?? 'sandbox', ...rules, customizeOrigin: String(rules.customizeOrigin) },
+    }).then(response => response.data);
+}
+
+// campaignId null means the Character Sandbox.
+export function getCharacterOptions(campaignId: string | null): Promise<characterOptions> {
+    return apiClient.get("/characters/options", { params: { campaign: campaignId ?? 'sandbox' } })
+        .then(response => response.data);
+}
+
+// A class or subclass feature the character has by the starting level.
+export interface classFeature {
+    id: string,
+    name: string,
+    level: number,
+    shortDescription: string,
+    description: string,
+    choices: characterChoice[],
+}
+
+export interface subclassDetail {
+    id: string,
+    name: string,
+    description: string,
+    features: classFeature[],
+}
+
+// A class as it is at the starting level, with every choice resolved for the campaign.
+export interface classDetail {
+    id: string,
+    name: string,
+    level: number,
+    hitDie: number | null,
+    primaryAbility: string[],
+    savingThrows: string[],
+    armor: string[],
+    weapons: string[],
+    tools: string[],
+    subclassLevel: number | null,
+    // Skill and tool proficiencies to pick.
+    choices: characterChoice[],
+    features: classFeature[],
+    // The subclass pick, once the level reaches it; null before.
+    subclassChoice: characterChoice | null,
+    subclasses: subclassDetail[],
+}
+
+// level: show it at that level instead of the campaign's starting level (editing a character).
+export function getClassOption(campaignId: string | null, classId: string, level?: number): Promise<classDetail> {
+    return apiClient.get(`/characters/options/classes/${classId}`, { params: { campaign: campaignId ?? 'sandbox', level } })
+        .then(response => response.data);
+}
+
+// field: which part of the draft it's about: 'campaign', 'species', 'choice:<id>' (species
+// choices), 'background', 'backgroundChoice:<id>', 'class', 'classChoice:<id>', 'name'.
+export interface draftError {
+    field: string,
+    message: string,
+}
+
+// Option key -> the field of the choice that picked it, for each skill, tool and language
+// the draft already has. Other choices leave these out.
+export type takenOptions = Record<string, string>
+
+export interface abilitySummary {
+    // As assigned at creation; null until the score is set.
+    base: number | null,
+    // Permanent increases in the order gained: the background, then feats.
+    increases: { source: string, amount: number }[],
+    bonus: number,
+    // base + increases: the character's own score.
+    total: number | null,
+    modifier: number | null,
+}
+
+// An ability on a saved character: abilitySummary plus temporary effects.
+export interface sheetAbility extends abilitySummary {
+    // The score with temporary effects applied.
+    current: number | null,
+    currentModifier: number | null,
+    // Ids of the scoreAdjustments that touch this ability.
+    adjustments: string[],
+}
+
+// A temporary effect on one score (a sheet's play.scoreAdjustments). set: becomes value;
+// atLeast: raised to value unless already higher (most magic items); add: plus value
+// (negative lowers it). Defined in schemas/records/sheet.schema.json.
+export type scoreAdjustment = ScoreAdjustment
+
+export interface hitPointSummary {
+    max: number,
+    // Hit points gained at each level, Constitution included.
+    perLevel: number[],
+    conModifier: number,
+    bonuses: { name: string, amount: number }[],
+}
+
+export interface draftCheck {
+    // Every problem the server finds with the draft; empty when it can be created.
+    errors: draftError[],
+    taken: takenOptions,
+    // The scores with the background's increases, and hit points once they can be worked out.
+    summary: { abilities: Record<string, abilitySummary>, hitPoints: hitPointSummary | null },
+}
+
+// Saves nothing. draftId: the saved draft, whose ability rolls the roll method checks against.
+// characterId: checks an edit of that character instead (its campaign, level and rolls).
+export function validateCharacter(campaignId: string | null, draft: characterDraft, draftId?: string | null,
+                                  characterId?: string | null): Promise<draftCheck> {
+    return apiClient.post("/characters/validate", { campaignId, draftId, characterId, ...draft })
+        .then(response => response.data);
+}
+
+// Saves an edit made in the wizard. Refused (with errors) unless everything fits the
+// character's campaign as it is now.
+export function updateCharacter(characterId: string, draft: characterDraft): Promise<void> {
+    return apiClient.put(`/characters/${characterId}`, draft).then(() => undefined);
+}
+
+// Rolls ability scores for a character switched to the roll method while being edited.
+export function rollCharacterAbilities(characterId: string): Promise<abilityRoll[]> {
+    return apiClient.post(`/characters/${characterId}/roll`).then(response => response.data.rolls);
+}
+
+// Creates a Character Sandbox character: in no campaign, using all the content the
+// server has and the default rules. draftId: the saved draft it came from, deleted with the save.
+export function createSandboxCharacter(draft: characterDraft & { draftId?: string }): Promise<createdCharacter> {
+    return apiClient.post("/sandbox/characters", draft).then(response => response.data);
+}
+
+// Creates a character for the signed-in player in this campaign.
+export function createCharacter(campaignId: string, draft: characterDraft & { draftId?: string }): Promise<createdCharacter> {
+    return apiClient.post(`/campaigns/${campaignId}/characters`, draft).then(response => response.data);
+}
+
+// owner: its player or the admin; gm: the campaign's GM, who can change its play state;
+// party: another player in the campaign, who only reads it.
+export type sheetAccess = 'owner' | 'gm' | 'party'
+
+export interface sheetStat {
+    ability: string,
+    proficient: boolean,
+    // null until the ability has a score.
+    modifier: number | null,
+}
+
+// Worked out from the build each time it's read (server/rules/state.py).
+export interface sheetStats {
+    // Names for the sheet's header; null when not picked.
+    identity: { species: string | null, class: string | null, subclass: string | null, background: string | null },
+    senses: {
+        passivePerception: number | null,
+        passiveInsight: number | null,
+        passiveInvestigation: number | null,
+        // Range in feet; null without it.
+        darkvision: number | null,
+    },
+    proficiencies: { armor: string[], weapons: string[], tools: string[], languages: string[] },
+    proficiencyBonus: number,
+    initiative: number | null,
+    // Without armor: equipment isn't tracked yet.
+    armorClass: number | null,
+    speed: number | null,
+    // Every speed the character has, walking first. condition: the feature that has to be
+    // active for it (Draconic Flight); null when it's always there.
+    speeds: { type: 'walk' | 'fly' | 'swim' | 'climb' | 'burrow', value: number, condition: string | null }[],
+    // From traits and features. condition: the feature that has to be active (Rage); null: always.
+    defenses: {
+        resistances: { name: string, condition: string | null }[],
+        immunities: { name: string, condition: string | null }[],
+    },
+    passivePerception: number | null,
+    savingThrows: sheetStat[],
+    skills: (sheetStat & { id: string, name: string })[],
+    spellcasting: { ability: string, saveDc: number | null, attackBonus: number | null } | null,
+    hitDie: number | null,
+}
+
+// What changes at the table, as the sheet shows it: every field filled in.
+export interface playState {
+    // null until hit points can be worked out.
+    currentHp: number | null,
+    maxHp: number | null,
+    workedOutMaxHp: number | null,
+    // A maximum set by hand; null: worked out.
+    maxHpOverride: number | null,
+    tempHp: number,
+    // Slot level ("1".."9") -> slots; only the levels the class has.
+    spellSlots: Record<string, { total: number, spent: number }>,
+    pactSlots: { total: number, slotLevel: number, spent: number } | null,
+    // Pack condition ids; exhaustion is counted on its own.
+    conditions: string[],
+    exhaustion: number,
+    hitDice: { total: number, spent: number },
+    deathSaves: { successes: number, failures: number },
+    // Feature id -> uses spent, for each limited-use feature.
+    featureUses: Record<string, number>,
+}
+
+// A species trait, class or subclass feature, or the origin feat, as the sheet lists it.
+export interface sheetFeature {
+    id: string,
+    name: string,
+    source: 'species' | 'class' | 'subclass' | 'feat',
+    // The level it's gained at, for class and subclass features.
+    level: number | null,
+    activation: 'action' | 'bonusAction' | 'reaction' | 'free' | 'special' | 'passive',
+    // Rules text (Markdown).
+    description: string,
+    // For a limited-use feature: how many, when they come back (shortRecover: how many a short
+    // rest returns, for one that recharges on a long rest), and whether it's a pool of points.
+    uses: { max: number, recharge: string | null, pool: boolean, shortRecover: number | null } | null,
+}
+
+// A spell the character picked in the wizard.
+export interface sheetSpell {
+    id: string,
+    name: string,
+    level: number,
+    school: string | null,
+    castingTime: string | null,
+    range: string | null,
+    duration: string | null,
+    concentration: boolean,
+    ritual: boolean,
+    description: string,
+}
+
+// A PATCH /state body: only what changed. spentSlots merges by slot level.
+export interface statePatch {
+    currentHp?: number,
+    maxHpOverride?: number | null,
+    tempHp?: number,
+    spentSlots?: Record<string, number>,
+    spentPactSlots?: number,
+    conditions?: string[],
+    exhaustion?: number,
+    spentHitDice?: number,
+    deathSaves?: { successes: number, failures: number },
+    // Merged by feature id.
+    featureUses?: Record<string, number>,
+}
+
+// The owner, the admin or the GM. Resolves with the whole play state after the change.
+export function patchCharacterState(characterId: string, patch: statePatch): Promise<playState> {
+    return apiClient.patch(`/characters/${characterId}/state`, patch).then(response => response.data);
+}
+
+// What a rest did. A short rest's rolls are the Hit Point Dice the server rolled.
+export type restResult =
+    | { kind: 'long', hitDiceRecovered: number, healed: number }
+    // applied: false when the player chose to roll without healing.
+    | { kind: 'short', rolls: number[], conModifier: number, healed: number, applied: boolean }
+
+// resetMaxHp: drop a hand-set maximum. applyHealing (short, default true): heal by the roll.
+// hitDiceRecovery (long, default 'all'): all spent Hit Point Dice back (2024 rules) or half (2014).
+export type restRequest =
+    | { type: 'short', hitDice: number, applyHealing?: boolean, resetMaxHp?: boolean }
+    | { type: 'long', hitDiceRecovery?: 'all' | 'half', resetMaxHp?: boolean }
+
+// Takes a short rest (spending up to hitDice Hit Point Dice) or a long rest. Not shown in
+// advance like other changes: the server rolls the dice. Resolves with the new play state.
+export function takeRest(characterId: string, rest: restRequest):
+    Promise<{ state: playState, rest: restResult }> {
+    return apiClient.post(`/characters/${characterId}/rest`, rest).then(response => response.data);
+}
+
+// A character as its owner (or the admin), its GM or its party sees it.
+export interface characterSummary {
+    access: sheetAccess,
+    // The player the character belongs to.
+    owner: { name: string, username: string },
+    // The owner's private notes; null for anyone else.
+    notes: string | null,
+    // null for a character made before the sheet had a build.
+    stats: sheetStats | null,
+    state: playState,
+    features: sheetFeature[],
+    spells: sheetSpell[],
+    id: string,
+    name: string,
+    isActive: boolean,
+    status: characterStatus,
+    // Why the GM rejected it; null unless rejected with a reason.
+    reviewReason: string | null,
+    // Both null for a Character Sandbox character.
+    campaignId: string | null,
+    campaignName: string | null,
+    // Changes whenever the portrait does; null when there isn't one.
+    portraitVersion: string | null,
+    // What no longer fits its campaign's current settings. Fixed by editing it in the wizard;
+    // until then the character keeps everything as it was.
+    problems: draftError[],
+    // The character as the wizard edits it, and the ability rolls its scores came from.
+    draft: characterDraft,
+    rolls: abilityRoll[] | null,
+    level: number,
+    // null for a character made before it had ability scores.
+    abilities: Record<string, sheetAbility> | null,
+    scoreAdjustments: scoreAdjustment[],
+}
+
+export function getCharacter(id: string): Promise<characterSummary> {
+    return apiClient.get(`/characters/${id}`).then(response => response.data);
+}
+
+// Replaces the character's temporary ability score effects; returns the abilities with them applied.
+export function saveScoreAdjustments(characterId: string, adjustments: scoreAdjustment[]):
+    Promise<{ scoreAdjustments: scoreAdjustment[], abilities: Record<string, sheetAbility> | null }> {
+    return apiClient.put(`/characters/${characterId}/adjustments`, { adjustments }).then(response => response.data);
+}
+
+// The portrait's address. version (from portraitVersion) makes a replaced portrait a new
+// URL, so the browser can cache each one without showing an old picture.
+export function portraitUrl(characterId: string, version: string): string {
+    return `/api/characters/${characterId}/portrait?v=${encodeURIComponent(version)}`;
+}
+
+// Uploads an image already cropped and shrunk in the browser (see makePortrait). Resolves
+// with the new portraitVersion; rejects with the server's reason if it refuses the image.
+export function uploadPortrait(characterId: string, image: Blob): Promise<string> {
+    return apiClient.put(`/characters/${characterId}/portrait`, image, { headers: { 'Content-Type': image.type || 'application/octet-stream' } })
+        .then(response => response.data.portraitVersion);
+}
+
+export function deletePortrait(characterId: string): Promise<void> {
+    return apiClient.delete(`/characters/${characterId}/portrait`).then(() => undefined);
+}
+
+// Deletes the character and its portrait for good. confirm must be its name.
+export function deleteCharacter(characterId: string, confirm: string): Promise<void> {
+    return apiClient.delete(`/characters/${characterId}`, { data: { confirm } }).then(() => undefined);
+}

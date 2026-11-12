@@ -1,0 +1,210 @@
+/* ---- New character wizard: numbered steps, then the current step's form ---- */
+
+.wizard > .setting-caption {
+  display: block;
+  margin-top: 1rem;
+}
+
+.wizard > h1 {
+  margin-top: 0.3rem;
+}
+
+/* One bar across the page: six chevrons, each pointing into the next, with a progress bar
+   underneath. Each shows its number (a tick once done), an icon and its label. Done steps
+   are tinted, the current one is solid accent. */
+.wizard__progress {
+  margin: 0 0 2rem;
+}
+
+.wizard__steps {
+  --notch: 0.75rem;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-base);
+  color: var(--text);
+}
+
+/* Each grows from its own content's width, so longer labels (Abilities & HP) get more room. */
+.wizard__step {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--code-bg);
+  /* A chevron: notched on the left, pointed on the right. */
+  clip-path: polygon(0 0, calc(100% - var(--notch)) 0, 100% 50%, calc(100% - var(--notch)) 100%, 0 100%, var(--notch) 50%);
+  transition: background 150ms ease-out, color 150ms ease-out;
+}
+
+/* Neighbours overlap so each point sits in the next one's notch, with a thin gap between. */
+.wizard__step + .wizard__step {
+  margin-left: calc(var(--notch) * -1 + 3px);
+}
+
+.wizard__step:first-child {
+  clip-path: polygon(0 0, calc(100% - var(--notch)) 0, 100% 50%, calc(100% - var(--notch)) 100%, 0 100%);
+}
+
+.wizard__step:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, var(--notch) 50%);
+}
+
+.wizard__step-button {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem calc(var(--notch) + 0.4rem);
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.wizard__step-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+.wizard__step-button:disabled {
+  cursor: default;
+}
+
+.wizard__step:hover:has(.wizard__step-button:not(:disabled)) {
+  color: var(--accent);
+}
+
+.wizard__step-number {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: var(--fs-2xs);
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.step-icon {
+  flex-shrink: 0;
+}
+
+.wizard__step-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wizard__step--done {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.wizard__step--current {
+  color: var(--bg);
+  background: var(--accent);
+}
+
+.wizard__step--current:hover:has(.wizard__step-button:not(:disabled)) {
+  color: var(--bg);
+}
+
+/* The Campaign step when the campaign is already decided. */
+.wizard__step:has(.wizard__step-button:disabled) .wizard__step-button > * {
+  opacity: 0.45;
+}
+
+.wizard__progress-track {
+  height: 3px;
+  margin-top: 0.4rem;
+  background: var(--border);
+}
+
+.wizard__progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 250ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard__progress-fill,
+  .wizard__step {
+    transition: none;
+  }
+}
+
+/* Narrow screens: icons only, with the current step's label kept. */
+@media (max-width: 720px) {
+  .wizard__step-number,
+  .wizard__step-label {
+    display: none;
+  }
+
+  .wizard__step--current {
+    flex-grow: 2.5;
+  }
+
+  .wizard__step--current .wizard__step-label {
+    display: inline;
+  }
+}
+
+.wizard__form {
+  max-width: 560px;
+}
+
+/* Steps with a card (species) use the page's full width. */
+.wizard__form--wide {
+  max-width: none;
+}
+
+.wizard__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Campaign step: one radio row per campaign. */
+.wizard__choices {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.wizard__choices > legend {
+  padding: 0 0 0.5rem;
+}
+
+.wizard__choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.25rem;
+  font-size: var(--fs-md);
+  color: var(--text-h);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.wizard__choice:hover {
+  background: var(--code-bg);
+}
+
+.wizard__choice input {
+  accent-color: var(--accent);
+}
+
+.wizard__choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
