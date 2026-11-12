@@ -29,10 +29,10 @@
   flex: 1;
   min-width: 0;
   padding: 0.2rem 0.5rem;
-  font-family: var(--heading);
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -0.24px;
+  font-family: var(--sans);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-tight);
   color: var(--text-h);
   background: transparent;
   border: 1px solid var(--border);
@@ -45,7 +45,7 @@
 }
 
 .campaign-name__error {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--accent);
 }
 
@@ -74,7 +74,7 @@
   gap: 1rem;
   padding: 0.6rem 0.25rem;
   border-bottom: 1px solid var(--border);
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
@@ -130,7 +130,7 @@
 .class-cell .subclass-row {
   padding: 0.35rem 0;
   border-bottom: 0;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
 }
 
@@ -206,7 +206,7 @@
 .campaign-description__body {
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
@@ -228,7 +228,7 @@
 .tabs button {
   padding: 0.4rem 1rem;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
   background: transparent;
   border: 0;
@@ -249,7 +249,7 @@
   padding: 0.75rem 1rem;
   box-sizing: border-box;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
   background: transparent;
   border: 0;
@@ -282,8 +282,8 @@
 .markdown > :last-child { margin-bottom: 0; }
 .markdown p { margin: 0 0 0.75rem; }
 .markdown h1, .markdown h2, .markdown h3 {
-  font-size: 18px;
-  letter-spacing: normal;
+  font-size: var(--fs-lg);
+  letter-spacing: var(--ls-normal);
   margin: 1rem 0 0.5rem;
 }
 .markdown ul, .markdown ol { margin: 0 0 0.75rem; padding-left: 1.5rem; }
@@ -309,7 +309,7 @@
 
 .tabs--small button {
   padding: 0.15rem 0.6rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* ---- View mode: read-only cells in the shared-line grid ---- */
@@ -321,17 +321,17 @@
   padding: 0.6rem 0.75rem;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
 .view-cell__sub {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
 .setting-error {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--accent);
 }
 
@@ -341,7 +341,7 @@
   padding: 0.75rem 1rem;
   border: 1px solid var(--accent);
   border-left-width: 3px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
 }
 
@@ -383,7 +383,7 @@
 .setting-section--compact .setting-row,
 .setting-section--compact .view-cell {
   padding: 0.35rem 0.6rem;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 /* Keep each compact row one line tall; a name too long for its cell ends in "…". */
@@ -419,7 +419,7 @@
 }
 
 .setting-hint {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
@@ -431,7 +431,7 @@
 .rules-select {
   padding: 0.2rem 0.4rem;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
   background: var(--bg);
   border: 1px solid var(--border);
@@ -452,7 +452,7 @@
 .segmented button {
   padding: 0.2rem 0.7rem;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
   background: transparent;
   border: 1px solid var(--border);
@@ -492,7 +492,7 @@
   max-width: 320px;
   padding: 0.3rem 0.5rem;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
   background: transparent;
   border: 1px solid var(--border);
@@ -519,7 +519,7 @@
 
 .spell-level__bulk .setting-button {
   padding: 0.1rem 0.5rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* View mode: one line per level. */
@@ -528,7 +528,7 @@
   gap: 1rem;
   padding: 0.4rem 0;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .spell-level-summary__name {
@@ -554,7 +554,7 @@
 
 .spell-filter button {
   padding: 0.15rem 0.5rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* Class tags under a spell's name: tiny outlined abbreviations. */
@@ -572,8 +572,8 @@
 .spell-tag {
   padding: 0 0.3rem;
   font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-normal);
   color: var(--text);
   border: 1px solid var(--border);
 }
@@ -622,7 +622,7 @@
 }
 
 .invite__status {
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
@@ -639,7 +639,7 @@
   min-width: 0;
   padding: 0.2rem 0.4rem;
   font: inherit;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-h);
   background: transparent;
   border: 1px solid var(--border);
@@ -697,7 +697,7 @@
 }
 
 .member__name {
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 

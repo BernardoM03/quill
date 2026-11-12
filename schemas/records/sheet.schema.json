@@ -77,7 +77,7 @@
       "additionalProperties": false
     },
     "play": {
-      "description": "What changes at the table. Each field is optional, missing meaning its empty state, so adding a field needs no migration. Planned: xp, current and temporary hit points, spent hit dice, death saves, conditions, inventory and coins, spell slots, limited-use features.",
+      "description": "What changes at the table. Each field is optional, missing meaning its empty state, so adding a field needs no migration. Hit points through death saves are changed field by field with PATCH /characters/<id>/state (server/rules/state.py). Planned: xp, inventory and coins, limited-use features.",
       "type": "object",
       "properties": {
         "scoreAdjustments": {
@@ -85,6 +85,58 @@
           "type": "array",
           "items": { "$ref": "#/$defs/scoreAdjustment" },
           "maxItems": 20
+        },
+        "currentHp": {
+          "description": "Hit points now. Missing: at the maximum. Kept within 0 and the maximum when read.",
+          "type": "integer", "minimum": 0, "maximum": 999
+        },
+        "maxHpOverride": {
+          "description": "A maximum set by hand (a GM's ruling, an effect), used instead of the worked-out one. Missing or null: worked out.",
+          "type": ["integer", "null"], "minimum": 1, "maximum": 999
+        },
+        "tempHp": {
+          "description": "Temporary hit points.",
+          "type": "integer", "minimum": 0, "maximum": 999
+        },
+        "spentSlots": {
+          "description": "Spell slots used, by slot level (\"1\"-\"9\"). A missing level: none used.",
+          "type": "object",
+          "patternProperties": { "^[1-9]$": { "type": "integer", "minimum": 0, "maximum": 9 } },
+          "additionalProperties": false
+        },
+        "spentPactSlots": {
+          "description": "Pact Magic slots used.",
+          "type": "integer", "minimum": 0, "maximum": 9
+        },
+        "conditions": {
+          "description": "Conditions on the character now, as pack condition ids. Exhaustion is counted in exhaustion instead.",
+          "type": "array",
+          "items": { "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId" },
+          "uniqueItems": true,
+          "maxItems": 30
+        },
+        "exhaustion": {
+          "description": "Exhaustion level, 0-6.",
+          "type": "integer", "minimum": 0, "maximum": 6
+        },
+        "spentHitDice": {
+          "description": "Hit Point Dice spent; at most the character's level.",
+          "type": "integer", "minimum": 0, "maximum": 20
+        },
+        "featureUses": {
+          "description": "Uses spent of each limited-use feature (Rage, Second Wind, Lay On Hands), by feature id. A missing feature: none spent. Rests recover them (server/rules/state.py rest_changes).",
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 999 }
+        },
+        "deathSaves": {
+          "description": "Death saving throws rolled since the character last dropped to 0 hit points.",
+          "type": "object",
+          "properties": {
+            "successes": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "failures": { "type": "integer", "minimum": 0, "maximum": 3 }
+          },
+          "required": ["successes", "failures"],
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

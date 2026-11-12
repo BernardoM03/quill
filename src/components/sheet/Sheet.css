@@ -1,0 +1,1938 @@
+/* ---- Character sheet (CharacterSheet.tsx), after the Figma outline "Character Sheet" ----
+   Desktop: one grid of five columns, the outline's proportions:
+     [ saves/senses/training | skills ] [ prof | speed | hit points ]
+   with the ability scores across the first two in the top row, and initiative, armor class
+   and conditions, then the details panel, under the right three. Narrow screens stack it
+   in play order: hit points, the small stats, conditions, abilities, details, then the rest. */
+
+.sheet {
+  /* Kept tight so ability scores through skills fit a laptop screen (about 650px). */
+  --sheet-gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheet-gap);
+  margin: 1rem 0 1.5rem;
+  /* The side panel is placed against the sheet. */
+  position: relative;
+}
+
+/* Every box: a hairline-bordered panel, square like the rest of the app, with a caption for
+   a title (the same type as .setting-caption on the other pages). */
+.sheet-box {
+  min-width: 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--bg);
+}
+
+.sheet-box__title {
+  margin: 0 0 0.25rem;
+  font-family: var(--sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  line-height: var(--lh-snug);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* A rules word that opens its definition beside the sheet (SheetTerm): it looks like the text
+   it's in until hovered, and stays in the accent while its definition is open. */
+.sheet-term {
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.sheet-term:hover,
+.sheet-term:focus-visible,
+.sheet-term--on {
+  color: var(--accent);
+  outline: none;
+}
+
+.sheet-term:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sheet-box__note {
+  margin: 0.25rem 0 0.5rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+/* Header: portrait, name, who the character is. */
+
+/* Two halves like the body: portrait and name in one box, Character Info in the other. */
+.sheet-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--sheet-gap);
+}
+
+.sheet-header__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem;
+}
+
+/* A square as tall as the box with the portrait centred in it, so the space left of the
+   portrait matches the space above and below however tall Character Info makes the box. */
+.sheet-header__portrait {
+  align-self: stretch;
+  aspect-ratio: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The owner's portrait is a button: hovering or focusing shows what clicking does. */
+.sheet-portrait {
+  position: relative;
+}
+
+.sheet-portrait__button {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.sheet-portrait__button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sheet-portrait__hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.sheet-portrait__button:hover .sheet-portrait__hint,
+.sheet-portrait__button:focus-visible .sheet-portrait__hint {
+  opacity: 1;
+}
+
+.sheet-portrait__menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 10rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.sheet-portrait__menu button {
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-base);
+  text-align: left;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.sheet-portrait__menu button:hover,
+.sheet-portrait__menu button:focus-visible {
+  background: var(--accent-bg);
+  outline: none;
+}
+
+.sheet-portrait__menu .sheet-portrait__remove {
+  color: var(--danger);
+}
+
+.sheet-header__name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sheet-header__name h1 {
+  margin: 0;
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-tight);
+  overflow-wrap: anywhere;
+}
+
+.sheet-header__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+/* Campaign and its badges under the name. */
+.sheet-header__campaign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+  font-size: var(--fs-base);
+}
+
+.sheet-header__campaign a {
+  color: inherit;
+}
+
+.sheet-header__campaign a:hover {
+  color: var(--accent);
+}
+
+/* Character Info: two rows of three cells, each a small label over its value, divided by
+   hairlines. */
+.sheet-header__info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sheet-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.1rem;
+  min-width: 0;
+  padding: 0.25rem 0.6rem;
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+.sheet-info:nth-child(3n + 1) {
+  border-left: none;
+}
+
+.sheet-info:nth-child(-n + 3) {
+  border-top: none;
+}
+
+.sheet-info dt {
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sheet-info dd {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-snug);
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+
+.sheet-info a {
+  color: inherit;
+}
+
+.sheet-info a:hover {
+  color: var(--accent);
+}
+
+.sheet-badge {
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--fs-xs);
+  color: var(--accent);
+}
+
+.sheet-badge--warning {
+  border-color: var(--danger);
+  background: transparent;
+  color: var(--danger);
+}
+
+/* The body grid. */
+
+/* Two equal halves. The right half's stat boxes (.sheet-top) span the first two rows, so
+   the left half's saves and skills start beside initiative, as in the outline. */
+.sheet-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "abilities top"
+    "left      top"
+    "left      details";
+  grid-template-rows: auto auto 1fr;
+  gap: var(--sheet-gap);
+  align-items: start;
+}
+
+/* Right half, top: a slim row of Short Rest and Long Rest buttons over proficiency and
+   speed, with hit points beside both; then initiative, armor class and conditions. The
+   party has no rest buttons, so hit points just sit beside proficiency and speed. */
+.sheet-top {
+  grid-area: top;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2.6fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "shortrest   longrest hp"
+    "proficiency speed    hp"
+    "initiative  armor    conditions";
+  gap: var(--sheet-gap);
+  align-self: stretch;
+}
+
+.sheet-top--no-rest {
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "proficiency speed hp"
+    "initiative  armor conditions";
+}
+
+.sheet-rest-button--short { grid-area: shortrest; }
+.sheet-rest-button--long { grid-area: longrest; }
+
+.sheet-box--proficiency { grid-area: proficiency; }
+.sheet-box--speed { grid-area: speed; }
+.sheet-box--initiative { grid-area: initiative; }
+.sheet-box--armor { grid-area: armor; }
+.sheet-box--hp { grid-area: hp; }
+.sheet-box--conditions { grid-area: conditions; }
+.sheet-box--details { grid-area: details; align-self: stretch; }
+.sheet-box--abilities { grid-area: abilities; }
+
+.sheet-box--proficiency,
+.sheet-box--speed,
+.sheet-box--initiative,
+.sheet-box--armor,
+.sheet-box--hp,
+.sheet-box--conditions {
+  align-self: stretch;
+}
+
+/* Left half: saves, senses and training stacked, skills beside them. */
+.sheet-left {
+  grid-area: left;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sheet-gap);
+  align-items: stretch;
+}
+
+.sheet-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheet-gap);
+}
+
+.sheet-stack > .sheet-box--training {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .sheet-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "top" "abilities" "details" "left";
+    grid-template-rows: none;
+  }
+
+  .sheet-header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .sheet-top {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-template-areas:
+      "shortrest   shortrest longrest   longrest"
+      "hp          hp    hp         hp"
+      "proficiency speed initiative armor"
+      "conditions  conditions conditions conditions";
+  }
+
+  .sheet-top--no-rest {
+    grid-template-areas:
+      "hp          hp    hp         hp"
+      "proficiency speed initiative armor"
+      "conditions  conditions conditions conditions";
+  }
+
+  .sheet-header__name h1 {
+    font-size: var(--fs-2xl);
+  }
+
+  .sheet-left {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* One big number: proficiency, speed, initiative, armor class. */
+
+.sheet-box--stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.3rem;
+  text-align: center;
+}
+
+.sheet-box--stat .sheet-box__title {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+}
+
+.sheet-stat-box__value {
+  font-family: var(--sans);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.sheet-stat-box__value sup {
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+/* Ability score boxes (AbilityScores.tsx) take the sheet's box look. */
+.sheet-abilities .sheet-ability {
+  justify-content: center;
+  border-radius: 0;
+  padding: 0.35rem 0.25rem;
+}
+
+.sheet-ability__name abbr {
+  text-decoration: none;
+}
+
+/* Saves and skills. */
+
+.sheet-stat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-base);
+}
+
+.sheet-stat-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.05rem 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-stat-list li:last-child {
+  border-bottom: none;
+}
+
+.sheet-stat__dot {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 1px solid var(--text);
+  border-radius: 50%;
+}
+
+.sheet-stat--proficient .sheet-stat__dot {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.sheet-stat--proficient {
+  color: var(--text-h);
+}
+
+.sheet-stat__value {
+  min-width: 2rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.sheet-stat-list .muted {
+  font-size: var(--fs-2xs);
+}
+
+/* Senses: label and value pairs. */
+
+.sheet-pairs {
+  margin: 0;
+  font-size: var(--fs-base);
+}
+
+.sheet-pairs div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.05rem 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-pairs div:last-child {
+  border-bottom: none;
+}
+
+.sheet-pairs dt {
+  color: var(--text);
+}
+
+.sheet-pairs dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-h);
+}
+
+/* Proficiencies & Training. */
+
+/* One line per group: "Armor  Light armor, Shields". */
+.sheet-training {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.05rem 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  /* The same grey as a skill the character isn't proficient in: a list to read, not a stat. */
+  color: var(--text);
+}
+
+/* The group's name, the size of a Senses label; the weight alone sets it apart from its list. */
+.sheet-training__label {
+  font-weight: var(--fw-medium);
+}
+
+/* Hit points: heal / amount / damage on the left, then current / max and temp, the title
+   beneath the numbers. */
+
+/* The same padding on every side: Heal and Damage sit as far from the top and bottom edges
+   as the column does from the left one. */
+.sheet-box--hp {
+  display: flex;
+  align-items: stretch;
+  padding: 0.55rem;
+}
+
+.sheet-hp {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Heal at the top, Damage at the bottom, the amount between them filling the rest. */
+.sheet-hp__adjust {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.3rem;
+  width: 3.9rem;
+  flex: none;
+}
+
+.sheet-hp__heal,
+.sheet-hp__damage {
+  padding: 0 0.25rem;
+  line-height: var(--lh-normal);
+  font: inherit;
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.sheet-hp__heal { color: var(--success); }
+.sheet-hp__damage { color: var(--danger); }
+
+.sheet-hp__heal:hover:not(:disabled) { background: color-mix(in srgb, var(--success) 10%, transparent); }
+.sheet-hp__damage:hover:not(:disabled) { background: color-mix(in srgb, var(--danger) 10%, transparent); }
+
+.sheet-hp__heal:disabled,
+.sheet-hp__damage:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.sheet-hp__amount {
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: 0 0.3rem;
+  font: inherit;
+  font-size: var(--fs-md);
+  text-align: center;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.sheet-hp__amount:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Current / Max  Temp in a row, "Hit Points" centred under Current and Max. */
+.sheet-hp__numbers {
+  flex: 1;
+  display: grid;
+  /* "Hit Points" across the top, centred; Current / Max and Temp beneath. */
+  grid-template-columns: auto auto auto auto;
+  grid-template-areas:
+    "title   title title title"
+    "current slash max   temp";
+  align-items: end;
+  align-content: center;
+  justify-content: center;
+  column-gap: 0.25rem;
+  row-gap: 0.2rem;
+  min-width: 0;
+}
+
+.sheet-hp__numbers > .sheet-hp__part:nth-of-type(1) { grid-area: current; }
+.sheet-hp__numbers > .sheet-hp__part:nth-of-type(2) { grid-area: max; }
+/* Temp to the right of Max, a little apart. */
+.sheet-hp__part--temp { grid-area: temp; margin-left: 0.25rem; }
+.sheet-hp__slash { grid-area: slash; }
+
+.sheet-hp__part {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.sheet-hp__label {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sheet-hp__slash {
+  padding-bottom: 0.15rem;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  color: var(--text);
+}
+
+.sheet-hp__title {
+  grid-area: title;
+  align-self: center;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--text-h);
+  margin-bottom: 0.15rem;
+}
+
+/* A number that's only shown. The padding and (invisible) border are .sheet-hp__input's, so
+   its digits sit on the same line as a typed-over number beside it. */
+.sheet-hp__value {
+  padding: 0.05rem 0.3rem;
+  font-family: var(--sans);
+  font-size: var(--fs-2xl);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-snug);
+  color: var(--text-h);
+  border: 1px solid transparent;
+}
+
+/* A number typed over in place (NumberField in SheetPlay.tsx). */
+.sheet-number {
+  box-sizing: border-box;
+  width: 3.5rem;
+  padding: 0.15rem 0.3rem;
+  font: inherit;
+  font-size: var(--fs-md);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+/* No spinner arrows: they take the room the digits need. Typing and arrow keys still work. */
+.sheet-number,
+.sheet-hp__amount {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.sheet-number::-webkit-inner-spin-button,
+.sheet-number::-webkit-outer-spin-button,
+.sheet-hp__amount::-webkit-inner-spin-button,
+.sheet-hp__amount::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.sheet-number:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* The big numbers: current boxed like an input, max and temp plain until focused. */
+/* Sized for three digits. */
+.sheet-hp__input {
+  width: calc(3ch + 0.6rem);
+  padding: 0.05rem 0.3rem;
+  font-family: var(--sans);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+}
+
+.sheet-hp__input--plain {
+  border-color: transparent;
+}
+
+.sheet-hp__input--plain:hover {
+  border-color: var(--border);
+}
+
+.sheet-hp__input--temp {
+  font-size: var(--fs-md);
+}
+
+@media (max-width: 380px) {
+  .sheet-hp {
+    flex-direction: column;
+  }
+
+  .sheet-hp__adjust {
+    flex-direction: row;
+    width: auto;
+  }
+}
+
+/* Conditions. */
+
+.sheet-conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.sheet-condition {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 0;
+  background: var(--accent-bg);
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+}
+
+.sheet-condition__remove {
+  padding: 0 0.1rem;
+  border: none;
+  background: none;
+  font: inherit;
+  line-height: var(--lh-none);
+  color: inherit;
+  cursor: pointer;
+}
+
+.sheet-conditions__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.4rem;
+}
+
+.sheet-select {
+  padding: 0.15rem 0.3rem;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.sheet-exhaustion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-sm);
+}
+
+.sheet-exhaustion .sheet-number {
+  width: 2.8rem;
+  font-size: var(--fs-base);
+}
+
+/* Details panel: trackers and temporary effects. */
+
+.sheet-trackers {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-tracker:first-child {
+  padding-top: 0.2rem;
+}
+
+.sheet-box--details > .sheet-tracker:last-of-type {
+  border-bottom: none;
+}
+
+.sheet-tracker__title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-h);
+}
+
+.sheet-tracker__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+}
+
+.sheet-tracker__name {
+  min-width: 6rem;
+  font-size: var(--fs-sm);
+}
+
+/* Rest buttons in the header, and the rest dialogs (RestDialogs.tsx). */
+
+/* The slim Short Rest / Long Rest boxes above proficiency and speed. */
+.sheet-rest-button {
+  padding: 0.3rem 0.25rem;
+  font: inherit;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.sheet-rest-button:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.sheet-rest-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.rest-dialog {
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.rest-dialog__body p {
+  margin: 0 0 0.75rem;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+.rest-dialog__heading {
+  margin: 1rem 0 0.5rem;
+  font-family: var(--sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.rest-dialog__aside {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-normal);
+  text-transform: none;
+  color: var(--text);
+}
+
+.rest-dialog__check,
+.rest-dialog__radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.35rem 0;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.rest-dialog__check input,
+.rest-dialog__radio input {
+  margin-top: 0.2rem;
+  accent-color: var(--accent);
+}
+
+.rest-dialog__check:has(input:disabled) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.rest-dialog__radio .rest-dialog__aside {
+  display: block;
+}
+
+.rest-dialog__recover {
+  color: var(--text-h);
+}
+
+.rest-dialog__dice {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+}
+
+.rest-dialog__die {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.rest-dialog__die--spent {
+  opacity: 0.35;
+  background: repeating-linear-gradient(45deg, transparent 0 3px, var(--border) 3px 5px);
+}
+
+.rest-dialog__rules {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.rest-dialog__rules p {
+  font-size: var(--fs-sm);
+}
+
+.rest-dialog__rules strong {
+  color: var(--text-h);
+}
+
+.rest-dialog__result {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--accent-bg);
+  font-size: var(--fs-base);
+  color: var(--text-h);
+}
+
+.sheet-pips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.sheet-pip {
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 1px solid var(--text);
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sheet-pip:disabled {
+  cursor: default;
+}
+
+.sheet-pip--filled {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.sheet-pip--good.sheet-pip--filled {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.sheet-pip--danger.sheet-pip--filled {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Rest dialog title row, with the × to close it. */
+.rest-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rest-dialog__close {
+  margin: -0.25rem -0.5rem 0 0;
+  padding: 0 0.4rem;
+  font: inherit;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.rest-dialog__close:hover,
+.rest-dialog__close:focus-visible {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  outline: none;
+}
+
+/* Cancel on the left of the dialog's button row, Reset and Take Rest on the right. */
+.rest-dialog__cancel {
+  margin-right: auto;
+}
+
+/* The ability a skill uses, in its own column between the dot and the bonus. */
+.sheet-stat__ability {
+  flex: none;
+  width: 2.1rem;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-decoration: none;
+  color: var(--text);
+}
+
+/* Speed box: quiet chevrons pinned to its left and right edges, full height so they're easy
+   to hit, styled like the character wizard's card arrows (PickCard.css .pick-card-row__arrow):
+   no box, only the chevron, which brightens on hover. */
+.sheet-speed {
+  position: relative;
+  padding-inline: 1.4rem;
+}
+
+.sheet-speed .sheet-stat-box__value {
+  font-size: var(--fs-xl);
+}
+
+.sheet-speed__arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  padding: 0 0 0.15em;  /* the glyph sits low in its line; lift it to the optical centre */
+  font: inherit;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-none);
+  color: var(--text);
+  opacity: 0.55;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease-out, color 120ms ease-out;
+}
+
+.sheet-speed__arrow--prev { left: 0; }
+.sheet-speed__arrow--next { right: 0; }
+
+.sheet-speed__arrow:hover {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.sheet-speed__arrow:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -2px;
+  opacity: 1;
+}
+
+.sheet-speed__none {
+  color: var(--text);
+}
+
+/* "Swimming Speed" and the rest need to fit the narrow box. */
+.sheet-speed .sheet-box__title {
+  white-space: nowrap;
+  font-size: var(--fs-micro);
+}
+
+/* ---- Defenses / Conditions box: two halves, a hairline between ---- */
+
+.sheet-defenses {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+
+.sheet-defenses__half {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.5rem 0.65rem;
+}
+
+.sheet-defenses__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+}
+
+.sheet-defenses__list li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sheet-defenses__list sup {
+  /* Tucked against the name: it's a row item of its own, so it would get the row's gap. */
+  margin-left: -0.3rem;
+  cursor: help;
+  color: var(--text);
+}
+
+/* R(esistance) / I(mmunity) badges. */
+.sheet-defenses__tag {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0;
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-semibold);
+  color: var(--bg);
+}
+
+/* The tag is a rules word: hover, focus or tap it for what Resistance or Immunity does. */
+.sheet-defenses__tag[data-term] { cursor: help; }
+.sheet-defenses__tag[data-term]:focus-visible { outline: 1px solid var(--text-h); outline-offset: 1px; }
+
+.sheet-defenses__tag--R { background: var(--success); }
+.sheet-defenses__tag--I { background: var(--accent); }
+
+.sheet-defenses__empty {
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+/* The conditions half is the button that opens the dialog. */
+.sheet-defenses__conditions {
+  border: none;
+  border-left: 1px solid var(--border);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sheet-defenses__conditions:hover {
+  background: var(--accent-bg);
+}
+
+.sheet-defenses__conditions:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.sheet-defenses__active {
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+}
+
+/* ---- Conditions dialog: one switch per condition, rules text under a chevron ---- */
+
+.conditions-dialog__list {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conditions-dialog__item {
+  border-bottom: 1px solid var(--border);
+}
+
+.conditions-dialog__row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.conditions-dialog__toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.4rem;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+}
+
+.conditions-dialog__exhaustion {
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.conditions-dialog__name {
+  flex: 1;
+  padding: 0.5rem 0.4rem;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+}
+
+.conditions-dialog__level {
+  font-size: var(--fs-sm);
+}
+
+.conditions-dialog__levels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0 0.6rem;
+}
+
+.conditions-dialog__level-button {
+  min-width: 2.2rem;
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.conditions-dialog__level-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.conditions-dialog__level-button--on {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.conditions-dialog__level-button:disabled {
+  cursor: default;
+}
+
+/* A stat box's number sits in the middle of whatever height the row gives it. */
+.sheet-box--stat .sheet-stat-box__value {
+  margin-block: auto;
+}
+
+/* The left half's lists share one roomy row: saving throws, senses and proficiencies
+   beside the skills, so the stack fills the height the skills take. Ability scores through
+   skills is about 700px this way: whole on a 1080p screen. */
+.sheet-left .sheet-stat-list li,
+.sheet-left .sheet-pairs div,
+.sheet-left .sheet-training {
+  padding: 0.3rem 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+.sheet-left .sheet-training {
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-left .sheet-training:last-child {
+  border-bottom: none;
+}
+
+/* Each box in the stack grows to share any height left over, so the stack and the skills
+   end level. */
+.sheet-stack > .sheet-box {
+  flex: 1 1 auto;
+}
+
+/* ---- Side panel (SidePanel.tsx): rests, conditions and rules text beside the sheet ----
+   The panel is as tall as the sheet: its top level with the header (portrait and name), its
+   bottom with the last row (skills and details). Longer content scrolls inside it.
+   The page (#root, index.css) is 1126px wide and centred. With room beside it (1080p and
+   wider), the panel stands in the empty space to the sheet's right, so the whole sheet stays
+   in view; with less room it covers the sheet's right edge instead. */
+.side-panel {
+  --side-panel-width: min(380px, 100%);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  width: var(--side-panel-width);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem 1.25rem;
+  color: var(--text);
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: 0;
+  animation: side-panel-in 160ms ease-out;
+}
+
+.side-panel:focus {
+  outline: none;
+}
+
+@media (min-width: 1820px) {
+  .side-panel {
+    --side-panel-width: min(380px, calc((100vw - 1126px) / 2 - 2rem));
+    right: auto;
+    /* Past the page's own padding and border, then a gap. */
+    left: calc(100% + 3rem);
+    animation-name: side-panel-fade;
+  }
+}
+
+/* Stacked, the sheet is several screens tall, so a panel its height would open out of view:
+   there it stays on screen instead, over the page's right edge. */
+@media (max-width: 900px) {
+  .side-panel {
+    --side-panel-width: min(380px, calc(100vw - 2rem));
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    bottom: auto;
+    max-height: calc(100vh - 2rem);
+  }
+}
+
+@keyframes side-panel-in {
+  from { transform: translateX(1.5rem); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes side-panel-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-panel { animation: none; }
+}
+
+/* ---- Saving throws: two columns of three ---- */
+
+.sheet-saves {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 0.35rem 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-save {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  font-size: var(--fs-base);
+}
+
+.sheet-save__ability {
+  flex: 1;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.sheet-stat--proficient .sheet-save__ability {
+  color: var(--text-h);
+}
+
+.sheet-save__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-h);
+}
+
+/* ---- Skills: ability and bonus close together, room before the name ---- */
+
+.sheet-box--skills .sheet-stat-list li {
+  gap: 0.3rem;
+}
+
+.sheet-box--skills .sheet-stat__ability {
+  width: 1.9rem;
+}
+
+.sheet-box--skills .sheet-stat__value {
+  min-width: 1.6rem;
+  margin-right: 0.45rem;
+}
+
+/* ---- Fixed layout (wider than 900px) ----
+   Every box has a set size, whatever is in it; anything longer scrolls inside its box.
+   Rows: ability scores, then initiative / armor class / defenses and conditions, then the
+   body (details on the right; the left half's saves, senses, training and skills run down
+   the last two). The header is a set height too. */
+@media (min-width: 901px) {
+  .sheet {
+    --row-abilities: 6.25rem;
+    /* Initiative, Armor Class, Defenses and Conditions: kept short. Whatever this row
+       loses, the body row gains, so the left half's saves and skills keep their height. */
+    --row-defenses: 4.75rem;
+    --row-body: 32rem;
+    --row-rest: 2.1rem;
+  }
+
+  .sheet-header {
+    height: 6.25rem;
+  }
+
+  .sheet-header > .sheet-box {
+    overflow: hidden;
+  }
+
+  .sheet-grid {
+    grid-template-rows: var(--row-abilities) var(--row-defenses) var(--row-body);
+    align-items: stretch;
+  }
+
+  .sheet-abilities,
+  .sheet-abilities .sheet-ability {
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .sheet-top {
+    grid-template-rows: var(--row-rest) minmax(0, 1fr) var(--row-defenses);
+  }
+
+  .sheet-top--no-rest {
+    grid-template-rows: var(--row-abilities) var(--row-defenses);
+  }
+
+  .sheet-top > * {
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  /* Defenses and conditions never scroll: each half shows two items, then "+N more". */
+  .sheet-defenses {
+    height: 100%;
+  }
+
+  .sheet-defenses__half {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .sheet-box--details {
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  /* Left half: the stack and the skills both fill rows two and three exactly. */
+  .sheet-left {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .sheet-stack {
+    min-height: 0;
+  }
+
+  .sheet-stack > .sheet-box {
+    box-sizing: border-box;
+    min-height: 0;
+  }
+
+  .sheet-stack > .sheet-box--saves {
+    flex: 0 0 9rem;
+  }
+
+  .sheet-stack > .sheet-box--senses {
+    flex: 0 0 auto;
+  }
+
+  /* Proficiencies & Training gets whatever's left, and scrolls past that. */
+  .sheet-stack > .sheet-box--training {
+    flex: 1 1 0;
+    overflow-y: auto;
+  }
+
+  /* Skills: the 18 rows share the box's height evenly. */
+  .sheet-box--skills {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    box-sizing: border-box;
+  }
+
+  .sheet-box--skills .sheet-stat-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .sheet-box--skills .sheet-stat-list li {
+    flex: 1 0 auto;
+    padding-block: 0.1rem;
+  }
+}
+
+/* ---- Details panel (DetailsPanel.tsx): tabs over a scrolling body ---- */
+
+.details {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-height: 18rem;
+}
+
+@media (min-width: 901px) {
+  /* The tab bar stays put; only the tab's content scrolls. */
+  .sheet-box--details.details {
+    overflow: hidden;
+  }
+}
+
+/* All seven tabs on one line, spread evenly across the panel; never wrapped, never scrolled. */
+.details-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.details-tab {
+  flex: none;
+  padding: 0.25rem 0 0.4rem;
+  font: inherit;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.details-tab:hover {
+  color: var(--text-h);
+}
+
+.details-tab--on {
+  color: var(--text-h);
+  border-bottom-color: var(--accent);
+}
+
+.details-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.details-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.85rem 1rem 1rem;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+.details-error {
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Filter chips: All, Action, Bonus Action, ... */
+.details-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.details-chip {
+  padding: 0.15rem 0.55rem;
+  font: inherit;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.details-chip:hover {
+  color: var(--text-h);
+}
+
+.details-chip--on {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.details-section {
+  margin-bottom: 1.4rem;
+}
+
+.details-section__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.3rem;
+  font-family: var(--sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.details-section__aside {
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-normal);
+  text-transform: none;
+  color: var(--text);
+}
+
+.details-empty {
+  margin: 0.25rem 0;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.details-empty--center {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+/* Tables: attacks and spells. */
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.details-table th {
+  padding: 0 0.4rem 0.25rem 0;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.details-table td {
+  padding: 0.55rem 0.5rem 0.55rem 0;
+  vertical-align: top;
+  color: var(--text-h);
+  border-top: 1px solid var(--border);
+}
+
+.details-table__sub {
+  display: block;
+  font-size: var(--fs-2xs);
+  color: var(--text);
+}
+
+.details-table__num {
+  font-variant-numeric: tabular-nums;
+}
+
+.details-combat {
+  margin: 0;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--accent);
+  color: var(--text-h);
+}
+
+/* Features: name (opens the text beside the sheet), where it's from, uses. */
+.details-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.details-feature {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.details-feature:last-child {
+  border-bottom: none;
+}
+
+.details-feature__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.details-feature__name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0;
+  font: inherit;
+  font-weight: var(--fw-semibold);
+  text-align: left;
+  color: var(--text-h);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.details-feature__name:hover,
+.details-feature__name--on {
+  color: var(--accent);
+}
+
+.details-feature__meta {
+  font-size: var(--fs-2xs);
+  color: var(--text);
+}
+
+/* A feature's or spell's rules text, in the panel beside the sheet (InfoPanel). */
+.info-panel__meta {
+  margin: 0.15rem 0 0.75rem;
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+.details-uses {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.75rem;
+  margin: 0.3rem 0 0 0.95rem;
+}
+
+.details-uses__pool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-h);
+}
+
+.details-uses__recharge {
+  font-size: var(--fs-2xs);
+  color: var(--text);
+}
+
+.details-death {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  font-size: var(--fs-sm);
+}
+
+.details-death > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Spells. */
+.details-casting {
+  margin: 0 0 0.6rem;
+  font-size: var(--fs-sm);
+}
+
+.details-casting strong {
+  color: var(--text-h);
+}
+
+.details-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.details-slots__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.details-slots__level {
+  min-width: 4.5rem;
+  font-size: var(--fs-sm);
+}
+
+/* Background: characteristics grid and the character's own writing. */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 0.6rem;
+}
+
+.details-grid dt {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.details-grid dd {
+  margin: 0;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.details-sub {
+  margin-top: 0.5rem;
+}
+
+.details-sub h4 {
+  margin: 0 0 0.15rem;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-h);
+}
+
+.details-writing {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--text-h);
+}
+
+/* "+N more" in the Defenses / Conditions box: opens the full list beside the sheet. */
+.sheet-defenses__more {
+  padding: 0;
+  font: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sheet-defenses__more:hover {
+  text-decoration: underline;
+}
+
+/* Active conditions, one per line like the defenses. */
+.sheet-defenses__active {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.defenses-panel__list {
+  font-size: var(--fs-base);
+  gap: 0.35rem;
+}
+
+/* Current, Max and Temp: every column the same height, its label pinned to the top and its
+   number to the bottom, so the three labels sit on one line and the numbers on another even
+   though Temp's number is smaller. */
+.sheet-hp__numbers {
+  align-items: stretch;
+}
+
+.sheet-hp__numbers > .sheet-hp__part {
+  justify-content: space-between;
+}
+
+.sheet-hp__slash,
+.sheet-hp__title {
+  align-self: end;
+}

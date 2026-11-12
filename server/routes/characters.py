@@ -1,4 +1,5 @@
 import json
+import secrets
 import uuid
 
 from flask import Blueprint, Response, g, jsonify, request
@@ -19,6 +20,10 @@ from server.rules.scores import apply_adjustments, clean_adjustments
 from server.rules.classes import class_summary
 from server.rules.settings import MAX_LEVEL, with_rule_defaults
 from server.rules.details import clean_answers, clean_details
+from server.rules import packs
+from server.rules.state import (
+    clean_state_patch, play_state, rest_changes, sheet_features, sheet_spells, sheet_stats, state_limits,
+)
 
 bp = Blueprint('characters', __name__)
 
@@ -281,12 +286,54 @@ def own_character(conn, character_id):
         return None
     return row
 
+# Who may see a character's sheet, and how: (row, access), or (None, None) for anyone else.
+# 'owner': its owner or the admin, who can do everything. 'gm': its campaign's GM, who can
+# change its play state. 'party': another member of its campaign, who sees an approved
+# character read-only, without its notes.
+def sheet_access(conn, character_id):
+    row = conn.execute(
+        'SELECT ch.*, c.name AS campaign_name, p.updated_at AS portrait_version, m.role AS viewer_role, '
+        'u.display_name AS owner_name, u.username AS owner_username '
+        'FROM characters ch JOIN users u ON u.id = ch.owner_id '
+        'LEFT JOIN campaigns c ON c.id = ch.campaign_id '
+        'LEFT JOIN character_portraits p ON p.character_id = ch.id '
+        'LEFT JOIN memberships m ON m.campaign_id = ch.campaign_id AND m.user_id = ? '
+        'WHERE ch.id = ? AND ch.deleted_at IS NULL',
+        (g.user['id'], character_id),
+    ).fetchone()
+    if row is None:
+        return None, None
+    if row['owner_id'] == g.user['id'] or g.user['is_admin']:
+        return row, 'owner'
+    if row['viewer_role'] == 'gm':
+        return row, 'gm'
+    if row['viewer_role'] == 'player' and row['status'] == 'approved':
+        return row, 'party'
+    return None, None
+
+# The sheet's play state, and the limits it's checked against, for a character whose
+# check_character result is given (None for one without a build).
+def character_state(sheet, result):
+    build = sheet.get('build') or {}
+    hp = (result or {}).get('summary', {}).get('hitPoints')
+    limits = state_limits(build, sheet.get('level', 1), hp['max'] if hp else None, character_features(sheet, result))
+    return play_state(sheet.get('play') or {}, limits), limits
+
+# The character's species traits, class and subclass features and origin feat, with their
+# limited uses worked out (server/rules/state.py sheet_features).
+def character_features(sheet, result):
+    if not result:
+        return []
+    level = sheet.get('level', 1)
+    abilities = sheet_abilities(result['summary'], sheet)
+    return sheet_features(sheet.get('build') or {}, level, abilities, 2 + (level - 1) // 4)
+
 @bp.get('/characters/<character_id>')
 @require_login
 def get_character(character_id):
     conn = connect()
     try:
-        row = own_character(conn, character_id)
+        row, access = sheet_access(conn, character_id)
         sheet = json.loads(row['sheet']) if row else {}
         result = check_character(conn, row, sheet) if row else None
     finally:
@@ -294,7 +341,27 @@ def get_character(character_id):
     if row is None:
         return error('Character not found', 404)
     problems = result['errors'] if result else []
+    abilities = sheet_abilities(result['summary'], sheet) if result else None
+    draft = sheet_draft(row, sheet)
+    if access == 'party':
+        # Answers to the GM's questions are between the player and the GM.
+        draft.pop('answers', None)
     return jsonify({
+        # owner (or the admin), gm or party: what the viewer may do (see sheet_access).
+        'access': access,
+        # The player the character belongs to.
+        'owner': {'name': row['owner_name'], 'username': row['owner_username']},
+        # Owner and admin only; null for everyone else.
+        'notes': row['personal_notes'] if access == 'owner' else None,
+        # Worked out from the build each time: proficiency, saves, skills, spellcasting.
+        'stats': sheet_stats(sheet.get('build') or {}, sheet.get('level', 1), abilities,
+                             result['taken']) if result else None,
+        # Hit points, spell slots, conditions, Hit Point Dice, death saves and feature uses (PATCH /state).
+        'state': character_state(sheet, result)[0],
+        # Traits, features and the origin feat, for the Actions and Features & Traits tabs.
+        'features': character_features(sheet, result),
+        # The spells picked in the wizard, for the Spells tab.
+        'spells': sheet_spells(sheet.get('build') or {}),
         'id': row['id'],
         'name': row['name'],
         'isActive': bool(row['is_active']),
@@ -309,13 +376,98 @@ def get_character(character_id):
         # What no longer fits the campaign's current settings; fixed by editing in the wizard.
         'problems': problems,
         # The character as the wizard edits it, and the ability rolls its scores came from.
-        'draft': sheet_draft(row, sheet),
+        'draft': draft,
         'rolls': sheet_rolls(sheet),
         'level': sheet.get('level', 1),
         # Each ability's base, increases, score and current; null for a character without scores.
-        'abilities': sheet_abilities(result['summary'], sheet) if result else None,
+        'abilities': abilities,
         'scoreAdjustments': (sheet.get('play') or {}).get('scoreAdjustments') or [],
     }), 200
+
+# Body: any of currentHp, maxHpOverride (null: worked out), tempHp, spentSlots ({level: used},
+# merged by level), spentPactSlots, conditions, exhaustion, spentHitDice, deathSaves
+# ({successes, failures}): only what changed. The owner, the admin or the campaign's GM.
+# Returns the whole play state as the sheet shows it.
+@bp.patch('/characters/<character_id>/state')
+@require_login
+def patch_state(character_id):
+    body = json_body()
+    conn = connect()
+    try:
+        with conn:
+            row, access = sheet_access(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if access == 'party':
+                return error('Only the character’s player and the GM can change this sheet.', 403)
+            sheet = json.loads(row['sheet'])
+            _, limits = character_state(sheet, check_character(conn, row, sheet))
+            play = sheet.setdefault('play', {})
+            changes, message = clean_state_patch(body, play, limits)
+            if message:
+                return error(message, 400)
+            play.update(changes)
+            if play.get('maxHpOverride') is None:
+                play.pop('maxHpOverride', None)
+            conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
+                         (sheet_json(sheet), character_id))
+    finally:
+        conn.close()
+    return jsonify(play_state(play, limits)), 200
+
+# Body: {type: 'short', hitDice: n, applyHealing?, resetMaxHp?} or {type: 'long',
+# hitDiceRecovery?: 'all' | 'half', resetMaxHp?}. Takes a rest (server/rules/state.py
+# rest_changes); the server rolls the Hit Point Dice. The owner, the admin or the GM.
+# Returns {state, rest}: the play state after it, and what happened ({kind, rolls, healed}).
+@bp.post('/characters/<character_id>/rest')
+@require_login
+@limit('rest', 120, 60 * 60)
+def take_rest(character_id):
+    body = json_body() or {}
+    kind = body.get('type')
+    if kind not in ('short', 'long'):
+        return error('type must be "short" or "long".', 400)
+    hit_dice = body.get('hitDice', 0) if kind == 'short' else 0
+    if not isinstance(hit_dice, int) or isinstance(hit_dice, bool) or not 0 <= hit_dice <= MAX_LEVEL:
+        return error(f'hitDice must be from 0 to {MAX_LEVEL}.', 400)
+    options = {}
+    for flag in ('applyHealing', 'resetMaxHp'):
+        if flag in body:
+            if not isinstance(body[flag], bool):
+                return error(f'{flag} must be true or false.', 400)
+            options[flag] = body[flag]
+    if 'hitDiceRecovery' in body:
+        if body['hitDiceRecovery'] not in ('all', 'half'):
+            return error('hitDiceRecovery must be "all" or "half".', 400)
+        options['hitDiceRecovery'] = body['hitDiceRecovery']
+    conn = connect()
+    try:
+        with conn:
+            row, access = sheet_access(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if access == 'party':
+                return error('Only the character’s player and the GM can change this sheet.', 403)
+            sheet = json.loads(row['sheet'])
+            result = check_character(conn, row, sheet)
+            now, limits = character_state(sheet, result)
+            # Both rest rules: "To start a ... Rest, you must have at least 1 Hit Point."
+            if now['currentHp'] == 0:
+                return error('A character needs at least 1 Hit Point to start a rest.', 409)
+            abilities = sheet_abilities(result['summary'], sheet) if result else {}
+            con = (abilities.get('CON') or {}).get('currentModifier')
+            cls = packs.collection('classes').get((sheet.get('build') or {}).get('class') or '')
+            play = sheet.setdefault('play', {})
+            changes, rest = rest_changes(kind, hit_dice, play, limits, (cls or {}).get('hitDie'), con,
+                                         lambda die: secrets.randbelow(die) + 1, options)
+            play.update(changes)
+            if play.get('maxHpOverride') is None:
+                play.pop('maxHpOverride', None)
+            conn.execute(f'UPDATE characters SET sheet = ?, updated_at = {NOW} WHERE id = ?',
+                         (sheet_json(sheet), character_id))
+    finally:
+        conn.close()
+    return jsonify({'state': play_state(play, limits), 'rest': rest}), 200
 
 # Body: {adjustments: [{id, name, ability, mode, value}]}. Replaces the character's temporary
 # ability score effects (see server/rules/scores.py). Returns the abilities with them applied.
@@ -406,7 +558,7 @@ def roll_character_abilities(character_id):
 def get_portrait(character_id):
     conn = connect()
     try:
-        image = own_character(conn, character_id) and conn.execute(
+        image = sheet_access(conn, character_id)[0] and conn.execute(
             'SELECT image FROM character_portraits WHERE character_id = ?', (character_id,)
         ).fetchone()
     finally:

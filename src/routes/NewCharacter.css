@@ -22,7 +22,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
 }
 
@@ -84,7 +84,7 @@
   justify-content: center;
   width: 1.35rem;
   height: 1.35rem;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   border: 1px solid currentColor;
   border-radius: 50%;
   opacity: 0.8;
@@ -189,7 +189,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 0.25rem;
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
   border-bottom: 1px solid var(--border);
   cursor: pointer;

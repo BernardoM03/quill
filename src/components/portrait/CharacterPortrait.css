@@ -14,7 +14,7 @@
 }
 
 .portrait--empty {
-  font-family: var(--heading);
+  font-family: var(--sans);
   color: var(--text);
   user-select: none;
 }

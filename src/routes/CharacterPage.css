@@ -47,13 +47,13 @@
 
 .character-flag strong {
   color: var(--text-h);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .character-flag p,
 .character-flag ul {
   margin: 0.4rem 0;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 /* Approval: waiting or unsubmitted is a note, not a problem; rejected keeps the danger rule. */

@@ -89,6 +89,30 @@ export interface Play {
    * @maxItems 20
    */
   scoreAdjustments?: ScoreAdjustment[];
+  currentHp?: number;
+  maxHpOverride?: number | null;
+  tempHp?: number;
+  spentSlots?: {
+    /**
+     * This interface was referenced by `undefined`'s JSON-Schema definition
+     * via the `patternProperty` "^[1-9]$".
+     */
+    [k: string]: number;
+  };
+  spentPactSlots?: number;
+  /**
+   * @maxItems 30
+   */
+  conditions?: string[];
+  exhaustion?: number;
+  spentHitDice?: number;
+  featureUses?: {
+    [k: string]: number;
+  };
+  deathSaves?: {
+    successes: number;
+    failures: number;
+  };
 }
 export interface ScoreAdjustment {
   id: string;

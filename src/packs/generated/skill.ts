@@ -5,4 +5,5 @@ export type SkillSchema = {
   name: string;
   ability: 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA';
   description?: string;
+  uses?: string;
 }[];

@@ -23,14 +23,40 @@ function errorMessage(err: unknown): string {
   return response?.data?.error ?? 'Couldn’t save. Try again.';
 }
 
-// The sheet's six abilities. Each shows its current score (what's rolled with) and modifier;
-// below, the character's own score and where it comes from: base, then each permanent
-// increase. Temporary effects (a magic item, a curse, a spell) change current only, and are
-// added and removed here.
-export function AbilityScores({ characterId, abilities, adjustments, onChange }: {
+// The sheet's six abilities, one box each: the current score large, its modifier (what's
+// rolled with) in the small box beneath. Highlighted while a temporary effect changes it; hovering shows the
+// character's own score and where it comes from.
+export function AbilityBoxes({ abilities }: { abilities: Record<string, sheetAbility> }) {
+  return (
+    <div className="sheet-abilities" role="group" aria-label="Ability scores">
+      {ABILITIES.map(([code, label]) => {
+        const a = abilities[code];
+        const changed = a && a.current !== a.total;
+        // Where the score comes from, shown on hover: base, then each permanent increase.
+        const breakdown = a && a.base != null
+          ? [changed ? `Own score ${a.total}` : null, `Base ${a.base}`,
+             ...a.increases.map(inc => `${signed(inc.amount)} ${inc.source}`)].filter(Boolean).join('\n')
+          : undefined;
+        return (
+          <div key={code} className={changed ? 'sheet-ability sheet-ability--changed' : 'sheet-ability'}
+            title={breakdown ? `${label}\n${breakdown}` : label}>
+            <span className="sheet-ability__name"><abbr title={label} aria-label={label}>{code}</abbr></span>
+            <span className="sheet-ability__score" aria-label="Score">{a?.current ?? '—'}</span>
+            <span className="sheet-ability__mod" aria-label="Modifier">{a?.currentModifier != null ? signed(a.currentModifier) : '—'}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Temporary effects (a magic item, a curse, a spell): they change the current score only,
+// and are added and removed here. onChange gets the abilities with the effects applied.
+export function TemporaryEffects({ characterId, adjustments, readOnly = false, onChange }: {
   characterId: string;
-  abilities: Record<string, sheetAbility>;
   adjustments: scoreAdjustment[];
+  // Shows the effects without the add and remove controls (anyone but the owner).
+  readOnly?: boolean;
   onChange: (abilities: Record<string, sheetAbility>, adjustments: scoreAdjustment[]) => void;
 }) {
   const [adding, setAdding] = useState(false);
@@ -59,31 +85,9 @@ export function AbilityScores({ characterId, abilities, adjustments, onChange }:
   }
 
   return (
-    <div className="setting-section">
-      <span className="setting-caption">Ability Scores</span>
-      <div className="sheet-abilities">
-        {ABILITIES.map(([code, label]) => {
-          const a = abilities[code];
-          const changed = a && a.current !== a.total;
-          return (
-            <div key={code} className={changed ? 'sheet-ability sheet-ability--changed' : 'sheet-ability'}>
-              <span className="sheet-ability__name">{label}</span>
-              <span className="sheet-ability__mod">{a?.currentModifier != null ? signed(a.currentModifier) : '—'}</span>
-              <span className="sheet-ability__current" title="Current score">{a?.current ?? '—'}</span>
-              {a && a.base != null && (
-                <span className="sheet-ability__breakdown">
-                  {changed && <span className="sheet-ability__own">Score {a.total}</span>}
-                  <span>Base {a.base}</span>
-                  {a.increases.map((inc, i) => <span key={i}>{signed(inc.amount)} {inc.source}</span>)}
-                </span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <span className="setting-label sheet-effects__title">Temporary effects</span>
-      <p className="setting-hint">
+    <div className="sheet-tracker">
+      <span className="sheet-tracker__title">Temporary Effects</span>
+      <p className="sheet-box__note">
         Magic items, curses and spells that change a score for now. They change the current score only;
         the character’s own score stays as it is.
       </p>
@@ -92,15 +96,19 @@ export function AbilityScores({ characterId, abilities, adjustments, onChange }:
           {adjustments.map(a => (
             <li key={a.id}>
               <span><strong>{a.name}</strong> <span className="muted">{describe(a)}</span></span>
-              <button type="button" className="setting-button setting-button--quiet" disabled={saving}
-                onClick={() => save(adjustments.filter(x => x.id !== a.id))}>
-                Remove
-              </button>
+              {!readOnly && (
+                <button type="button" className="setting-button setting-button--quiet" disabled={saving}
+                  onClick={() => save(adjustments.filter(x => x.id !== a.id))}>
+                  Remove
+                </button>
+              )}
             </li>
           ))}
         </ul>
       )}
-      {adding ? (
+      {readOnly ? (
+        adjustments.length === 0 && <p className="muted">None</p>
+      ) : adding ? (
         <form className="sheet-effects__form" onSubmit={handleAdd}>
           <input className="sheet-effects__name" aria-label="Effect name" placeholder="Belt of Hill Giant Strength"
             value={name} maxLength={60} required autoFocus onChange={e => setName(e.target.value)} />

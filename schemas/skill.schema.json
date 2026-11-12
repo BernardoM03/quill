@@ -13,7 +13,11 @@
         "$ref": "https://quill.local/schemas/common.schema.json#/$defs/ability",
         "description": "The ability a check with this skill is made against."
       },
-      "description": { "type": "string" }
+      "description": { "type": "string" },
+      "uses": {
+        "type": "string",
+        "description": "Example uses of the skill, as a sentence (the SRD's Skills table)."
+      }
     },
     "required": ["id", "name", "ability"],
     "additionalProperties": false

@@ -53,7 +53,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .home-header__name {
@@ -96,7 +96,7 @@
 }
 
 .character-row__name {
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
   text-decoration: none;
 }
@@ -106,7 +106,7 @@
 }
 
 .character-row__campaign {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
   text-decoration: none;
 }
@@ -117,7 +117,7 @@
 
 .character-row__badge {
   padding: 0.05rem 0.45rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--accent);
   border: 1px solid var(--accent);
 }

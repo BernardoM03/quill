@@ -34,8 +34,8 @@
   width: 1.5rem;
   padding: 0 0 0.15em;  /* the glyph sits low in its line; lift it to the optical centre */
   font: inherit;
-  font-size: 26px;
-  line-height: 1;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-none);
   color: var(--text);
   opacity: 0.55;
   background: none;
@@ -81,7 +81,7 @@
   grid-template-columns: max-content 1fr;
   gap: 0.3rem 1rem;
   margin: 0 0 1rem;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .pick-card__facts dt {
@@ -95,8 +95,8 @@
 
 .pick-card__section-title {
   margin: 1.25rem 0 0.25rem;
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--text);
 }
@@ -116,19 +116,19 @@
 }
 
 .pick-entry dt {
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
 .pick-entry__level {
   margin-left: 0.5rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text);
 }
 
 .pick-entry dd {
   margin: 0.2rem 0 0;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
 }
 
@@ -148,7 +148,7 @@
 .pick-choice__prompt {
   display: block;
   margin-bottom: 0.35rem;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
 }
 
@@ -160,13 +160,13 @@
 
 .pick-choice__option-note {
   margin-top: 0.4rem;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
 .pick-choice__option-note strong {
   color: var(--text-h);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 /* A background's ability score increases: one box per ability, six across. */
@@ -191,13 +191,13 @@
 }
 
 .ability-box__code {
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
   color: var(--text);
 }
 
 .ability-box__amount {
-  font-size: 20px;
+  font-size: var(--fs-xl);
   color: var(--text-h);
 }
 
@@ -271,12 +271,12 @@
 }
 
 .ability-box__total {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   color: var(--text-h);
 }
 
 .ability-box__bonus {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--accent);
 }
 
@@ -315,7 +315,7 @@
 }
 
 .hp-total strong {
-  font-size: 22px;
+  font-size: var(--fs-2xl);
   color: var(--text-h);
 }
 
@@ -349,7 +349,7 @@
 .details-textarea {
   padding: 0.35rem 0.5rem;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
   background: var(--bg);
   border: 1px solid var(--border);

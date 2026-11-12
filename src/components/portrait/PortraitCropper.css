@@ -7,7 +7,7 @@
 
 .cropper__hint {
   margin: 0 0 0.75rem;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
@@ -39,7 +39,7 @@
   align-items: center;
   gap: 0.75rem;
   margin-top: 0.75rem;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-h);
 }
 

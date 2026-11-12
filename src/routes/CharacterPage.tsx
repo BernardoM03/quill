@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
 import {
-    activateCharacter, deleteCharacter, deletePortrait, getCharacter, submitCharacter, uploadPortrait, type characterSummary,
+    activateCharacter, deleteCharacter, deletePortrait, getCharacter, patchCharacterState, submitCharacter, uploadPortrait,
+    type characterSummary, type playState, type statePatch,
 } from "../api/characters";
+import { CharacterSheet } from "../components/sheet/CharacterSheet";
 import BackButton from "../components/BackButton";
-import { AbilityScores } from "../components/sheet/AbilityScores";
 import ConfirmDialog from "../components/ConfirmDialog";
 import TypeToConfirmDialog from "../components/TypeToConfirmDialog";
-import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
 import { loadImage } from "../components/portrait/makePortrait";
 import { PortraitCropper } from "../components/portrait/PortraitCropper";
 import "../components/campaignSettings/CampaignSettings.css";
@@ -38,6 +38,32 @@ export default function CharacterPage() {
     useEffect(() => {
         getCharacter(characterID).then(setCharacter).catch(() => setCharacter(null))
     }, [characterID])
+
+    // Why the last play-state change couldn't be saved; the change itself is already undone.
+    const [stateError, setStateError] = useState<string | null>(null)
+    // Saves can overlap; only the last one sent knows the final state.
+    const latestStateSave = useRef(0)
+
+    // Same pattern as handleAllowedChange (CampaignSettings): show the change now, send only
+    // what changed, and if the save fails put back just the fields this change touched.
+    // Uses the setter's function form so quick changes don't overwrite each other.
+    function handleStateChange(next: Partial<playState>, patch: statePatch) {
+        setStateError(null)
+        const before = character?.state
+        if (!before) return
+        const previous = Object.fromEntries(Object.keys(next).map(key => [key, before[key as keyof playState]]))
+        const setFields = (fields: Partial<playState>) => setCharacter(c => c && { ...c, state: { ...c.state, ...fields } })
+        setFields(next)
+        const request = ++latestStateSave.current
+        patchCharacterState(characterID, patch)
+            .then(state => {
+                if (request === latestStateSave.current) setCharacter(c => c && { ...c, state })
+            })
+            .catch(err => {
+                setFields(previous)
+                setStateError(errorMessage(err, 'Could not save that change. Check your connection and try again.'))
+            })
+    }
 
     // Errors and busy state for the approval banner's buttons.
     const [statusError, setStatusError] = useState<string | null>(null)
@@ -103,26 +129,15 @@ export default function CharacterPage() {
         )
     }
 
+    // The owner (or the admin) does everything; the GM changes the play state; the party reads.
+    const isOwner = character.access === 'owner'
+    const canEdit = character.access !== 'party'
+
     return (
         <div className="page">
             <BackButton/>
-            <div className="character-header">
-                <CharacterPortrait characterId={character.id} name={character.name} version={character.portraitVersion} size={128} />
-                <div className="character-header__text">
-                    <h1>{character.name}</h1>
-                    <span className="muted">
-                        {character.campaignId
-                            ? <Link to={`/campaign/${character.campaignId}`}>{character.campaignName}</Link>
-                            : 'Character Sandbox'}
-                        {character.isActive && ' · Active'}
-                    </span>
-                    <Link to={`/characters/${character.id}/edit`} className="setting-button setting-button--quiet character-header__edit">
-                        Edit Character
-                    </Link>
-                </div>
-            </div>
 
-            {character.campaignId && character.status !== 'approved' && (
+            {isOwner && character.campaignId && character.status !== 'approved' && (
                 <div className={`character-flag character-flag--${character.status}`} role="status">
                     {character.status === 'pending' && <>
                         <strong>Waiting for the GM’s approval.</strong>
@@ -149,7 +164,7 @@ export default function CharacterPage() {
                 </div>
             )}
 
-            {character.campaignId && character.status === 'approved' && !character.isActive && (
+            {isOwner && character.campaignId && character.status === 'approved' && !character.isActive && (
                 <div className="character-portrait__actions character-activate">
                     <button type="button" className="setting-button setting-button--quiet" onClick={handleActivate} disabled={statusBusy}>
                         Make Active Character
@@ -158,7 +173,7 @@ export default function CharacterPage() {
                 </div>
             )}
 
-            {character.problems.length > 0 && (
+            {isOwner && character.problems.length > 0 && (
                 <div className="character-flag" role="alert">
                     <strong>This character no longer matches {character.campaignName ?? 'the Character Sandbox'}.</strong>
                     <p>
@@ -172,31 +187,16 @@ export default function CharacterPage() {
                 </div>
             )}
 
-            {character.abilities && (
-                <AbilityScores characterId={character.id} abilities={character.abilities}
-                    adjustments={character.scoreAdjustments}
-                    onChange={(abilities, scoreAdjustments) => setCharacter(c => c && { ...c, abilities, scoreAdjustments })} />
-            )}
+            <CharacterSheet character={character} canEdit={canEdit} isOwner={isOwner}
+                stateError={stateError} onStateChange={handleStateChange}
+                onRested={state => setCharacter(c => c && { ...c, state })}
+                portrait={isOwner ? {
+                    error,
+                    onPick: () => { setError(null); fileInput.current?.click() },
+                    onRemove: () => { setError(null); setConfirmingRemove(true) },
+                } : undefined} />
 
-            <div className="setting-section">
-                <span className="setting-caption">Portrait</span>
-                <p className="setting-hint">
-                    You’ll frame it as a square after choosing an image. Large photos are shrunk before uploading.
-                </p>
-                <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />
-                <div className="character-portrait__actions">
-                    <button type="button" className="setting-button" onClick={() => fileInput.current?.click()}>
-                        {character.portraitVersion ? 'Replace Portrait' : 'Upload Portrait'}
-                    </button>
-                    {character.portraitVersion && (
-                        <button type="button" className="setting-button setting-button--quiet"
-                            onClick={() => { setError(null); setConfirmingRemove(true) }}>
-                            Remove
-                        </button>
-                    )}
-                </div>
-                {error && <p className="setting-error">{error}</p>}
-            </div>
+            {isOwner && <input ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={handleFile} />}
             {picked && <PortraitCropper image={picked} onConfirm={handleCropped} onClose={handleCropperClosed} />}
             {confirmingRemove && (
                 <ConfirmDialog
@@ -211,11 +211,13 @@ export default function CharacterPage() {
                 </ConfirmDialog>
             )}
 
-            <div className="settings-danger">
-                <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
-                    Delete Character
-                </button>
-            </div>
+            {isOwner && (
+                <div className="settings-danger">
+                    <button type="button" className="setting-button setting-button--danger" onClick={() => setConfirmingDelete(true)}>
+                        Delete Character
+                    </button>
+                </div>
+            )}
             {confirmingDelete && (
                 <TypeToConfirmDialog
                     title={`Delete ${character.name}?`}

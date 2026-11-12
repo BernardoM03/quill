@@ -374,8 +374,150 @@ export function createCharacter(campaignId: string, draft: characterDraft & { dr
     return apiClient.post(`/campaigns/${campaignId}/characters`, draft).then(response => response.data);
 }
 
-// A character as its owner (or the admin) sees it.
+// owner: its player or the admin; gm: the campaign's GM, who can change its play state;
+// party: another player in the campaign, who only reads it.
+export type sheetAccess = 'owner' | 'gm' | 'party'
+
+export interface sheetStat {
+    ability: string,
+    proficient: boolean,
+    // null until the ability has a score.
+    modifier: number | null,
+}
+
+// Worked out from the build each time it's read (server/rules/state.py).
+export interface sheetStats {
+    // Names for the sheet's header; null when not picked.
+    identity: { species: string | null, class: string | null, subclass: string | null, background: string | null },
+    senses: {
+        passivePerception: number | null,
+        passiveInsight: number | null,
+        passiveInvestigation: number | null,
+        // Range in feet; null without it.
+        darkvision: number | null,
+    },
+    proficiencies: { armor: string[], weapons: string[], tools: string[], languages: string[] },
+    proficiencyBonus: number,
+    initiative: number | null,
+    // Without armor: equipment isn't tracked yet.
+    armorClass: number | null,
+    speed: number | null,
+    // Every speed the character has, walking first. condition: the feature that has to be
+    // active for it (Draconic Flight); null when it's always there.
+    speeds: { type: 'walk' | 'fly' | 'swim' | 'climb' | 'burrow', value: number, condition: string | null }[],
+    // From traits and features. condition: the feature that has to be active (Rage); null: always.
+    defenses: {
+        resistances: { name: string, condition: string | null }[],
+        immunities: { name: string, condition: string | null }[],
+    },
+    passivePerception: number | null,
+    savingThrows: sheetStat[],
+    skills: (sheetStat & { id: string, name: string })[],
+    spellcasting: { ability: string, saveDc: number | null, attackBonus: number | null } | null,
+    hitDie: number | null,
+}
+
+// What changes at the table, as the sheet shows it: every field filled in.
+export interface playState {
+    // null until hit points can be worked out.
+    currentHp: number | null,
+    maxHp: number | null,
+    workedOutMaxHp: number | null,
+    // A maximum set by hand; null: worked out.
+    maxHpOverride: number | null,
+    tempHp: number,
+    // Slot level ("1".."9") -> slots; only the levels the class has.
+    spellSlots: Record<string, { total: number, spent: number }>,
+    pactSlots: { total: number, slotLevel: number, spent: number } | null,
+    // Pack condition ids; exhaustion is counted on its own.
+    conditions: string[],
+    exhaustion: number,
+    hitDice: { total: number, spent: number },
+    deathSaves: { successes: number, failures: number },
+    // Feature id -> uses spent, for each limited-use feature.
+    featureUses: Record<string, number>,
+}
+
+// A species trait, class or subclass feature, or the origin feat, as the sheet lists it.
+export interface sheetFeature {
+    id: string,
+    name: string,
+    source: 'species' | 'class' | 'subclass' | 'feat',
+    // The level it's gained at, for class and subclass features.
+    level: number | null,
+    activation: 'action' | 'bonusAction' | 'reaction' | 'free' | 'special' | 'passive',
+    // Rules text (Markdown).
+    description: string,
+    // For a limited-use feature: how many, when they come back (shortRecover: how many a short
+    // rest returns, for one that recharges on a long rest), and whether it's a pool of points.
+    uses: { max: number, recharge: string | null, pool: boolean, shortRecover: number | null } | null,
+}
+
+// A spell the character picked in the wizard.
+export interface sheetSpell {
+    id: string,
+    name: string,
+    level: number,
+    school: string | null,
+    castingTime: string | null,
+    range: string | null,
+    duration: string | null,
+    concentration: boolean,
+    ritual: boolean,
+    description: string,
+}
+
+// A PATCH /state body: only what changed. spentSlots merges by slot level.
+export interface statePatch {
+    currentHp?: number,
+    maxHpOverride?: number | null,
+    tempHp?: number,
+    spentSlots?: Record<string, number>,
+    spentPactSlots?: number,
+    conditions?: string[],
+    exhaustion?: number,
+    spentHitDice?: number,
+    deathSaves?: { successes: number, failures: number },
+    // Merged by feature id.
+    featureUses?: Record<string, number>,
+}
+
+// The owner, the admin or the GM. Resolves with the whole play state after the change.
+export function patchCharacterState(characterId: string, patch: statePatch): Promise<playState> {
+    return apiClient.patch(`/characters/${characterId}/state`, patch).then(response => response.data);
+}
+
+// What a rest did. A short rest's rolls are the Hit Point Dice the server rolled.
+export type restResult =
+    | { kind: 'long', hitDiceRecovered: number, healed: number }
+    // applied: false when the player chose to roll without healing.
+    | { kind: 'short', rolls: number[], conModifier: number, healed: number, applied: boolean }
+
+// resetMaxHp: drop a hand-set maximum. applyHealing (short, default true): heal by the roll.
+// hitDiceRecovery (long, default 'all'): all spent Hit Point Dice back (2024 rules) or half (2014).
+export type restRequest =
+    | { type: 'short', hitDice: number, applyHealing?: boolean, resetMaxHp?: boolean }
+    | { type: 'long', hitDiceRecovery?: 'all' | 'half', resetMaxHp?: boolean }
+
+// Takes a short rest (spending up to hitDice Hit Point Dice) or a long rest. Not shown in
+// advance like other changes: the server rolls the dice. Resolves with the new play state.
+export function takeRest(characterId: string, rest: restRequest):
+    Promise<{ state: playState, rest: restResult }> {
+    return apiClient.post(`/characters/${characterId}/rest`, rest).then(response => response.data);
+}
+
+// A character as its owner (or the admin), its GM or its party sees it.
 export interface characterSummary {
+    access: sheetAccess,
+    // The player the character belongs to.
+    owner: { name: string, username: string },
+    // The owner's private notes; null for anyone else.
+    notes: string | null,
+    // null for a character made before the sheet had a build.
+    stats: sheetStats | null,
+    state: playState,
+    features: sheetFeature[],
+    spells: sheetSpell[],
     id: string,
     name: string,
     isActive: boolean,

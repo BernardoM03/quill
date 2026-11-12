@@ -1,8 +1,8 @@
 /* ---- Rules text (RulesText): readable paragraphs, and the keywords a player scans for ---- */
 
 .rules-text {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
   color: var(--text);
 }
 
@@ -41,11 +41,54 @@ span.rules-text > span + span::before {
 /* The bold lead-ins: "Damage Resistance." */
 .rules-text strong {
   color: var(--text-h);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .rules-text em {
   font-style: italic;
+}
+
+/* Tables (Damage Types, the conditions list): small caps headings over ruled rows, the first
+   column the one that's read down. */
+.rules-text table {
+  width: 100%;
+  margin: 0.5em 0 0.7em;
+  border-collapse: collapse;
+  font-size: 0.93em;
+  line-height: var(--lh-snug);
+}
+
+.rules-text th {
+  padding: 0 0.6em 0.3em 0;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-align: left;
+  text-transform: uppercase;
+  vertical-align: bottom;
+  color: var(--text);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.rules-text td {
+  padding: 0.3em 0.6em 0.3em 0;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+.rules-text td:first-child {
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  color: var(--text-h);
+}
+
+.rules-text th:last-child,
+.rules-text td:last-child {
+  padding-right: 0;
+}
+
+.rules-text tr:last-child td {
+  border-bottom: none;
 }
 
 /* Dice and DCs: what's rolled, in the accent. */
@@ -71,10 +114,11 @@ span.rules-text > span + span::before {
   text-underline-offset: 3px;
 }
 
-/* Game terms: Bonus Action, Advantage, Short Rest, ... */
-.rules-term {
+/* Game terms and skills: Bonus Action, Advantage, Short Rest, Perception, ... */
+.rules-term,
+.rules-skill {
   color: var(--text-h);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 /* Spells, feats and languages named in the text: italic, as the books set spell names. */
@@ -99,6 +143,43 @@ span.rules-text > span + span::before {
   text-decoration-color: var(--accent);
 }
 
+/* The switch for hover definitions (GlossaryTooltips): fixed in the corner of every page. */
+.tooltip-toggle {
+  position: fixed;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 30;
+  padding: 0.25rem 0.6rem;
+  font: inherit;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.tooltip-toggle:hover,
+.tooltip-toggle:focus-visible {
+  color: var(--text-h);
+  border-color: var(--accent);
+  outline: none;
+}
+
+.tooltip-toggle__state {
+  font-weight: var(--fw-semibold);
+  color: var(--text-h);
+}
+
+.tooltip-toggle[aria-pressed='true'] .tooltip-toggle__state {
+  color: var(--accent);
+}
+
+@media print {
+  .tooltip-toggle { display: none; }
+}
+
 /* The definition, floating over the page near the word. */
 .rules-popover {
   position: fixed;
@@ -117,9 +198,9 @@ span.rules-text > span + span::before {
 .rules-popover__name {
   display: block;
   margin-bottom: 0.25rem;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -127,11 +208,11 @@ span.rules-text > span + span::before {
 .rules-popover__meta {
   display: block;
   margin: -0.15rem 0 0.35rem;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-style: italic;
   color: var(--text);
 }
 
 .rules-popover .rules-text {
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }

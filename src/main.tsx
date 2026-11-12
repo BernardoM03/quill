@@ -16,6 +16,7 @@ import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
 import CampaignView from './routes/CampaignView';
+import { GlossaryTooltips } from './components/GlossaryTooltips';
 
 const router = createBrowserRouter([
   {
@@ -85,6 +86,8 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RouterProvider router={router} />
+    {/* Outside the router, so it's on every page. */}
+    <GlossaryTooltips />
   </StrictMode>,
 )
 

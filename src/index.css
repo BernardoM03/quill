@@ -6,18 +6,53 @@
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --danger: #c62828;
+  --success: #2e7d32;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
+  /* ---- Typography ----
+     Two families only: --sans for everything read as text (body, headings, labels, controls)
+     and --mono for things read as data (dice, modifiers, codes, numbers that must line up).
+     Never write a raw font-family, size, weight, line-height or letter-spacing in a
+     component: pick a token. Hierarchy comes from size and weight, not from a third face. */
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  /* Size scale. Kept in px because the root font-size doubles as the rem spacing unit.
+     micro is for uppercase labels in dense sheet boxes only; running text starts at xs. */
+  --fs-micro: 10px;
+  --fs-2xs: 11px; /* table heads, chips, tabs */
+  --fs-xs: 12px; /* captions, hints */
+  --fs-sm: 13px; /* secondary UI text */
+  --fs-base: 14px; /* default UI text: controls, rules text */
+  --fs-md: 16px; /* body copy, names, emphasised rows */
+  --fs-lg: 18px; /* card and dialog titles */
+  --fs-xl: 20px; /* small stat values */
+  --fs-2xl: 24px; /* h2, large stat values */
+  --fs-3xl: 28px; /* in-page titles (character name) */
+  --fs-display: 56px; /* page h1; 36px on narrow screens */
+
+  /* Three weights. medium for headings, semibold for labels and emphasis. */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Unitless, so each scales with the element's own size. */
+  --lh-none: 1; /* single-line numerals and glyphs */
+  --lh-tight: 1.1; /* display */
+  --lh-snug: 1.3; /* headings, compact labels */
+  --lh-normal: 1.5; /* body and multi-line text */
+
+  /* Tracking in em so it scales too. caps is for uppercase labels only. */
+  --ls-tight: -0.02em; /* large headings */
+  --ls-normal: 0;
+  --ls-caps: 0.05em;
+
+  /* Root size is the rem spacing unit, not the text size; body sets the text size. */
+  font-size: 18px;
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -28,6 +63,7 @@
 
   @media (max-width: 1024px) {
     font-size: 16px;
+    --fs-display: 36px;
   }
 }
 
@@ -40,6 +76,7 @@
     --code-bg: #1f2028;
     --accent: #c084fc;
     --danger: #f87171;
+    --success: #4ade80;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);
@@ -66,33 +103,34 @@
 
 body {
   margin: 0;
+  font-family: var(--sans);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-normal);
 }
 
 h1,
 h2 {
-  font-family: var(--heading);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-tight);
   color: var(--text-h);
 }
 
 h1 {
-  font-size: 56px;
-  /* Unitless, so it scales with the heading: the root's 145% is fixed at the body size. */
-  line-height: 1.1;
-  letter-spacing: -1.68px;
+  font-size: var(--fs-display);
+  line-height: var(--lh-tight);
   margin: 32px 0;
   @media (max-width: 1024px) {
-    font-size: 36px;
     margin: 20px 0;
   }
 }
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
   margin: 0 0 8px;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: var(--fs-xl);
   }
 }
 p {
@@ -108,8 +146,9 @@ code,
 }
 
 code {
-  font-size: 15px;
-  line-height: 135%;
+  /* Relative, so inline code tracks the text it sits in. */
+  font-size: 0.9em;
+  line-height: var(--lh-snug);
   padding: 4px 8px;
   background: var(--code-bg);
 }
@@ -137,8 +176,8 @@ code {
 }
 
 .setting-caption {
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--text);
 }
@@ -152,7 +191,7 @@ code {
   display: inline-block;
   padding: 0.3rem 0.8rem;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
   text-decoration: none;
   background: transparent;
@@ -200,4 +239,38 @@ code {
   gap: 0.35rem;
   margin-top: 1rem;
   margin-left: calc(-0.8rem - 1px);
+}
+
+/* Every scrollbar, the page's included, is styled like the character wizard's progress bar:
+   a hairline border-coloured track with an accent thumb, 4px wide so scrolling boxes keep
+   nearly all their width. Chromium and Safari use the pseudo-elements; Firefox can't go
+   below its standard thin bar, so it just gets the colours. */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  /* Clip the track to a 2px line down the middle of the 4px gutter. */
+  border: 1px solid transparent;
+  background: var(--border);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-corner {
+  display: none;
+  background: transparent;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) var(--border);
+  }
 }

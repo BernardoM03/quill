@@ -1,8 +1,8 @@
 import { loadCollection } from '../packs/loader';
 
 // Definitions for the words RulesText picks out, from the packs: the rules glossary
-// ("Advantage", "Bonus Action", "Cone", ...), the conditions, and the spells, feats and
-// languages named in rules text. Loaded once per page.
+// ("Advantage", "Bonus Action", "Cone", ...), the conditions, the skills, and the spells,
+// feats and languages named in rules text. Loaded once per page.
 export interface definition {
   name: string;
   // A line under the name: a spell's level, school, casting time, ...
@@ -16,6 +16,7 @@ export interface glossary {
   // so a spell named like a rule (Darkness) doesn't replace the rule.
   terms: Map<string, definition>;
   // Names to look for in rules text, by kind.
+  skills: string[];
   spells: string[];
   feats: string[];
   languages: string[];
@@ -29,7 +30,12 @@ interface spellEntry {
   ritual?: boolean; duration?: { value?: number; unit?: string }; description?: string; shortDescription?: string;
 }
 interface featEntry { name: string; category?: string; effectGroups?: { name: string; description?: string }[] }
+interface skillEntry { name: string; ability: string; description?: string; uses?: string }
 interface languageEntry { name: string; rarity?: string; description?: string }
+
+const ABILITIES: Record<string, string> = {
+  STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
+};
 
 const titleCase = (s: string) => s.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
 const ordinal = (n: number) => `${n}${['th', 'st', 'nd', 'rd'][n % 10 > 3 || Math.floor(n / 10) === 1 ? 0 : n % 10]}`;
@@ -58,8 +64,8 @@ export function loadGlossary(): Promise<glossary> {
   if (!glossaryPromise) {
     glossaryPromise = Promise.all([
       loadCollection('rules'), loadCollection('conditions'), loadCollection('spells'),
-      loadCollection('feats'), loadCollection('languages'),
-    ]).then(([rules, conditions, spells, feats, languages]) => {
+      loadCollection('feats'), loadCollection('languages'), loadCollection('skills'),
+    ]).then(([rules, conditions, spells, feats, languages, skills]) => {
       const terms = new Map<string, definition>();
       for (const r of rules.values() as Iterable<ruleEntry>) {
         if (r.description) terms.set(r.name.toLowerCase(), { name: r.name, text: r.description });
@@ -68,6 +74,14 @@ export function loadGlossary(): Promise<glossary> {
       for (const c of conditions.values() as Iterable<conditionEntry>) {
         const text = groupsText(c.effectGroups);
         if (text) terms.set(c.name.toLowerCase(), { name: c.name, text });
+      }
+      // A skill: the ability it goes with, then what the pack says about it and its example uses.
+      const skillNames: string[] = [];
+      for (const s of skills.values() as Iterable<skillEntry>) {
+        const text = [s.description, s.uses && `**Example uses.** ${s.uses}`].filter(Boolean).join('\n\n');
+        if (!text) continue;
+        terms.set(s.name.toLowerCase(), { name: s.name, meta: `${ABILITIES[s.ability] ?? s.ability} skill`, text });
+        skillNames.push(s.name);
       }
       const spellNames: string[] = [];
       for (const s of spells.values() as Iterable<spellEntry>) {
@@ -89,7 +103,7 @@ export function loadGlossary(): Promise<glossary> {
         });
         languageNames.push(l.name);
       }
-      return { terms, spells: spellNames, feats: featNames, languages: languageNames };
+      return { terms, skills: skillNames, spells: spellNames, feats: featNames, languages: languageNames };
     });
     glossaryPromise.catch(() => { glossaryPromise = null; });
   }
