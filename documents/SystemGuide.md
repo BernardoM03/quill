@@ -31,8 +31,8 @@ Schema files define the shape of both the packs and the JSON records the databas
 | Shape | JSON Schema, draft 2020-12 | `schemas/`, `schemas/records/` | Defines what a pack file or stored record may contain |
 | API | Python 3, Flask | `server/` | HTTP routes, sessions, access checks |
 | Rules engine | Python, no framework | `server/rules/` | Decides what a character may be built from and whether a build is valid |
-| Storage | SQLite (`sqlite3` from the Python standard library) | `data/quill.db` | Users, campaigns, characters, drafts |
-| Images | Pillow | `server/portraits.py` | Re-encodes portrait uploads |
+| Storage | SQLite (`sqlite3` from the Python standard library) | `data/quill.db` | Users, campaigns, characters, drafts, maps |
+| Images | Pillow | `server/portraits.py`, `server/maps.py` | Re-encodes portrait and map uploads; finds a map image's outline |
 | UI | React 19, React Router 7, TypeScript | `src/` | Pages, the creation wizard, the sheet |
 | HTTP client | axios | `src/api/` | One function per API call |
 | Build / dev server | Vite 8 | `vite.config.ts` | Serves the UI in development, bundles it for release |
@@ -52,7 +52,7 @@ quill/
 ├── packs/                 Content packs. Server-only: never served as static files.
 │   └── srd-5.2/           SRD 5.2.1. pack.json is the manifest; one file per collection.
 ├── schemas/               JSON Schemas for pack files (class, spell, species, ...).
-│   └── records/           JSON Schemas for records stored in SQLite (draft, sheet, campaign-settings).
+│   └── records/           JSON Schemas for records stored in SQLite (draft, sheet, campaign-settings, hex).
 ├── server/                Flask API.
 │   ├── __init__.py        App factory: config, cookies, global rate limit, blueprint registration.
 │   ├── __main__.py        Entry point: `python -m server`.
@@ -69,7 +69,7 @@ quill/
 ├── src/                   React app.
 │   ├── main.tsx           Router: every page and its URL.
 │   ├── routes/            One component per page.
-│   ├── components/        Shared and feature components (wizard steps, sheet, settings, portrait).
+│   ├── components/        Shared and feature components (wizard steps, sheet, settings, portrait, maps).
 │   ├── api/               axios client and one module per API resource.
 │   ├── datatypes/         Hand-written response types; generated/ holds record types.
 │   └── packs/             Pack loader, React hooks, and generated/ pack types.

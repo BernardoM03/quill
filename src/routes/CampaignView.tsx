@@ -7,6 +7,7 @@ import type { campaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
 import PendingCharacters from "../components/PendingCharacters";
 import CharacterChangeLog from "../components/CharacterChangeLog";
+import { CampaignMaps } from "../components/maps/CampaignMaps";
 import "../components/campaignSettings/CampaignSettings.css";
 
 // Read-only campaign page for members; where a player lands after joining.
@@ -40,6 +41,8 @@ export default function CampaignView() {
             </div>
             {campaignID && <PendingCharacters campaignId={campaignID} />}
             {campaignID && <CharacterChangeLog campaignId={campaignID} />}
+            {/* Only the GM (or the admin stepping in) can add maps; players see the public ones. */}
+            {campaignID && <CampaignMaps campaignId={campaignID} canEdit={campaign.role !== 'player'} />}
             {/* Characters belong to a membership; an admin who isn't in the campaign can't make one. */}
             {campaign.role !== 'admin' && (
                 <div className="home-actions campaign-view__actions">

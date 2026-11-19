@@ -236,6 +236,45 @@ MIGRATIONS = [
     );
     CREATE INDEX character_changes_campaign ON character_changes(campaign_id, created_at);
     ''',
+    # 13: campaign maps. A map starts as a draft while the GM sets its scale, then is
+    # finalized (ready), which locks the grid: hexes are stored by grid position. land is
+    # the hexes that make up the map, as [[col, row], ...]. The image and its land mask
+    # are kept apart so map rows stay small. A hex has a row only once the GM changes it.
+    '''
+    CREATE TABLE campaign_maps (
+        id           TEXT PRIMARY KEY,                  -- UUID
+        campaign_id  TEXT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+        name         TEXT NOT NULL,
+        kind         TEXT NOT NULL CHECK (kind IN ('hex', 'battle', 'world')),
+        visibility   TEXT NOT NULL DEFAULT 'private' CHECK (visibility IN ('private', 'public')),  -- private: GM only
+        status       TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'ready')),
+        unit         TEXT NOT NULL CHECK (unit IN ('mi', 'km')),
+        hex_size     INTEGER NOT NULL CHECK (hex_size > 0),    -- centre to centre, in unit
+        map_width    INTEGER NOT NULL CHECK (map_width > 0),   -- what the image's width covers, in unit
+        show_outline INTEGER NOT NULL DEFAULT 1 CHECK (show_outline IN (0, 1)),  -- players see hidden hexes as blanks
+        image_width  INTEGER NOT NULL,                  -- of the stored image, in pixels
+        image_height INTEGER NOT NULL,
+        land         TEXT NOT NULL DEFAULT '[]' CHECK (json_valid(land)),
+        created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        updated_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    );
+    CREATE INDEX campaign_maps_campaign ON campaign_maps(campaign_id, created_at);
+
+    CREATE TABLE campaign_map_images (
+        map_id TEXT PRIMARY KEY REFERENCES campaign_maps(id) ON DELETE CASCADE,
+        image  BLOB NOT NULL,                           -- WebP, re-encoded by the server; GM only
+        mask   BLOB NOT NULL                            -- 1-bit PNG: the image's land (server/maps.py)
+    );
+
+    CREATE TABLE campaign_map_hexes (
+        map_id     TEXT NOT NULL REFERENCES campaign_maps(id) ON DELETE CASCADE,
+        hex_col    INTEGER NOT NULL,
+        hex_row    INTEGER NOT NULL,
+        data       TEXT NOT NULL CHECK (json_valid(data)),  -- schemas/records/hex.schema.json
+        updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+        PRIMARY KEY (map_id, hex_col, hex_row)
+    ) WITHOUT ROWID;
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

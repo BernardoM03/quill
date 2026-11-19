@@ -16,6 +16,7 @@ import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
 import CampaignView from './routes/CampaignView';
+import MapPage from './routes/MapPage';
 import { GlossaryTooltips } from './components/GlossaryTooltips';
 
 const router = createBrowserRouter([
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
   {
     path : "/campaign/:campaignID",
     element : <CampaignView />
+  },
+  {
+    path : "/campaign/:campaignID/maps/:mapID",
+    element : <MapPage />
   },
   {
     path : "campaignsettings/:campaignID",
