@@ -402,11 +402,12 @@ export default function NewCharacter() {
                     ? createSandboxCharacter(body)
                     // If the submit fails, the character is still saved (as a draft, submittable
                     // from its page), so don't offer a retry here that would make a second one.
-                    : createCharacter(draft.campaignId, body).then(created => submitCharacter(created.id).catch(() => undefined))
+                    : createCharacter(draft.campaignId, body).then(created => submitCharacter(created.id).catch(() => undefined).then(() => created))
                 finished.current = true
                 return create
-                    // From a campaign, go back to it; from home, go home, where the new character is listed.
-                    .then(() => navigate(campaignID ? `/campaign/${campaignID}` : '/', { replace: true }))
+                    // Open the new character's sheet, so the player sees it was made (and, in a
+                    // campaign that needs approval, that it's waiting on the GM).
+                    .then(created => navigate(`/characters/${created.id}`, { replace: true }))
             })
             .catch(err => {
                 const data = err.response?.data
