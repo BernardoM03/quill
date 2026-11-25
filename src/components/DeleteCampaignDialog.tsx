@@ -1,8 +1,7 @@
 import { deleteCampaign, shortCampaignId } from '../api/campaigns'
 import TypeToConfirmDialog from './TypeToConfirmDialog'
 
-// Asks before deleting a campaign: the Delete button stays disabled until the user
-// types the campaign's short id. onDeleted runs once the server has removed it.
+// Confirms deleting a campaign by typing its short id, then calls onDeleted once the server removes it.
 export default function DeleteCampaignDialog({ id, name, onClose, onDeleted }: {
   id: string
   name: string

@@ -3,24 +3,25 @@ import sqlite3
 
 from flask import Blueprint, jsonify
 
-from server.db import connect
+from server.access import require_admin, require_login, require_member
+from server.campaign_content import load_allowed, save_allowed
+from server.db import connection
 from server.helpers import (
     NAME_MAX_LENGTH, NOW, canonical_uuid, clean_name, current_user, error, is_gm, json_body, list_campaigns,
+    revalidated_json,
 )
 from server.rules import validate_campaign_patch
-from server.rules.settings import LIMITS, with_rule_defaults
+from server.rules.campaign import known_content
 from server.rules.problems import campaign_problems, spell_change_problem, subclass_change_problem
-from server.access import require_admin, require_login, require_member
+from server.rules.settings import LIMITS, with_rule_defaults
 
 bp = Blueprint('campaigns', __name__)
 
-# The admin gets every campaign; anyone else only the ones they've joined. role is the
-# user's role in each, or 'admin' where the admin isn't a member.
+# The admin sees every campaign, with role 'admin' where they aren't a member.
 @bp.get('/campaigns')
 @require_login
 def get_campaigns():
-    conn = connect()
-    try:
+    with connection() as conn:
         user = current_user(conn)
         if user['is_admin']:
             rows = conn.execute(
@@ -28,11 +29,9 @@ def get_campaigns():
                 'LEFT JOIN memberships m ON m.campaign_id = c.id AND m.user_id = ? ORDER BY c.created_at',
                 (user['id'],),
             ).fetchall()
-            campaigns = [dict(r) for r in rows]
+            campaigns = [dict(row) for row in rows]
         else:
             campaigns = list_campaigns(conn, user['id'])
-    finally:
-        conn.close()
     return jsonify(campaigns), 200
 
 @bp.post('/campaigns')
@@ -47,10 +46,9 @@ def create_campaign():
     campaign_id = canonical_uuid(content.get('id'))
     if campaign_id is None:
         return error('Invalid campaign id.', 400)
-    settings = {'alternateRules': [], 'allowedContent': {}, 'rules': {}}
+    settings = {'rules': {}}
 
-    conn = connect()
-    try:
+    with connection() as conn:
         with conn:
             user = current_user(conn)
             try:
@@ -64,100 +62,106 @@ def create_campaign():
                 "INSERT INTO memberships (campaign_id, user_id, role) VALUES (?, ?, 'gm')",
                 (campaign_id, user['id']),
             )
-    finally:
-        conn.close()
     return jsonify({'name': campaign_name, 'id': campaign_id}), 201
 
-# Members read their campaign; the admin can read any. role is the user's role in it,
-# or 'admin' for an admin who isn't a member.
+# role is the user's role in the campaign, or 'admin' for an admin who isn't a member.
 @bp.get('/campaigns/<campaign_id>')
 @require_member
 def get_campaign(campaign_id):
-    conn = connect()
-    try:
+    with connection() as conn:
         row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+        allowed = load_allowed(conn, campaign_id)
         membership = conn.execute(
             'SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, current_user(conn)['id'])
         ).fetchone()
-    finally:
-        conn.close()
     if row is None:
         return error('Campaign not found', 404)
-    role = membership['role'] if membership else 'admin'
     details = json.loads(row['settings'])
-    details.update({'name': row['name'], 'description': row['description'] or None, 'characters': [], 'role': role})
-    # Campaigns made before allowedContent existed: missing means everything is allowed.
-    details.setdefault('allowedContent', {})
-    # Stored: only what the GM changed. Sent: every rule, defaults filled in, with the limits
-    # the settings page should offer.
-    details['rules'] = with_rule_defaults(details.get('rules'))
-    details['ruleLimits'] = LIMITS
-    # What the settings are missing before characters can be made; the page shows these.
-    details['problems'] = campaign_problems(details['allowedContent'])
-    return jsonify(details), 200
+    details.update({
+        'name': row['name'],
+        'description': row['description'] or None,
+        'characters': [],
+        'role': membership['role'] if membership else 'admin',
+        # A collection missing from allowedContent allows everything in it.
+        'allowedContent': allowed,
+        # Only GM changes are stored, so defaults are filled in before sending.
+        'rules': with_rule_defaults(details.get('rules')),
+        'ruleLimits': LIMITS,
+        'questions': details.get('questions') or [],
+        # What the settings lack before characters can be made.
+        'problems': campaign_problems(allowed),
+    })
+    return revalidated_json(details)
 
-# Body: any of {name, description, rules, allowedContent}. All are checked before any is saved.
+# Applies allowedContent changes to allowed in place and returns an error message, or None.
+def _apply_content_changes(conn, campaign_id, allowed, requested):
+    changes = known_content(requested)
+    before = dict(allowed)
+    for collection, entry_ids in changes.items():
+        if entry_ids is None:
+            allowed.pop(collection, None)
+        else:
+            allowed[collection] = entry_ids
+    # Unlike campaign problems these are refused outright, because the pickers never pass through them.
+    if 'classes' in changes or 'subclasses' in changes:
+        problem = subclass_change_problem(before, allowed)
+        if problem:
+            return problem
+    if 'spells' in changes:
+        problem = spell_change_problem(before, allowed)
+        if problem:
+            return problem
+    save_allowed(conn, campaign_id, changes)
+    return None
+
+# Body: any of {name, description, rules, allowedContent, questions}, all checked before any is saved.
 # Returns the campaign's problems after the change, so the page needn't work them out.
 @bp.patch('/campaigns/<campaign_id>')
 @require_login
 def update_campaign(campaign_id):
     content = json_body()
-    message = validate_campaign_patch(content)
-    if message:
-        return error(message, 400)
+    problem = validate_campaign_patch(content)
+    if problem:
+        return error(problem, 400)
 
-    conn = connect()
-    try:
+    with connection() as conn:
         with conn:
             row = conn.execute('SELECT name, description, settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
             if row is None or not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
             settings = json.loads(row['settings'])
-            # While the campaign has problems, only the fix can be saved: allowed content (and
-            # rules, which can't affect problems). Matches the settings page, which locks the
-            # name and description until the problems are gone.
+            allowed = load_allowed(conn, campaign_id)
+            # While problems remain, only fixes (allowed content and rules) can be saved, matching the settings page.
             if 'name' in content or 'description' in content:
-                problems = campaign_problems(settings.get('allowedContent', {}))
+                problems = campaign_problems(allowed)
                 if problems:
                     return error('Fix the campaign’s problems first: ' + ' '.join(problems), 409)
             name = clean_name(content['name']) if 'name' in content else row['name']
             description = content['description'].strip() if 'description' in content else row['description']
+            if 'questions' in content:
+                settings['questions'] = [{**question, 'prompt': question['prompt'].strip()} for question in content['questions']]
             if 'rules' in content:
                 settings.setdefault('rules', {}).update(content['rules'])
             if 'allowedContent' in content:
-                before = dict(settings.get('allowedContent', {}))
-                settings.setdefault('allowedContent', {}).update(content['allowedContent'])
-                # Refused outright, unlike the problems list: the class and spell pickers
-                # never need to pass through these states.
-                if 'classes' in content['allowedContent'] or 'subclasses' in content['allowedContent']:
-                    message = subclass_change_problem(before, settings['allowedContent'])
-                    if message:
-                        return error(message, 400)
-                if 'spells' in content['allowedContent']:
-                    message = spell_change_problem(before, settings['allowedContent'])
-                    if message:
-                        return error(message, 400)
+                problem = _apply_content_changes(conn, campaign_id, allowed, content['allowedContent'])
+                if problem:
+                    return error(problem, 400)
             conn.execute(
                 f'UPDATE campaigns SET name = ?, description = ?, settings = ?, updated_at = {NOW} WHERE id = ?',
                 (name, description, json.dumps(settings), campaign_id),
             )
-    finally:
-        conn.close()
-    return jsonify({'success': True, 'problems': campaign_problems(settings.get('allowedContent', {}))}), 200
+    return jsonify({'success': True, 'problems': campaign_problems(allowed)}), 200
 
 @bp.delete('/campaigns/<campaign_id>')
 @require_login
 def delete_campaign(campaign_id):
-    conn = connect()
-    try:
+    with connection() as conn:
         with conn:
-            # Memberships, characters and invites go with it (ON DELETE CASCADE).
             if not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
-            deleted = conn.execute('DELETE FROM campaigns WHERE id = ?', (campaign_id,)).rowcount
-    finally:
-        conn.close()
-    if not deleted:
+            # Memberships, characters and invites go with it through ON DELETE CASCADE.
+            deleted_count = conn.execute('DELETE FROM campaigns WHERE id = ?', (campaign_id,)).rowcount
+    if not deleted_count:
         return error('Campaign not found', 404)
     return jsonify({'success': True}), 200
 
@@ -165,8 +169,7 @@ def delete_campaign(campaign_id):
 @bp.get('/campaigns/<campaign_id>/members')
 @require_login
 def get_members(campaign_id):
-    conn = connect()
-    try:
+    with connection() as conn:
         if not is_gm(conn, campaign_id, current_user(conn)):
             return error('Campaign not found', 404)
         rows = conn.execute(
@@ -176,24 +179,20 @@ def get_members(campaign_id):
             "ORDER BY m.role = 'gm' DESC, m.joined_at",
             (campaign_id,),
         ).fetchall()
-    finally:
-        conn.close()
     return jsonify([{
-        'userId': r['id'],
-        'username': r['username'],
-        'displayName': r['display_name'],
-        'role': r['role'],
-        'joinedAt': r['joined_at'],
-        'characterCount': r['character_count'],
-    } for r in rows]), 200
+        'userId': row['id'],
+        'username': row['username'],
+        'displayName': row['display_name'],
+        'role': row['role'],
+        'joinedAt': row['joined_at'],
+        'characterCount': row['character_count'],
+    } for row in rows]), 200
 
-# Removes a player from the campaign, and with them their characters there (the
-# characters table cascades from memberships). The GM can't be removed this way.
+# Removes a player, whose characters there cascade with the membership; the GM can't be removed.
 @bp.delete('/campaigns/<campaign_id>/members/<user_id>')
 @require_login
 def remove_member(campaign_id, user_id):
-    conn = connect()
-    try:
+    with connection() as conn:
         with conn:
             if not is_gm(conn, campaign_id, current_user(conn)):
                 return error('Campaign not found', 404)
@@ -205,6 +204,4 @@ def remove_member(campaign_id, user_id):
             if member['role'] != 'player':
                 return error('The GM can’t be removed from their campaign.', 400)
             conn.execute('DELETE FROM memberships WHERE campaign_id = ? AND user_id = ?', (campaign_id, user_id))
-    finally:
-        conn.close()
     return jsonify({'success': True}), 200

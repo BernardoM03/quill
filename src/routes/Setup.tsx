@@ -10,7 +10,7 @@ function errorMessage(err: unknown, fallback: string): string {
     return response?.data?.error ?? fallback;
 }
 
-// First-run page for creating the admin. Opened from the link the server prints, which carries a one-time token.
+// First-run admin creation, opened from the one-time link the server prints.
 export default function Setup() {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token') ?? ''

@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 
-export interface sessionUser {
+export interface SessionUser {
     id: string,
     username: string,
     displayName: string,
@@ -11,13 +11,13 @@ export const USERNAME_PATTERN = "[A-Za-z0-9_.\\-]{3,32}";
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 128;
 
-// Creates a player from an invite and signs them in. Resolves with the campaign they joined.
+// Creates a player from an invite, signs them in and resolves with the campaign they joined.
 export function signup(token: string, username: string, password: string, displayName?: string): Promise<string> {
     return apiClient.post("/auth/signup", { token, username, password, ...(displayName ? { displayName } : {}) })
         .then(response => response.data.campaignId);
 }
 
-export function login(username: string, password: string): Promise<sessionUser> {
+export function login(username: string, password: string): Promise<SessionUser> {
     return apiClient.post("/auth/login", { username, password }).then(response => response.data);
 }
 
@@ -26,7 +26,7 @@ export function logout(): Promise<void> {
 }
 
 // The signed-in user, or null when nobody is.
-export function getSessionUser(): Promise<sessionUser | null> {
+export function getSessionUser(): Promise<SessionUser | null> {
     return apiClient.get("/auth/me")
         .then(response => response.data)
         .catch(err => {

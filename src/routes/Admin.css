@@ -25,12 +25,12 @@
 }
 
 .deleted-account__name {
-  font-size: 15px;
+  font-size: var(--fs-md);
   color: var(--text-h);
 }
 
 .deleted-account__days {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
   white-space: nowrap;
 }
@@ -41,6 +41,6 @@
 }
 
 .admin-notice {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-h);
 }

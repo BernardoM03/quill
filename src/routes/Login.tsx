@@ -15,7 +15,7 @@ function safeNext(next: string | null): string {
     return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
 }
 
-// Sign-in for the admin and players alike. Before the admin exists, points to the setup link instead.
+// Sign-in for everyone, pointing to the setup link until the admin exists.
 export default function Login() {
     const [searchParams] = useSearchParams();
     const next = safeNext(searchParams.get('next'))

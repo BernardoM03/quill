@@ -13,12 +13,9 @@ export type GroupedEntry = {
   filters?: string[]; // filter keys it matches
 };
 
-// A long collection's allowed entries, grouped (spells by level, items by category).
-// View mode summarizes each group by what's left out; Edit mode has a search, an optional
-// filter row, All/None per group, and a toggle per entry. validate can refuse a change by
-// returning a message, and so can the server when the save fails; either shows where the
-// change came from.
-// allowed: the saved ids, or null for "all".
+// A long collection's allowed entries in groups, summarized by exclusions or edited with search, filters and toggles.
+// validate or a failed save can refuse a change, and the message shows where the change came from.
+// allowed holds the saved ids, or null for all.
 export function GroupedSettings({ caption, noun, entries, groups, filters, validate, allowed, onChange }: {
   caption: string;
   noun: string; // plural, lowercase: "spells"

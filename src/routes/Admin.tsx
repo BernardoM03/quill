@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getDeletedAccounts, restoreAccount, type deletedAccount, type restoreResult } from "../api/admin";
+import { getDeletedAccounts, restoreAccount, type DeletedAccount, type RestoreResult } from "../api/admin";
 import BackButton from "../components/BackButton";
 import "../components/campaignSettings/CampaignSettings.css";
 import "./Admin.css";
@@ -10,7 +10,7 @@ function errorMessage(err: unknown, fallback: string): string {
     return response?.data?.error ?? fallback;
 }
 
-function describeRestore(result: restoreResult): string {
+function describeRestore(result: RestoreResult): string {
     const parts = [`Restored ${result.username}.`]
     if (result.skippedCampaigns.length > 0) {
         parts.push(`Not rejoined (campaign deleted since): ${result.skippedCampaigns.join(', ')}.`)
@@ -21,9 +21,9 @@ function describeRestore(result: restoreResult): string {
     return parts.join(' ')
 }
 
-// Admin-only. Lists deleted accounts still inside their 30 days, with a Restore button each.
+// Admin-only list of deleted accounts still within their 30-day restore window.
 export default function Admin() {
-    const [accounts, setAccounts] = useState<deletedAccount[] | null>(null)
+    const [accounts, setAccounts] = useState<DeletedAccount[] | null>(null)
     // Not signed in as the admin: the server answers 404 and this stays set.
     const [loadError, setLoadError] = useState<string | null>(null)
     const [message, setMessage] = useState<{ text: string, failed: boolean } | null>(null)
@@ -37,7 +37,7 @@ export default function Admin() {
                 : 'Could not load deleted accounts.'))
     }, [])
 
-    function handleRestore(account: deletedAccount) {
+    function handleRestore(account: DeletedAccount) {
         if (!confirm(`Restore ${account.displayName} (${account.username})?`)) return
         setRestoring(account.id)
         setMessage(null)

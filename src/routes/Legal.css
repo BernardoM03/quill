@@ -1,5 +1,5 @@
 .legal {
-  line-height: 1.6;
+  line-height: var(--lh-normal);
 }
 
 .legal__section {
@@ -18,7 +18,7 @@
 
 .legal__pack h4 {
   margin: 0 0 0.5rem;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .legal__pack p + p {
@@ -30,8 +30,8 @@
   padding: 0.05rem 0.4rem;
   border: 1px solid var(--border);
   font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 400;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
   color: var(--text);
   vertical-align: middle;
 }

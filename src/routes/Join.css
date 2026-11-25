@@ -29,7 +29,7 @@
 }
 
 .join__label {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
 }
 
@@ -56,5 +56,5 @@
 /* Login page: the note under the form. */
 .login__hint {
   margin-top: 2rem;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }

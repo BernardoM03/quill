@@ -14,17 +14,17 @@
 }
 
 .campaign-card__title {
-  font-family: var(--heading);
-  font-size: 18px;
-  font-weight: 500;
+  font-family: var(--sans);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
   color: var(--text-h);
   margin: 0 0 4px;
-  letter-spacing: -0.24px;
+  letter-spacing: var(--ls-tight);
 }
 
 .campaign-card__id {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text);
 }
 

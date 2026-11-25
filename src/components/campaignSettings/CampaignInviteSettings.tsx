@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { createInvite, getInvites, joinLink, revokeInvite, type invite } from "../../api/invites";
+import { createInvite, getInvites, joinLink, revokeInvite, type Invite } from "../../api/invites";
 import "./CampaignSettings.css";
 
 const EXPIRY_OPTIONS = [
@@ -31,24 +31,22 @@ function describeExpiry(expiresAt: string | null): string {
         : `Expires ${relative.format(Math.round(hours / 24), 'day')}`
 }
 
-function describeUses(item: invite): string {
+function describeUses(item: Invite): string {
     if (item.maxUses === null) return `${item.useCount} used · unlimited`
     const left = Math.max(0, item.maxUses - item.useCount)
     return `${left} of ${item.maxUses} ${item.maxUses === 1 ? 'use' : 'uses'} left`
 }
 
-// Copies text, falling back to selecting it when the clipboard API isn't available
-// (it needs a secure context: localhost or HTTPS).
+// Copies text, or selects it where the clipboard API needs a secure context that isn't available.
 function copyText(text: string, input: HTMLInputElement | null): Promise<void> {
     if (navigator.clipboard) return navigator.clipboard.writeText(text)
     input?.select()
     return Promise.reject(new Error('clipboard unavailable'))
 }
 
-// Invite links for a campaign. A link can only be copied right after it's made: the
-// server keeps just a hash of the token, so older invites can be revoked but not re-shown.
+// A campaign's invite links, copyable only right after creation because the server keeps just a token hash.
 export function CampaignInviteSettings({ campaignId }: { campaignId: string }) {
-    const [invites, setInvites] = useState<invite[] | null>(null)
+    const [invites, setInvites] = useState<Invite[] | null>(null)
     const [days, setDays] = useState<number | null>(7)
     const [uses, setUses] = useState<number | null>(null)
     // Raw tokens of links made on this visit, by invite id.
@@ -83,7 +81,7 @@ export function CampaignInviteSettings({ campaignId }: { campaignId: string }) {
             .catch(() => setError('Couldn’t copy automatically. The link is selected; copy it with Ctrl+C.'))
     }
 
-    function handleRevoke(item: invite) {
+    function handleRevoke(item: Invite) {
         if (!confirm('Revoke this invite? Anyone with the link will no longer be able to join.')) return
         revokeInvite(item.id)
             .then(() => setInvites(list => list && list.map(i => (i.id === item.id ? { ...i, status: 'revoked' } : i))))
@@ -93,7 +91,7 @@ export function CampaignInviteSettings({ campaignId }: { campaignId: string }) {
     const active = invites?.filter(i => i.status === 'active') ?? []
     const inactive = invites?.filter(i => i.status !== 'active') ?? []
 
-    function renderInvite(item: invite) {
+    function renderInvite(item: Invite) {
         const token = tokens[item.id]
         let input: HTMLInputElement | null = null
         return (

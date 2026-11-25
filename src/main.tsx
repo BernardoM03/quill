@@ -10,10 +10,14 @@ import Setup from './routes/Setup';
 import Login from './routes/Login';
 import AccountSettings from './routes/AccountSettings';
 import Admin from './routes/Admin';
+import NewCharacter from './routes/NewCharacter';
+import CharacterPage from './routes/CharacterPage';
 import CampaignSettings from './routes/CampaignSettings';
 import Legal from './routes/Legal';
 import Join from './routes/Join';
 import CampaignView from './routes/CampaignView';
+import MapPage from './routes/MapPage';
+import { GlossaryTooltips } from './components/GlossaryTooltips';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +51,22 @@ const router = createBrowserRouter([
     element: <Admin />
   },
   {
+    path : "/campaigns/:campaignID/characters/new",
+    element: <NewCharacter />
+  },
+  {
+    path : "/characters/new",
+    element: <NewCharacter />
+  },
+  {
+    path : "/characters/:characterID",
+    element: <CharacterPage />
+  },
+  {
+    path : "/characters/:characterID/edit",
+    element: <NewCharacter />
+  },
+  {
     path : "/setup/campaign",
     element : <CampaignSettings />
   },
@@ -59,6 +79,10 @@ const router = createBrowserRouter([
     element : <CampaignView />
   },
   {
+    path : "/campaign/:campaignID/maps/:mapID",
+    element : <MapPage />
+  },
+  {
     path : "campaignsettings/:campaignID",
     element : <CampaignSettings />
   }
@@ -67,6 +91,8 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RouterProvider router={router} />
+    {/* Outside the router, so it's on every page. */}
+    <GlossaryTooltips />
   </StrictMode>,
 )
 

@@ -1,0 +1,77 @@
+/* ---- Character page: portrait beside the name, then the portrait controls ---- */
+
+/* Takes over the page h1's spacing and rule, with the portrait on the left. */
+.character-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 1rem 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.character-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.character-header__text h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.character-header__text a {
+  color: inherit;
+}
+
+.character-header__text a:hover {
+  color: var(--accent);
+}
+
+.character-portrait__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A character that no longer fits its campaign's settings: what's wrong, and a way to fix it. */
+.character-flag {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--danger);
+  background: var(--code-bg);
+}
+
+.character-flag strong {
+  color: var(--text-h);
+  font-weight: var(--fw-medium);
+}
+
+.character-flag p,
+.character-flag ul {
+  margin: 0.4rem 0;
+  font-size: var(--fs-base);
+}
+
+/* Approval: waiting or unsubmitted is a note, not a problem; rejected keeps the danger rule. */
+.character-flag--pending,
+.character-flag--draft {
+  border-left-color: var(--accent);
+}
+
+.character-flag__reason {
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.character-activate {
+  margin: 0 0 1.5rem;
+}
+
+.character-header__edit {
+  align-self: flex-start;
+  margin-left: calc(-0.8rem - 1px);
+}

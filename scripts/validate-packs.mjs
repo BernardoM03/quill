@@ -31,8 +31,11 @@ const printRow = (collection, status) => console.log(`  ${collection.padEnd(14)}
 
 let failed = false;
 
-// Catch the common typo first and log error.
-for (const file of readdirSync(SCHEMAS_DIR)) {
+// Catch the common typo first and log error, in the pack schemas and the stored-record schemas (records/).
+const schemaFiles = readdirSync(SCHEMAS_DIR, { recursive: true })
+  .filter((file) => file.endsWith('.schema.json'))
+  .sort();
+for (const file of schemaFiles) {
   const lines = readFileSync(`${SCHEMAS_DIR}/${file}`, 'utf8').split('\n');
   lines.forEach((line, i) => {
     if (line.includes('#/defs/')) {

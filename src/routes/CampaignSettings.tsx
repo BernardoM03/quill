@@ -1,10 +1,10 @@
 import { Link, useBlocker, useNavigate, useParams, useSearchParams } from "react-router";
 import { useState, useEffect, useRef } from 'react'
 
-import type { campaignDetails } from "../datatypes/campaignDetails";
+import type { CampaignDetails } from "../datatypes/campaignDetails";
 import { getCampaign, updateCampaignAllowed, updateCampaignRules } from "../api/campaigns";
 import { getSessionUser } from "../api/auth";
-import type { campaignRules } from "../datatypes/campaignRules";
+import type { CampaignRules } from "../datatypes/campaignRules";
 
 import { CollectionSettings } from "../components/campaignSettings/CampaignCollectionSettings";
 import { ClassSettings } from "../components/campaignSettings/CampaignClassSettings";
@@ -18,6 +18,8 @@ import { CampaignDescriptionSettings } from "../components/campaignSettings/Camp
 import { CampaignInviteSettings } from "../components/campaignSettings/CampaignInviteSettings";
 import { CampaignMemberSettings } from "../components/campaignSettings/CampaignMemberSettings";
 import { ReadOnlyContext } from "../components/campaignSettings/ReadOnly";
+import { CampaignQuestionsSettings } from "../components/campaignSettings/CampaignQuestionsSettings";
+import type { CampaignQuestion } from "../datatypes/campaignDetails";
 
 const proficiencies = [
     { collection: 'skills', caption: 'Allowed Skills' },
@@ -30,34 +32,34 @@ const SETTINGS_TABS = [
     { id: 'rules', label: 'Rules' },
     { id: 'content', label: 'Content' },
 ] as const
-type settingsTab = typeof SETTINGS_TABS[number]['id']
+type SettingsTab = typeof SETTINGS_TABS[number]['id']
 
 export default function CampaignSettings() {
-    // No campaignID means /setup/campaign: only the name shows until the campaign is created,
-    // then the page swaps to that campaign's settings URL.
+    // Without a campaignID this is /setup/campaign, which shows only the name until the campaign exists.
     const { campaignID } = useParams();
     const navigate = useNavigate();
-    // The open tab lives in ?tab=, so reloading or going Back keeps it. Unknown values mean General.
+    // The open tab lives in ?tab= so reloading keeps it, and unknown values mean General.
     const [searchParams, setSearchParams] = useSearchParams();
-    const tab: settingsTab = SETTINGS_TABS.find(t => t.id === searchParams.get('tab'))?.id ?? 'general'
-    function selectTab(next: settingsTab) {
+    const tab: SettingsTab = SETTINGS_TABS.find(t => t.id === searchParams.get('tab'))?.id ?? 'general'
+    function selectTab(next: SettingsTab) {
         setSearchParams(next === 'general' ? {} : { tab: next }, { replace: true })
     }
-    const [campaignDetails, setCampaignDetails] = useState<campaignDetails | null>(null)
+    const [campaignDetails, setCampaignDetails] = useState<CampaignDetails | null>(null)
     const [confirmingDelete, setConfirmingDelete] = useState(false)
-    // Set once the campaign is deleted, so leaving isn't blocked even if its settings were broken.
+    // Set on delete, so leaving isn't blocked even if the settings were broken.
     const deleted = useRef(false)
-    // Counts allowed-content saves, so only the newest one's problems are shown.
+    // Numbers allowed-content saves so only the newest one's problems are shown.
     const latestAllowedSave = useRef(0)
+    // Why the last rules change failed, shown on the Rules tab.
+    const [rulesError, setRulesError] = useState<string | null>(null)
 
-    // Creating a campaign is admin-only for now; anyone else gets a message instead of a
-    // form whose save the server would refuse. An existing campaign goes by role below.
+    // Creating a campaign is admin-only, so others see a message instead of a form the server would refuse.
     const [isAdmin, setIsAdmin] = useState<boolean | undefined>(undefined)
     useEffect(() => {
         getSessionUser().then(user => setIsAdmin(user?.isAdmin ?? false)).catch(() => setIsAdmin(false))
     }, [])
 
-    // The server answers 404 when the campaign is gone or the user isn't in it.
+    // Set when the campaign is gone or the user isn't a member.
     const [notFound, setNotFound] = useState(false)
     useEffect(() => {
         if (!campaignID) return
@@ -66,13 +68,11 @@ export default function CampaignSettings() {
             .catch(() => setNotFound(true))
     }, [campaignID])
 
-    // While the settings are broken (no species, no classes, a class with no subclasses),
-    // the page can't be left: Back is disabled, in-app links are blocked, closing the tab
-    // asks first, and only the allowed-content toggles (the fix) can save.
-    // Players see the same page as Campaign Information: everything shown, nothing editable.
+    // While settings are broken the GM can't leave the page, and only allowed-content fixes can save.
+    // Players see the same page read-only as Campaign Information.
     const readOnly = campaignDetails?.role === 'player'
     const problems = campaignDetails?.problems ?? []
-    // Only someone who can fix broken settings is kept on the page until they do.
+    // Only someone who can fix broken settings is kept on the page.
     const broken = problems.length > 0 && !readOnly
 
     const blocker = useBlocker(({ currentLocation, nextLocation }) =>
@@ -92,13 +92,16 @@ export default function CampaignSettings() {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, name })
     }
 
+    function handleQuestionsSaved(questions: CampaignQuestion[]) {
+        setCampaignDetails(details => details && { ...details, questions })
+    }
+
     function handleDescriptionSaved(description: string | null) {
         if (campaignDetails) setCampaignDetails({ ...campaignDetails, description })
     }
 
-    // Show the change right away; put the old lists back if the save fails. changes can hold
-    // several collections (a class and its subclasses), saved together so the server checks
-    // them as one change. Uses the setter's function form so quick saves don't overwrite each other.
+    // Applies the change optimistically and restores the old lists if the save fails.
+    // Related collections (a class and its subclasses) are saved together so the server checks them as one change.
     // Rejects with the server's reason, which the section shows beside the toggle.
     function handleAllowedChanges(changes: Record<string, string[] | null>): Promise<void> {
         const previous = Object.fromEntries(
@@ -109,15 +112,14 @@ export default function CampaignSettings() {
         const request = ++latestAllowedSave.current
         return updateCampaignAllowed(campaignID as string, changes)
             .then(problems => {
-                // Saves can overlap; only the last one sent knows the final state.
+                // Saves can overlap, and only the last one sent knows the final state.
                 if (request === latestAllowedSave.current) {
                     setCampaignDetails(details => details && { ...details, problems })
                 }
             })
             .catch(err => {
                 setLists(previous)
-                // The server refuses some changes outright, e.g. leaving a class with no
-                // subclasses or no cantrips.
+                // The server refuses changes such as leaving a class with no subclasses or cantrips.
                 throw new Error(err.response?.data?.error ?? 'Could not save.')
             })
     }
@@ -126,16 +128,17 @@ export default function CampaignSettings() {
         return handleAllowedChanges({ [collection]: ids })
     }
 
-    // Same pattern as handleAllowedChange: show it now, undo just these rules if the save fails.
-    function handleRulesChange(changed: Partial<campaignRules>) {
+    // Applies the rules optimistically and reverts only these rules if the save fails.
+    function handleRulesChange(changed: Partial<CampaignRules>) {
+        setRulesError(null)
         const previous = Object.fromEntries(
-            Object.keys(changed).map(key => [key, campaignDetails?.rules[key as keyof campaignRules]]))
-        const setRules = (patch: Partial<campaignRules>) => setCampaignDetails(details =>
+            Object.keys(changed).map(key => [key, campaignDetails?.rules[key as keyof CampaignRules]]))
+        const setRules = (patch: Partial<CampaignRules>) => setCampaignDetails(details =>
             details && { ...details, rules: { ...details.rules, ...patch } })
         setRules(changed)
-        updateCampaignRules(campaignID as string, changed).catch(() => {
+        updateCampaignRules(campaignID as string, changed).catch(err => {
             setRules(previous)
-            alert('Could not save.')
+            setRulesError(err.response?.data?.error ?? 'Could not save that change. Check your connection and try again.')
         })
     }
 
@@ -192,7 +195,6 @@ export default function CampaignSettings() {
                     ))}
                 </div>
             )}
-            {/* Without a campaignID only the name shows, so creating a campaign stays one step. */}
             {(general || !campaignID) && (
                 <CampaignNameSettings
                     key={campaignID ?? 'new'}
@@ -204,15 +206,17 @@ export default function CampaignSettings() {
                 <CampaignDescriptionSettings description={campaignDetails.description} onSaved={handleDescriptionSaved} locked={broken}/>
             )}
             {campaignDetails && campaignID && general && !readOnly && (
-                <CampaignInviteSettings campaignId={campaignID}/>
+                <CampaignMemberSettings campaignId={campaignID}/>
             )}
             {campaignDetails && campaignID && general && !readOnly && (
-                <CampaignMemberSettings campaignId={campaignID}/>
+                <CampaignInviteSettings campaignId={campaignID}/>
             )}
             {campaignDetails && tab === 'rules' && (
                 <>
+                    {rulesError && <p className="setting-error" role="alert">{rulesError}</p>}
                     <RulesSettings rules={campaignDetails.rules} limits={campaignDetails.ruleLimits} onChange={handleRulesChange}/>
                     <AdvancedRulesSettings rules={campaignDetails.rules} onChange={handleRulesChange}/>
+                    <CampaignQuestionsSettings questions={campaignDetails.questions} onSaved={handleQuestionsSaved}/>
                 </>
             )}
             {campaignDetails && content && (
@@ -221,6 +225,11 @@ export default function CampaignSettings() {
                         collection="species" caption="Allowed Species" noun="species" requireOne
                         allowed={campaignDetails.allowedContent.species ?? null}
                         onChange={ids => handleAllowedChange('species', ids)}
+                    />
+                    <CollectionSettings
+                        collection="origins" caption="Allowed Backgrounds" noun="backgrounds" requireOne
+                        allowed={campaignDetails.allowedContent.origins ?? null}
+                        onChange={ids => handleAllowedChange('origins', ids)}
                     />
                     <ClassSettings
                         allowedClasses={campaignDetails.allowedContent.classes ?? null}

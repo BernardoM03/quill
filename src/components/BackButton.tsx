@@ -1,12 +1,11 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-// Goes back to whichever page led here. When there's nothing to go back to
-// (the page was opened directly or in a new tab), goes home instead.
+// Goes back to the previous page in this app, or home when there isn't one (a direct link or new tab).
 export default function BackButton({ disabled = false }: { disabled?: boolean }) {
   const navigate = useNavigate()
-  const location = useLocation()
-  // React Router gives the first page of a session the key "default".
-  const hasHistory = location.key !== 'default'
+  // React Router stores a 0-based entry index in history.state.idx, so anything above 0 has an earlier in-app page.
+  const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
+  const hasHistory = idx > 0
 
   return (
     <button
@@ -15,7 +14,7 @@ export default function BackButton({ disabled = false }: { disabled?: boolean })
       disabled={disabled}
       onClick={() => (hasHistory ? navigate(-1) : navigate('/'))}
     >
-      ← Back
+      <span aria-hidden="true">←</span>Back
     </button>
   )
 }

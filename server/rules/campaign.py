@@ -1,47 +1,55 @@
-import re
-
 from server.helpers import NAME_MAX_LENGTH, clean_name
-from server.rules.settings import LIMITS, RULE_DEFAULTS
+from server.records import record_problems
+from server.rules import packs
+from server.rules.settings import RULE_CHECKS
 
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
-# Caps on allowedContent so one request can't bloat the database.
-ALLOWED_COLLECTIONS_MAX = 32
-ALLOWED_IDS_MAX = 2000
-ALLOWED_ID_MAX_LENGTH = 200
+PATCH_FIELDS = {'name', 'description', 'rules', 'allowedContent', 'questions'}
+# Without species, backgrounds or classes no character can be made.
+REQUIRED_COLLECTIONS = ('species', 'origins', 'classes')
 
-# Each rule's check. The values each rule can take are described in server/rules/settings.py.
-def is_bool(v): return isinstance(v, bool)
-def is_int_in(v, low, high): return isinstance(v, int) and not isinstance(v, bool) and low <= v <= high
-BUDGET, SCORE = LIMITS['pointBuyBudget'], LIMITS['sharedScore']
-RULE_CHECKS = {
-    'optionalClassFeatures': is_bool,
-    'customizeOrigin': is_bool,
-    'advancement': lambda v: v in ('xp', 'milestone'),
-    'milestoneLevel': lambda v: is_int_in(v, 1, LIMITS['maxLevel']),
-    'hitPoints': lambda v: v in ('automatic', 'manual'),
-    'featPrerequisites': is_bool,
-    'multiclassPrerequisites': is_bool,
-    'encumbrance': is_bool,
-    'ignoreCoinWeight': is_bool,
-    'allowMulticlass': is_bool,
-    'abilityScoreMethod': lambda v: v in ('standardArray', 'pointBuy', 'roll', 'manual', 'sharedManual'),
-    'sharedScores': lambda v: isinstance(v, list) and len(v) == 6
-        and all(is_int_in(n, SCORE['min'], SCORE['max']) for n in v),
-    'pointBuyBudget': lambda v: is_int_in(v, BUDGET['min'], BUDGET['max']),
-    'startingEquipment': lambda v: v in ('choice', 'equipment', 'gold'),
-    'originFeat': lambda v: v in ('background', 'any'),
-    'characterApproval': is_bool,
-}
-# A rule added to one list but not the other would be unsettable or have no default.
-assert set(RULE_CHECKS) == set(RULE_DEFAULTS), 'RULE_CHECKS and RULE_DEFAULTS must name the same rules'
+def _rules_problem(rules):
+    if not isinstance(rules, dict) or not rules:
+        return 'rules must be a non-empty object.'
+    for key, value in rules.items():
+        is_valid = RULE_CHECKS.get(key)
+        if is_valid is None:
+            return f'Unknown rule: {key}'
+        if not is_valid(value):
+            return f'Invalid value for {key}.'
+    return None
 
-# Checks a campaign PATCH body. Returns an error message, or None if every field is valid.
+def _questions_problem(questions):
+    problems = record_problems('campaign-settings', {'questions': questions})
+    if problems:
+        return f'Invalid questions: {problems[0]}'
+    if any(not question['prompt'].strip() for question in questions):
+        return 'Every question needs a prompt.'
+    if len({question['id'] for question in questions}) != len(questions):
+        return 'Question ids must be unique.'
+    return None
+
+def _allowed_content_problem(allowed):
+    if not isinstance(allowed, dict) or not allowed:
+        return 'allowedContent must be a non-empty object.'
+    installed = packs.collection_names() - {'pack'}
+    for collection, entry_ids in allowed.items():
+        if collection not in installed:
+            return f'Unknown collection: {collection}'
+        if entry_ids is not None and not (isinstance(entry_ids, list) and all(isinstance(i, str) for i in entry_ids)):
+            return 'ids must be null or a list of strings.'
+        if collection in REQUIRED_COLLECTIONS and entry_ids == []:
+            return f'At least one entry in {collection} must stay allowed.'
+    return None
+
+# An error message for a campaign PATCH body, or None if every field is valid.
+# rules merge into the saved rules, while questions replace the saved list.
 def validate_campaign_patch(content):
     if not isinstance(content, dict) or not content:
         return 'Body must be a non-empty object.'
-    unknown = set(content) - {'name', 'description', 'rules', 'allowedContent'}
-    if unknown:
-        return f'Unknown field: {sorted(unknown)[0]}'
+    unknown_fields = set(content) - PATCH_FIELDS
+    if unknown_fields:
+        return f'Unknown field: {sorted(unknown_fields)[0]}'
     if 'name' in content and clean_name(content['name']) is None:
         return f'Name must be 1–{NAME_MAX_LENGTH} characters.'
     if 'description' in content:
@@ -49,32 +57,24 @@ def validate_campaign_patch(content):
         if not isinstance(description, str) or len(description) > CAMPAIGN_DESCRIPTION_MAX_LENGTH:
             return f'Description must be at most {CAMPAIGN_DESCRIPTION_MAX_LENGTH} characters.'
     if 'rules' in content:
-        # rules holds only the rules being changed; they merge into the saved rules.
-        rules = content['rules']
-        if not isinstance(rules, dict) or not rules:
-            return 'rules must be a non-empty object.'
-        for key, value in rules.items():
-            check = RULE_CHECKS.get(key)
-            if check is None:
-                return f'Unknown rule: {key}'
-            if not check(value):
-                return f'Invalid value for {key}.'
+        problem = _rules_problem(content['rules'])
+        if problem:
+            return problem
+    if 'questions' in content:
+        problem = _questions_problem(content['questions'])
+        if problem:
+            return problem
     if 'allowedContent' in content:
-        # {collection: ids}. ids is a list of pack ids, or null for "everything allowed".
-        allowed = content['allowedContent']
-        if not isinstance(allowed, dict) or not allowed:
-            return 'allowedContent must be a non-empty object.'
-        if len(allowed) > ALLOWED_COLLECTIONS_MAX:
-            return f'allowedContent may have at most {ALLOWED_COLLECTIONS_MAX} collections.'
-        for collection, ids in allowed.items():
-            if not re.fullmatch(r'[a-z-]{1,64}', collection):
-                return 'Invalid collection.'
-            if ids is not None and not (
-                isinstance(ids, list) and len(ids) <= ALLOWED_IDS_MAX
-                and all(isinstance(i, str) and len(i) <= ALLOWED_ID_MAX_LENGTH for i in ids)
-            ):
-                return f'ids must be null or a list of at most {ALLOWED_IDS_MAX} strings.'
-            # A campaign with no species or no classes can't make characters.
-            if collection in ('species', 'classes') and ids == []:
-                return f'At least one entry in {collection} must stay allowed.'
+        return _allowed_content_problem(content['allowedContent'])
     return None
+
+# Narrows each id list to installed entries in pack order, so removed or mistyped ids aren't stored.
+def known_content(changes):
+    result = {}
+    for collection, entry_ids in changes.items():
+        if entry_ids is None:
+            result[collection] = None
+        else:
+            wanted = set(entry_ids)
+            result[collection] = [entry_id for entry_id in packs.collection(collection) if entry_id in wanted]
+    return result

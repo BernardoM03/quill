@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quill.local/schemas/records/hex.schema.json",
+  "title": "Map hex",
+  "description": "The JSON stored in campaign_map_hexes.data: what the GM has recorded for one hex of a hex map. Only hexes the GM has changed have a row; a hex without one is hidden and empty. Players are only ever sent status, name and description, and only for hexes that aren't hidden (server/routes/maps.py).",
+  "type": "object",
+  "properties": {
+    "status": {
+      "description": "hidden: players see nothing of it. scouted: seen from afar. visited: the party has been there. Players see the name and description of scouted and visited hexes.",
+      "enum": [
+        "hidden",
+        "scouted",
+        "visited"
+      ]
+    },
+    "name": {
+      "description": "A short name for the place, or empty.",
+      "type": "string",
+      "maxLength": 64
+    },
+    "description": {
+      "description": "A small description of the location, shown to players once the hex is scouted or visited.",
+      "type": "string",
+      "maxLength": 500
+    },
+    "notes": {
+      "description": "The GM's own notes. Never sent to players.",
+      "type": "string",
+      "maxLength": 5000
+    },
+    "encounters": {
+      "description": "Pre-recorded encounters: what is here, every time.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/setEncounter"
+      },
+      "maxItems": 20
+    },
+    "randomEncounters": {
+      "description": "The hex's random encounter table. A roll picks one entry, each as likely as its weight.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/randomEncounter"
+      },
+      "maxItems": 30
+    }
+  },
+  "required": [
+    "status",
+    "name",
+    "description",
+    "notes",
+    "encounters",
+    "randomEncounters"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "encounterKind": {
+      "description": "What sort of encounter it is.",
+      "enum": [
+        "combat",
+        "social",
+        "treasure",
+        "hazard",
+        "exploration"
+      ]
+    },
+    "encounterCreature": {
+      "description": "Creatures in an encounter: a creature from an installed pack and how many of it.",
+      "type": "object",
+      "properties": {
+        "creature": {
+          "$ref": "https://quill.local/schemas/records/common.schema.json#/$defs/packId"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 99
+        }
+      },
+      "required": [
+        "creature",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "setEncounter": {
+      "description": "A pre-recorded encounter.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/encounterKind"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "creatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/encounterCreature"
+          },
+          "maxItems": 12
+        },
+        "resolved": {
+          "description": "The party has dealt with it.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "notes",
+        "creatures",
+        "resolved"
+      ],
+      "additionalProperties": false
+    },
+    "randomEncounter": {
+      "description": "One entry of a random encounter table.",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/encounterKind"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "creatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/encounterCreature"
+          },
+          "maxItems": 12
+        },
+        "weight": {
+          "description": "How likely this entry is next to the others: an entry of weight 2 comes up twice as often as one of weight 1.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "notes",
+        "creatures",
+        "weight"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

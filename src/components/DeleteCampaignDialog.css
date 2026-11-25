@@ -17,7 +17,7 @@
 
 .delete-dialog__title {
   margin: 0 0 0.5rem;
-  font-size: 18px;
+  font-size: var(--fs-lg);
   color: var(--text-h);
   overflow-wrap: anywhere;
 }
@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-h);
 }
 
@@ -47,7 +47,7 @@
 
 .delete-dialog__error {
   margin: 0.5rem 0 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--danger);
 }
 
@@ -61,7 +61,7 @@
 /* Explanation between the title and the input. */
 .delete-dialog__body {
   margin-bottom: 0.75rem;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .delete-dialog__body p {

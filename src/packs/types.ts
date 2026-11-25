@@ -18,8 +18,7 @@ import type { ToolSchema } from './generated/tool';
 
 export type PackManifest = PackSchema;
 
-// Keyed by the collection names a pack.json lists in `provides`
-// the collection file names (`magic-items` -> magic-items.json).
+// Keyed by the collection names a pack.json lists in `provides`, which are also the file names.
 export interface CollectionEntries {
   classes: ClassSchema[number];
   subclasses: SubclassSchema[number];

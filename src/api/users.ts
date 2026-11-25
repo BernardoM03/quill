@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
-import type { user } from "../datatypes/user";
+import type { User } from "../datatypes/user";
 
-export function getUser(): Promise<user> {
-    return apiClient.get<user>("/user").then((res) => res.data);
+export function getUser(): Promise<User> {
+    return apiClient.get<User>("/user").then((res) => res.data);
 }

@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
 import './LegalFooter.css'
 
-// CC-BY-4.0 s. 3(a)(1) wants the attribution given "in any reasonable manner based
-// on the medium". For a web app that means on screen, not just in the repo, so this
-// sits in the root layout and links out to the full notices.
+// CC-BY-4.0 section 3(a)(1) requires on-screen attribution for a web app.
+// This sits in the root layout and links to the full notices.
 export default function LegalFooter() {
   return (
     <footer className="legal-footer">

@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { apiClient } from "./client";
-import type { campaign } from "../datatypes/campaign";
-import type { campaignDetails } from "../datatypes/campaignDetails";
-import type { campaignRules } from "../datatypes/campaignRules";
+import type { Campaign } from "../datatypes/campaign";
+import type { CampaignDetails, CampaignQuestion } from "../datatypes/campaignDetails";
+import type { CampaignRules } from "../datatypes/campaignRules";
 
 export const CAMPAIGN_NAME_MAX_LENGTH = 64;
 
@@ -15,27 +15,34 @@ export function validateCampaignName(raw: string): string | null {
     return name;
 }
 
-export function createCampaign(name: string): Promise<campaign> {
-    const newCampaign: campaign = { name, id: uuidv4() };
+export function createCampaign(name: string): Promise<Campaign> {
+    const newCampaign: Campaign = { name, id: uuidv4() };
 
     return apiClient.post("/campaigns", newCampaign).then(() => newCampaign);
 }
 
-export function getCampaign(id: string): Promise<campaignDetails> {
+export function getCampaign(id: string): Promise<CampaignDetails> {
     return apiClient.get(`/campaigns/${id}`).then(response => response.data);
 }
 
-// changes: {collection: ids}; ids null means every entry in the collection is allowed.
-// Several collections are checked by the server as one change. Resolves with the
-// campaign's problems after the change, as worked out by the server.
+// Applies {collection: ids} as one change, where null ids allow the whole collection.
+// Resolves with the campaign's problems after the change.
 export function updateCampaignAllowed(id: string, changes: Record<string, string[] | null>): Promise<string[]> {
     return apiClient.patch(`/campaigns/${id}`, { allowedContent: changes })
         .then(response => response.data.problems);
 }
 
-// Saves only the rules given; the rest stay as they are.
-export function updateCampaignRules(id: string, rules: Partial<campaignRules>): Promise<void> {
+// Saves only the rules given and leaves the rest unchanged.
+export function updateCampaignRules(id: string, rules: Partial<CampaignRules>): Promise<void> {
     return apiClient.patch(`/campaigns/${id}`, { rules }).then(() => undefined);
+}
+
+export const QUESTION_PROMPT_MAX_LENGTH = 200;
+export const MAX_QUESTIONS = 20;
+
+// Replaces the campaign's custom questions with these, in order.
+export function updateCampaignQuestions(id: string, questions: CampaignQuestion[]): Promise<void> {
+    return apiClient.patch(`/campaigns/${id}`, { questions }).then(() => undefined);
 }
 
 export const CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000;
@@ -48,8 +55,7 @@ export function updateCampaignName(id: string, name: string): Promise<void> {
     return apiClient.patch(`/campaigns/${id}`, { name }).then(() => undefined);
 }
 
-// The short id shown on campaign cards
-// 703ffe14-e831-4fb9-856f-8fe17aa026d4 --> 703ffe14
+// The first UUID segment shown on campaign cards, e.g. 703ffe14.
 export function shortCampaignId(id: string): string {
     return id.slice(0, 8);
 }
@@ -59,7 +65,7 @@ export function deleteCampaign(id: string): Promise<void> {
 }
 
 // Someone in a campaign, as its GM sees them.
-export interface campaignMember {
+export interface CampaignMember {
     userId: string,
     username: string,
     displayName: string,
@@ -68,7 +74,7 @@ export interface campaignMember {
     characterCount: number,
 }
 
-export function getMembers(campaignId: string): Promise<campaignMember[]> {
+export function getMembers(campaignId: string): Promise<CampaignMember[]> {
     return apiClient.get(`/campaigns/${campaignId}/members`).then(response => response.data);
 }
 

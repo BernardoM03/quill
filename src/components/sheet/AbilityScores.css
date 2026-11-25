@@ -1,0 +1,134 @@
+/* ---- Sheet ability scores: current score large, the breakdown beneath ---- */
+
+/* Six boxes in a row in the sheet's abilities area; three a row on narrow screens. */
+.sheet-abilities {
+  grid-area: abilities;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--sheet-gap);
+}
+
+@media (max-width: 640px) {
+  .sheet-abilities {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.sheet-ability {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  padding: 0.35rem 0.25rem;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+/* A temporary effect is changing this one. */
+.sheet-ability--changed {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.sheet-ability__name {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.sheet-ability__score {
+  font-family: var(--sans);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  color: var(--text-h);
+}
+
+.sheet-ability__mod {
+  min-width: 2.4em;
+  padding: 0 0.4em;
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.sheet-ability--changed .sheet-ability__mod {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.sheet-ability__breakdown {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.3rem;
+  font-size: var(--fs-2xs);
+  line-height: var(--lh-normal);
+  color: var(--text);
+}
+
+.sheet-ability__own {
+  color: var(--text-h);
+}
+
+.sheet-effects__title {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.sheet-effects {
+  margin: 0.4rem 0 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-effects li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: var(--fs-base);
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-effects strong {
+  color: var(--text-h);
+  font-weight: var(--fw-medium);
+}
+
+.sheet-effects__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.sheet-effects__name,
+.sheet-effects__value {
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.sheet-effects__name {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.sheet-effects__value {
+  width: 4.5rem;
+}
+
+.sheet-effects__name:focus,
+.sheet-effects__value:focus {
+  outline: none;
+  border-color: var(--accent);
+}

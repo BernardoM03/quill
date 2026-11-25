@@ -1,0 +1,719 @@
+/* ---- Maps: the campaign page's list, the Add map dialog, the hex map and its panels ---- */
+
+.campaign-maps {
+  margin-top: 1.5rem;
+}
+
+/* ---- Shared form controls: thin outlined boxes, like the rest of the app ---- */
+
+.map-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.map-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  font: inherit;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+textarea.map-input {
+  min-height: 4.5rem;
+  line-height: var(--lh-normal);
+  resize: vertical;
+}
+
+.map-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.map-input--number {
+  width: 6rem;
+  font-family: var(--mono);
+}
+
+.map-hint {
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+/* ---- Add map dialog ---- */
+
+.add-map {
+  width: min(460px, calc(100vw - 32px));
+}
+
+.add-map__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.add-map__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.add-map__kinds legend {
+  padding: 0;
+  margin-bottom: 0.3rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.add-map__kind {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.add-map__kind input {
+  accent-color: var(--accent);
+}
+
+.add-map__kind--later {
+  color: var(--text);
+  cursor: default;
+}
+
+/* ---- Map page ---- */
+
+/* A hex's panel (Sheet.css .side-panel) opens down the right side of the screen, outside
+   the page's border where the screen is wide enough for that and over the page's edge where
+   it isn't. The map keeps its size either way. */
+.map-view .side-panel {
+  --side-panel-width: min(380px, calc(100vw - 2rem));
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  left: auto;
+  max-height: none;
+  box-shadow: var(--shadow);
+}
+
+.map-page__title {
+  overflow-wrap: anywhere;
+}
+
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.map-toolbar__spacer {
+  flex: 1;
+}
+
+.map-toolbar .setting-button[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.map-readout {
+  margin: 0 0 0.75rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+/* Shown while the GM looks at the map as a player. */
+.map-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent);
+}
+
+.map-preview .setting-button {
+  margin-left: auto;
+  padding: 0.1rem 0.6rem;
+  font-size: var(--fs-sm);
+}
+
+.map-opacity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.map-opacity input {
+  width: 8rem;
+  accent-color: var(--accent);
+}
+
+/* What each fill means. */
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+.map-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.map-legend__swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1px solid var(--text);
+  background: var(--code-bg);
+}
+
+.map-legend__swatch--scouted {
+  background: color-mix(in srgb, var(--accent) 22%, var(--bg));
+  border-color: var(--accent-border);
+}
+
+.map-legend__swatch--visited {
+  background: color-mix(in srgb, var(--accent) 55%, var(--bg));
+  border-color: var(--accent);
+}
+
+.map-legend__dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--text-h);
+}
+
+/* ---- The hex map ---- */
+
+.hexmap {
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+/* Zoomed in, the map scrolls inside its frame. */
+.hexmap__scroll {
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+}
+
+.hexmap__canvas {
+  position: relative;
+}
+
+.hexmap__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Hexes are picked by click, not dragged. */
+  user-select: none;
+}
+
+.hexmap__zoom {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--bg);
+}
+
+.hexmap__zoom .setting-button {
+  width: 1.6rem;
+  padding: 0.1rem 0;
+  text-align: center;
+  background: var(--bg);
+}
+
+.hexmap__zoom-value {
+  min-width: 2.6rem;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  text-align: center;
+  color: var(--text);
+}
+
+/* The frame's bottom right corner: the GM's map settings. */
+.hexmap__corner {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+}
+
+.map-settings {
+  position: relative;
+}
+
+.map-settings__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0;
+  background: var(--bg);
+}
+
+.map-settings__button[aria-expanded='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Opens upward from the cog. */
+.map-settings__menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.4rem);
+  width: min(20rem, calc(100vw - 4rem));
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.map-settings__menu .setting-row {
+  padding: 0.5rem 0.75rem;
+  font-size: var(--fs-base);
+}
+
+.map-settings__danger {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.6rem 0.75rem;
+}
+
+/* Strokes are in screen pixels whatever the zoom. */
+.hexmap__hex,
+.hexmap__outline,
+.hexmap__hover,
+.hexmap__selected {
+  vector-effect: non-scaling-stroke;
+}
+
+.hexmap__hex {
+  stroke-width: 1;
+}
+
+.hexmap__svg--clickable .hexmap__hex {
+  cursor: pointer;
+}
+
+.hexmap__hex--land {
+  fill: var(--code-bg);
+  stroke: var(--border);
+}
+
+/* The rest of the grid: fainter, and out of the pointer's way unless the map's shape is
+   being edited. */
+.hexmap__hex--sea {
+  fill: transparent;
+  stroke: var(--border);
+  stroke-opacity: 0.35;
+  pointer-events: none;
+}
+
+.hexmap__svg--sea-clickable .hexmap__hex--sea {
+  pointer-events: auto;
+}
+
+.hexmap__hex--scouted {
+  fill: color-mix(in srgb, var(--accent) 22%, var(--bg));
+  stroke: var(--accent-border);
+  stroke-width: 1.5;
+}
+
+.hexmap__hex--visited {
+  fill: color-mix(in srgb, var(--accent) 55%, var(--bg));
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+/* Over the GM's own drawing, plain hexes thin out so it shows through. Scouted and visited
+   hexes stay strong enough to pick out against it: a tint of the accent, bordered in it. */
+.hexmap__svg--underlay .hexmap__hex--land {
+  fill-opacity: 0.3;
+}
+
+.hexmap__svg--underlay .hexmap__hex--scouted {
+  fill: var(--accent);
+  fill-opacity: 0.4;
+  stroke: var(--accent);
+}
+
+.hexmap__svg--underlay .hexmap__hex--visited {
+  fill: var(--accent);
+  fill-opacity: 0.75;
+}
+
+.hexmap__outline {
+  fill: none;
+  stroke: var(--text-h);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.hexmap__dot {
+  fill: var(--text-h);
+  pointer-events: none;
+}
+
+.hexmap__hover {
+  fill: var(--accent-bg);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.hexmap__selected {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  pointer-events: none;
+}
+
+/* Above the hovered hex, centred on it. */
+.hexmap__tooltip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  width: max-content;
+  max-width: 16rem;
+  padding: 0.4rem 0.6rem;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  text-align: left;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  box-shadow: var(--shadow);
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.hexmap__tooltip-title {
+  font-weight: var(--fw-semibold);
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.hexmap__tooltip-label {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+}
+
+.hexmap__tooltip-text {
+  margin-top: 0.2rem;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Setup: the scale controls over the preview ---- */
+
+.map-setup__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.map-setup__name {
+  flex: 1;
+  min-width: 12rem;
+}
+
+/* ---- Hex panel ---- */
+
+.hex-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.hex-panel__label {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+.hex-panel__saved {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+.hex-panel__saved--error {
+  color: var(--danger);
+}
+
+.hex-panel__description {
+  margin: 0;
+  font-size: var(--fs-base);
+  color: var(--text-h);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Hidden / Scouted / Visited: one row of three, the chosen one in the accent colour. */
+.hex-status {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.hex-status legend {
+  padding: 0;
+  margin-bottom: 0.3rem;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.hex-status label {
+  padding: 0.3rem 0;
+  font-size: var(--fs-base);
+  text-align: center;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.hex-status label + label {
+  border-left: 0;
+}
+
+.hex-status input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.hex-status label:has(input:checked) {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+/* A checked label's left edge would be missing after a neighbour: put it back. */
+.hex-status label + label:has(input:checked) {
+  box-shadow: -1px 0 0 var(--accent);
+}
+
+.hex-status label:has(input:focus-visible) {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hex-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.hex-section__title {
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.hex-section__actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.hex-section .setting-button {
+  padding: 0.1rem 0.5rem;
+  font-size: var(--fs-xs);
+}
+
+.encounter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.encounter {
+  padding: 0.5rem 0.6rem;
+  border-left: 2px solid var(--accent);
+  background: var(--code-bg);
+}
+
+.encounter--resolved {
+  border-left-color: var(--border);
+  opacity: 0.65;
+}
+
+.encounter__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.encounter__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+.encounter__kind {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.encounter__weight {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--text);
+}
+
+.encounter__creatures,
+.encounter__notes {
+  margin: 0.2rem 0 0;
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+
+.encounter__creatures {
+  color: var(--text-h);
+}
+
+.encounter__notes {
+  white-space: pre-wrap;
+}
+
+.encounter__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.encounter__resolved {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: auto;
+  font-size: var(--fs-xs);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.encounter__resolved input {
+  accent-color: var(--accent);
+}
+
+/* The form an encounter is written or changed in. */
+.encounter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+}
+
+.encounter-form__row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.encounter-form__row > .map-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.encounter-form__row > .encounter-form__narrow {
+  flex: none;
+  width: 4.5rem;
+}
+
+.encounter-form__creatures {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+}
+
+.encounter-form__creatures li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.encounter-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.hex-roll {
+  margin: 0.5rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: var(--accent-bg);
+  font-size: var(--fs-base);
+  color: var(--text-h);
+}
+
+.hex-roll p {
+  margin: 0.2rem 0 0;
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}

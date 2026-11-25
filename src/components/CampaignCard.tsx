@@ -2,26 +2,27 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { shortCampaignId } from '../api/campaigns'
+import type { Campaign } from '../datatypes/campaign'
 import DeleteCampaignDialog from './DeleteCampaignDialog'
 import './CampaignCard.css'
 
-export default function CampaignCard({ props, onDeleted }: { props: { name: string; id: string; role?: 'gm' | 'player' }; onDeleted: (id: string) => void }) {
+export default function CampaignCard({ campaign, onDeleted }: { campaign: Campaign; onDeleted: (id: string) => void }) {
   const navigate = useNavigate()
   const [confirmingDelete, setConfirmingDelete] = useState(false)
-  // Edit and delete are GM-only; the server refuses them for players anyway.
-  const isGm = props.role !== 'player'
+  // Edit and delete are GM-only, and the server refuses them for players anyway.
+  const isGm = campaign.role !== 'player'
 
   return (
     <div className="campaign-card">
       <div className="campaign-card__head">
         <div className="campaign-card__body">
-          <h3 className="campaign-card__title">{props.name}</h3>
-          <span className="campaign-card__id">#{shortCampaignId(props.id)}</span>
+          <h3 className="campaign-card__title">{campaign.name}</h3>
+          <span className="campaign-card__id">#{shortCampaignId(campaign.id)}</span>
         </div>
         {isGm && <button
           type="button"
           className="campaign-card__delete"
-          aria-label={`Delete ${props.name}`}
+          aria-label={`Delete ${campaign.name}`}
           title="Delete campaign"
           onClick={() => setConfirmingDelete(true)}
         >
@@ -33,24 +34,24 @@ export default function CampaignCard({ props, onDeleted }: { props: { name: stri
       <div className="campaign-card__actions">
         <button
           className="setting-button"
-          onClick={() => navigate(`/campaign/${props.id}`)}
+          onClick={() => navigate(`/campaign/${campaign.id}`)}
         >
           Open
         </button>
-        {/* Same page either way: settings for the GM, read-only Campaign Information for players. */}
+        {/* The same page serves as settings for the GM and read-only Campaign Information for players. */}
         <button
           className="setting-button setting-button--quiet"
-          onClick={() => navigate(`/campaignsettings/${props.id}`)}
+          onClick={() => navigate(`/campaignsettings/${campaign.id}`)}
         >
           {isGm ? 'Edit' : 'Info'}
         </button>
       </div>
       {confirmingDelete && (
         <DeleteCampaignDialog
-          id={props.id}
-          name={props.name}
+          id={campaign.id}
+          name={campaign.name}
           onClose={() => setConfirmingDelete(false)}
-          onDeleted={() => onDeleted(props.id)}
+          onDeleted={() => onDeleted(campaign.id)}
         />
       )}
     </div>
