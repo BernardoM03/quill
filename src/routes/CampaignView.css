@@ -1,0 +1,32 @@
+/* ---- The Party: each member's active character, as partyVisibility lets the viewer see it ---- */
+
+.party__note {
+  margin: 0 0 0.75rem;
+}
+
+/* A span, not a link, when the viewer can't open the sheet: no hover colour. */
+span.character-row__name:hover {
+  color: var(--text-h);
+}
+
+.party__disguise {
+  font-style: italic;
+}
+
+.party__disguise:hover {
+  color: var(--text);
+}
+
+.party__conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+}
+
+.party__hp {
+  flex-shrink: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-h);
+  font-variant-numeric: tabular-nums;
+}

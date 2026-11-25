@@ -122,6 +122,7 @@ const EQUIPMENT_HINTS: Record<campaignRules['startingEquipment'], string> = {
 // Less common character creation rules, shown under the main rules.
 export function AdvancedRulesSettings({ rules, onChange }: Props) {
   return (
+    <>
     <div className="setting-section">
       <span className="setting-caption">Character Creation</span>
       <div className="rules-list">
@@ -151,8 +152,31 @@ export function AdvancedRulesSettings({ rules, onChange }: Props) {
         />
       </div>
     </div>
+    <div className="setting-section">
+      <span className="setting-caption">Party</span>
+      <div className="rules-list">
+        <ChoiceRow
+          label="Party Visibility"
+          hint={PARTY_HINTS[rules.partyVisibility]}
+          value={rules.partyVisibility}
+          options={[
+            { value: 'full', label: 'Full' },
+            { value: 'limited', label: 'Limited' },
+            { value: 'misleading', label: 'Misleading' },
+          ]}
+          onChange={partyVisibility => onChange({ partyVisibility })}
+        />
+      </div>
+    </div>
+    </>
   );
 }
+
+const PARTY_HINTS: Record<campaignRules['partyVisibility'], string> = {
+  full: 'Players can open each other’s full sheets (never their notes).',
+  limited: 'Players see only each other’s name, species, class, level, hit points and conditions.',
+  misleading: 'As Limited, but each player can show the party a false name, species and class. You always see the truth.',
+};
 
 // A label with a two-or-more-way switch on the right, styled like the View/Edit tabs.
 function ChoiceRow<T extends string>({ label, hint, value, options, onChange }: {

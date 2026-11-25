@@ -286,14 +286,26 @@ def own_character(conn, character_id):
         return None
     return row
 
+# The campaign's partyVisibility rule, from its settings JSON (None: the Character Sandbox).
+def party_visibility(settings):
+    if settings is None:
+        return None
+    return with_rule_defaults(json.loads(settings).get('rules'))['partyVisibility']
+
+# The columns sheet_access and the party list both read, for character_payload.
+CHARACTER_COLUMNS = (
+    'ch.*, c.name AS campaign_name, c.settings AS campaign_settings, p.updated_at AS portrait_version, '
+    'u.display_name AS owner_name, u.username AS owner_username'
+)
+
 # Who may see a character's sheet, and how: (row, access), or (None, None) for anyone else.
 # 'owner': its owner or the admin, who can do everything. 'gm': its campaign's GM, who can
 # change its play state. 'party': another member of its campaign, who sees an approved
-# character read-only, without its notes.
+# character read-only, without its notes, and only while the campaign's partyVisibility is
+# full (otherwise the party list, GET /campaigns/<id>/party, is all they get).
 def sheet_access(conn, character_id):
     row = conn.execute(
-        'SELECT ch.*, c.name AS campaign_name, p.updated_at AS portrait_version, m.role AS viewer_role, '
-        'u.display_name AS owner_name, u.username AS owner_username '
+        f'SELECT {CHARACTER_COLUMNS}, m.role AS viewer_role '
         'FROM characters ch JOIN users u ON u.id = ch.owner_id '
         'LEFT JOIN campaigns c ON c.id = ch.campaign_id '
         'LEFT JOIN character_portraits p ON p.character_id = ch.id '
@@ -307,7 +319,8 @@ def sheet_access(conn, character_id):
         return row, 'owner'
     if row['viewer_role'] == 'gm':
         return row, 'gm'
-    if row['viewer_role'] == 'player' and row['status'] == 'approved':
+    if (row['viewer_role'] == 'player' and row['status'] == 'approved'
+            and party_visibility(row['campaign_settings']) == 'full'):
         return row, 'party'
     return None, None
 
@@ -334,19 +347,29 @@ def get_character(character_id):
     conn = connect()
     try:
         row, access = sheet_access(conn, character_id)
-        sheet = json.loads(row['sheet']) if row else {}
-        result = check_character(conn, row, sheet) if row else None
+        payload = character_payload(conn, row, access) if row else None
     finally:
         conn.close()
     if row is None:
         return error('Character not found', 404)
+    return jsonify(payload), 200
+
+# The disguise as stored (a dict of the fields set), or None.
+def stored_disguise(row):
+    return json.loads(row['disguise']) if row['disguise'] else None
+
+# The character as its sheet shows it to this viewer. row: from a query selecting
+# CHARACTER_COLUMNS; access: as sheet_access gives it.
+def character_payload(conn, row, access):
+    sheet = json.loads(row['sheet'])
+    result = check_character(conn, row, sheet)
     problems = result['errors'] if result else []
     abilities = sheet_abilities(result['summary'], sheet) if result else None
     draft = sheet_draft(row, sheet)
     if access == 'party':
         # Answers to the GM's questions are between the player and the GM.
         draft.pop('answers', None)
-    return jsonify({
+    return {
         # owner (or the admin), gm or party: what the viewer may do (see sheet_access).
         'access': access,
         # The player the character belongs to.
@@ -382,7 +405,12 @@ def get_character(character_id):
         # Each ability's base, increases, score and current; null for a character without scores.
         'abilities': abilities,
         'scoreAdjustments': (sheet.get('play') or {}).get('scoreAdjustments') or [],
-    }), 200
+        # The campaign's partyVisibility rule; null in the Character Sandbox.
+        'partyVisibility': party_visibility(row['campaign_settings']),
+        # What the party is shown instead under 'misleading' ({name, species, className}, each
+        # optional). The owner, the admin and the GM only; null for the party.
+        'disguise': stored_disguise(row) if access != 'party' else None,
+    }
 
 # Body: any of currentHp, maxHpOverride (null: worked out), tempHp, spentSlots ({level: used},
 # merged by level), spentPactSlots, conditions, exhaustion, spentHitDice, deathSaves
@@ -829,3 +857,133 @@ def dismiss_character_change(campaign_id, change_id):
     if not updated:
         return error('Change not found', 404)
     return jsonify({'success': True}), 200
+
+DISGUISE_FIELDS = ('name', 'species', 'className')
+
+# Body: {name, species, className}, each a string (blank or null: show the real one). What
+# the party sees of this character while its campaign's partyVisibility is 'misleading'.
+# Can be set under any visibility, ready for when the GM switches to it. Owner (or admin).
+@bp.put('/characters/<character_id>/disguise')
+@require_login
+def put_disguise(character_id):
+    content = json_body()
+    if content is None or set(content) - set(DISGUISE_FIELDS):
+        return error(f'Body must be an object with any of {", ".join(DISGUISE_FIELDS)}.', 400)
+    disguise = {}
+    for field in DISGUISE_FIELDS:
+        value = content.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            continue
+        cleaned = clean_name(value)
+        if cleaned is None:
+            return error(f'{field} must be up to 64 characters, without control characters.', 400)
+        disguise[field] = cleaned
+    conn = connect()
+    try:
+        with conn:
+            row = own_character(conn, character_id)
+            if row is None:
+                return error('Character not found', 404)
+            if row['campaign_id'] is None:
+                return error('Character Sandbox characters have no party to mislead.', 409)
+            conn.execute(f'UPDATE characters SET disguise = ?, updated_at = {NOW} WHERE id = ?',
+                         (json.dumps(disguise) if disguise else None, character_id))
+    finally:
+        conn.close()
+    return jsonify({'disguise': disguise or None}), 200
+
+# The name of a pack entry, or None if it isn't installed.
+def _entry_name(collection, entry_id):
+    entry = packs.collection(collection).get(entry_id) if entry_id else None
+    return entry['name'] if entry else None
+
+# The party list's view of a character: what partyVisibility 'limited' shows.
+def party_summary(payload):
+    build = payload['draft']
+    state = payload['state']
+    return {
+        'id': payload['id'],
+        'name': payload['name'],
+        'species': _entry_name('species', build.get('species')),
+        'className': _entry_name('classes', build.get('class')),
+        'level': payload['level'],
+        'hitPoints': {'current': state['currentHp'], 'max': state['maxHp'], 'temp': state['tempHp']},
+        # Names, not pack ids, so the list needn't load the conditions collection.
+        'conditions': [_entry_name('conditions', c) or c for c in state['conditions']],
+        'exhaustion': state['exhaustion'],
+    }
+
+# The campaign's members, GM first, each with their active character as this viewer may
+# see it under the campaign's partyVisibility; and the viewer's own characters there.
+# Each character has the summary fields (party_summary). Then:
+#   sheet: the whole character (as GET /characters/<id>) when the viewer may open it: always
+#     for their own, the GM's view and the admin's (the admin's has notes); for the rest of the
+#     party only under 'full' (without notes). null otherwise.
+#   portraitVersion: under 'limited' and 'misleading' the party doesn't get portraits.
+#   disguise: under 'misleading', what the party is shown, for the owner, GM and admin; for
+#     the rest of the party the summary fields are already the disguised ones.
+@bp.get('/campaigns/<campaign_id>/party')
+@require_member
+def get_party(campaign_id):
+    conn = connect()
+    try:
+        campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+        if campaign is None:
+            return error('Campaign not found', 404)
+        visibility = party_visibility(campaign['settings'])
+        viewer = conn.execute('SELECT role FROM memberships WHERE campaign_id = ? AND user_id = ?',
+                              (campaign_id, g.user['id'])).fetchone()
+        viewer_role = viewer['role'] if viewer else None
+        members = conn.execute(
+            'SELECT u.id, u.display_name, m.role FROM memberships m JOIN users u ON u.id = m.user_id '
+            "WHERE m.campaign_id = ? ORDER BY m.role = 'gm' DESC, m.joined_at",
+            (campaign_id,),
+        ).fetchall()
+        active = {r['owner_id']: r for r in conn.execute(
+            f'SELECT {CHARACTER_COLUMNS} FROM characters ch JOIN users u ON u.id = ch.owner_id '
+            'JOIN campaigns c ON c.id = ch.campaign_id '
+            'LEFT JOIN character_portraits p ON p.character_id = ch.id '
+            'WHERE ch.campaign_id = ? AND ch.is_active = 1 AND ch.deleted_at IS NULL',
+            (campaign_id,),
+        )}
+        party = []
+        for member in members:
+            row = active.get(member['id'])
+            character = None
+            if row is not None:
+                if row['owner_id'] == g.user['id'] or g.user['is_admin']:
+                    access = 'owner'
+                elif viewer_role == 'gm':
+                    access = 'gm'
+                else:
+                    access = 'party'
+                payload = character_payload(conn, row, access)
+                character = party_summary(payload)
+                hidden = access == 'party' and visibility != 'full'
+                character['portraitVersion'] = None if hidden else payload['portraitVersion']
+                character['sheet'] = None if hidden else payload
+                character['disguise'] = None
+                if visibility == 'misleading':
+                    disguise = stored_disguise(row) or {}
+                    if access == 'party':
+                        character.update(disguise)
+                    else:
+                        character['disguise'] = disguise or None
+            party.append({'userId': member['id'], 'playerName': member['display_name'],
+                          'role': member['role'], 'character': character})
+        mine = conn.execute(
+            'SELECT ch.id, ch.name, ch.status, ch.is_active, p.updated_at AS portrait_version '
+            'FROM characters ch LEFT JOIN character_portraits p ON p.character_id = ch.id '
+            'WHERE ch.campaign_id = ? AND ch.owner_id = ? AND ch.deleted_at IS NULL ORDER BY ch.created_at',
+            (campaign_id, g.user['id']),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify({
+        'visibility': visibility,
+        'members': party,
+        'myCharacters': [{
+            'id': r['id'], 'name': r['name'], 'status': r['status'],
+            'isActive': bool(r['is_active']), 'portraitVersion': r['portrait_version'],
+        } for r in mine],
+    }), 200

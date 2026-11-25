@@ -1,24 +1,76 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { getCampaign } from "../api/campaigns";
+import { activateCharacter, getParty, type campaignParty, type characterDisguise, type partyCharacter } from "../api/characters";
 import type { campaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
 import PendingCharacters from "../components/PendingCharacters";
 import CharacterChangeLog from "../components/CharacterChangeLog";
 import { CampaignMaps } from "../components/maps/CampaignMaps";
+import { CharacterPortrait } from "../components/portrait/CharacterPortrait";
 import "../components/campaignSettings/CampaignSettings.css";
+import "./CampaignView.css";
 
-// Read-only campaign page for members; where a player lands after joining.
+const VISIBILITY_NOTES = {
+    full: null,
+    limited: 'In this campaign you see only part of each other’s characters.',
+    misleading: 'In this campaign, what you see of the others may not be the whole truth.',
+} as const;
+
+// Species · Class · Level, leaving out what isn't known.
+function describe(c: { species: string | null, className: string | null, level?: number }): string {
+    return [c.species, c.className, c.level !== undefined ? `Level ${c.level}` : null].filter(Boolean).join(' · ')
+}
+
+function hitPoints(c: partyCharacter): string | null {
+    const { current, max, temp } = c.hitPoints
+    if (current === null) return null
+    return `HP ${current}${max !== null ? ` / ${max}` : ''}${temp ? ` (+${temp} temp)` : ''}`
+}
+
+// "Shown to the party as …" for the owner, GM and admin under 'misleading'.
+function disguiseNote(c: partyCharacter, disguise: characterDisguise): string {
+    return [disguise.name ?? c.name, describe({
+        species: disguise.species ?? c.species, className: disguise.className ?? c.className,
+    })].filter(Boolean).join(', ')
+}
+
+// The campaign's overview for its members: description, the party (everyone's active
+// character, as the campaign's partyVisibility lets the viewer see it), and the viewer's
+// own characters there. Where a player lands after joining.
 export default function CampaignView() {
     const { campaignID } = useParams();
     const [campaign, setCampaign] = useState<campaignDetails | null | undefined>(undefined)
+    const [party, setParty] = useState<campaignParty | null>(null)
+    const [partyError, setPartyError] = useState<string | null>(null)
+    // The character being made active, and why that failed.
+    const [activating, setActivating] = useState<string | null>(null)
+    const [activateError, setActivateError] = useState<string | null>(null)
 
     useEffect(() => {
         if (!campaignID) return
         getCampaign(campaignID).then(setCampaign).catch(() => setCampaign(null))
     }, [campaignID])
+
+    const loadParty = useCallback(() => {
+        if (!campaignID) return Promise.resolve()
+        return getParty(campaignID)
+            .then(p => { setParty(p); setPartyError(null) })
+            .catch(() => setPartyError('Could not load the party.'))
+    }, [campaignID])
+
+    useEffect(() => { loadParty() }, [loadParty])
+
+    function handleActivate(characterId: string) {
+        setActivating(characterId)
+        setActivateError(null)
+        activateCharacter(characterId)
+            .then(loadParty)
+            .catch(err => setActivateError(err.response?.data?.error ?? 'Could not make that character active.'))
+            .finally(() => setActivating(null))
+    }
 
     if (campaign === undefined) return <div className="page" />
 
@@ -32,6 +84,11 @@ export default function CampaignView() {
         )
     }
 
+    const mine = new Set(party?.myCharacters.map(c => c.id))
+    // A GM without an active character isn't in the party; players without one still are.
+    const members = party?.members.filter(m => m.character || m.role === 'player') ?? []
+    const isPlayer = campaign.role === 'player'
+
     return (
         <div className="page">
             <BackButton/>
@@ -41,14 +98,101 @@ export default function CampaignView() {
             </div>
             {campaignID && <PendingCharacters campaignId={campaignID} />}
             {campaignID && <CharacterChangeLog campaignId={campaignID} />}
-            {/* Only the GM (or the admin stepping in) can add maps; players see the public ones. */}
-            {campaignID && <CampaignMaps campaignId={campaignID} canEdit={campaign.role !== 'player'} />}
+
+            <section className="setting-section">
+                <span className="setting-caption">The Party</span>
+                {isPlayer && party && VISIBILITY_NOTES[party.visibility] && (
+                    <p className="muted party__note">{VISIBILITY_NOTES[party.visibility]}</p>
+                )}
+                {partyError && <p className="setting-error">{partyError}</p>}
+                {party && members.length === 0 && <p className="muted">No one has joined yet.</p>}
+                {members.length > 0 && (
+                    <ul className="character-list">
+                        {members.map(m => {
+                            const c = m.character
+                            if (!c) {
+                                return (
+                                    <li key={m.userId} className="character-row">
+                                        <div className="character-row__info">
+                                            <span className="character-row__name muted">No active character</span>
+                                            <span className="character-row__campaign">Played by {m.playerName}</span>
+                                        </div>
+                                    </li>
+                                )
+                            }
+                            const hp = hitPoints(c)
+                            const conditions = [...c.conditions, ...(c.exhaustion ? [`Exhaustion ${c.exhaustion}`] : [])]
+                            return (
+                                <li key={m.userId} className="character-row party__row">
+                                    <CharacterPortrait characterId={c.id} name={c.name} version={c.portraitVersion} size={40} />
+                                    <div className="character-row__info">
+                                        {c.sheet
+                                            ? <Link to={`/characters/${c.id}`} className="character-row__name">{c.name}</Link>
+                                            : <span className="character-row__name">{c.name}</span>}
+                                        <span className="character-row__campaign">
+                                            {[describe(c), `Played by ${mine.has(c.id) ? 'you' : m.playerName}`].filter(Boolean).join(' · ')}
+                                        </span>
+                                        {c.disguise && (
+                                            <span className="character-row__campaign party__disguise">
+                                                Shown to the party as {disguiseNote(c, c.disguise)}
+                                            </span>
+                                        )}
+                                        {conditions.length > 0 && (
+                                            <span className="party__conditions">
+                                                {conditions.map(name => <span key={name} className="character-row__badge">{name}</span>)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {hp && <span className="party__hp">{hp}</span>}
+                                </li>
+                            )
+                        })}
+                    </ul>
+                )}
+            </section>
+
             {/* Characters belong to a membership; an admin who isn't in the campaign can't make one. */}
             {campaign.role !== 'admin' && (
-                <div className="home-actions campaign-view__actions">
-                    <Link to={`/campaigns/${campaignID}/characters/new`} className="setting-button">Create Character</Link>
-                </div>
+                <section className="setting-section">
+                    <span className="setting-caption">My Characters</span>
+                    {party && party.myCharacters.length === 0 && (
+                        <p className="muted">You don’t have a character here yet.</p>
+                    )}
+                    {party && party.myCharacters.length > 0 && (
+                        <ul className="character-list">
+                            {party.myCharacters.map(c => (
+                                <li key={c.id} className="character-row">
+                                    <CharacterPortrait characterId={c.id} name={c.name} version={c.portraitVersion} size={40} />
+                                    <div className="character-row__info">
+                                        <Link to={`/characters/${c.id}`} className="character-row__name">{c.name}</Link>
+                                    </div>
+                                    {c.status === 'pending' && <span className="character-row__badge">Awaiting approval</span>}
+                                    {c.status === 'draft' && (
+                                        <Link to={`/characters/${c.id}`} className="character-row__badge character-row__badge--warning">Not submitted</Link>
+                                    )}
+                                    {c.status === 'rejected' && (
+                                        <Link to={`/characters/${c.id}`} className="character-row__badge character-row__badge--warning">Sent back</Link>
+                                    )}
+                                    {c.isActive && <span className="character-row__badge">Active</span>}
+                                    {c.status === 'approved' && !c.isActive && (
+                                        <button type="button" className="setting-button setting-button--quiet"
+                                            disabled={activating !== null} onClick={() => handleActivate(c.id)}>
+                                            {activating === c.id ? 'Activating…' : 'Activate'}
+                                        </button>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    {activateError && <p className="setting-error">{activateError}</p>}
+                    <div className="home-actions campaign-view__actions">
+                        <Link to={`/campaigns/${campaignID}/characters/new`} className="setting-button">Create Character</Link>
+                    </div>
+                </section>
             )}
+
+            {/* Only the GM (or the admin stepping in) can add maps; players see the public ones. */}
+            {campaignID && <CampaignMaps campaignId={campaignID} canEdit={campaign.role !== 'player'} />}
         </div>
     )
 }

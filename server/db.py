@@ -275,6 +275,12 @@ MIGRATIONS = [
         PRIMARY KEY (map_id, hex_col, hex_row)
     ) WITHOUT ROWID;
     ''',
+    # 14: what the party is shown in a campaign with partyVisibility 'misleading':
+    # {name, species, className}, each a string or missing (the real one shows). Set by the
+    # owner; the GM and the admin also see it. NULL: no disguise.
+    '''
+    ALTER TABLE characters ADD COLUMN disguise TEXT CHECK (disguise IS NULL OR json_valid(disguise));
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

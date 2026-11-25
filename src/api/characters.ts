@@ -539,6 +539,63 @@ export interface characterSummary {
     // null for a character made before it had ability scores.
     abilities: Record<string, sheetAbility> | null,
     scoreAdjustments: scoreAdjustment[],
+    // The campaign's partyVisibility rule; null in the Character Sandbox.
+    partyVisibility: partyVisibility | null,
+    // What the party is shown under 'misleading'. The owner, admin and GM only; null otherwise.
+    disguise: characterDisguise | null,
+}
+
+export type partyVisibility = 'full' | 'limited' | 'misleading'
+
+// The false details a character shows the party under 'misleading'. A missing field shows the real one.
+export interface characterDisguise {
+    name?: string,
+    species?: string,
+    className?: string,
+}
+
+// Saves the disguise; blank fields are dropped. Resolves with what was stored (null: none).
+export function saveDisguise(characterId: string, disguise: characterDisguise): Promise<characterDisguise | null> {
+    return apiClient.put(`/characters/${characterId}/disguise`, disguise).then(response => response.data.disguise);
+}
+
+// A member's active character as the viewer may see it (GET /campaigns/:id/party).
+export interface partyCharacter {
+    id: string,
+    // Under 'misleading', for the rest of the party: the disguised ones where set.
+    name: string,
+    species: string | null,
+    className: string | null,
+    level: number,
+    hitPoints: { current: number | null, max: number | null, temp: number },
+    // Condition names; exhaustion is counted on its own.
+    conditions: string[],
+    exhaustion: number,
+    // null when there's no portrait, or the party isn't shown portraits ('limited', 'misleading').
+    portraitVersion: string | null,
+    // The whole character when the viewer may open its sheet; null otherwise.
+    sheet: characterSummary | null,
+    // Under 'misleading', what the party is shown: for the owner, the GM and the admin only.
+    disguise: characterDisguise | null,
+}
+
+export interface partyMember {
+    userId: string,
+    playerName: string,
+    role: 'gm' | 'player',
+    // Their active character; null when they have none.
+    character: partyCharacter | null,
+}
+
+export interface campaignParty {
+    visibility: partyVisibility,
+    members: partyMember[],
+    // The viewer's own characters in the campaign, oldest first.
+    myCharacters: { id: string, name: string, status: characterStatus, isActive: boolean, portraitVersion: string | null }[],
+}
+
+export function getParty(campaignId: string): Promise<campaignParty> {
+    return apiClient.get(`/campaigns/${campaignId}/party`).then(response => response.data);
 }
 
 export function getCharacter(id: string): Promise<characterSummary> {

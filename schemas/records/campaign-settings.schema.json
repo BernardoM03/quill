@@ -139,6 +139,15 @@
           "description": "New characters wait for the GM's approval before they can be played.",
           "type": "boolean",
           "default": false
+        },
+        "partyVisibility": {
+          "description": "What players see of each other's active characters. full: the whole sheet but its notes. limited: name, species, class, level, hit points and conditions. misleading: as limited, but each player can show the party a false name, species and class. The GM and the admin always see the real character.",
+          "enum": [
+            "full",
+            "limited",
+            "misleading"
+          ],
+          "default": "full"
         }
       },
       "additionalProperties": false
