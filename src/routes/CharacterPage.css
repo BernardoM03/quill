@@ -75,35 +75,3 @@
   align-self: flex-start;
   margin-left: calc(-0.8rem - 1px);
 }
-
-/* The owner's false name, species and class, under partyVisibility 'misleading'. */
-.disguise__fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 0.6rem 0 0.75rem;
-}
-
-.disguise__field {
-  display: flex;
-  flex: 1 1 10rem;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: var(--fs-sm);
-  color: var(--text-h);
-}
-
-.disguise__field input {
-  padding: 0.4rem 0.5rem;
-  font: inherit;
-  font-size: var(--fs-base);
-  color: var(--text-h);
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 0;
-}
-
-.disguise__field input:focus {
-  outline: none;
-  border-color: var(--accent);
-}

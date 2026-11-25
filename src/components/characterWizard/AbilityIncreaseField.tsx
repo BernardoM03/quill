@@ -1,4 +1,5 @@
-import type { CharacterChoice } from '../../api/characters';
+import type { AbilitySummary, CharacterChoice } from '../../api/characters';
+import { useAbilitySummary } from './abilitySummaryContext';
 
 const ABILITIES: [string, string][] = [
   ['STR', 'Strength'], ['DEX', 'Dexterity'], ['CON', 'Constitution'],
@@ -16,7 +17,6 @@ function parse(value: string | string[] | undefined): Record<string, number> {
   return spread;
 }
 
-// Back to the key the server's options use: the biggest increase first, then STR to CHA.
 function format(spread: Record<string, number>): string {
   return ABILITIES.map(([code]) => code)
     .filter(code => spread[code])
@@ -25,14 +25,27 @@ function format(spread: Record<string, number>): string {
     .join(',');
 }
 
+// What the character's other picks add to one ability, totalled per source, such as "Background +2".
+function otherIncreases(ability: AbilitySummary | undefined, field: string): [string, number][] {
+  const bySource = new Map<string, number>();
+  for (const increase of ability?.increases ?? []) {
+    if (increase.field === field) continue;
+    bySource.set(increase.source, (bySource.get(increase.source) ?? 0) + increase.amount);
+  }
+  return [...bySource];
+}
+
 // Ability increases from a background or feat as one − / + box per ability, with ineligible abilities locked.
-// A partly spent spread is saved too, and the server reports what's missing.
-export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
+// Each box also notes what the rest of the wizard adds to that ability (other increases) and the score it comes to.
+// field is this pick's draft field, such as 'backgroundChoice:<id>' or 'classChoice:<id>'.
+export function AbilityIncreaseField({ choice, field, value, onChoose, errors }: {
   choice: CharacterChoice;
+  field: string;
   value: string | string[] | undefined;
   onChoose: (choiceId: string, value: string) => void;
   errors: string[];
 }) {
+  const summary = useAbilitySummary();
   const points = choice.points ?? 3;
   const max = choice.max ?? 2;
   const allowed = new Set(choice.abilities ?? []);
@@ -49,17 +62,21 @@ export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
     <div className="pick-choice">
       <span className="pick-choice__prompt">
         {choice.source ? `${choice.source}: ability score increase` : 'Ability score increases'}
-        <span className="setting-hint">
-          {points === 1
-            ? ` — +1 to one ability${spent ? '' : ', not yet chosen'}`
-            : ` — ${points - spent} of ${points} points left, at most +${max} to one ability`}
-          {choice.maximum && ` (to a maximum of ${choice.maximum})`}
-        </span>
       </span>
       <div className="ability-boxes">
         {ABILITIES.map(([code, name]) => {
           const amount = spread[code] ?? 0;
           const open = allowed.has(code);
+          const ability = summary?.[code];
+          const others = otherIncreases(ability, field);
+          const fromOthers = others.reduce((sum, [, n]) => sum + n, 0);
+          // Worked out here with this box's own amount, so it keeps up before the server's next check.
+          const score = ability?.base != null ? Math.min(choice.maximum ?? 20, ability.base + fromOthers + amount) : null;
+          const breakdown = [
+            ability?.base != null && `Base ${ability.base}`,
+            ...others.map(([source, n]) => `${source} +${n}`),
+            amount > 0 && `This pick +${amount}`,
+          ].filter(Boolean).join(', ');
           return (
             <div key={code} className={open ? 'ability-box' : 'ability-box ability-box--locked'}>
               <span className="ability-box__code" title={name}>{code}</span>
@@ -70,6 +87,12 @@ export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
                 <button type="button" aria-label={`Raise ${name}`} disabled={!open || amount >= max || spent >= points}
                   onClick={() => change(code, 1)}>+</button>
               </div>
+              {(fromOthers > 0 || score != null) && (
+                <span className="ability-box__note" title={breakdown}>
+                  {fromOthers > 0 && <span className="ability-box__others">+{fromOthers} elsewhere</span>}
+                  {score != null && <span>Score {score}</span>}
+                </span>
+              )}
             </div>
           );
         })}

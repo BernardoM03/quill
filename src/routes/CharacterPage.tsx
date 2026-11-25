@@ -7,7 +7,6 @@ import {
 } from "../api/characters";
 import { CharacterSheet } from "../components/sheet/CharacterSheet";
 import BackButton from "../components/BackButton";
-import { DisguiseEditor } from "../components/DisguiseEditor";
 import ConfirmDialog from "../components/ConfirmDialog";
 import TypeToConfirmDialog from "../components/TypeToConfirmDialog";
 import { loadImage } from "../components/portrait/makePortrait";
@@ -170,11 +169,6 @@ export default function CharacterPage() {
                     </button>
                     {statusError && <p className="setting-error">{statusError}</p>}
                 </div>
-            )}
-
-            {isOwner && character.partyVisibility === 'misleading' && (
-                <DisguiseEditor characterId={character.id} name={character.name} disguise={character.disguise}
-                    onSaved={disguise => setCharacter(c => c && { ...c, disguise })} />
             )}
 
             {isOwner && character.problems.length > 0 && (

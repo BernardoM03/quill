@@ -21,8 +21,8 @@ const METHOD_LABELS: Record<AbilityMethod, string> = {
 const METHOD_HINTS: Record<AbilityMethod, string> = {
   standardArray: 'Assign 15, 14, 13, 12, 10 and 8, one to each ability.',
   pointBuy: 'Every score starts at 8. Spend points to raise them, up to 15.',
-  roll: 'Roll 4d6 six times, dropping the lowest die each time, then assign the totals.',
-  manual: 'Enter each score.',
+  roll: 'Roll 4d6, dropping the lowest die, for each ability.',
+  manual: 'Enter each score yourself.',
   sharedManual: 'Assign the six scores your GM set, one to each ability.',
 };
 
@@ -30,8 +30,6 @@ const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
 type AbilityFields = Pick<CharacterDraft, 'abilityMethod' | 'abilityScores' | 'hpMethod' | 'hpRolls'>;
 
-// The ability scores and hit points step, using the campaign's methods or any method in the sandbox.
-// Totals and hit points come from the server's summary, so what's shown is what will be saved.
 export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, summary, onChange, onRoll, errorsFor }: {
   rules: AbilityRules;
   level: number;
@@ -50,7 +48,7 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
   const [rolling, setRolling] = useState(false);
   const [rollError, setRollError] = useState<string | null>(null);
 
-  // Point buy starts every score at 8, the free amount.
+  // Point buy starts every score at 8.
   const unset = ABILITIES.some(([code]) => scores[code] === undefined);
   useEffect(() => {
     if (method === 'pointBuy' && unset) {
@@ -148,7 +146,6 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
         {(method === 'standardArray' || method === 'sharedManual') && pool && ` (${pool.join(', ')})`}
       </p>
 
-      {/* Required, so highlighted like the required choices on the other steps. */}
       <div className="pick-choice">
         {method === 'roll' && (
           <div className="ability-rolls">
@@ -179,9 +176,13 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
                 <span className="ability-box__total">
                   {abilitySummary?.total != null ? <>{abilitySummary.total} <span className="muted">({signed(abilitySummary.modifier ?? 0)})</span></> : '—'}
                 </span>
-                {abilitySummary?.increases.map((inc, i) => (
-                  <span key={i} className="ability-box__bonus">+{inc.amount} {inc.source}</span>
-                ))}
+                {abilitySummary && abilitySummary.increases.length > 0 && (
+                  <span className="ability-box__bonuses">
+                    {abilitySummary.increases.map((inc, i) => (
+                      <span key={i} className="ability-box__bonus">+{inc.amount} {inc.source}</span>
+                    ))}
+                  </span>
+                )}
               </div>
             );
           })}
@@ -198,11 +199,10 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
       {!hitDie ? <p className="muted">Choose a class first.</p> : (
         <>
           <p className="setting-hint">
-            Level 1: the full d{hitDie} ({hitDie}).
+            Level 1: the full d{hitDie}.
             {level > 1 && (hp === 'automatic'
               ? ` Each level after: ${hitDie / 2 + 1}, the die’s average.`
               : ` Each level after: roll a d${hitDie}, or enter what you rolled.`)}
-            {' '}Every level adds your Constitution modifier.
           </p>
           {hp === 'manual' && level > 1 && (
             <div className="pick-choice">

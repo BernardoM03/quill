@@ -48,8 +48,8 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
   const detail = details[current.id];
 
   const field = (choice: CharacterChoice) => choice.kind === 'abilityIncrease' ? (
-    <AbilityIncreaseField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
-      errors={errorsFor(`classChoice:${choice.id}`)} />
+    <AbilityIncreaseField key={choice.id} choice={choice} field={`classChoice:${choice.id}`} value={choices[choice.id]}
+      onChoose={onChoose} errors={errorsFor(`classChoice:${choice.id}`)} />
   ) : (
     <ChoiceField key={choice.id} choice={choice} field={`classChoice:${choice.id}`} value={choices[choice.id]}
       taken={taken} onChoose={onChoose}

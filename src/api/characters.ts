@@ -216,6 +216,8 @@ export interface CharacterOptions {
     rulesLocked: boolean,
     // The GM's custom questions, empty in the sandbox.
     questions: CampaignQuestion[],
+    // Null in the sandbox.
+    partyVisibility: PartyVisibility | null,
 }
 
 // The Character Sandbox's backgrounds under the origin rules the player picked.
@@ -277,6 +279,8 @@ export function getClassOption(campaignId: string | null, classId: string, level
 export interface DraftError {
     field: string,
     message: string,
+    // True when it only means something hasn't been filled in yet, rather than that something is wrong.
+    incomplete?: boolean,
 }
 
 // Option key mapped to the field of the choice that picked it, so other choices can leave it out.
@@ -285,8 +289,8 @@ export type TakenOptions = Record<string, string>
 export interface AbilitySummary {
     // Null until the score is set.
     base: number | null,
-    // Permanent increases in the order gained.
-    increases: { source: string, amount: number }[],
+    // Permanent increases in the order gained, with the draft field each came from (such as 'classChoice:<id>').
+    increases: { source: string, amount: number, field?: string | null }[],
     bonus: number,
     // base plus increases.
     total: number | null,
@@ -492,6 +496,8 @@ export interface CharacterSummary {
     draft: CharacterDraft,
     rolls: AbilityRoll[] | null,
     level: number,
+    // The level the wizard edits it at: level, or the campaign's milestone level once that is higher.
+    editLevel: number,
     // Null for a character made before it had ability scores.
     abilities: Record<string, SheetAbility> | null,
     scoreAdjustments: ScoreAdjustment[],

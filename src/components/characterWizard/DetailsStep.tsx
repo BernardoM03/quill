@@ -1,5 +1,8 @@
+import type { ComponentProps } from 'react';
+
 import { CHARACTER_NAME_MAX_LENGTH, type CharacterDetails } from '../../api/characters';
 import type { CampaignQuestion } from '../../datatypes/campaignDetails';
+import { DisguiseEditor } from '../DisguiseEditor';
 
 const SHORT_MAX = 100;
 const LONG_MAX = 5000;
@@ -19,11 +22,13 @@ const fieldClass = (wide: boolean, required = false) =>
 
 // The last step, with the required name, optional description fields and the GM's custom questions.
 // errorsFor returns the server's messages for 'name', 'details:<key>' and 'answer:<id>'.
-export function DetailsStep({ name, details, questions, answers, onName, onDetail, onAnswer, errorsFor }: {
+// disguise is given only when the campaign's partyVisibility is 'misleading'.
+export function DetailsStep({ name, details, questions, answers, disguise, onName, onDetail, onAnswer, errorsFor }: {
   name: string;
   details: CharacterDetails;
   questions: CampaignQuestion[];
   answers: Record<string, string>;
+  disguise?: Omit<ComponentProps<typeof DisguiseEditor>, 'realName'>;
   onName: (name: string) => void;
   onDetail: (key: DetailKey, value: string) => void;
   onAnswer: (id: string, value: string) => void;
@@ -58,6 +63,7 @@ export function DetailsStep({ name, details, questions, answers, onName, onDetai
             maxLength={CHARACTER_NAME_MAX_LENGTH} autoFocus onChange={e => onName(e.target.value)} />
           {errors('name')}
         </label>
+        {disguise && <DisguiseEditor {...disguise} realName={name} />}
         {questions.map(q => (
           <label key={q.id} className={fieldClass(true, q.required)}>
             <span className="setting-caption">{q.prompt}{!q.required && <span className="muted"> (optional)</span>}</span>

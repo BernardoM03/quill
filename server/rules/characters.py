@@ -8,7 +8,7 @@ from server.rules.choices import (
     ABILITY_NAMES, Context, Facts, active, allowed_entries, choice_errors, resolve_choice, unmet_prerequisite,
 )
 from server.rules.classes import active_choices, all_choices, class_detail
-from server.rules.common import field_error, is_whole_number, picked_values
+from server.rules.common import field_error, is_whole_number, missing_error, picked_values
 from server.rules.details import answer_errors, details_errors
 from server.rules.problems import campaign_problems
 from server.rules.scores import SCORE_CAP, apply_increases, parse_spread, source
@@ -130,7 +130,7 @@ def kept_class_choices(draft, setting):
 # An error if the id doesn't name an installed entry the setting allows, else None.
 def _pick_error(field, entry_id, collection, noun, setting):
     if not entry_id:
-        return field_error(field, f'Choose a {noun}.')
+        return missing_error(field, f'Choose a {noun}.')
     entries = packs.collection(collection)
     if not isinstance(entry_id, str) or entry_id not in entries:
         return field_error(field, f'That {noun} isn’t in any installed pack.')
@@ -138,15 +138,22 @@ def _pick_error(field, entry_id, collection, noun, setting):
         return field_error(field, f'This campaign doesn’t allow {entries[entry_id]["name"]}.')
     return None
 
+# Proficiencies and languages count once, and so do feats unless their pack marks them repeatable.
 def _is_once_only(key):
-    return isinstance(key, str) and any(marker in key for marker in ONCE_ONLY_MARKERS)
+    if not isinstance(key, str):
+        return False
+    if ':feat/' in key:
+        feat = packs.collection('feats').get(key)
+        return feat is not None and not feat.get('repeatable', False)
+    return any(marker in key for marker in ONCE_ONLY_MARKERS)
 
 def _duplicate_message(label, first_field):
     source = 'another choice' if ':' in first_field else f'your {first_field}'
     return f'You already have {label} from {source}. Pick something else.'
 
-# Walks picks in wizard order and returns ({key: first field}, errors for later repeats of a once-only proficiency).
-# A section is (prefix, choices, picks), or (field, None, ids) for proficiencies given outright.
+# Walks picks in wizard order and returns ({key: first field}, errors for later repeats of a once-only proficiency or feat).
+# A section is (prefix, choices, picks), or (field, None, ids) for what is given outright.
+# What is given outright counts first, since it can't be changed, so a pick that repeats it is the one flagged.
 # Expertise-style (proficientOnly) choices pick from what is taken, so they take nothing themselves.
 def _taken(sections):
     taken, errors = {}, []
@@ -154,6 +161,8 @@ def _taken(sections):
         if choices is None:
             for key in picks:
                 taken.setdefault(key, prefix)
+    for prefix, choices, picks in sections:
+        if choices is None:
             continue
         for choice in choices:
             if choice.get('proficientOnly'):
@@ -225,7 +234,7 @@ def increase_sources(draft, setting, background_key):
     sources = []
     spread = parse_spread(background_key) if isinstance(background_key, str) else None
     if spread:
-        sources.append(source('Background', spread, 1, SCORE_CAP))
+        sources.append(source('Background', spread, 1, SCORE_CAP, 'backgroundChoice:' + ABILITY_CHOICE))
     if isinstance(draft.get('class'), str) and draft['class'] in packs.collection('classes'):
         picks = _dict_or_empty(draft.get('classChoices'))
         detail = class_detail_for(draft['class'], setting)
@@ -278,7 +287,9 @@ def _check_background(draft, setting, errors, sections):
         if error['field'] == ability_field and picks.get(ABILITY_CHOICE):
             error['message'] = (f'Spend all {ABILITY_POINTS} points, at most +{ABILITY_MAX} to one ability: '
                                 f'+2 to one and +1 to another, or +1 to three.')
-    sections.append(('background', None, detail['fixed']))
+    # The background's own feat counts as taken, so no other pick repeats it unless it's repeatable.
+    own_feat = [detail['feat']['id']] if detail.get('feat') and _is_once_only(detail['feat']['id']) else []
+    sections.append(('background', None, detail['fixed'] + own_feat))
     sections.append(('backgroundChoice:', active_background_choices, picks))
 
 def _check_class(draft, setting, errors, sections):
@@ -296,7 +307,7 @@ def _check_class(draft, setting, errors, sections):
 
 def _name_errors(name):
     if not isinstance(name, str) or not name.strip():
-        return [field_error('name', 'Give your character a name.')]
+        return [missing_error('name', 'Give your character a name.')]
     if clean_name(name) is None:
         return [field_error('name', f'Name must be 1-{NAME_MAX_LENGTH} characters, with no control characters.')]
     return []

@@ -61,7 +61,7 @@ def answer_errors(answers, questions):
         elif value and len(value) > ANSWER_MAX_LENGTH:
             errors.append(_error(field, f'At most {ANSWER_MAX_LENGTH} characters.'))
         elif question['required'] and not (value or '').strip():
-            errors.append(_error(field, 'Your GM needs an answer to this.'))
+            errors.append({**_error(field, 'Your GM needs an answer to this.'), 'incomplete': True})
     return errors
 
 # Non-blank answers to the current questions, trimmed.

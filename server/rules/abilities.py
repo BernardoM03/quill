@@ -2,7 +2,7 @@ import random
 
 from server.rules import packs
 from server.rules.choices import ABILITY_NAMES
-from server.rules.common import ability_modifier, field_error, is_whole_number
+from server.rules.common import ability_modifier, field_error, is_whole_number, missing_error
 
 # Ability score and hit point methods for a new character.
 # Campaigns fix one method each (abilityScoreMethod, hitPoints), while the Character Sandbox allows any.
@@ -76,15 +76,15 @@ def ability_errors(draft, setting, rolls):
             # A saved character whose campaign has since changed its method.
             return [field_error('abilityMethod', f'This campaign uses {METHOD_LABELS[ability_methods[0]]} for ability '
                                                  f'scores now, not {METHOD_LABELS[method]}. Set your scores again.')]
-        return [field_error('abilityMethod', 'Choose how to set your ability scores.')]
+        return [missing_error('abilityMethod', 'Choose how to set your ability scores.')]
     scores = draft.get('abilityScores')
     if not isinstance(scores, dict) or not all(is_whole_number(scores.get(ability)) for ability in ABILITIES):
         if method == 'roll' and not rolls:
-            return [field_error('abilityScores', 'Roll your ability scores.')]
-        return [field_error('abilityScores', 'Give every ability a score.')]
+            return [missing_error('abilityScores', 'Roll your ability scores.')]
+        return [missing_error('abilityScores', 'Give every ability a score.')]
     values = [scores[ability] for ability in ABILITIES]
     if method == 'roll' and not rolls:
-        return [field_error('abilityScores', 'Roll your ability scores.')]
+        return [missing_error('abilityScores', 'Roll your ability scores.')]
     pool = _required_pool(method, setting, rolls)
     if pool is not None and sorted(values) != pool:
         listed = ', '.join(map(str, sorted(pool, reverse=True)))
@@ -107,13 +107,16 @@ def hp_errors(draft, setting, hit_die):
     _, hp_methods = methods(setting)
     method = hp_method(draft, setting)
     if method not in hp_methods:
-        return [field_error('hpMethod', 'Choose how to set your hit points.')]
+        return [missing_error('hpMethod', 'Choose how to set your hit points.')]
     if method == 'manual' and setting.level > 1 and hit_die:
         rolls = draft.get('hpRolls')
-        if (not isinstance(rolls, list) or len(rolls) != setting.level - 1
-                or not all(is_whole_number(roll) and 1 <= roll <= hit_die for roll in rolls)):
-            return [field_error('hpRolls', f'Roll or enter a d{hit_die} for each level after the first '
-                                           f'({setting.level - 1} in all).')]
+        rolls = rolls if isinstance(rolls, list) else []
+        valid = all(is_whole_number(roll) and 1 <= roll <= hit_die for roll in rolls)
+        if len(rolls) != setting.level - 1 or not valid:
+            # Fewer rolls than levels, all fine so far, is only unfinished.
+            make_error = missing_error if valid and len(rolls) < setting.level - 1 else field_error
+            return [make_error('hpRolls', f'Roll or enter a d{hit_die} for each level after the first '
+                                          f'({setting.level - 1} in all).')]
     return []
 
 # Features raising the Hit Point maximum (Dwarven Toughness, Draconic Resilience) as [{name, amount}].

@@ -4,14 +4,15 @@ import { useNavigate, useParams, useSearchParams } from "react-router";
 import { getCampaign } from "../api/campaigns";
 import {
     createCharacter, createSandboxCharacter, getBackgroundOptions, getCharacter, getCharacterOptions,
-    rollCharacterAbilities, submitCharacter, updateCharacter, validateCharacter,
-    type AbilityRoll, type BackgroundOption, type CharacterDraft, type CharacterOptions, type ChoicePicks,
+    rollCharacterAbilities, saveDisguise, submitCharacter, updateCharacter, validateCharacter,
+    type AbilityRoll, type BackgroundOption, type CharacterDisguise, type CharacterDraft, type CharacterOptions, type ChoicePicks,
     type CreatedCharacter, type DraftCheck, type DraftError, type TakenOptions,
 } from "../api/characters";
 import { createDraft, getDraft, rollAbilities, saveDraft } from "../api/drafts";
 import { getUser } from "../api/users";
 import BackButton from "../components/BackButton";
 import { AbilitiesStep } from "../components/characterWizard/AbilitiesStep";
+import { AbilitySummaryContext } from "../components/characterWizard/abilitySummaryContext";
 import { BackgroundStep } from "../components/characterWizard/BackgroundStep";
 import { ClassStep } from "../components/characterWizard/ClassStep";
 import { DetailsStep } from "../components/characterWizard/DetailsStep";
@@ -87,7 +88,8 @@ function stepForField(field: string): StepId | 'all' {
     if (field === 'species' || field.startsWith('choice:')) return 'species'
     if (field === 'background' || field.startsWith('backgroundChoice:')) return 'background'
     if (ABILITY_FIELDS.includes(field)) return 'abilities'
-    if (field === 'class' || field.startsWith('classChoice:')) return 'class'
+    // A character behind the campaign's milestone level levels up through its class.
+    if (field === 'class' || field === 'level' || field.startsWith('classChoice:')) return 'class'
     return 'name'
 }
 
@@ -95,6 +97,12 @@ function belongsToStep(field: string, stepId: StepId): boolean {
     const owner = stepForField(field)
     return owner === 'all' || owner === stepId
 }
+
+// Error messages in the wizard's form, of which the first in the page is the top-most.
+const ERROR_SELECTOR = '.campaign-name__error, .setting-error'
+const FOCUSABLE = 'input:not([type="hidden"]):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(:disabled)'
+// About three seconds of animation frames.
+const ERROR_SEEK_FRAMES = 180
 
 const serverCampaignId = (campaignId: string) => (campaignId === SANDBOX ? null : campaignId)
 
@@ -164,8 +172,50 @@ export default function NewCharacter() {
     const [campaignError, setCampaignError] = useState<string | null>(null)
     const [saveError, setSaveError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
+    // What the party sees under partyVisibility 'misleading', saved with the character.
+    const [disguise, setDisguise] = useState<CharacterDisguise>({})
     // Numbers validation requests so a slow answer can't replace a newer one.
     const latestCheck = useRef(0)
+    const formRef = useRef<HTMLFormElement>(null)
+    // Bumped when Next or Complete finds problems, to scroll to the top-most error once it shows.
+    const [errorJump, setErrorJump] = useState(0)
+    // False when the problem is a general message at the foot of the form, with no field error to wait for.
+    const jumpToField = useRef(true)
+    // When set, only errors with these messages are jumped to, so a real error wins over unfinished fields above it.
+    const jumpMessages = useRef<Set<string> | null>(null)
+    const jumpToFirstError = (toField = true, messages: string[] | null = null) => {
+        jumpToField.current = toField
+        jumpMessages.current = messages && new Set(messages)
+        setErrorJump(n => n + 1)
+    }
+
+    // A new step may still be loading its choices, so this looks for the error over the next few seconds.
+    useEffect(() => {
+        if (!errorJump) return
+        let frame = 0
+        let tries = 0
+        const seek = () => {
+            const form = formRef.current
+            const wanted = jumpMessages.current
+            const found = (form ? [...form.querySelectorAll<HTMLElement>(ERROR_SELECTOR)] : [])
+                .filter(el => !wanted || wanted.has(el.textContent?.trim() ?? ''))
+            // Errors beside a field come first; the general messages at the foot of the form
+            // (direct children of it) are used only once the step's own errors have had time to show.
+            const first = found.find(el => el.parentElement !== form)
+                ?? (!jumpToField.current || tries >= ERROR_SEEK_FRAMES / 2 ? found[0] : undefined)
+            if (!first) {
+                if (++tries < ERROR_SEEK_FRAMES) frame = requestAnimationFrame(seek)
+                return
+            }
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            first.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
+            // Focus the field the error belongs to, so the player can fix it straight away.
+            const control = first.closest('label, .pick-choice, .details-field')?.querySelector<HTMLElement>(FOCUSABLE)
+            control?.focus({ preventScroll: true })
+        }
+        frame = requestAnimationFrame(seek)
+        return () => cancelAnimationFrame(frame)
+    }, [errorJump])
 
     // When editing, start from the saved character on the first step with a problem.
     useEffect(() => {
@@ -177,7 +227,8 @@ export default function NewCharacter() {
                     campaignId: character.campaignId ?? SANDBOX,
                 })
                 setRolls(character.rolls)
-                setCharacterLevel(character.level)
+                setDisguise(character.disguise ?? {})
+                setCharacterLevel(character.editLevel)
                 setCampaigns(character.campaignId ? [{ id: character.campaignId, name: character.campaignName ?? '' }] : [])
                 setAttempted(new Set(STEPS.map(s => s.id)))
                 const firstProblemStep = STEPS.findIndex(s => character.problems.some(p => stepForField(p.field) === s.id))
@@ -237,6 +288,8 @@ export default function NewCharacter() {
         return () => { current = false }
     }, [draft.campaignId])
 
+    // The campaign shows the party a disguise, set on the Details step.
+    const misleading = options?.partyVisibility === 'misleading'
     // The campaign's origin rules, or in the sandbox the player's picks over the defaults.
     const originRules = options && (options.rulesLocked ? options.originRules : { ...options.originRules, ...draft.originRules })
     // A stable key for the sandbox's custom origin rules, or null when the defaults apply.
@@ -272,32 +325,35 @@ export default function NewCharacter() {
         return () => clearTimeout(timer)
     }, [draft, check])
 
-    // The first save creates the draft and puts its id in the URL, so reloading reopens it.
+    // Saves a new character's progress as a draft. The first save creates it and puts its id in the URL, so reloading reopens it.
+    const persistDraft = useCallback((current: WizardDraft, stepId: StepId): Promise<unknown> => {
+        const saved = {
+            campaignId: serverCampaignId(current.campaignId),
+            draft: characterFields(current),
+            step: stepId,
+        }
+        setSaveState('saving')
+        let save: Promise<unknown>
+        if (draftId.current) {
+            save = saveDraft(draftId.current, saved)
+        } else if (creatingDraft.current) {
+            save = creatingDraft.current.then(id => saveDraft(id, saved))
+        } else {
+            creatingDraft.current = createDraft(saved)
+            save = creatingDraft.current.then(id => {
+                draftId.current = id
+                if (!finished.current) setSearchParams({ draft: id }, { replace: true })
+            })
+        }
+        save.then(() => setSaveState('saved'), () => setSaveState('failed'))
+        return save
+    }, [setSearchParams])
+
     useEffect(() => {
         if (editing || !loaded || !draft.campaignId || finished.current) return
-        const timer = setTimeout(() => {
-            const saved = {
-                campaignId: serverCampaignId(draft.campaignId),
-                draft: characterFields(draft),
-                step: STEPS[stepIndex].id,
-            }
-            setSaveState('saving')
-            let save: Promise<unknown>
-            if (draftId.current) {
-                save = saveDraft(draftId.current, saved)
-            } else if (creatingDraft.current) {
-                save = creatingDraft.current.then(id => saveDraft(id, saved))
-            } else {
-                creatingDraft.current = createDraft(saved)
-                save = creatingDraft.current.then(id => {
-                    draftId.current = id
-                    if (!finished.current) setSearchParams({ draft: id }, { replace: true })
-                })
-            }
-            save.then(() => setSaveState('saved'), () => setSaveState('failed'))
-        }, SAVE_DELAY_MS)
+        const timer = setTimeout(() => { persistDraft(draft, STEPS[stepIndex].id).catch(() => {}) }, SAVE_DELAY_MS)
         return () => clearTimeout(timer)
-    }, [draft, stepIndex, loaded, campaignID, setSearchParams, editing])
+    }, [draft, stepIndex, loaded, editing, persistDraft])
 
     const step = STEPS[stepIndex]
     const isLastStep = stepIndex === STEPS.length - 1
@@ -364,17 +420,25 @@ export default function NewCharacter() {
         finished.current = true
         if (characterID) {
             return updateCharacter(characterID, characterFields(draft))
+                .then(() => misleading ? saveDisguise(characterID, disguise) : null)
                 .then(() => navigate(`/characters/${characterID}`, { replace: true }))
         }
         const body = { draftId: draftId.current ?? undefined, ...characterFields(draft) }
+        const hasDisguise = misleading && Object.values(disguise).some(Boolean)
+        // The character exists by now, so a failed disguise save mustn't offer a retry that creates it twice.
+        // The disguise can be set again by editing the character.
         return createFinishedCharacter(draft.campaignId, body)
-            .then(created => navigate(`/characters/${created.id}`, { replace: true }))
+            .then(created => Promise.resolve(hasDisguise ? saveDisguise(created.id, disguise).catch(() => null) : null)
+                .then(() => navigate(`/characters/${created.id}`, { replace: true })))
     }
 
     function handleNext(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault()
         if (step.id === 'campaign') {
-            if (!draft.campaignId) return setCampaignError('Choose a campaign, or the Character Sandbox.')
+            if (!draft.campaignId) {
+                setCampaignError('Choose a campaign, or the Character Sandbox.')
+                return jumpToFirstError(false)
+            }
             setStepIndex(i => i + 1)
             return
         }
@@ -385,6 +449,7 @@ export default function NewCharacter() {
             .then(found => {
                 if (found.some(error => belongsToStep(error.field, step.id))) {
                     setSaving(false)
+                    jumpToFirstError()
                     return
                 }
                 // Steps can be skipped from the bar, so send the player to the first unfinished one before creating.
@@ -393,6 +458,7 @@ export default function NewCharacter() {
                     setAttempted(a => new Set(a).add(STEPS[unfinishedStep].id))
                     setStepIndex(unfinishedStep)
                     setSaving(false)
+                    jumpToFirstError()
                     return
                 }
                 if (!isLastStep) {
@@ -407,6 +473,55 @@ export default function NewCharacter() {
                 setSaveError(data?.errors ? null : (data?.error ?? 'Could not reach the server.'))
                 finished.current = false
                 setSaving(false)
+                jumpToFirstError(Boolean(data?.errors))
+            })
+    }
+
+    // The Complete square, in order:
+    // 1. Anything wrong (rather than just not filled in yet) sends the player to the top-most such error.
+    // 2. An unfinished new character is kept as a draft and the player returns to the campaign.
+    //    An edit can't be saved half-done, so it shows the first step still needing work instead.
+    // 3. A finished character is saved and opens its sheet.
+    function handleComplete() {
+        if (!draft.campaignId) {
+            setCampaignError('Choose a campaign, or the Character Sandbox.')
+            return jumpToFirstError(false)
+        }
+        setSaving(true)
+        setSaveError(null)
+        check(draft)
+            .then(found => {
+                const wrong = found.filter(error => !error.incomplete)
+                if (wrong.length > 0) {
+                    // Campaign-wide errors show on every step, so the player stays put for those.
+                    const wrongStep = STEPS.findIndex(s => wrong.some(error => stepForField(error.field) === s.id))
+                    setAttempted(new Set(STEPS.map(s => s.id)))
+                    if (wrongStep >= 0) setStepIndex(wrongStep)
+                    setSaving(false)
+                    jumpToFirstError(wrongStep >= 0, wrong.map(error => error.message))
+                    return
+                }
+                const unfinishedStep = STEPS.findIndex(s => found.some(error => stepForField(error.field) === s.id))
+                if (unfinishedStep < 0) return finish()
+                if (editing) {
+                    setAttempted(new Set(STEPS.map(s => s.id)))
+                    setStepIndex(unfinishedStep)
+                    setSaveError('Finish the marked steps to save these changes.')
+                    setSaving(false)
+                    jumpToFirstError()
+                    return
+                }
+                finished.current = true
+                return persistDraft(draft, step.id)
+                    .then(() => navigate(draft.campaignId === SANDBOX ? '/' : `/campaign/${draft.campaignId}`))
+            })
+            .catch(err => {
+                const data = err.response?.data
+                if (data?.errors) setErrors(data.errors)
+                setSaveError(data?.errors ? null : (data?.error ?? 'Could not reach the server.'))
+                finished.current = false
+                setSaving(false)
+                jumpToFirstError(Boolean(data?.errors))
             })
     }
 
@@ -437,153 +552,173 @@ export default function NewCharacter() {
             )}
 
             <nav className="wizard__progress" aria-label="Steps">
-                <ol className="wizard__steps">
-                    {STEPS.map((s, i) => {
-                        const locked = s.id === 'campaign' ? campaignFixed : !draft.campaignId
-                        // A step is done once visited with nothing wrong, and otherwise keeps its number.
-                        const hasProblems = errors.some(error => belongsToStep(error.field, s.id))
-                        const visited = i < stepIndex || attempted.has(s.id)
-                        const state = i === stepIndex ? 'current'
-                            : (s.id === 'campaign' && campaignFixed) || (visited && !hasProblems) ? 'done'
-                            : 'todo'
-                        return (
-                            <li key={s.id} className={`wizard__step wizard__step--${state}`}
-                                title={s.id === 'campaign' && campaignFixed ? 'The campaign is already decided.' : undefined}>
-                                <button type="button" className="wizard__step-button"
-                                    aria-current={i === stepIndex ? 'step' : undefined}
-                                    disabled={saving || locked}
-                                    onClick={() => setStepIndex(i)}>
-                                    <span className="wizard__step-number" aria-hidden="true">{state === 'done' ? '✓' : i + 1}</span>
-                                    <StepIcon step={s.id} />
-                                    <span className="wizard__step-label">{s.label}</span>
-                                </button>
-                            </li>
-                        )
-                    })}
-                </ol>
+                <div className="wizard__bar">
+                    <ol className="wizard__steps">
+                        {STEPS.map((s, i) => {
+                            const locked = s.id === 'campaign' ? campaignFixed : !draft.campaignId
+                            // A step is done once visited with nothing wrong, and otherwise keeps its number.
+                            const hasProblems = errors.some(error => belongsToStep(error.field, s.id))
+                            const visited = i < stepIndex || attempted.has(s.id)
+                            const state = i === stepIndex ? 'current'
+                                : (s.id === 'campaign' && campaignFixed) || (visited && !hasProblems) ? 'done'
+                                : 'todo'
+                            return (
+                                <li key={s.id} className={`wizard__step wizard__step--${state}`}
+                                    title={s.id === 'campaign' && campaignFixed ? 'The campaign is already decided.' : undefined}>
+                                    <button type="button" className="wizard__step-button"
+                                        aria-current={i === stepIndex ? 'step' : undefined}
+                                        disabled={saving || locked}
+                                        onClick={() => setStepIndex(i)}>
+                                        <span className="wizard__step-number" aria-hidden="true">{state === 'done' ? '✓' : i + 1}</span>
+                                        <StepIcon step={s.id} />
+                                        <span className="wizard__step-label">{s.label}</span>
+                                    </button>
+                                </li>
+                            )
+                        })}
+                    </ol>
+                    <button type="button" className="wizard__complete" onClick={handleComplete}
+                        disabled={saving || !campaigns || blocked || !loaded || !draft.campaignId}
+                        aria-label="Complete"
+                        title={editing
+                            ? 'Save the changes and open the character sheet'
+                            : 'Create the character if it’s finished, or save it for later and go back to the campaign'}>
+                        <StepIcon step="complete" />
+                    </button>
+                </div>
                 <div className="wizard__progress-track" aria-hidden="true">
                     <div className="wizard__progress-fill" style={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }} />
                 </div>
             </nav>
 
-            <form className={WIDE_STEPS.includes(step.id) ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
-                {step.id === 'campaign' && campaigns && (
-                    <fieldset className="wizard__choices">
-                        <legend className="setting-caption">Campaign</legend>
-                        {campaigns.map(campaign => (
-                            <label key={campaign.id} className="wizard__choice">
-                                <input type="radio" name="campaign" value={campaign.id}
-                                    checked={draft.campaignId === campaign.id}
-                                    onChange={() => update({ campaignId: campaign.id })} />
-                                <span>{campaign.name}</span>
+            <AbilitySummaryContext.Provider value={summary?.abilities ?? null}>
+                <form ref={formRef} className={WIDE_STEPS.includes(step.id) ? 'wizard__form wizard__form--wide' : 'wizard__form'} onSubmit={handleNext}>
+                    {step.id === 'campaign' && campaigns && (
+                        <fieldset className="wizard__choices">
+                            <legend className="setting-caption">Campaign</legend>
+                            {campaigns.map(campaign => (
+                                <label key={campaign.id} className="wizard__choice">
+                                    <input type="radio" name="campaign" value={campaign.id}
+                                        checked={draft.campaignId === campaign.id}
+                                        onChange={() => update({ campaignId: campaign.id })} />
+                                    <span>{campaign.name}</span>
+                                </label>
+                            ))}
+                            <label className="wizard__choice">
+                                <input type="radio" name="campaign" value={SANDBOX}
+                                    checked={draft.campaignId === SANDBOX}
+                                    onChange={() => update({ campaignId: SANDBOX })} />
+                                <span className="wizard__choice-text">
+                                    <span>Character Sandbox</span>
+                                </span>
                             </label>
-                        ))}
-                        <label className="wizard__choice">
-                            <input type="radio" name="campaign" value={SANDBOX}
-                                checked={draft.campaignId === SANDBOX}
-                                onChange={() => update({ campaignId: SANDBOX })} />
-                            <span className="wizard__choice-text">
-                                <span>Character Sandbox</span>
-                            </span>
-                        </label>
-                    </fieldset>
-                )}
-
-                {step.id === 'species' && (options ? (
-                    <SpeciesStep
-                        options={options.species}
-                        selected={draft.species}
-                        choices={draft.speciesChoices}
-                        taken={taken}
-                        onSelect={id => update({ species: id, speciesChoices: {} }, 'species')}
-                        onChoose={(id, value) =>
-                            update({ speciesChoices: withPick(draft.speciesChoices, id, value) }, `choice:${id}`)}
-                        errorsFor={errorsFor}
-                    />
-                ) : waiting)}
-
-                {step.id === 'background' && (options && originRules && backgrounds ? (
-                    <BackgroundStep
-                        rules={originRules}
-                        locked={options.rulesLocked}
-                        // A new rule changes what the background asks for, so its choices reset.
-                        onRuleChange={changes => update({
-                            originRules: { ...draft.originRules, ...changes }, backgroundChoices: {},
-                        }, 'background')}
-                        options={backgrounds}
-                        selected={draft.background}
-                        choices={draft.backgroundChoices}
-                        taken={taken}
-                        onSelect={id => update({ background: id, backgroundChoices: {} }, 'background')}
-                        onChoose={(id, value) =>
-                            update({ backgroundChoices: withPick(draft.backgroundChoices, id, value) }, `backgroundChoice:${id}`)}
-                        errorsFor={errorsFor}
-                    />
-                ) : waiting)}
-
-                {step.id === 'class' && (options ? (
-                    <ClassStep
-                        campaignId={serverCampaignId(draft.campaignId)}
-                        level={characterLevel ?? options.level}
-                        classes={options.classes}
-                        selected={draft.class}
-                        choices={draft.classChoices}
-                        taken={taken}
-                        onSelect={id => update({ class: id, classChoices: {} }, 'class')}
-                        onChoose={(id, value) =>
-                            update({ classChoices: withPick(draft.classChoices, id, value) }, `classChoice:${id}`)}
-                        errorsFor={errorsFor}
-                    />
-                ) : waiting)}
-
-                {step.id === 'abilities' && (options ? (
-                    <AbilitiesStep
-                        rules={options.abilityRules}
-                        level={characterLevel ?? options.level}
-                        hitDie={options.classes.find(cls => cls.id === draft.class)?.hitDie ?? null}
-                        fields={draft}
-                        rolls={rolls}
-                        canReroll={draft.campaignId === SANDBOX}
-                        summary={summary}
-                        onChange={changeAbilities}
-                        onRoll={rollScores}
-                        errorsFor={errorsFor}
-                    />
-                ) : waiting)}
-
-                {step.id === 'name' && (
-                    <DetailsStep
-                        name={draft.name}
-                        details={draft.details}
-                        questions={options?.questions ?? []}
-                        answers={draft.answers ?? {}}
-                        onAnswer={(id, value) => update({ answers: { ...draft.answers, [id]: value } }, `answer:${id}`)}
-                        onName={name => update({ name }, 'name')}
-                        onDetail={(key, value) => update({ details: { ...draft.details, [key]: value } }, `details:${key}`)}
-                        errorsFor={errorsFor}
-                    />
-                )}
-
-                {campaignError && <p className="campaign-name__error">{campaignError}</p>}
-                {stepErrors
-                    .filter(error => !WIDE_STEPS.includes(step.id) || stepForField(error.field) === 'all')
-                    .map(error => <p key={error.field + error.message} className="campaign-name__error">{error.message}</p>)}
-                {saveError && <p className="campaign-name__error">{saveError}</p>}
-
-                <div className="wizard__actions">
-                    {stepIndex > (campaignFixed ? 1 : 0) && (
-                        <button type="button" className="setting-button setting-button--quiet" disabled={saving}
-                            onClick={() => setStepIndex(i => i - 1)}>
-                            Back
-                        </button>
+                        </fieldset>
                     )}
-                    <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked || !loaded}>
-                        {isLastStep
-                            ? (editing ? (saving ? 'Saving…' : 'Save Changes') : (saving ? 'Creating…' : 'Create Character'))
-                            : 'Next'}
-                    </button>
-                </div>
-            </form>
+
+                    {step.id === 'species' && (options ? (
+                        <SpeciesStep
+                            options={options.species}
+                            selected={draft.species}
+                            choices={draft.speciesChoices}
+                            taken={taken}
+                            onSelect={id => update({ species: id, speciesChoices: {} }, 'species')}
+                            onChoose={(id, value) =>
+                                update({ speciesChoices: withPick(draft.speciesChoices, id, value) }, `choice:${id}`)}
+                            errorsFor={errorsFor}
+                        />
+                    ) : waiting)}
+
+                    {step.id === 'background' && (options && originRules && backgrounds ? (
+                        <BackgroundStep
+                            rules={originRules}
+                            locked={options.rulesLocked}
+                            // A new rule changes what the background asks for, so its choices reset.
+                            onRuleChange={changes => update({
+                                originRules: { ...draft.originRules, ...changes }, backgroundChoices: {},
+                            }, 'background')}
+                            options={backgrounds}
+                            selected={draft.background}
+                            choices={draft.backgroundChoices}
+                            taken={taken}
+                            onSelect={id => update({ background: id, backgroundChoices: {} }, 'background')}
+                            onChoose={(id, value) =>
+                                update({ backgroundChoices: withPick(draft.backgroundChoices, id, value) }, `backgroundChoice:${id}`)}
+                            errorsFor={errorsFor}
+                        />
+                    ) : waiting)}
+
+                    {step.id === 'class' && (options ? (
+                        <ClassStep
+                            campaignId={serverCampaignId(draft.campaignId)}
+                            level={characterLevel ?? options.level}
+                            classes={options.classes}
+                            selected={draft.class}
+                            choices={draft.classChoices}
+                            taken={taken}
+                            onSelect={id => update({ class: id, classChoices: {} }, 'class')}
+                            onChoose={(id, value) =>
+                                update({ classChoices: withPick(draft.classChoices, id, value) }, `classChoice:${id}`)}
+                            errorsFor={errorsFor}
+                        />
+                    ) : waiting)}
+
+                    {step.id === 'abilities' && (options ? (
+                        <AbilitiesStep
+                            rules={options.abilityRules}
+                            level={characterLevel ?? options.level}
+                            hitDie={options.classes.find(cls => cls.id === draft.class)?.hitDie ?? null}
+                            fields={draft}
+                            rolls={rolls}
+                            canReroll={draft.campaignId === SANDBOX}
+                            summary={summary}
+                            onChange={changeAbilities}
+                            onRoll={rollScores}
+                            errorsFor={errorsFor}
+                        />
+                    ) : waiting)}
+
+                    {step.id === 'name' && (
+                        <DetailsStep
+                            name={draft.name}
+                            details={draft.details}
+                            questions={options?.questions ?? []}
+                            answers={draft.answers ?? {}}
+                            disguise={misleading ? {
+                                disguise,
+                                realSpecies: options.species.find(sp => sp.id === draft.species)?.name ?? null,
+                                realClass: options.classes.find(cls => cls.id === draft.class)?.name ?? null,
+                                species: options.species.map(sp => sp.name),
+                                classes: options.classes.map(cls => cls.name),
+                                onChange: setDisguise,
+                            } : undefined}
+                            onAnswer={(id, value) => update({ answers: { ...draft.answers, [id]: value } }, `answer:${id}`)}
+                            onName={name => update({ name }, 'name')}
+                            onDetail={(key, value) => update({ details: { ...draft.details, [key]: value } }, `details:${key}`)}
+                            errorsFor={errorsFor}
+                        />
+                    )}
+
+                    {campaignError && <p className="campaign-name__error">{campaignError}</p>}
+                    {stepErrors
+                        .filter(error => !WIDE_STEPS.includes(step.id) || stepForField(error.field) === 'all')
+                        .map(error => <p key={error.field + error.message} className="campaign-name__error">{error.message}</p>)}
+                    {saveError && <p className="campaign-name__error">{saveError}</p>}
+
+                    <div className="wizard__actions">
+                        {stepIndex > (campaignFixed ? 1 : 0) && (
+                            <button type="button" className="setting-button setting-button--quiet" disabled={saving}
+                                onClick={() => setStepIndex(i => i - 1)}>
+                                Back
+                            </button>
+                        )}
+                        <button type="submit" className="setting-button" disabled={saving || !campaigns || blocked || !loaded}>
+                            {isLastStep
+                                ? (editing ? (saving ? 'Updating…' : 'Update Character') : (saving ? 'Creating…' : 'Create Character'))
+                                : 'Next'}
+                        </button>
+                    </div>
+                </form>
+            </AbilitySummaryContext.Provider>
         </div>
     )
 }

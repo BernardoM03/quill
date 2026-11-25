@@ -20,7 +20,7 @@ from server.rules.characters import (
 from server.rules.classes import class_summary
 from server.rules.details import clean_answers, clean_details
 from server.rules.scores import apply_adjustments, clean_adjustments
-from server.rules.settings import MAX_LEVEL, with_rule_defaults
+from server.rules.settings import MAX_LEVEL, starting_level, with_rule_defaults
 from server.rules.state import (
     clean_state_patch, play_state, rest_changes, sheet_features, sheet_spells, sheet_stats, state_limits,
 )
@@ -63,15 +63,39 @@ def creation_setting(conn, campaign_id):
     return _setting_from_campaign_json(conn, campaign_id, row['settings'])
 
 # The setting an existing character is checked under: its campaign as it is now, at the character's level.
+# editing uses the level the wizard saves the character at instead (edit_level).
 # Membership isn't checked, because the admin may look at anyone's character.
-def character_setting(conn, row, sheet):
+def character_setting(conn, row, sheet, editing=False):
     campaign_id = row['campaign_id']
     if campaign_id is None:
         setting = Setting(None, {})
     else:
         campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
         setting = _setting_from_campaign_json(conn, campaign_id, campaign['settings'] if campaign else None)
-    return setting.for_draft(sheet.get('build') or {}).at_level(sheet.get('level'))
+    level = edit_level(conn, row, sheet) if editing else sheet.get('level')
+    return setting.for_draft(sheet.get('build') or {}).at_level(level)
+
+# The level an edit saves the character at: its own, raised to the campaign's milestone level when that is higher.
+# A lower milestone level leaves the character as it is, so lowering it never takes away a character's choices.
+def edit_level(conn, row, sheet):
+    level = sheet.get('level', 1)
+    if row['campaign_id'] is None:
+        return level
+    if 'campaign_settings' in row.keys():
+        settings_json = row['campaign_settings']
+    else:
+        campaign = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (row['campaign_id'],)).fetchone()
+        settings_json = campaign['settings'] if campaign else None
+    rules = with_rule_defaults(json.loads(settings_json).get('rules') if settings_json else None)
+    return max(level, starting_level(rules))
+
+# A problem asking the owner to bring the character up to the campaign's milestone level, if it's behind.
+def level_problems(conn, row, sheet):
+    level, target = sheet.get('level', 1), edit_level(conn, row, sheet)
+    if target <= level:
+        return []
+    return [{'field': 'level',
+             'message': f'The campaign is now at level {target}. Edit the character to bring it up from level {level}.'}]
 
 def sheet_rolls(sheet):
     return sheet.get('rolls')
@@ -88,8 +112,9 @@ def check_character(conn, row, sheet):
 
 # What no longer fits the character's campaign, as [{field, message}].
 def character_problems(conn, row):
-    result = check_character(conn, row, json.loads(row['sheet']))
-    return result['errors'] if result else []
+    sheet = json.loads(row['sheet'])
+    result = check_character(conn, row, sheet)
+    return level_problems(conn, row, sheet) + (result['errors'] if result else [])
 
 def _play(sheet):
     return sheet.get('play') or {}
@@ -185,6 +210,8 @@ def get_options():
         'rulesLocked': not setting.sandbox,
         # The GM's custom questions, asked on the Details step.
         'questions': setting.questions,
+        # 'misleading' adds the disguise fields to the Details step.
+        'partyVisibility': None if setting.sandbox else setting.rules['partyVisibility'],
     }), 200
 
 # Every allowed background, under the sandbox player's origin rules from the query (customizeOrigin, originFeat, startingEquipment).
@@ -230,7 +257,7 @@ def validate_character():
                 if row is None:
                     return error('Character not found', 404)
                 sheet = json.loads(row['sheet'])
-                setting = character_setting(conn, row, sheet).for_draft(draft)
+                setting = character_setting(conn, row, sheet, editing=True).for_draft(draft)
                 rolls = sheet_rolls(sheet)
             else:
                 setting = creation_setting(conn, draft.get('campaignId'))
@@ -388,10 +415,12 @@ def character_payload(conn, row, access):
         'campaignName': row['campaign_name'],
         'portraitVersion': row['portrait_version'],
         # What no longer fits the campaign's current settings.
-        'problems': result['errors'] if result else [],
+        'problems': level_problems(conn, row, sheet) + (result['errors'] if result else []),
         'draft': draft,
         'rolls': sheet_rolls(sheet),
         'level': level,
+        # The level the wizard edits the character at, above level when the milestone level has risen.
+        'editLevel': edit_level(conn, row, sheet),
         'abilities': abilities,
         'scoreAdjustments': _play(sheet).get('scoreAdjustments') or [],
         'partyVisibility': party_visibility(row['campaign_settings']),
@@ -542,13 +571,15 @@ def update_character(character_id):
             if row is None:
                 return error('Character not found', 404)
             sheet = json.loads(row['sheet'])
-            setting = character_setting(conn, row, sheet).for_draft(draft)
+            setting = character_setting(conn, row, sheet, editing=True).for_draft(draft)
             errors = check_draft(draft, setting, sheet_rolls(sheet))['errors']
             if errors:
                 return _draft_errors(errors)
             # The wizard owns the build, while rolls, play and any other keys are kept.
             old_build = sheet.get('build') or {}
             sheet['build'] = build_from_draft(draft, setting, old_build)
+            # Raised to the milestone level when the campaign has moved past the character.
+            sheet['level'] = setting.level
             name = clean_name(draft['name'])
             # An approved character stays approved, but the GM is told about changed picks.
             if (row['status'] == 'approved' and row['campaign_id'] is not None

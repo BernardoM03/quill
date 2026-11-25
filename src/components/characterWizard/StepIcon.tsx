@@ -12,6 +12,8 @@ const PATHS: Record<string, string> = {
   abilities: 'M12 2l8.5 5v10L12 22l-8.5-5V7z M12 7l5 8H7z M12 2v5 M3.5 7L7 15 M20.5 7L17 15 M7 15l5 7 5-7',
   // A quill.
   name: 'M20 4c-6 0-11 4-13 11l-2 5 5-2c7-2 11-7 11-13z M5 20l8-8',
+  // A tick, for the Complete square after the steps.
+  complete: 'M5 12.5l4.5 4.5L19 7.5',
 };
 
 export function StepIcon({ step }: { step: string }) {

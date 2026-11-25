@@ -1,58 +1,52 @@
-import { useState } from "react";
+import type { CharacterDisguise } from "../api/characters";
 
-import { saveDisguise, type CharacterDisguise } from "../api/characters";
-
-const FIELDS: { key: keyof CharacterDisguise, label: string, placeholder: (name: string) => string }[] = [
-    { key: 'name', label: 'Name', placeholder: name => name },
-    { key: 'species', label: 'Species', placeholder: () => 'Your disguise species' },
-    { key: 'className', label: 'Class', placeholder: () => 'Your disguise class' },
-]
-
-// Edits the false name, species and class the party sees under 'misleading' visibility.
-// Blank fields show the real value.
-export function DisguiseEditor({ characterId, name, disguise, onSaved }: {
-    characterId: string,
-    name: string,
-    disguise: CharacterDisguise | null,
-    onSaved: (disguise: CharacterDisguise | null) => void,
+// The false name, species and class the party sees under 'misleading' visibility, edited on the wizard's Details step.
+// Blank fields show the real value. Species and class come from what the campaign allows.
+export function DisguiseEditor({ disguise, realName, realSpecies, realClass, species, classes, onChange }: {
+    disguise: CharacterDisguise,
+    realName: string,
+    realSpecies: string | null,
+    realClass: string | null,
+    // Names of the species and classes the campaign allows.
+    species: string[],
+    classes: string[],
+    onChange: (disguise: CharacterDisguise) => void,
 }) {
-    const [values, setValues] = useState<CharacterDisguise>(disguise ?? {})
-    const [busy, setBusy] = useState(false)
-    const [message, setMessage] = useState<{ error: boolean, text: string } | null>(null)
+    const set = (key: keyof CharacterDisguise, value: string) => onChange({ ...disguise, [key]: value || undefined })
 
-    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault()
-        setBusy(true)
-        setMessage(null)
-        saveDisguise(characterId, values)
-            .then(saved => {
-                setValues(saved ?? {})
-                onSaved(saved)
-                setMessage({ error: false, text: 'Saved.' })
-            })
-            .catch(err => setMessage({ error: true, text: err.response?.data?.error ?? 'Could not save the disguise.' }))
-            .finally(() => setBusy(false))
+    // A saved pick the campaign no longer allows stays listed, so it isn't lost without the player noticing.
+    const select = (key: 'species' | 'className', label: string, allowed: string[], real: string | null) => {
+        const current = disguise[key]
+        const names = current && !allowed.includes(current) ? [current, ...allowed] : allowed
+        return (
+            <label className="details-field">
+                <span className="setting-caption">{label}</span>
+                <select className="rules-select" value={current ?? ''} onChange={e => set(key, e.target.value)}>
+                    <option value="">{real ? `Real ${label.toLowerCase()} (${real})` : `Real ${label.toLowerCase()}`}</option>
+                    {names.map(n => (
+                        <option key={n} value={n}>{allowed.includes(n) ? n : `${n} (no longer allowed)`}</option>
+                    ))}
+                </select>
+            </label>
+        )
     }
 
     return (
-        <form className="character-flag character-flag--pending disguise" onSubmit={handleSubmit}>
-            <strong>What the party sees</strong>
-            <p>
+        <div role="group" aria-labelledby="disguise-title" className="details-field details-field--wide details-field--required">
+            <span id="disguise-title" className="setting-caption">What the party sees</span>
+            <p className="muted disguise__note">
                 This campaign lets you mislead the rest of the party. They’ll see these instead of your
-                character’s real name, species and class; the GM always sees the truth. Leave a field blank
-                to show the real one.
+                character’s real name, species and class.
             </p>
-            <div className="disguise__fields">
-                {FIELDS.map(f => (
-                    <label key={f.key} className="disguise__field">
-                        <span>{f.label}</span>
-                        <input value={values[f.key] ?? ''} maxLength={64} placeholder={f.placeholder(name)}
-                            onChange={e => setValues(v => ({ ...v, [f.key]: e.target.value }))} />
-                    </label>
-                ))}
+            <div className="details-grid">
+                <label className="details-field">
+                    <span className="setting-caption">Name</span>
+                    <input className="details-input" value={disguise.name ?? ''} maxLength={64}
+                        placeholder={realName || 'Real name'} onChange={e => set('name', e.target.value)} />
+                </label>
+                {select('species', 'Species', species, realSpecies)}
+                {select('className', 'Class', classes, realClass)}
             </div>
-            <button type="submit" className="setting-button" disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
-            {message && <p className={message.error ? 'setting-error' : 'muted'}>{message.text}</p>}
-        </form>
+        </div>
     )
 }

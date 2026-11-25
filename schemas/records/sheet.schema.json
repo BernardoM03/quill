@@ -10,7 +10,7 @@
       "const": 1
     },
     "level": {
-      "description": "Character level. Set at creation from the campaign (milestone level, else 1). Planned: per-class levels when multiclassing arrives.",
+      "description": "Character level. Set at creation from the campaign (milestone level, else 1), and raised to the milestone level when an edit is saved after the campaign's milestone level goes up. Planned: per-class levels when multiclassing arrives.",
       "type": "integer",
       "minimum": 1,
       "maximum": 20

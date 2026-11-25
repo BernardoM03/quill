@@ -104,7 +104,8 @@ def apply_increases(base, sources, before_level=None):
             if gained < amount:
                 overflow.append((increase_source, ability))
             if gained:
-                entry['increases'].append({'source': increase_source['name'], 'amount': gained})
+                # field names the draft pick it came from, so the wizard can show each pick what the others add.
+                entry['increases'].append({'source': increase_source['name'], 'amount': gained, 'field': increase_source['field']})
                 entry['bonus'] += gained
                 entry['total'] += gained
                 entry['modifier'] = modifier(entry['total'])

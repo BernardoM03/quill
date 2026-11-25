@@ -47,6 +47,20 @@ export function PickCarousel({ caption, items, selected, onSelect, extra, childr
   );
 }
 
+// A picked option's name and rules text. Text in several parts, such as a feat's benefits,
+// starts below the name with each part on its own line; a single sentence follows the name.
+function OptionNote({ name, text }: { name: string; text: string }) {
+  if (/\n\s*\n/.test(text)) {
+    return (
+      <div className="pick-choice__option-note">
+        <strong>{name}.</strong>
+        <RulesText className="pick-choice__option-parts">{text}</RulesText>
+      </div>
+    );
+  }
+  return <div className="pick-choice__option-note"><strong>{name}.</strong> <RulesText inline>{text}</RulesText></div>;
+}
+
 // One choice rendered as count dropdowns, each leaving out what the others already took.
 // A picked option's description or granted features show beneath it.
 // field is the choice's draft field, such as 'choice:<id>' or 'classChoice:<id>'.
@@ -93,12 +107,8 @@ export function ChoiceField({ choice, field, value, taken, onChoose, errors }: {
       </div>
       {chosen.map(o => (
         <div key={o.key}>
-          {o.description && choice.options.some(x => x.description) && (
-            <div className="pick-choice__option-note"><strong>{o.label}.</strong> <RulesText inline>{o.description}</RulesText></div>
-          )}
-          {(o.grants ?? []).map(g => (
-            <div key={g.name} className="pick-choice__option-note"><strong>{g.name}.</strong> <RulesText inline>{g.description}</RulesText></div>
-          ))}
+          {o.description && choice.options.some(x => x.description) && <OptionNote name={o.label} text={o.description} />}
+          {(o.grants ?? []).map(g => <OptionNote key={g.name} name={g.name} text={g.description} />)}
         </div>
       ))}
       {errors.map(message => <p key={message} className="campaign-name__error">{message}</p>)}

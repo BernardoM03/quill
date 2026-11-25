@@ -12,7 +12,8 @@ function details(species: SpeciesOption): string {
   return parts.join(' · ');
 }
 
-// The species step, showing one allowed species at a time with its traits and choices.
+// Choose Species
+// Showing one allowed species at a time with its traits and choices.
 export function SpeciesStep({ options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
   options: SpeciesOption[];
   selected: string | null;
@@ -23,7 +24,7 @@ export function SpeciesStep({ options, selected, choices, taken, onSelect, onCho
   errorsFor: (field: string) => string[];
 }) {
   if (options.length === 0) {
-    return <p className="muted">This campaign doesn’t allow any species yet. Ask your GM.</p>;
+    return <p className="muted">This campaign doesn’t allow any species yet. Make fun of your GM for being dumb as fuh.</p>;
   }
   const species = selected ? options.find(s => s.id === selected) : options[0];
   if (!species) {
@@ -39,7 +40,6 @@ export function SpeciesStep({ options, selected, choices, taken, onSelect, onCho
       <PickCarousel caption="Species" items={options} selected={species.id} onSelect={onSelect}>
         <header className="pick-card__header">
           <h2>{species.name}</h2>
-          <span className="setting-hint">{details(species)}</span>
         </header>
 
         {species.choices.map(choice => (

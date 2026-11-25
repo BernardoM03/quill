@@ -1,7 +1,7 @@
 import re
 
 from server.rules import packs
-from server.rules.common import field_error, picked_values
+from server.rules.common import field_error, missing_error, picked_values
 from server.rules.problems import allowed_ids
 
 # Turns a pack "choice" into options a player can pick, for species, classes and subclasses.
@@ -291,7 +291,7 @@ def choice_errors(picked, choices, prefix, owner_field, proficient=frozenset(), 
         if not choice['options']:
             errors.append(field_error(field, 'Nothing is available to choose here in this campaign. Ask your GM.'))
         elif len(values) < count or (count == 1 and not values):
-            errors.append(field_error(field, choice['prompt'] if count == 1 else f'{choice["prompt"]} (choose {count})'))
+            errors.append(missing_error(field, choice['prompt'] if count == 1 else f'{choice["prompt"]} (choose {count})'))
         elif len(values) > count or len(set(values)) != len(values):
             errors.append(field_error(field, f'Choose exactly {count}, each only once.'))
         elif not set(values) <= option_keys:

@@ -30,13 +30,6 @@ function hitPoints(c: PartyCharacter): string | null {
     return `HP ${current}${max !== null ? ` / ${max}` : ''}${temp ? ` (+${temp} temp)` : ''}`
 }
 
-// "Shown to the party as …" for the owner, GM and admin under 'misleading'.
-function disguiseNote(c: PartyCharacter, disguise: CharacterDisguise): string {
-    return [disguise.name ?? c.name, describe({
-        species: disguise.species ?? c.species, className: disguise.className ?? c.className,
-    })].filter(Boolean).join(', ')
-}
-
 // The members' campaign overview with its description, the party and the viewer's own characters.
 // Players land here after joining.
 export default function CampaignView() {
@@ -131,11 +124,6 @@ export default function CampaignView() {
                                         <span className="character-row__campaign">
                                             {[describe(character), `Played by ${mine.has(character.id) ? 'you' : member.playerName}`].filter(Boolean).join(' · ')}
                                         </span>
-                                        {character.disguise && (
-                                            <span className="character-row__campaign party__disguise">
-                                                Shown to the party as {disguiseNote(character, character.disguise)}
-                                            </span>
-                                        )}
                                         {conditions.length > 0 && (
                                             <span className="party__conditions">
                                                 {conditions.map(name => <span key={name} className="character-row__badge">{name}</span>)}

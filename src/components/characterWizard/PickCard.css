@@ -169,6 +169,10 @@
   font-weight: var(--fw-medium);
 }
 
+.pick-choice__option-parts p {
+  margin: 0.25rem 0 0;
+}
+
 /* A background's ability score increases: one box per ability, six across. */
 .ability-boxes {
   display: grid;
@@ -227,6 +231,21 @@
   cursor: default;
 }
 
+/* What the other picks add to this ability, and the score it comes to. */
+.ability-box__note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: var(--fs-2xs);
+  line-height: 1.3;
+  color: var(--text);
+  text-align: center;
+}
+
+.ability-box__others {
+  color: var(--accent);
+}
+
 /* A rule's options (RuleSwitch); the ones a campaign rules out are greyed. */
 .rule-switches {
   display: flex;
@@ -275,9 +294,22 @@
   color: var(--text-h);
 }
 
+/* Each increase on its own centred line, wrapping long sources (Ability Score Improvement) within the box. */
+.ability-box__bonuses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: 100%;
+}
+
 .ability-box__bonus {
+  max-width: 100%;
   font-size: var(--fs-2xs);
+  line-height: 1.25;
   color: var(--accent);
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .ability-rolls {
@@ -363,6 +395,12 @@
 .details-textarea:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+/* The false name, species and class shown to the party under partyVisibility 'misleading'. */
+.disguise__note {
+  margin: 0.25rem 0 0.5rem;
+  font-size: var(--fs-sm);
 }
 
 /* Narrow screens: arrows above the card instead of beside it, so the text keeps its width. */
