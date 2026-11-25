@@ -408,6 +408,8 @@ def character_payload(conn, row, access):
         'id': row['id'],
         'name': row['name'],
         'isActive': bool(row['is_active']),
+        # Waiting for the GM to approve switching to this character (characterSwapApproval).
+        'swapRequested': row['swap_requested_at'] is not None,
         # One of draft, pending, approved or rejected.
         'status': row['status'],
         'reviewReason': row['review_reason'],
@@ -531,11 +533,17 @@ def put_adjustments(character_id):
     return jsonify({'scoreAdjustments': adjustments,
                     'abilities': sheet_abilities(result['summary'], sheet) if result else None}), 200
 
+def _campaign_rules(conn, campaign_id):
+    row = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
+    return with_rule_defaults(json.loads(row['settings']).get('rules', {}) if row and row['settings'] else {})
+
 # Whether the campaign's GM must approve characters (its characterApproval rule).
 def approval_required(conn, campaign_id):
-    row = conn.execute('SELECT settings FROM campaigns WHERE id = ?', (campaign_id,)).fetchone()
-    rules = json.loads(row['settings']).get('rules', {}) if row else {}
-    return with_rule_defaults(rules)['characterApproval']
+    return _campaign_rules(conn, campaign_id)['characterApproval']
+
+# Whether switching to another character waits for the GM (its characterSwapApproval rule).
+def swap_approval_required(conn, campaign_id):
+    return _campaign_rules(conn, campaign_id)['characterSwapApproval']
 
 # Changes to picks the GM approved, as [{field, from, to}].
 # Only picks the old build had count, so a choice made for the first time (as on levelling up) isn't a change.
@@ -744,7 +752,18 @@ def review_character(character_id):
             is_active = status == 'approved' and activate_if_first(conn, row)
     return jsonify({'status': status, 'reviewReason': reason, 'isActive': is_active}), 200
 
+# Makes the character its owner's active one in its campaign, replacing any other, and clears their swap requests.
+def _make_active(conn, row):
+    # Deactivate first, because a unique index allows one active character per player per campaign.
+    conn.execute('UPDATE characters SET is_active = 0 WHERE campaign_id = ? AND owner_id = ? AND is_active = 1',
+                 (row['campaign_id'], row['owner_id']))
+    conn.execute('UPDATE characters SET swap_requested_at = NULL WHERE campaign_id = ? AND owner_id = ?',
+                 (row['campaign_id'], row['owner_id']))
+    conn.execute('UPDATE characters SET is_active = 1 WHERE id = ?', (row['id'],))
+
 # Makes an approved campaign character its owner's active one there, replacing any other.
+# Under characterSwapApproval, replacing another character instead asks the GM, replacing any earlier request;
+# a player's first active character and the GM's own switches don't wait.
 @bp.post('/characters/<character_id>/activate')
 @require_login
 def activate_character(character_id):
@@ -757,11 +776,77 @@ def activate_character(character_id):
                 return error('Character Sandbox characters can’t be active.', 409)
             if row['status'] != 'approved':
                 return error('Only an approved character can be made active.', 409)
-            # Deactivate first, because a unique index allows one active character per player per campaign.
-            conn.execute('UPDATE characters SET is_active = 0 WHERE campaign_id = ? AND owner_id = ? AND is_active = 1',
-                         (row['campaign_id'], row['owner_id']))
-            conn.execute('UPDATE characters SET is_active = 1 WHERE id = ?', (character_id,))
+            if row['is_active']:
+                return jsonify({'isActive': True, 'swapRequested': False}), 200
+            has_active = conn.execute(
+                'SELECT 1 FROM characters WHERE campaign_id = ? AND owner_id = ? AND is_active = 1 AND deleted_at IS NULL',
+                (row['campaign_id'], row['owner_id']),
+            ).fetchone()
+            if has_active and swap_approval_required(conn, row['campaign_id']) and not can_review(conn, row['campaign_id']):
+                conn.execute('UPDATE characters SET swap_requested_at = NULL WHERE campaign_id = ? AND owner_id = ?',
+                             (row['campaign_id'], row['owner_id']))
+                conn.execute(f'UPDATE characters SET swap_requested_at = {NOW} WHERE id = ?', (character_id,))
+                return jsonify({'isActive': False, 'swapRequested': True}), 200
+            _make_active(conn, row)
+    return jsonify({'isActive': True, 'swapRequested': False}), 200
+
+# Withdraws the owner's request to swap to this character.
+@bp.delete('/characters/<character_id>/swap-request')
+@require_login
+def cancel_swap_request(character_id):
+    with connection() as conn:
+        with conn:
+            if own_character(conn, character_id) is None:
+                return error('Character not found', 404)
+            conn.execute('UPDATE characters SET swap_requested_at = NULL WHERE id = ?', (character_id,))
+    return jsonify({'swapRequested': False}), 200
+
+# Body: {decision: 'approve' | 'reject'}. Approving makes the character its owner's active one; rejecting clears the request.
+@bp.post('/characters/<character_id>/swap-review')
+@require_login
+def review_swap(character_id):
+    decision = (json_body() or {}).get('decision')
+    if decision not in ('approve', 'reject'):
+        return error('decision must be "approve" or "reject".', 400)
+    with connection() as conn:
+        with conn:
+            row = conn.execute('SELECT * FROM characters WHERE id = ? AND deleted_at IS NULL',
+                               (character_id,)).fetchone()
+            if row is None or row['campaign_id'] is None or not can_review(conn, row['campaign_id']):
+                return error('Character not found', 404)
+            if row['swap_requested_at'] is None:
+                return error('This character isn’t waiting to be swapped in.', 409)
+            if decision == 'reject':
+                conn.execute('UPDATE characters SET swap_requested_at = NULL WHERE id = ?', (character_id,))
+                return jsonify({'isActive': bool(row['is_active'])}), 200
+            if row['status'] != 'approved':
+                conn.execute('UPDATE characters SET swap_requested_at = NULL WHERE id = ?', (character_id,))
+                return error('This character is no longer approved, so the request was cleared.', 409)
+            _make_active(conn, row)
     return jsonify({'isActive': True}), 200
+
+# The GM's queue of requested swaps, oldest first, each with the character it would replace.
+@bp.get('/campaigns/<campaign_id>/characters/swaps')
+@require_member
+def pending_swaps(campaign_id):
+    with connection() as conn:
+        if not can_review(conn, campaign_id):
+            return error('Not found', 404)
+        rows = conn.execute(
+            'SELECT ch.id, ch.name, ch.swap_requested_at, u.display_name AS owner_name, p.updated_at AS portrait_version, '
+            'cur.name AS current_name '
+            'FROM characters ch JOIN users u ON u.id = ch.owner_id '
+            'LEFT JOIN character_portraits p ON p.character_id = ch.id '
+            'LEFT JOIN characters cur ON cur.campaign_id = ch.campaign_id AND cur.owner_id = ch.owner_id '
+            '    AND cur.is_active = 1 AND cur.deleted_at IS NULL '
+            'WHERE ch.campaign_id = ? AND ch.swap_requested_at IS NOT NULL AND ch.deleted_at IS NULL '
+            'ORDER BY ch.swap_requested_at',
+            (campaign_id,),
+        ).fetchall()
+    return jsonify([{
+        'id': row['id'], 'name': row['name'], 'ownerName': row['owner_name'], 'requestedAt': row['swap_requested_at'],
+        'portraitVersion': row['portrait_version'], 'replacesName': row['current_name'],
+    } for row in rows]), 200
 
 # The GM's review queue, oldest submission first.
 @bp.get('/campaigns/<campaign_id>/characters/pending')
@@ -921,7 +1006,7 @@ def get_party(campaign_id):
                 'character': _party_character(conn, active_row, viewer_role, visibility) if active_row else None,
             })
         my_characters = conn.execute(
-            'SELECT ch.id, ch.name, ch.status, ch.is_active, p.updated_at AS portrait_version '
+            'SELECT ch.id, ch.name, ch.status, ch.is_active, ch.swap_requested_at, p.updated_at AS portrait_version '
             'FROM characters ch LEFT JOIN character_portraits p ON p.character_id = ch.id '
             'WHERE ch.campaign_id = ? AND ch.owner_id = ? AND ch.deleted_at IS NULL ORDER BY ch.created_at',
             (campaign_id, g.user['id']),
@@ -932,5 +1017,6 @@ def get_party(campaign_id):
         'myCharacters': [{
             'id': row['id'], 'name': row['name'], 'status': row['status'],
             'isActive': bool(row['is_active']), 'portraitVersion': row['portrait_version'],
+            'swapRequested': row['swap_requested_at'] is not None,
         } for row in my_characters],
     }), 200

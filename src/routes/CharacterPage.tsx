@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
 import {
-    activateCharacter, deleteCharacter, deletePortrait, getCharacter, patchCharacterState, submitCharacter, uploadPortrait,
+    activateCharacter, cancelSwapRequest, deleteCharacter, deletePortrait, getCharacter, patchCharacterState, submitCharacter, uploadPortrait,
     type CharacterSummary, type PlayState, type StatePatch,
 } from "../api/characters";
 import { CharacterSheet } from "../components/sheet/CharacterSheet";
@@ -81,8 +81,17 @@ export default function CharacterPage() {
         setStatusBusy(true)
         setStatusError(null)
         activateCharacter(characterID)
-            .then(() => setCharacter(c => c && { ...c, isActive: true }))
+            .then(({ isActive, swapRequested }) => setCharacter(c => c && { ...c, isActive, swapRequested }))
             .catch(err => setStatusError(errorMessage(err, 'Could not make this character active.')))
+            .finally(() => setStatusBusy(false))
+    }
+
+    function handleCancelSwap() {
+        setStatusBusy(true)
+        setStatusError(null)
+        cancelSwapRequest(characterID)
+            .then(() => setCharacter(c => c && { ...c, swapRequested: false }))
+            .catch(err => setStatusError(errorMessage(err, 'Could not cancel the request.')))
             .finally(() => setStatusBusy(false))
     }
 
@@ -162,7 +171,18 @@ export default function CharacterPage() {
                 </div>
             )}
 
-            {isOwner && character.campaignId && character.status === 'approved' && !character.isActive && (
+            {isOwner && character.campaignId && character.status === 'approved' && !character.isActive && character.swapRequested && (
+                <div className="character-flag character-flag--pending" role="status">
+                    <strong>Waiting for the GM to approve the swap.</strong>
+                    <p>{character.name} becomes your active character in {character.campaignName} once the GM approves.</p>
+                    <button type="button" className="setting-button setting-button--quiet" onClick={handleCancelSwap} disabled={statusBusy}>
+                        {statusBusy ? 'Cancelling…' : 'Cancel Request'}
+                    </button>
+                    {statusError && <p className="setting-error">{statusError}</p>}
+                </div>
+            )}
+
+            {isOwner && character.campaignId && character.status === 'approved' && !character.isActive && !character.swapRequested && (
                 <div className="character-portrait__actions character-activate">
                     <button type="button" className="setting-button setting-button--quiet" onClick={handleActivate} disabled={statusBusy}>
                         Make Active Character

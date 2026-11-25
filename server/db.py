@@ -283,6 +283,13 @@ MIGRATIONS = [
     '''
     ALTER TABLE characters ADD COLUMN disguise TEXT CHECK (disguise IS NULL OR json_valid(disguise));
     ''',
+    # 15: a player's request to make this character their active one in a campaign with
+    # characterSwapApproval on, waiting for the GM. NULL: no request. A player has at most one
+    # request per campaign; approving makes the character active, and rejecting or cancelling clears it.
+    '''
+    ALTER TABLE characters ADD COLUMN swap_requested_at TEXT;
+    CREATE INDEX characters_swap_requests ON characters(campaign_id) WHERE swap_requested_at IS NOT NULL;
+    ''',
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 

@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { getCampaign } from "../api/campaigns";
-import { activateCharacter, getParty, type CampaignParty, type CharacterDisguise, type PartyCharacter } from "../api/characters";
+import { activateCharacter, cancelSwapRequest, getParty, type CampaignParty, type CharacterDisguise, type PartyCharacter } from "../api/characters";
 import type { CampaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
 import PendingCharacters from "../components/PendingCharacters";
@@ -64,6 +64,15 @@ export default function CampaignView() {
             .finally(() => setActivating(null))
     }
 
+    function handleCancelSwap(characterId: string) {
+        setActivating(characterId)
+        setActivateError(null)
+        cancelSwapRequest(characterId)
+            .then(loadParty)
+            .catch(err => setActivateError(err.response?.data?.error ?? 'Could not cancel the request.'))
+            .finally(() => setActivating(null))
+    }
+
     if (campaign === undefined) return <div className="page" />
 
     if (campaign === null) {
@@ -88,7 +97,7 @@ export default function CampaignView() {
             <div className="campaign-description__body markdown">
                 {campaign.description ? <Markdown>{campaign.description}</Markdown> : <p className="muted">No description provided.</p>}
             </div>
-            {campaignID && <PendingCharacters campaignId={campaignID} />}
+            {campaignID && <PendingCharacters campaignId={campaignID} onSwapReviewed={loadParty} />}
             {campaignID && <CharacterChangeLog campaignId={campaignID} />}
 
             <section className="setting-section">
@@ -161,7 +170,14 @@ export default function CampaignView() {
                                         <Link to={`/characters/${c.id}`} className="character-row__badge character-row__badge--warning">Sent back</Link>
                                     )}
                                     {c.isActive && <span className="character-row__badge">Active</span>}
-                                    {c.status === 'approved' && !c.isActive && (
+                                    {c.status === 'approved' && !c.isActive && c.swapRequested && <>
+                                        <span className="character-row__badge">Swap requested</span>
+                                        <button type="button" className="setting-button setting-button--quiet"
+                                            disabled={activating !== null} onClick={() => handleCancelSwap(c.id)}>
+                                            {activating === c.id ? 'Cancelling…' : 'Cancel Request'}
+                                        </button>
+                                    </>}
+                                    {c.status === 'approved' && !c.isActive && !c.swapRequested && (
                                         <button type="button" className="setting-button setting-button--quiet"
                                             disabled={activating !== null} onClick={() => handleActivate(c.id)}>
                                             {activating === c.id ? 'Activating…' : 'Activate'}

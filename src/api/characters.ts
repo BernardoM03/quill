@@ -31,8 +31,32 @@ export function reviewCharacter(characterId: string, decision: 'approve' | 'reje
 }
 
 // Makes an approved campaign character the player's active one there.
-export function activateCharacter(characterId: string): Promise<void> {
-    return apiClient.post(`/characters/${characterId}/activate`).then(() => undefined);
+// Under characterSwapApproval, replacing another active character asks the GM instead (swapRequested).
+export function activateCharacter(characterId: string): Promise<{ isActive: boolean, swapRequested: boolean }> {
+    return apiClient.post(`/characters/${characterId}/activate`).then(response => response.data);
+}
+
+export function cancelSwapRequest(characterId: string): Promise<void> {
+    return apiClient.delete(`/characters/${characterId}/swap-request`).then(() => undefined);
+}
+
+// The GM's answer to a player's request to swap to this character.
+export function reviewSwap(characterId: string, decision: 'approve' | 'reject'): Promise<void> {
+    return apiClient.post(`/characters/${characterId}/swap-review`, { decision }).then(() => undefined);
+}
+
+export interface PendingSwap {
+    id: string,
+    name: string,
+    ownerName: string,
+    requestedAt: string,
+    portraitVersion: string | null,
+    // The owner's active character it would replace, if any.
+    replacesName: string | null,
+}
+
+export function getPendingSwaps(campaignId: string): Promise<PendingSwap[]> {
+    return apiClient.get(`/campaigns/${campaignId}/characters/swaps`).then(response => response.data);
 }
 
 export interface PendingCharacter {
@@ -484,6 +508,8 @@ export interface CharacterSummary {
     id: string,
     name: string,
     isActive: boolean,
+    // Waiting for the GM to approve switching to this character.
+    swapRequested: boolean,
     status: CharacterStatus,
     reviewReason: string | null,
     // Both null for a Character Sandbox character.
@@ -553,7 +579,7 @@ export interface CampaignParty {
     visibility: PartyVisibility,
     members: PartyMember[],
     // The viewer's own characters in the campaign, oldest first.
-    myCharacters: { id: string, name: string, status: CharacterStatus, isActive: boolean, portraitVersion: string | null }[],
+    myCharacters: { id: string, name: string, status: CharacterStatus, isActive: boolean, portraitVersion: string | null, swapRequested: boolean }[],
 }
 
 export function getParty(campaignId: string): Promise<CampaignParty> {

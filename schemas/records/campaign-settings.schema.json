@@ -140,6 +140,11 @@
           "type": "boolean",
           "default": false
         },
+        "characterSwapApproval": {
+          "description": "A player switching their active character to another approved one waits for the GM's approval. A player's first active character and the GM's own characters don't wait.",
+          "type": "boolean",
+          "default": true
+        },
         "partyVisibility": {
           "description": "What players see of each other's active characters. full: the whole sheet but its notes. limited: name, species, class, level, hit points and conditions. misleading: as limited, but each player can show the party a false name, species and class. The GM and the admin always see the real character.",
           "enum": [

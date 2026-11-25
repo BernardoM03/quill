@@ -28,6 +28,7 @@ export interface Rules {
   startingEquipment?: 'choice' | 'equipment' | 'gold';
   originFeat?: 'background' | 'any';
   characterApproval?: boolean;
+  characterSwapApproval?: boolean;
   partyVisibility?: 'full' | 'limited' | 'misleading';
 }
 export interface Question {

@@ -150,6 +150,12 @@ export function AdvancedRulesSettings({ rules, onChange }: Props) {
           checked={rules.characterApproval}
           onChange={() => onChange({ characterApproval: !rules.characterApproval })}
         />
+        <Toggle
+          label="Character Swap Approval"
+          hint="Players wait for the DM to approve before switching their active character to another one."
+          checked={rules.characterSwapApproval}
+          onChange={() => onChange({ characterSwapApproval: !rules.characterSwapApproval })}
+        />
       </div>
     </div>
     <div className="setting-section">
