@@ -1,17 +1,55 @@
-from server.rules import packs
 from server.helpers import NAME_MAX_LENGTH, clean_name
 from server.records import record_problems
+from server.rules import packs
 from server.rules.settings import RULE_CHECKS
 
 CAMPAIGN_DESCRIPTION_MAX_LENGTH = 10000
+PATCH_FIELDS = {'name', 'description', 'rules', 'allowedContent', 'questions'}
+# Without species, backgrounds or classes no character can be made.
+REQUIRED_COLLECTIONS = ('species', 'origins', 'classes')
 
-# Checks a campaign PATCH body. Returns an error message, or None if every field is valid.
+def _rules_problem(rules):
+    if not isinstance(rules, dict) or not rules:
+        return 'rules must be a non-empty object.'
+    for key, value in rules.items():
+        is_valid = RULE_CHECKS.get(key)
+        if is_valid is None:
+            return f'Unknown rule: {key}'
+        if not is_valid(value):
+            return f'Invalid value for {key}.'
+    return None
+
+def _questions_problem(questions):
+    problems = record_problems('campaign-settings', {'questions': questions})
+    if problems:
+        return f'Invalid questions: {problems[0]}'
+    if any(not question['prompt'].strip() for question in questions):
+        return 'Every question needs a prompt.'
+    if len({question['id'] for question in questions}) != len(questions):
+        return 'Question ids must be unique.'
+    return None
+
+def _allowed_content_problem(allowed):
+    if not isinstance(allowed, dict) or not allowed:
+        return 'allowedContent must be a non-empty object.'
+    installed = packs.collection_names() - {'pack'}
+    for collection, entry_ids in allowed.items():
+        if collection not in installed:
+            return f'Unknown collection: {collection}'
+        if entry_ids is not None and not (isinstance(entry_ids, list) and all(isinstance(i, str) for i in entry_ids)):
+            return 'ids must be null or a list of strings.'
+        if collection in REQUIRED_COLLECTIONS and entry_ids == []:
+            return f'At least one entry in {collection} must stay allowed.'
+    return None
+
+# An error message for a campaign PATCH body, or None if every field is valid.
+# rules merge into the saved rules, while questions replace the saved list.
 def validate_campaign_patch(content):
     if not isinstance(content, dict) or not content:
         return 'Body must be a non-empty object.'
-    unknown = set(content) - {'name', 'description', 'rules', 'allowedContent', 'questions'}
-    if unknown:
-        return f'Unknown field: {sorted(unknown)[0]}'
+    unknown_fields = set(content) - PATCH_FIELDS
+    if unknown_fields:
+        return f'Unknown field: {sorted(unknown_fields)[0]}'
     if 'name' in content and clean_name(content['name']) is None:
         return f'Name must be 1–{NAME_MAX_LENGTH} characters.'
     if 'description' in content:
@@ -19,52 +57,24 @@ def validate_campaign_patch(content):
         if not isinstance(description, str) or len(description) > CAMPAIGN_DESCRIPTION_MAX_LENGTH:
             return f'Description must be at most {CAMPAIGN_DESCRIPTION_MAX_LENGTH} characters.'
     if 'rules' in content:
-        # rules holds only the rules being changed; they merge into the saved rules.
-        rules = content['rules']
-        if not isinstance(rules, dict) or not rules:
-            return 'rules must be a non-empty object.'
-        for key, value in rules.items():
-            check = RULE_CHECKS.get(key)
-            if check is None:
-                return f'Unknown rule: {key}'
-            if not check(value):
-                return f'Invalid value for {key}.'
+        problem = _rules_problem(content['rules'])
+        if problem:
+            return problem
     if 'questions' in content:
-        # The whole list, replacing the saved one (schemas/records/campaign-settings.schema.json).
-        questions = content['questions']
-        problems = record_problems('campaign-settings', {'questions': questions})
-        if problems:
-            return f'Invalid questions: {problems[0]}'
-        if any(not q['prompt'].strip() for q in questions):
-            return 'Every question needs a prompt.'
-        if len({q['id'] for q in questions}) != len(questions):
-            return 'Question ids must be unique.'
+        problem = _questions_problem(content['questions'])
+        if problem:
+            return problem
     if 'allowedContent' in content:
-        # {collection: ids}. ids is a list of pack ids, or null for "everything allowed".
-        # Only installed collections; ids are kept to installed entries (known_content), so
-        # what's stored can't outgrow the packs.
-        allowed = content['allowedContent']
-        if not isinstance(allowed, dict) or not allowed:
-            return 'allowedContent must be a non-empty object.'
-        installed = packs.collection_names() - {'pack'}
-        for collection, ids in allowed.items():
-            if collection not in installed:
-                return f'Unknown collection: {collection}'
-            if ids is not None and not (isinstance(ids, list) and all(isinstance(i, str) for i in ids)):
-                return 'ids must be null or a list of strings.'
-            # A campaign with no species or no classes can't make characters.
-            if collection in ('species', 'origins', 'classes') and ids == []:
-                return f'At least one entry in {collection} must stay allowed.'
+        return _allowed_content_problem(content['allowedContent'])
     return None
 
-# A checked allowedContent change with each list kept to entries installed packs have
-# (in pack order), so ids from removed packs or typos aren't stored.
+# Narrows each id list to installed entries in pack order, so removed or mistyped ids aren't stored.
 def known_content(changes):
     result = {}
-    for collection, ids in changes.items():
-        if ids is None:
+    for collection, entry_ids in changes.items():
+        if entry_ids is None:
             result[collection] = None
         else:
-            wanted = set(ids)
-            result[collection] = [i for i in packs.collection(collection) if i in wanted]
+            wanted = set(entry_ids)
+            result[collection] = [entry_id for entry_id in packs.collection(collection) if entry_id in wanted]
     return result

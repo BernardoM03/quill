@@ -2,10 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import './DeleteCampaignDialog.css'
 
-// A modal yes/no question, for actions that are easy to redo but shouldn't happen by
-// accident. (Anything that can't be undone uses TypeToConfirmDialog instead.) Cancel has
-// focus at first, so Enter or a stray click doesn't confirm. onConfirm does the work; its
-// rejection's server message is shown in the dialog, which then stays open.
+// A modal yes/no question for reversible actions, while irreversible ones use TypeToConfirmDialog.
+// Cancel starts focused so Enter or a stray click doesn't confirm.
+// If onConfirm rejects, its server message shows and the dialog stays open.
 export default function ConfirmDialog({ title, confirmLabel, busyLabel, danger = false, onConfirm, onClose, children }: {
   title: string
   confirmLabel: string

@@ -1,8 +1,8 @@
 import { apiClient } from '../api/client';
 import type { CollectionName, Entry, PackManifest } from './types';
 
-// Pack data comes from the server (server/routes/packs.py), not from static files: the
-// manifests are public, collections need a signed-in user. Each is fetched once per page load.
+// Pack data comes from the API, where manifests are public and collections need a signed-in user.
+// Each is fetched once per page load.
 let manifestsPromise: Promise<PackManifest[]> | null = null;
 const collectionPromises = new Map<CollectionName, Promise<Map<string, unknown>>>();
 

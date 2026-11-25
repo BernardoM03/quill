@@ -3,19 +3,18 @@ import { SidePanel } from './SidePanel';
 import '../DeleteCampaignDialog.css';
 import './Sheet.css';
 
-// What the panel shows: a feature or spell picked in the Details panel.
-export interface sheetInfo {
+// A feature or spell picked in the Details panel.
+export interface SheetInfo {
   id: string,
   title: string,
-  // A line under the title: where a feature is from, how a spell is cast.
+  // A line under the title, such as a feature's source or how a spell is cast.
   meta?: string,
-  // Rules text (Markdown).
+  // Rules text in Markdown.
   text: string,
 }
 
-// A feature's or spell's rules text, beside the sheet: clicking its name in the Details
-// panel opens it here instead of unfolding it in the list.
-export function InfoPanel({ info, onClose }: { info: sheetInfo, onClose: () => void }) {
+// Shows a feature's or spell's rules text beside the sheet instead of unfolding it in the list.
+export function InfoPanel({ info, onClose }: { info: SheetInfo, onClose: () => void }) {
   return (
     <SidePanel label={info.title} term={info.id.startsWith('term:') ? info.id.slice(5) : undefined} onClose={onClose}>
       <div className="rest-dialog__header">

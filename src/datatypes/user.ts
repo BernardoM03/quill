@@ -1,25 +1,25 @@
-import type { campaign } from "./campaign";
-import type { characterStatus } from "../api/characters";
+import type { Campaign } from "./campaign";
+import type { CharacterStatus } from "../api/characters";
 
 // One of the user's characters, with the campaign it belongs to.
-export interface userCharacter {
+export interface UserCharacter {
   id: string,
   name: string,
-  // The one character the player is playing in that campaign. Never true in the sandbox.
+  // The character the player is playing in that campaign, never true in the sandbox.
   isActive: boolean,
-  status: characterStatus,
+  status: CharacterStatus,
   // Both null for a Character Sandbox character.
   campaignId: string | null,
   campaignName: string | null,
-  // Changes whenever the portrait does; null when there isn't one.
+  // Changes whenever the portrait does.
   portraitVersion: string | null,
-  // It no longer fits its campaign's settings and needs editing.
+  // True when it no longer fits its campaign's settings.
   needsChanges: boolean,
 }
 
-export interface user {
+export interface User {
   name: string,
   isAdmin: boolean,
-  campaigns: campaign[],
-  characters: userCharacter[],
+  campaigns: Campaign[],
+  characters: UserCharacter[],
 }

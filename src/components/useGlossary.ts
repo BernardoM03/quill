@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { loadGlossary, type glossary } from './glossary';
+import { loadGlossary, type Glossary } from './glossary';
 
-// The glossary, once loaded; null until then (and if it can't be), when nothing is defined.
-export function useGlossary(): glossary | null {
-  const [terms, setTerms] = useState<glossary | null>(null);
+// Null until the glossary loads, and forever if it can't.
+export function useGlossary(): Glossary | null {
+  const [terms, setTerms] = useState<Glossary | null>(null);
   useEffect(() => {
-    let live = true;
-    loadGlossary().then(t => live && setTerms(t)).catch(() => {});
-    return () => { live = false; };
+    let mounted = true;
+    loadGlossary().then(glossary => mounted && setTerms(glossary)).catch(() => {});
+    return () => { mounted = false; };
   }, []);
   return terms;
 }

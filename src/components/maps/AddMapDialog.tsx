@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { MAP_NAME_MAX_LENGTH, createMap, type mapSummary } from '../../api/maps';
+import { MAP_NAME_MAX_LENGTH, createMap, type MapSummary } from '../../api/maps';
 import '../DeleteCampaignDialog.css';
 import { prepareMapImage } from './makeMapImage';
 import './Maps.css';
 
-// The kinds of map, in the order offered. Only hex maps can be made for now; the others
-// are shown so the GM knows they're coming.
-const KINDS: { value: mapSummary['kind'], label: string, available: boolean }[] = [
+// Map kinds in the order offered, where only hex maps can be made yet and the rest are previews.
+const KINDS: { value: MapSummary['kind'], label: string, available: boolean }[] = [
   { value: 'hex', label: 'Hex map', available: true },
   { value: 'battle', label: 'Battle map', available: false },
   { value: 'world', label: 'World map', available: false },
@@ -20,8 +19,7 @@ function errorMessage(err: unknown): string {
   return err instanceof Error && err.message ? err.message : 'Could not add the map.';
 }
 
-// The GM picks an image, names the map and chooses its kind. The image is shrunk here,
-// uploaded, and turned into a draft hex map by the server; onCreated gets the new map's id.
+// Uploads a shrunk image as a new draft map, and onCreated receives the new map's id.
 export function AddMapDialog({ campaignId, onCreated, onClose }: {
   campaignId: string,
   onCreated: (mapId: string) => void,
@@ -30,7 +28,7 @@ export function AddMapDialog({ campaignId, onCreated, onClose }: {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
-  const [kind, setKind] = useState<mapSummary['kind']>('hex');
+  const [kind, setKind] = useState<MapSummary['kind']>('hex');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

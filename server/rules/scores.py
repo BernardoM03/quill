@@ -1,52 +1,50 @@
-# A character's ability scores, in layers:
-#   base       the scores assigned at creation (standard array, point buy, roll, ...)
-#   increases  permanent ones, each from a source: the background, then feats such as
-#              Ability Score Improvement in the order they're gained; each capped at its
-#              own maximum (20, or 30 for an Epic Boon)
-#   score      base + increases: the character's own score
-#   current    the score with temporary effects applied: a Belt of Giant Strength, a curse,
-#              a spell. These are kept on the sheet (scoreAdjustments) and never change score.
-
 from itertools import combinations_with_replacement
 
 from server.rules.choices import ABILITY_NAMES, option
+from server.rules.common import ability_modifier, is_whole_number
+
+# Ability scores are layered as base, then permanent increases, then temporary effects.
+# base is assigned at creation and increases come from sources (background, feats) in the order gained.
+# Each increase is capped at its source's maximum, which is 20, or 30 for an Epic Boon.
+# current applies temporary effects (items, curses, spells) stored as scoreAdjustments, without changing the score.
 
 ABILITIES = list(ABILITY_NAMES)
 SCORE_CAP = 20
-# A temporary effect: 'set' makes the score exactly value, 'atLeast' raises it to value
-# unless it's already higher (most magic items), 'add' adds value (negative lowers it).
+# 'set' makes the score exactly value, 'atLeast' raises it to value, and 'add' adds value (possibly negative).
 ADJUSTMENT_MODES = ('set', 'atLeast', 'add')
 ADJUSTMENT_MAX = 20
 ADJUSTMENT_NAME_MAX = 60
+ADJUSTMENT_ID_MAX = 64
+ADD_RANGE = (-30, 30)
 CURRENT_RANGE = (1, 30)
 
 def modifier(score):
-    return (score - 10) // 2
+    return ability_modifier(score)
 
-# Every way to spread points over abilities, at most max_each on one. Keys look like
-# "WIS+2,CHA+1": the biggest increase first, then STR to CHA, as the wizard's boxes write them.
+# Every way to spread points over abilities with at most max_each on one.
+# Keys look like "WIS+2,CHA+1", biggest increase first and then STR to CHA, as the wizard writes them.
 def spread_options(abilities, points, max_each):
-    order = [a for a in ABILITIES if a in abilities]
+    ordered = [ability for ability in ABILITIES if ability in abilities]
     options = []
-    for combo in combinations_with_replacement(order, points):
-        counts = {a: combo.count(a) for a in order if a in combo}
+    for combo in combinations_with_replacement(ordered, points):
+        counts = {ability: combo.count(ability) for ability in ordered if ability in combo}
         if max(counts.values()) > max_each:
             continue
-        parts = sorted(counts.items(), key=lambda p: (-p[1], order.index(p[0])))
-        options.append(option(','.join(f'{a}+{n}' for a, n in parts),
-                              ', '.join(f'+{n} {ABILITY_NAMES[a]}' for a, n in parts)))
+        parts = sorted(counts.items(), key=lambda part: (-part[1], ordered.index(part[0])))
+        options.append(option(','.join(f'{ability}+{amount}' for ability, amount in parts),
+                              ', '.join(f'+{amount} {ABILITY_NAMES[ability]}' for ability, amount in parts)))
     return options
 
 def feat_maximum(feat):
     cap = (feat.get('abilityScoreIncrease') or {}).get('maximum')
     return cap if isinstance(cap, int) else SCORE_CAP
 
-# The choice a feat's increase asks for once the feat is picked for parent (a choice id).
-# Ability Score Improvement: 2 points, at most +2 on one; Grappler: +1 to STR or DEX.
+# The increase choice a feat adds once it is picked for the parent choice.
+# For example, Ability Score Improvement gives 2 points with at most +2 on one ability.
 def feat_increase_choice(parent_id, feat):
-    asi = feat['abilityScoreIncrease']
-    amount = asi.get('amount', 1)
-    abilities = [a for a in ABILITIES if a in asi.get('from') or ABILITIES]
+    increase = feat['abilityScoreIncrease']
+    amount = increase.get('amount', 1)
+    abilities = [ability for ability in ABILITIES if ability in increase.get('from') or ABILITIES]
     slug = feat['id'].rsplit('/', 1)[-1]
     return {
         'id': f'{parent_id}~{slug}',
@@ -59,97 +57,103 @@ def feat_increase_choice(parent_id, feat):
         'source': feat['name'], 'maximum': feat_maximum(feat),
     }
 
-# One increase choice per feat option that raises scores, for each choice that offers feats.
+# One increase choice per score-raising feat option, for each choice that offers feats.
 def feat_increase_choices(choices, feats):
-    extra = []
+    increase_choices = []
     for choice in choices:
-        for o in choice['options']:
-            feat = feats.get(o['key'])
+        for opt in choice['options']:
+            feat = feats.get(opt['key'])
             if feat and feat.get('abilityScoreIncrease'):
-                extra.append(feat_increase_choice(choice['id'], feat))
-    return extra
+                increase_choices.append(feat_increase_choice(choice['id'], feat))
+    return increase_choices
 
-# The increases a picked key gives, {ability: amount}, or None if the key isn't one.
+# The {ability: amount} a picked spread key gives, or None if the key isn't one.
 def parse_spread(key):
     try:
-        return {a: int(n) for a, n in (part.split('+') for part in key.split(','))}
+        return {ability: int(amount) for ability, amount in (part.split('+') for part in key.split(','))}
     except (AttributeError, ValueError):
         return None
 
-# A source of permanent increases. level: when it's gained (the background's is 1).
+# A source of permanent increases, gained at level (1 for the background).
 def source(name, increases, level=1, maximum=SCORE_CAP, field=None):
     return {'name': name, 'increases': increases, 'level': level, 'maximum': maximum, 'field': field}
 
-# base + each source in the order gained, each capped at its maximum. Returns
-# ({ability: {base, increases: [{source, amount}], bonus, total, modifier}}, overflow), where
-# overflow is [(source, ability)] for increases lost to a cap. before_level: only sources
-# gained earlier count (what a feat's prerequisites are checked against).
+def _base_score(base, ability):
+    value = base.get(ability) if isinstance(base, dict) else None
+    return value if is_whole_number(value) else None
+
+# Applies each source in the order gained, capped at its maximum, to the base scores.
+# Returns ({ability: {base, increases, bonus, total, modifier}}, overflow), where overflow lists (source, ability) lost to a cap.
+# With before_level, only sources gained earlier count, which is what feat prerequisites check against.
 def apply_increases(base, sources, before_level=None):
-    result, overflow = {}, []
-    for a in ABILITIES:
-        b = base.get(a) if isinstance(base, dict) and isinstance(base.get(a), int) and not isinstance(base.get(a), bool) else None
-        result[a] = {'base': b, 'increases': [], 'bonus': 0, 'total': b, 'modifier': modifier(b) if b is not None else None}
-    for s in sorted(sources, key=lambda s: s['level']):
-        if before_level is not None and s['level'] >= before_level:
+    abilities, overflow = {}, []
+    for ability in ABILITIES:
+        score = _base_score(base, ability)
+        abilities[ability] = {
+            'base': score, 'increases': [], 'bonus': 0, 'total': score,
+            'modifier': modifier(score) if score is not None else None,
+        }
+    for increase_source in sorted(sources, key=lambda s: s['level']):
+        if before_level is not None and increase_source['level'] >= before_level:
             continue
-        for a, amount in s['increases'].items():
-            entry = result.get(a)
+        for ability, amount in increase_source['increases'].items():
+            entry = abilities.get(ability)
             if entry is None or entry['total'] is None or amount <= 0:
                 continue
-            gained = max(0, min(amount, s['maximum'] - entry['total']))
+            gained = max(0, min(amount, increase_source['maximum'] - entry['total']))
             if gained < amount:
-                overflow.append((s, a))
+                overflow.append((increase_source, ability))
             if gained:
-                entry['increases'].append({'source': s['name'], 'amount': gained})
+                entry['increases'].append({'source': increase_source['name'], 'amount': gained})
                 entry['bonus'] += gained
                 entry['total'] += gained
                 entry['modifier'] = modifier(entry['total'])
-    return result, overflow
+    return abilities, overflow
 
-# Temporary effects, cleaned: [{id, name, ability, mode, value}], or (None, message).
+# Cleans temporary effects into [{id, name, ability, mode, value}], returning (effects, None) or (None, message).
 def clean_adjustments(value):
     if not isinstance(value, list):
         return None, 'Temporary effects must be a list.'
     if len(value) > ADJUSTMENT_MAX:
         return None, f'At most {ADJUSTMENT_MAX} temporary effects.'
     cleaned = []
-    for i, item in enumerate(value):
+    for index, item in enumerate(value):
         if not isinstance(item, dict):
             return None, 'Each temporary effect must be an object.'
         name = item.get('name')
         if not isinstance(name, str) or not name.strip() or len(name.strip()) > ADJUSTMENT_NAME_MAX:
             return None, f'Give each temporary effect a name of 1-{ADJUSTMENT_NAME_MAX} characters.'
+        name = name.strip()
         if item.get('ability') not in ABILITIES:
-            return None, f'{name.strip()}: choose an ability.'
+            return None, f'{name}: choose an ability.'
         if item.get('mode') not in ADJUSTMENT_MODES:
-            return None, f'{name.strip()}: choose how it changes the score.'
-        v = item.get('value')
-        if not isinstance(v, int) or isinstance(v, bool):
-            return None, f'{name.strip()}: the value must be a whole number.'
-        low, high = (-30, 30) if item['mode'] == 'add' else CURRENT_RANGE
-        if not low <= v <= high:
-            return None, f'{name.strip()}: the value must be {low} to {high}.'
-        item_id = item.get('id') if isinstance(item.get('id'), str) and len(item['id']) <= 64 else str(i)
-        cleaned.append({'id': item_id, 'name': name.strip(), 'ability': item['ability'], 'mode': item['mode'], 'value': v})
+            return None, f'{name}: choose how it changes the score.'
+        amount = item.get('value')
+        if not is_whole_number(amount):
+            return None, f'{name}: the value must be a whole number.'
+        low, high = ADD_RANGE if item['mode'] == 'add' else CURRENT_RANGE
+        if not low <= amount <= high:
+            return None, f'{name}: the value must be {low} to {high}.'
+        item_id = item.get('id') if isinstance(item.get('id'), str) and len(item['id']) <= ADJUSTMENT_ID_MAX else str(index)
+        cleaned.append({'id': item_id, 'name': name, 'ability': item['ability'], 'mode': item['mode'], 'value': amount})
     return cleaned, None
 
-# Adds current (and its modifier, and the effects that apply) to each ability of apply_increases'
-# result. 'set' effects apply first (the last one listed wins), then 'atLeast' (the highest),
-# then 'add', clamped to 1-30.
+# Adds current, currentModifier and the applied adjustment ids to each ability, in place.
+# 'set' applies first (last one wins), then 'atLeast' (highest wins), then 'add', clamped to CURRENT_RANGE.
 def apply_adjustments(abilities, adjustments):
-    for a, entry in abilities.items():
-        mine = [x for x in adjustments or [] if x['ability'] == a]
+    for ability, entry in abilities.items():
+        applicable = [adjustment for adjustment in adjustments or [] if adjustment['ability'] == ability]
         current = entry['total']
         if current is not None:
-            for x in mine:
-                if x['mode'] == 'set':
-                    current = x['value']
-            floors = [x['value'] for x in mine if x['mode'] == 'atLeast']
+            for adjustment in applicable:
+                if adjustment['mode'] == 'set':
+                    current = adjustment['value']
+            floors = [adjustment['value'] for adjustment in applicable if adjustment['mode'] == 'atLeast']
             if floors:
                 current = max(current, max(floors))
-            current += sum(x['value'] for x in mine if x['mode'] == 'add')
+            current += sum(adjustment['value'] for adjustment in applicable if adjustment['mode'] == 'add')
             current = max(CURRENT_RANGE[0], min(CURRENT_RANGE[1], current))
         entry['current'] = current
         entry['currentModifier'] = modifier(current) if current is not None else None
-        entry['adjustments'] = [x['id'] for x in mine]
+        entry['adjustments'] = [adjustment['id'] for adjustment in applicable]
     return abilities

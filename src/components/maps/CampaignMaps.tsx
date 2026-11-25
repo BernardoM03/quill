@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { listMaps, type mapSummary } from '../../api/maps';
+import { listMaps, type MapSummary } from '../../api/maps';
 import { AddMapDialog } from './AddMapDialog';
 import './Maps.css';
 
-// The campaign page's maps. Everyone sees the maps they may open (for a player, the public
-// finalized ones; the server leaves the rest out); the GM also gets Add map. Renders
-// nothing for a player while there are no maps to show.
+// The campaign page's map list, where the GM can also add maps.
+// Players see only public finalized maps, and nothing at all when there are none.
 export function CampaignMaps({ campaignId, canEdit }: { campaignId: string, canEdit: boolean }) {
   const navigate = useNavigate();
-  const [maps, setMaps] = useState<mapSummary[] | null>(null);
+  const [maps, setMaps] = useState<MapSummary[] | null>(null);
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {

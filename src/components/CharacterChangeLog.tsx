@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
-import { dismissCharacterChange, getCharacterChanges, type characterChange, type pickChange } from "../api/characters";
+import { dismissCharacterChange, getCharacterChanges, type CharacterChange, type PickChange } from "../api/characters";
 import "./PendingCharacters.css";
 
 const FIELD_LABELS: Record<string, string> = {
@@ -14,7 +14,7 @@ const FIELD_LABELS: Record<string, string> = {
     classChoices: 'Class choice',
 }
 
-// "srd-5.2:species/high-elf" -> "High Elf": the readable end of a pack id or option key.
+// The readable end of a pack id or option key, e.g. "srd-5.2:species/high-elf" becomes "High Elf".
 function readable(id: string): string {
     const tail = id.split(/[/:]/).pop() || id
     return tail.replace(/[-_]+/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase())
@@ -28,16 +28,16 @@ function describeValue(value: unknown): string {
     return String(value)
 }
 
-function describeChange(change: pickChange): string {
+function describeChange(change: PickChange): string {
     const [key, choice] = change.field.split(/:(.*)/s)
     const label = (FIELD_LABELS[key] ?? key) + (choice ? ` (${readable(choice)})` : '')
     return `${label}: ${describeValue(change.from)} → ${describeValue(change.to)}`
 }
 
-// The GM's log of changes players made to approved characters, newest first. Renders
-// nothing for anyone else (the server answers them 404).
+// The GM's log of player changes to approved characters, newest first.
+// Renders nothing for anyone else, since the server answers them 404.
 export default function CharacterChangeLog({ campaignId }: { campaignId: string }) {
-    const [entries, setEntries] = useState<characterChange[] | null>(null)
+    const [entries, setEntries] = useState<CharacterChange[] | null>(null)
     const [showAll, setShowAll] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -55,7 +55,7 @@ export default function CharacterChangeLog({ campaignId }: { campaignId: string 
     }
 
     if (entries === null) return null
-    // Nothing new and not browsing the history: stay out of the way.
+    // Stay hidden when there's nothing new and the history isn't open.
     if (entries.length === 0 && !showAll) return null
 
     return (

@@ -3,8 +3,7 @@ import { useReadOnly } from './ReadOnly';
 
 export type SectionMode = 'view' | 'edit';
 
-// A section caption with a View / Edit switch on the right. Read-only pages have no
-// switch, and sections start in View, so they stay there.
+// A section caption with a View / Edit switch, hidden on read-only pages so sections stay in View.
 export function SectionHeader({ caption, mode, onModeChange }: {
   caption: string;
   mode: SectionMode;

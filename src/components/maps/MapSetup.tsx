@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 import {
   MAP_NAME_MAX_LENGTH, MAX_HEX_SIZE, MAX_MAP_WIDTH, deleteMap, mapImageUrl, updateMap,
-  type gmMap, type mapUnit,
+  type GmMap, type MapUnit,
 } from '../../api/maps';
 import ConfirmDialog from '../ConfirmDialog';
-import { HexMap, type hexTooltip } from './HexMap';
+import { HexMap, type HexTooltip } from './HexMap';
 import { MAX_HEXES, MAX_LINE, gridFor } from './hexMath';
-import { errorMessage, toggleLand, type updateGmMap } from './mapActions';
+import { errorMessage, toggleLand, type UpdateGmMap } from './mapActions';
 import './Maps.css';
 
 const KM_PER_MILE = 1.609344;
@@ -15,11 +15,11 @@ const KM_PER_MILE = 1.609344;
 const RESCALE_DELAY = 400;
 
 const whole = (text: string, max: number) => {
-  const n = Number(text);
-  return Number.isInteger(n) && n >= 1 && n <= max ? n : null;
+  const parsed = Number(text);
+  return Number.isInteger(parsed) && parsed >= 1 && parsed <= max ? parsed : null;
 };
 
-// Why a scale can't be used, or null. The server checks the same (server/maps.py grid_problem).
+// Why a scale can't be used, or null, mirroring the server's grid_problem.
 function scaleProblem(aspect: number, hexSize: number | null, mapWidth: number | null): string | null {
   if (hexSize === null) return `Hex size must be a whole number from 1 to ${MAX_HEX_SIZE}.`;
   if (mapWidth === null) return `Map width must be a whole number from 1 to ${MAX_MAP_WIDTH.toLocaleString()}.`;
@@ -29,20 +29,19 @@ function scaleProblem(aspect: number, hexSize: number | null, mapWidth: number |
   return null;
 }
 
-const setupTooltip = (_col: number, _row: number, isLand: boolean): hexTooltip =>
+const setupTooltip = (_col: number, _row: number, isLand: boolean): HexTooltip =>
   isLand ? { title: 'On the map', text: 'Click to take it off.' } : { title: 'Not on the map', text: 'Click to add it.' };
 
-// A draft map, for its GM: the hexes found in the image over the image itself, with the
-// scale to adjust (how far across a hex is and how much ground the image covers) and hexes
-// to click on or off. Finalizing locks the scale, since hexes are kept by grid position.
+// The GM's draft map setup, showing detected hexes over the image with the scale to adjust and hexes to toggle.
+// Finalizing locks the scale, since hexes are stored by grid position.
 export function MapSetup({ campaignId, map, update, onDeleted }: {
   campaignId: string,
-  map: gmMap,
-  update: updateGmMap,
+  map: GmMap,
+  update: UpdateGmMap,
   onDeleted: () => void,
 }) {
   const [name, setName] = useState(map.name);
-  const [unit, setUnit] = useState<mapUnit>(map.unit);
+  const [unit, setUnit] = useState<MapUnit>(map.unit);
   // As typed, so a half-typed number isn't corrected under the GM's fingers.
   const [hexSize, setHexSize] = useState(String(map.hexSize));
   const [mapWidth, setMapWidth] = useState(String(map.mapWidth));
@@ -57,7 +56,7 @@ export function MapSetup({ campaignId, map, update, onDeleted }: {
 
   const aspect = map.image.width / map.image.height;
 
-  function rescale(nextUnit: mapUnit, nextHexSize: string, nextMapWidth: string) {
+  function rescale(nextUnit: MapUnit, nextHexSize: string, nextMapWidth: string) {
     setUnit(nextUnit);
     setHexSize(nextHexSize);
     setMapWidth(nextMapWidth);
@@ -76,7 +75,7 @@ export function MapSetup({ campaignId, map, update, onDeleted }: {
   }
 
   // Switching unit keeps the map the same size on the ground, to the nearest whole number.
-  function handleUnit(next: mapUnit) {
+  function handleUnit(next: MapUnit) {
     if (next === unit) return;
     const factor = next === 'km' ? KM_PER_MILE : 1 / KM_PER_MILE;
     const convert = (text: string, max: number) => String(Math.min(max, Math.max(1, Math.round(Number(text) * factor) || 1)));
@@ -114,7 +113,7 @@ export function MapSetup({ campaignId, map, update, onDeleted }: {
         </label>
         <label className="map-field">
           Unit
-          <select className="map-input" value={unit} onChange={e => handleUnit(e.target.value as mapUnit)}>
+          <select className="map-input" value={unit} onChange={e => handleUnit(e.target.value as MapUnit)}>
             <option value="mi">Miles</option>
             <option value="km">Kilometres</option>
           </select>

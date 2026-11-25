@@ -3,22 +3,22 @@ import { useParams } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 
 import { MAX_QUESTIONS, QUESTION_PROMPT_MAX_LENGTH, updateCampaignQuestions } from "../../api/campaigns";
-import type { campaignQuestion } from "../../datatypes/campaignDetails";
+import type { CampaignQuestion } from "../../datatypes/campaignDetails";
 import { SectionHeader, type SectionMode } from "./SectionHeader";
 import { useReadOnly } from "./ReadOnly";
 import "./CampaignSettings.css";
 
-// The GM's custom questions, asked on the character wizard's Details step under the name.
-// View lists them; Edit changes a copy, saved all at once (the server replaces the list).
-// A question keeps its id when reworded or moved, so players' answers stay with it.
+// The GM's custom questions for the wizard's Details step.
+// Editing works on a copy that replaces the whole list on save.
+// A question keeps its id when reworded or moved, so players' answers stay attached.
 export function CampaignQuestionsSettings({ questions, onSaved }: {
-    questions: campaignQuestion[];
-    onSaved: (questions: campaignQuestion[]) => void;
+    questions: CampaignQuestion[];
+    onSaved: (questions: CampaignQuestion[]) => void;
 }) {
     const { campaignID } = useParams();
     const readOnly = useReadOnly()
     const [mode, setMode] = useState<SectionMode>('view')
-    const [draft, setDraft] = useState<campaignQuestion[]>([])
+    const [draft, setDraft] = useState<CampaignQuestion[]>([])
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
 
@@ -30,13 +30,13 @@ export function CampaignQuestionsSettings({ questions, onSaved }: {
         setMode(next)
     }
 
-    const change = (index: number, patch: Partial<campaignQuestion>) =>
+    const change = (index: number, patch: Partial<CampaignQuestion>) =>
         setDraft(list => list.map((q, i) => (i === index ? { ...q, ...patch } : q)))
     const remove = (index: number) => setDraft(list => list.filter((_, i) => i !== index))
     const move = (index: number, by: number) => setDraft(list => {
         const next = [...list]
-        const [q] = next.splice(index, 1)
-        next.splice(index + by, 0, q)
+        const [question] = next.splice(index, 1)
+        next.splice(index + by, 0, question)
         return next
     })
     const add = () => setDraft(list => [...list, { id: uuidv4(), prompt: '', required: false }])

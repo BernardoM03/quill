@@ -1,9 +1,8 @@
 import './CampaignSettings.css';
 import { useReadOnly } from './ReadOnly';
 
-// A label with a thin rectangular switch on the right. The real checkbox stays in
-// the page (just unseen) so keyboard and screen readers still work. hint is an
-// optional muted line under the label.
+// A labelled switch backed by a visually hidden checkbox, so keyboards and screen readers still work.
+// hint is an optional muted line under the label.
 export function Toggle({ label, hint, checked, onChange, className = '' }: {
   label: string;
   hint?: string;

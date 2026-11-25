@@ -5,10 +5,9 @@ import { classTags } from './spellRules';
 
 const levelName = (level: number) => (level === 0 ? 'Cantrips' : `Level ${level}`);
 
-// Allowed spells, grouped by level. Each spell is tagged with the classes that have it,
-// and the class filter narrows to one class's list. A change that leaves an allowed class
-// with no cantrips is refused by the server (server/rules/problems.py).
-// allowed: the saved ids, or null for "all".
+// Allowed spells grouped by level and tagged with their classes, with a filter for one class's list.
+// The server refuses changes that leave an allowed class without cantrips.
+// allowed holds the saved ids, or null for all.
 export function SpellSettings({ allowed, onChange }: {
   allowed: string[] | null;
   onChange: SaveAllowed;

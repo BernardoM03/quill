@@ -1,14 +1,11 @@
 import type { ReactNode } from 'react';
 
-import type { characterChoice, takenOptions } from '../../api/characters';
+import type { CharacterChoice, TakenOptions } from '../../api/characters';
 import { RulesText } from '../RulesText';
 import './PickCard.css';
 
-// A wizard step that picks one thing from a list (species, class): a dropdown to jump to
-// any of them, and one card at a time with quiet arrows to step through. Whatever card is
-// showing is the pick. children: the card's contents for the current item. A selected id
-// that isn't among items (a character's pick the campaign no longer allows) shows no item
-// as picked; children then say so.
+// Picks one item from a list with a dropdown plus one card at a time and arrows, where the card showing is the pick.
+// A selected id missing from items (no longer allowed by the campaign) shows nothing as picked, and children explain.
 export function PickCarousel({ caption, items, selected, onSelect, extra, children }: {
   caption: string;
   items: { id: string; name: string }[];
@@ -50,17 +47,15 @@ export function PickCarousel({ caption, items, selected, onSelect, extra, childr
   );
 }
 
-// One choice. A single pick is a dropdown; a choice of several shows that many dropdowns,
-// each leaving out what the others already took. An option that brings features (a
-// lineage's spells) or has a description shows it once picked.
-// field: this choice's draft field ('choice:<id>', 'classChoice:<id>'). taken: proficiencies
-// other choices already picked (from the server), left out here; an Expertise-style choice
-// offers only those instead.
+// One choice rendered as count dropdowns, each leaving out what the others already took.
+// A picked option's description or granted features show beneath it.
+// field is the choice's draft field, such as 'choice:<id>' or 'classChoice:<id>'.
+// taken lists proficiencies other choices already picked, which are hidden here except in Expertise-style choices that offer only those.
 export function ChoiceField({ choice, field, value, taken, onChoose, errors }: {
-  choice: characterChoice;
+  choice: CharacterChoice;
   field: string;
   value: string | string[] | undefined;
-  taken: takenOptions;
+  taken: TakenOptions;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errors: string[];
 }) {

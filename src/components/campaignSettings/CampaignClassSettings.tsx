@@ -6,10 +6,8 @@ import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 import { refusalText } from './saveAllowed';
 
-// View mode: a read-only grid of allowed classes.
-// Edit mode: one row per class with its toggle.
-// onChange gets the lists that changed; a class and its subclasses come in one call,
-// because the server checks them together (server/rules/problems.py).
+// Allowed classes as a read-only grid, or toggle rows when editing.
+// A class and its subclasses change in one onChange call because the server checks them together.
 export function ClassSettings({ allowedClasses, allowedSubclasses, onChange }: {
   allowedClasses: string[] | null;
   allowedSubclasses: string[] | null;
@@ -33,8 +31,7 @@ export function ClassSettings({ allowedClasses, allowedSubclasses, onChange }: {
     const subclassesOf = (classId: string) => subclassList.filter(s => s.classId === classId);
     const allowedClassList = classList.filter(c => selectedClasses.includes(c.id));
 
-    // Characters need a class, and a class with subclasses needs one of them to pick. The
-    // server checks both (server/rules/) and its reason shows in the class's box.
+    // The server refuses leaving no classes or a class without subclasses, and its reason shows in the class's box.
     const toggleClass = (classId: string) => {
       const next = toggleId(selectedClasses, classId);
       setRule(null);

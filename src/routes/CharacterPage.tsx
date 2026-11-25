@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 
 import {
     activateCharacter, deleteCharacter, deletePortrait, getCharacter, patchCharacterState, submitCharacter, uploadPortrait,
-    type characterSummary, type playState, type statePatch,
+    type CharacterSummary, type PlayState, type StatePatch,
 } from "../api/characters";
 import { CharacterSheet } from "../components/sheet/CharacterSheet";
 import BackButton from "../components/BackButton";
@@ -26,7 +26,7 @@ function errorMessage(err: unknown, fallback: string): string {
 export default function CharacterPage() {
     const { characterID = '' } = useParams();
     const navigate = useNavigate();
-    const [character, setCharacter] = useState<characterSummary | null | undefined>(undefined)
+    const [character, setCharacter] = useState<CharacterSummary | null | undefined>(undefined)
     const [error, setError] = useState<string | null>(null)
     // The picked image while the player frames it.
     const [picked, setPicked] = useState<ImageBitmap | null>(null)
@@ -40,20 +40,19 @@ export default function CharacterPage() {
         getCharacter(characterID).then(setCharacter).catch(() => setCharacter(null))
     }, [characterID])
 
-    // Why the last play-state change couldn't be saved; the change itself is already undone.
+    // Why the last play-state change failed, which has already been undone.
     const [stateError, setStateError] = useState<string | null>(null)
-    // Saves can overlap; only the last one sent knows the final state.
+    // Saves can overlap, and only the last one sent knows the final state.
     const latestStateSave = useRef(0)
 
-    // Same pattern as handleAllowedChange (CampaignSettings): show the change now, send only
-    // what changed, and if the save fails put back just the fields this change touched.
-    // Uses the setter's function form so quick changes don't overwrite each other.
-    function handleStateChange(next: Partial<playState>, patch: statePatch) {
+    // Applies the change optimistically and sends only what changed.
+    // A failed save reverts just the fields this change touched, so quick changes don't overwrite each other.
+    function handleStateChange(next: Partial<PlayState>, patch: StatePatch) {
         setStateError(null)
         const before = character?.state
         if (!before) return
-        const previous = Object.fromEntries(Object.keys(next).map(key => [key, before[key as keyof playState]]))
-        const setFields = (fields: Partial<playState>) => setCharacter(c => c && { ...c, state: { ...c.state, ...fields } })
+        const previous = Object.fromEntries(Object.keys(next).map(key => [key, before[key as keyof PlayState]]))
+        const setFields = (fields: Partial<PlayState>) => setCharacter(c => c && { ...c, state: { ...c.state, ...fields } })
         setFields(next)
         const request = ++latestStateSave.current
         patchCharacterState(characterID, patch)
@@ -102,8 +101,7 @@ export default function CharacterPage() {
             .catch(err => setError(errorMessage(err, 'Could not open that image.')))
     }
 
-    // Called by the cropper with the framed 256x256 portrait. A rejection keeps the cropper
-    // open and shows the server's reason there.
+    // A rejection keeps the cropper open and shows the server's reason there.
     function handleCropped(portrait: Blob) {
         return uploadPortrait(characterID, portrait).then(setVersion)
     }
@@ -113,7 +111,7 @@ export default function CharacterPage() {
         setPicked(null)
     }
 
-    // Called by the confirm dialog. A rejection keeps it open and shows the reason there.
+    // A rejection keeps the confirm dialog open and shows the reason there.
     function handleRemove() {
         return deletePortrait(characterID).then(() => setVersion(null))
     }
@@ -130,7 +128,7 @@ export default function CharacterPage() {
         )
     }
 
-    // The owner (or the admin) does everything; the GM changes the play state; the party reads.
+    // The owner or admin can do everything, the GM can change play state and the party only reads.
     const isOwner = character.access === 'owner'
     const canEdit = character.access !== 'party'
 

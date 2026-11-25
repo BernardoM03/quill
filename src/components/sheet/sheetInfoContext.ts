@@ -1,14 +1,13 @@
 import { createContext } from 'react';
 
-import type { sheetInfo } from './InfoPanel';
+import type { SheetInfo } from './InfoPanel';
 
-// How anything on the character sheet opens rules text in the panel beside it (CharacterSheet
-// provides it; SheetTerm uses it).
-export interface sheetInfoActions {
-  // The id of what's open in the panel, if it's showing rules text.
+// Lets anything on the sheet open rules text in the side panel, provided by CharacterSheet.
+export interface SheetInfoActions {
+  // The id of the rules text open in the panel.
   openInfo: string | null,
-  // Open that text beside the sheet; null closes it.
-  onInfo: (info: sheetInfo | null) => void,
+  // Opens that text beside the sheet, or closes it when given null.
+  onInfo: (info: SheetInfo | null) => void,
 }
 
-export const SheetInfoContext = createContext<sheetInfoActions | null>(null);
+export const SheetInfoContext = createContext<SheetInfoActions | null>(null);

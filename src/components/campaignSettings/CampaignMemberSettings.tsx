@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getMembers, removeMember, type campaignMember } from "../../api/campaigns";
+import { getMembers, removeMember, type CampaignMember } from "../../api/campaigns";
 import TypeToConfirmDialog from "../TypeToConfirmDialog";
 import "./CampaignSettings.css";
 
@@ -8,17 +8,17 @@ function plural(n: number, word: string): string {
     return `${n} ${word}${n === 1 ? '' : 's'}`
 }
 
-// Everyone in the campaign. Players can be removed, which also deletes their characters here.
+// Everyone in the campaign, where removing a player also deletes their characters here.
 export function CampaignMemberSettings({ campaignId }: { campaignId: string }) {
-    const [members, setMembers] = useState<campaignMember[] | null>(null)
+    const [members, setMembers] = useState<CampaignMember[] | null>(null)
     const [error, setError] = useState<string | null>(null)
-    const [removing, setRemoving] = useState<campaignMember | null>(null)
+    const [removing, setRemoving] = useState<CampaignMember | null>(null)
 
     useEffect(() => {
         getMembers(campaignId).then(setMembers).catch(() => setError('Could not load members.'))
     }, [campaignId])
 
-    function handleRemoved(member: campaignMember) {
+    function handleRemoved(member: CampaignMember) {
         setMembers(list => list && list.filter(m => m.userId !== member.userId))
         setRemoving(null)
     }

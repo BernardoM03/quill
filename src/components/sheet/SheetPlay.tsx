@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import type { playState, sheetStats, statePatch } from '../../api/characters';
-import { defenseRows, type defenseRow } from './defenses';
+import type { PlayState, SheetStats, StatePatch } from '../../api/characters';
+import { defenseRows, type DefenseEntry } from './defenses';
 import { useCollection } from '../../packs/usePacks';
 import { SheetBox } from './SheetStats';
 import { SheetTerm } from './SheetTerm';
@@ -10,26 +10,25 @@ import './Sheet.css';
 
 
 // The change to show now, and the PATCH body that saves it.
-export type playChange = (next: Partial<playState>, patch: statePatch) => void;
+export type PlayChange = (next: Partial<PlayState>, patch: StatePatch) => void;
 
-interface playProps {
-  state: playState,
-  // The owner, the admin or the GM; the party sees everything read-only.
+interface PlayProps {
+  state: PlayState,
+  // True for the owner, admin or GM, while the party sees everything read-only.
   canEdit: boolean,
-  onChange: playChange,
+  onChange: PlayChange,
 }
 
-// A number typed in and saved when the field is left or Enter is pressed; anything out of
-// range or not a number puts the old value back.
+// A number input that saves on blur or Enter and reverts anything invalid or out of range.
 function NumberField({ label, value, min, max, className, onCommit }: {
   label: string, value: number, min: number, max: number, className?: string, onCommit: (n: number) => void,
 }) {
   const [text, setText] = useState<string | null>(null);
   function commit() {
     if (text === null) return;
-    const n = Number(text);
+    const parsed = Number(text);
     setText(null);
-    if (text.trim() !== '' && Number.isInteger(n) && n >= min && n <= max && n !== value) onCommit(n);
+    if (text.trim() !== '' && Number.isInteger(parsed) && parsed >= min && parsed <= max && parsed !== value) onCommit(parsed);
   }
   return (
     <input className={`sheet-number${className ? ` ${className}` : ''}`} type="number" inputMode="numeric"
@@ -39,8 +38,8 @@ function NumberField({ label, value, min, max, className, onCommit }: {
   );
 }
 
-// A row of boxes, the first `filled` of `total` ticked. Clicking a box ticks up to it, or
-// unticks it (and those after) if it was ticked.
+// A row of `total` boxes with the first `filled` ticked.
+// Clicking a box ticks up to it, or unticks it and those after if it was ticked.
 export function Pips({ label, total, filled, disabled, tone, onChange }: {
   label: string, total: number, filled: number, disabled: boolean, tone?: 'danger' | 'good',
   onChange: (filled: number) => void,
@@ -57,26 +56,26 @@ export function Pips({ label, total, filled, disabled, tone, onChange }: {
   );
 }
 
-// Heal or Damage by the amount typed between them. Damage comes off temporary hit points
-// first; healing stops at the maximum. Enter in the box heals.
+// Heal and Damage buttons around an amount field, where Enter heals.
+// Damage comes off temporary hit points first, and healing stops at the maximum.
 function HealDamage({ currentHp, maxHp, tempHp, onChange }: {
-  currentHp: number, maxHp: number, tempHp: number, onChange: playChange,
+  currentHp: number, maxHp: number, tempHp: number, onChange: PlayChange,
 }) {
   const [amount, setAmount] = useState('');
-  const n = Math.floor(Number(amount));
-  const valid = amount.trim() !== '' && Number.isFinite(n) && n > 0;
+  const points = Math.floor(Number(amount));
+  const valid = amount.trim() !== '' && Number.isFinite(points) && points > 0;
 
   function heal() {
     if (!valid) return;
-    const next = Math.min(maxHp, currentHp + n);
+    const next = Math.min(maxHp, currentHp + points);
     onChange({ currentHp: next }, { currentHp: next });
     setAmount('');
   }
 
   function damage() {
     if (!valid) return;
-    const fromTemp = Math.min(tempHp, n);
-    const next = { tempHp: tempHp - fromTemp, currentHp: Math.max(0, currentHp - (n - fromTemp)) };
+    const fromTemp = Math.min(tempHp, points);
+    const next = { tempHp: tempHp - fromTemp, currentHp: Math.max(0, currentHp - (points - fromTemp)) };
     onChange(next, next);
     setAmount('');
   }
@@ -91,9 +90,9 @@ function HealDamage({ currentHp, maxHp, tempHp, onChange }: {
   );
 }
 
-// Hit points as at the table: heal and damage on the left, then current / max and temporary.
-// Current and temp can be typed over; the maximum is worked out and only shown.
-export function HitPointsBox({ state, canEdit, onChange }: playProps) {
+// Hit points with heal and damage controls, then current over max and temporary.
+// Current and temporary are editable, while the maximum is derived.
+export function HitPointsBox({ state, canEdit, onChange }: PlayProps) {
   const { currentHp, maxHp } = state;
   if (currentHp == null || maxHp == null) {
     return (
@@ -136,20 +135,20 @@ export function HitPointsBox({ state, canEdit, onChange }: playProps) {
   );
 }
 
-// How many items a half of the Defenses / Conditions box shows; past that, the first
-// LIMIT - 1 and a "+N more" link that opens the full list beside the sheet.
-const LIMIT = 2;
+// Items each half of the Defenses / Conditions box shows before collapsing the rest into "+N more".
+const VISIBLE_LIMIT = 2;
 
+// The items to show, keeping one slot free for the "+N more" link when they don't all fit.
 function shown<T>(items: T[]): { visible: T[], more: number } {
-  return items.length <= LIMIT ? { visible: items, more: 0 } : { visible: items.slice(0, LIMIT - 1), more: items.length - LIMIT + 1 };
+  if (items.length <= VISIBLE_LIMIT) return { visible: items, more: 0 };
+  return { visible: items.slice(0, VISIBLE_LIMIT - 1), more: items.length - VISIBLE_LIMIT + 1 };
 }
 
-// Defenses and conditions, beside initiative and armor class, split down the middle. Left:
-// the character's resistances and immunities (R / I), with a * on any that need a feature
-// active (hover names it); the title opens the full list, where each has its rules. Right: the conditions on the character now. Each half shows a
-// couple of items and never scrolls; "+N more" (or clicking the half) opens the full list.
-export function DefensesConditionsBox({ state, canEdit, defenses, onOpenConditions, onOpenDefenses }: playProps & {
-  defenses: sheetStats['defenses'] | null,
+// A box split into resistances and immunities on the left and current conditions on the right.
+// A * marks a defense that needs an active feature, named on hover.
+// Each half shows a couple of items, and "+N more" or clicking the half opens the full list.
+export function DefensesConditionsBox({ state, canEdit, defenses, onOpenConditions, onOpenDefenses }: PlayProps & {
+  defenses: SheetStats['defenses'] | null,
   // Open the Conditions / Defenses panels beside the sheet.
   onOpenConditions: () => void,
   onOpenDefenses: () => void,
@@ -192,12 +191,10 @@ export function DefensesConditionsBox({ state, canEdit, defenses, onOpenConditio
   );
 }
 
-// One resistance or immunity. Its parts are rules words with tooltips (GlossaryTooltips): the
-// R / I tag says what Resistance or Immunity does, and the name what it's a resistance to: the
-// condition's own text, or the damage types for anything else. The * names the feature that
-// has to be active. plain: on the sheet itself, where rules open beside the sheet rather than
-// on hover, so the row is just its text.
-export function DefenseRow({ row, plain = false }: { row: defenseRow, plain?: boolean }) {
+// One resistance or immunity whose R / I tag and name are rules words with tooltips.
+// The * names the feature that must be active.
+// plain renders bare text for the sheet itself, where rules open in the side panel instead of on hover.
+export function DefenseRow({ row, plain = false }: { row: DefenseEntry, plain?: boolean }) {
   const conditions = useCollection('conditions').data;
   const name = row.name.toLowerCase();
   const isCondition = !!conditions && [...conditions.values()].some(c => c.name.toLowerCase() === name);

@@ -1,23 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
-import { getMap, type campaignMap, type gmMap } from "../api/maps";
+import { getMap, type CampaignMap, type GmMap } from "../api/maps";
 import BackButton from "../components/BackButton";
 import { MapSetup } from "../components/maps/MapSetup";
 import { MapViewer } from "../components/maps/MapViewer";
 import "../components/campaignSettings/CampaignSettings.css";
 import "../components/maps/Maps.css";
 
-// How often a player's page asks for the map again, so hexes the GM reveals turn up
-// without a reload. Unchanged, the server's answer is an empty 304.
+// How often players refetch the map so newly revealed hexes appear, which costs an empty 304 when unchanged.
 const REFRESH_MS = 20_000;
 
-// /campaign/:campaignID/maps/:mapID: one map. Its GM sets a draft up, then edits its hexes;
-// players see a public, finalized map and what the GM has revealed of it.
+// One map page, where the GM sets up a draft then edits hexes, and players see what has been revealed.
 export default function MapPage() {
     const { campaignID = '', mapID = '' } = useParams();
     const navigate = useNavigate();
-    const [map, setMap] = useState<campaignMap | null | undefined>(undefined)
+    const [map, setMap] = useState<CampaignMap | null | undefined>(undefined)
 
     useEffect(() => {
         let current = true
@@ -28,7 +26,7 @@ export default function MapPage() {
     const isPlayer = map ? !map.canEdit : false
     useEffect(() => {
         if (!isPlayer) return
-        // A failed refresh keeps what's on screen; the next one tries again.
+        // A failed refresh keeps the current map until the next attempt.
         const timer = window.setInterval(() => {
             getMap(campaignID, mapID).then(setMap).catch(() => undefined)
         }, REFRESH_MS)
@@ -36,7 +34,7 @@ export default function MapPage() {
     }, [isPlayer, campaignID, mapID])
 
     // Changes the GM's copy from the copy held at that moment.
-    const update = useCallback((change: (map: gmMap) => gmMap) => {
+    const update = useCallback((change: (map: GmMap) => GmMap) => {
         setMap(current => (current && current.canEdit ? change(current) : current))
     }, [])
 

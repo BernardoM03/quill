@@ -2,16 +2,14 @@ import { useState } from "react";
 import { useParams } from "react-router";
 
 import { CAMPAIGN_NAME_MAX_LENGTH, createCampaign, updateCampaignName, validateCampaignName } from "../../api/campaigns";
-import type { campaign } from "../../datatypes/campaign";
+import type { Campaign } from "../../datatypes/campaign";
 import "./CampaignSettings.css";
 import { useReadOnly } from "./ReadOnly";
 
-// Shows the campaign name; the pencil swaps it for an input in place, like a GitHub PR title.
-// name is null while the campaign is still loading. onRenamed runs once the save succeeds.
+// The campaign name, edited in place via the pencil, with name null while loading.
 // locked blocks saving while other campaign settings are broken.
-// Without a campaignID in the route the campaign doesn't exist yet: the input starts open
-// and submitting creates the campaign, then runs onCreated.
-export function CampaignNameSettings({ name, onRenamed, onCreated, locked = false }: { name: string | null; onRenamed: (name: string) => void; onCreated?: (created: campaign) => void; locked?: boolean }) {
+// Without a campaignID the input starts open and submitting creates the campaign, then calls onCreated.
+export function CampaignNameSettings({ name, onRenamed, onCreated, locked = false }: { name: string | null; onRenamed: (name: string) => void; onCreated?: (created: Campaign) => void; locked?: boolean }) {
     const { campaignID } = useParams();
     const creating = !campaignID
     const readOnly = useReadOnly()

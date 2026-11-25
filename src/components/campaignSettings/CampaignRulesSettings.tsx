@@ -1,8 +1,8 @@
-import type { campaignRules, ruleLimits } from '../../datatypes/campaignRules';
+import type { CampaignRules, RuleLimits } from '../../datatypes/campaignRules';
 import { Toggle } from './Toggle';
 import { useReadOnly } from './ReadOnly';
 
-type BooleanRule = { [K in keyof campaignRules]: campaignRules[K] extends boolean ? K : never }[keyof campaignRules];
+type BooleanRule = { [K in keyof CampaignRules]: CampaignRules[K] extends boolean ? K : never }[keyof CampaignRules];
 type ToggleSpec = { rule: BooleanRule; label: string; hint: string };
 
 const CHARACTER_OPTIONS: ToggleSpec[] = [
@@ -18,12 +18,12 @@ const INVENTORY: ToggleSpec[] = [
 ];
 
 type Props = {
-  rules: campaignRules; // every rule, defaults filled in by the server
-  onChange: (changed: Partial<campaignRules>) => void; // only the rules that changed
+  rules: CampaignRules; // every rule, defaults filled in by the server
+  onChange: (changed: Partial<CampaignRules>) => void; // only the rules that changed
 };
 
 // The campaign's main character creation rules. limits: the ranges the server accepts.
-export function RulesSettings({ rules, limits, onChange }: Props & { limits: ruleLimits }) {
+export function RulesSettings({ rules, limits, onChange }: Props & { limits: RuleLimits }) {
   const toggle = (t: ToggleSpec, className?: string) => (
     <Toggle key={t.rule} className={className} label={t.label} hint={t.hint} checked={rules[t.rule]} onChange={() => onChange({ [t.rule]: !rules[t.rule] })} />
   );
@@ -105,7 +105,7 @@ export function RulesSettings({ rules, limits, onChange }: Props & { limits: rul
   );
 }
 
-const ABILITY_HINTS: Record<campaignRules['abilityScoreMethod'], string> = {
+const ABILITY_HINTS: Record<CampaignRules['abilityScoreMethod'], string> = {
   standardArray: 'Assign 15, 14, 13, 12, 10, 8.',
   pointBuy: 'Spend points on scores from 8 to 15.',
   roll: 'Roll 4d6 and drop the lowest, six times.',
@@ -113,7 +113,7 @@ const ABILITY_HINTS: Record<campaignRules['abilityScoreMethod'], string> = {
   sharedManual: 'You set six scores; every player assigns them as they like.',
 };
 
-const EQUIPMENT_HINTS: Record<campaignRules['startingEquipment'], string> = {
+const EQUIPMENT_HINTS: Record<CampaignRules['startingEquipment'], string> = {
   choice: 'Players pick the equipment or the gold for each class and background.',
   equipment: 'Everyone takes the equipment packages.',
   gold: 'Everyone takes the gold and buys their own gear.',
@@ -172,7 +172,7 @@ export function AdvancedRulesSettings({ rules, onChange }: Props) {
   );
 }
 
-const PARTY_HINTS: Record<campaignRules['partyVisibility'], string> = {
+const PARTY_HINTS: Record<CampaignRules['partyVisibility'], string> = {
   full: 'Players can open each other’s full sheets (never their notes).',
   limited: 'Players see only each other’s name, species, class, level, hit points and conditions.',
   misleading: 'As Limited, but each player can show the party a false name, species and class. You always see the truth.',
@@ -229,14 +229,14 @@ function NumberRow({ label, hint, value, min, max, onChange }: {
 
 // The six scores every player assigns under Shared Manual, highest first.
 function SharedScoresRow({ scores, range, onChange }: {
-  scores: campaignRules['sharedScores'];
+  scores: CampaignRules['sharedScores'];
   range: { min: number; max: number };
-  onChange: (scores: campaignRules['sharedScores']) => void;
+  onChange: (scores: CampaignRules['sharedScores']) => void;
 }) {
   const readOnly = useReadOnly();
   // Mapping a 6-tuple keeps 6 entries; TypeScript just can't see that through map and sort.
   const setScore = (index: number, value: number) =>
-    onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a) as campaignRules['sharedScores']);
+    onChange(scores.map((n, i) => (i === index ? value : n)).sort((a, b) => b - a) as CampaignRules['sharedScores']);
 
   return (
     <div className="setting-row rules-subrow">

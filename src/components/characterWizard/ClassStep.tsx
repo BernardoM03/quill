@@ -1,32 +1,29 @@
 import { useEffect, useState } from 'react';
 
 import {
-  getClassOption, type characterChoice, type choicePicks, type classDetail, type classFeature, type classSummary,
-  type takenOptions,
+  getClassOption, type CharacterChoice, type ChoicePicks, type ClassDetail, type ClassFeature, type ClassSummary,
+  type TakenOptions,
 } from '../../api/characters';
 import { AbilityIncreaseField } from './AbilityIncreaseField';
 import { activeChoices } from './activeChoices';
 import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 
-// The class step: every class the campaign allows, one card at a time, as it is at the
-// campaign's starting level. The card loads that class's details from the server: its
-// proficiencies, each feature up to the level, the subclass once the level reaches it,
-// and every choice those bring, made right here.
-// errorsFor(field): the server's messages for a field ('class', 'classChoice:<id>').
+// The class step, showing one allowed class at a time at the starting level.
+// Each card loads the class's features, subclass and choices from the server.
 export function ClassStep({ campaignId, level, classes, selected, choices, taken, onSelect, onChoose, errorsFor }: {
   campaignId: string | null;
   level: number;
-  classes: classSummary[];
+  classes: ClassSummary[];
   selected: string | null;
-  choices: choicePicks;
-  taken: takenOptions;
+  choices: ChoicePicks;
+  taken: TakenOptions;
   onSelect: (classId: string) => void;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];
 }) {
   // Loaded class details, by id, so stepping back and forth doesn't fetch again.
-  const [details, setDetails] = useState<Record<string, classDetail | 'failed'>>({});
+  const [details, setDetails] = useState<Record<string, ClassDetail | 'failed'>>({});
   const current = selected ? classes.find(c => c.id === selected) : classes[0];
 
   useEffect(() => {
@@ -50,7 +47,7 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
   }
   const detail = details[current.id];
 
-  const field = (choice: characterChoice) => choice.kind === 'abilityIncrease' ? (
+  const field = (choice: CharacterChoice) => choice.kind === 'abilityIncrease' ? (
     <AbilityIncreaseField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
       errors={errorsFor(`classChoice:${choice.id}`)} />
   ) : (
@@ -58,7 +55,7 @@ export function ClassStep({ campaignId, level, classes, selected, choices, taken
       taken={taken} onChoose={onChoose}
       errors={errorsFor(`classChoice:${choice.id}`)} />
   );
-  const featureList = (features: classFeature[]) => (
+  const featureList = (features: ClassFeature[]) => (
     <dl className="pick-card__entries">
       {features.map(feature => (
         <div key={`${feature.id}@${feature.level}`} className="pick-entry">

@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router";
 
 import {
     PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, USERNAME_PATTERN,
-    getSessionUser, login, logout, signup, type sessionUser,
+    getSessionUser, login, logout, signup, type SessionUser,
 } from "../api/auth";
-import { acceptInvite, checkInvite, type inviteCheck } from "../api/invites";
+import { acceptInvite, checkInvite, type InviteCheck } from "../api/invites";
 import "../components/campaignSettings/CampaignSettings.css";
 import "./Join.css";
 
@@ -24,8 +24,8 @@ function errorMessage(err: unknown, fallback: string): string {
 export default function Join() {
     const { token = '' } = useParams();
     const navigate = useNavigate();
-    const [invite, setInvite] = useState<inviteCheck | null | undefined>(undefined)
-    const [user, setUser] = useState<sessionUser | null | undefined>(undefined)
+    const [invite, setInvite] = useState<InviteCheck | null | undefined>(undefined)
+    const [user, setUser] = useState<SessionUser | null | undefined>(undefined)
     const [mode, setMode] = useState<'signup' | 'login'>('signup')
     const [username, setUsername] = useState('')
     const [displayName, setDisplayName] = useState('')

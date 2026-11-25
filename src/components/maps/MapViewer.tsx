@@ -2,21 +2,20 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import {
   EMPTY_HEX, deleteMap, getMap, mapImageUrl, saveHex, updateMap,
-  type campaignMap, type gmHex, type gmMap, type hexRecord, type mapPatch, type playerHex, type playerMap,
+  type CampaignMap, type GmHex, type GmMap, type HexRecord, type MapPatch, type PlayerHex, type PlayerMap,
 } from '../../api/maps';
 import ConfirmDialog from '../ConfirmDialog';
 import { Toggle } from '../campaignSettings/Toggle';
 import '../campaignSettings/CampaignSettings.css';
-import { HexMap, type hexTooltip } from './HexMap';
+import { HexMap, type HexTooltip } from './HexMap';
 import { HexEditor, HexInfo } from './HexPanel';
 import { hexKey } from './hexMath';
-import { errorMessage, toggleLand, type updateGmMap } from './mapActions';
+import { errorMessage, toggleLand, type UpdateGmMap } from './mapActions';
 import './Maps.css';
 
 const STATUS_LABEL = { hidden: 'Hidden', scouted: 'Scouted', visited: 'Visited' };
 
-// The GM's map settings: a cog in the map's bottom right corner that opens a small menu
-// above it. Escape, or a click anywhere else, closes it.
+// The GM's settings cog in the map's corner, whose menu closes on Escape or an outside click.
 function MapSettings({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,14 +55,13 @@ function MapSettings({ children }: { children: ReactNode }) {
   );
 }
 
-// A finalized hex map. Hovering a hex shows its name and description; clicking one opens
-// the panel at the side of the screen: for the GM the hex's editor, for a player what they
-// know of it. The GM also gets the map's settings, behind the cog in its corner.
+// A finalized hex map, where hovering shows a hex's name and clicking opens the side panel.
+// The panel is the hex editor for the GM and what's known of the hex for a player.
 export function MapViewer({ campaignId, map, update, onDeleted }: {
   campaignId: string,
-  map: campaignMap,
+  map: CampaignMap,
   // Only used for a GM's map (map.canEdit).
-  update: updateGmMap,
+  update: UpdateGmMap,
   onDeleted: () => void,
 }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -73,13 +71,13 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   // GM only: the map as the server would send it to a player, while See Player View is on.
-  const [playerView, setPlayerView] = useState<playerMap | null>(null);
+  const [playerView, setPlayerView] = useState<PlayerMap | null>(null);
   const wantsPlayerView = useRef(false);
   // What's on screen: the player's copy while the GM is looking at that, else the map itself.
-  const view: campaignMap = playerView ?? map;
+  const view: CampaignMap = playerView ?? map;
 
   const hexes = useMemo(() => {
-    const byKey = new Map<string, gmHex | playerHex>();
+    const byKey = new Map<string, GmHex | PlayerHex>();
     view.hexes.forEach(h => byKey.set(hexKey(h.col, h.row), h));
     return byKey;
   }, [view.hexes]);
@@ -103,7 +101,7 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
 
   const landKeys = useMemo(() => new Set(view.land.map(([col, row]) => hexKey(col, row))), [view.land]);
 
-  function tooltip(col: number, row: number, isLand: boolean): hexTooltip | null {
+  function tooltip(col: number, row: number, isLand: boolean): HexTooltip | null {
     if (editingShape) {
       return isLand ? { title: 'On the map', text: 'Click to take it off.' } : { title: 'Not on the map', text: 'Click to add it.' };
     }
@@ -127,8 +125,7 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
     }
   }
 
-  // Fetches the player's copy afresh: the server leaves out what players may not have, so
-  // this is exactly what they get, not this page's guess at it.
+  // Fetches the player's copy from the server, so the preview is exactly what players receive.
   function loadPlayerView() {
     return getMap(campaignId, map.id, true)
       // Unless the GM has switched back while this was on its way.
@@ -148,7 +145,7 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
     }
   }
 
-  function patch(change: mapPatch, apply: (map: gmMap, saved: gmMap) => gmMap) {
+  function patch(change: MapPatch, apply: (map: GmMap, saved: GmMap) => GmMap) {
     setError(null);
     updateMap(campaignId, map.id, change)
       .then(saved => {
@@ -159,17 +156,16 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
       .catch(err => setError(errorMessage(err, 'Could not save the change.')));
   }
 
-  function save(col: number, row: number, record: hexRecord) {
+  function save(col: number, row: number, record: HexRecord) {
     return saveHex(campaignId, map.id, col, row, record).then(saved => update(current => ({
       ...current,
       hexes: [...current.hexes.filter(h => h.col !== col || h.row !== row), saved],
     })));
   }
 
-  // What the editor starts from: the hex's record alone, without the position the server
-  // sends with it (the record is saved back whole, and the server takes nothing extra).
-  function recordOf(key: string): hexRecord {
-    const hex = hexes.get(key) as gmHex | undefined;
+  // The hex record without its position, since it is saved back whole and the server rejects extra fields.
+  function recordOf(key: string): HexRecord {
+    const hex = hexes.get(key) as GmHex | undefined;
     if (!hex) return EMPTY_HEX;
     const { status, name, description, notes, encounters, randomEncounters } = hex;
     return { status, name, description, notes, encounters, randomEncounters };
@@ -239,7 +235,7 @@ export function MapViewer({ campaignId, map, update, onDeleted }: {
             onSave={record => save(open[0], open[1], record)} onClose={() => setSelected(null)} />
         )}
         {open && !view.canEdit && (
-          <HexInfo key={selected} col={open[0]} row={open[1]} hex={hexes.get(selected!) as playerHex | undefined}
+          <HexInfo key={selected} col={open[0]} row={open[1]} hex={hexes.get(selected!) as PlayerHex | undefined}
             onClose={() => setSelected(null)} />
         )}
       </div>

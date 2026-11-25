@@ -1,7 +1,7 @@
-import type { playState } from '../../api/characters';
+import type { PlayState } from '../../api/characters';
 import { useCollection } from '../../packs/usePacks';
 import '../RulesText.css';
-import type { playChange } from './SheetPlay';
+import type { PlayChange } from './SheetPlay';
 import '../DeleteCampaignDialog.css';
 import '../campaignSettings/CampaignSettings.css';
 import { SidePanel } from './SidePanel';
@@ -11,13 +11,11 @@ const EXHAUSTION_ID = 'srd-5.2:condition/exhaustion';
 const EXHAUSTION_LEVELS = [0, 1, 2, 3, 4, 5, 6];
 
 
-// Every condition in the installed packs, one row each: its name and a switch to turn it on
-// or off. What a condition does (the pack's own text) is a tooltip on its name, like any other
-// rules word (GlossaryTooltips). Exhaustion comes last, as a level from – to 6. Each change
-// shows at once and saves like the rest of the sheet.
-// canEdit false (another player): the switches are shown but can't be changed.
+// Every installed condition with an on/off switch, and exhaustion last as a level up to 6.
+// Condition names show their rules as tooltips, and changes save like the rest of the sheet.
+// Without canEdit the switches are shown but disabled.
 export function ConditionsDialog({ state, canEdit, onChange, onClose }: {
-  state: playState, canEdit: boolean, onChange: playChange, onClose: () => void,
+  state: PlayState, canEdit: boolean, onChange: PlayChange, onClose: () => void,
 }) {
   const { data: conditions, error } = useCollection('conditions');
 

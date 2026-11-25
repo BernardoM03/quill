@@ -5,12 +5,9 @@ import { useGlossary } from '../useGlossary';
 import { SheetInfoContext } from './sheetInfoContext';
 import './Sheet.css';
 
-// A rules word on the character sheet: a box title ("Saving Throws"), a sense, a skill. The
-// sheet is too dense for definitions to pop up under the pointer, so clicking the word opens
-// its definition (from the packs' glossary) in the panel beside the sheet, where the text's
-// own rules words do have tooltips. Clicking it again closes the panel. A word the glossary
-// doesn't define is left as plain text.
-// term: what to look up, when it isn't what's shown ("Temp" -> "Temporary Hit Points").
+// A rules word on the sheet that toggles its definition in the side panel, since hover popups are too busy there.
+// Words the glossary doesn't define stay plain text.
+// term is what to look up when it differs from the text shown, such as "Temporary Hit Points" for "Temp".
 export function SheetTerm({ term, children }: { term: string, children: ReactNode }) {
   const glossary = useGlossary();
   const actions = useContext(SheetInfoContext);

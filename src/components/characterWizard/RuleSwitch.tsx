@@ -1,10 +1,9 @@
-// One rule's options side by side, every option shown. In a campaign the GM has chosen
-// (locked), the others are greyed out; in the Character Sandbox the player picks.
+// One rule's options side by side, with options outside allowed greyed out.
 export function RuleSwitch<T extends string>({ label, options, value, allowed, onChange }: {
   label: string;
   options: { value: T; label: string }[];
   value: T;
-  // The options that may be picked; every one when omitted.
+  // Every option is allowed when omitted.
   allowed?: T[];
   onChange: (value: T) => void;
 }) {

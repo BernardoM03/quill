@@ -1,7 +1,6 @@
-import { termKey, type glossary } from './glossary';
+import { termKey, type Glossary } from './glossary';
 
-// The words RulesText picks out of rules text, and the same search over any other text on
-// the page (GlossaryTooltips).
+// The words RulesText highlights in rules text, and the same search GlossaryTooltips runs over other page text.
 
 const CONDITIONS = [
   'Blinded', 'Charmed', 'Deafened', 'Exhaustion', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible',
@@ -16,7 +15,7 @@ const TERMS = [
   'Heroic Inspiration', 'Cone', 'Cube', 'Cylinder', 'Emanation', 'Line', 'Sphere', 'Darkvision', 'Blindsight',
   'Tremorsense', 'Truesight', 'Difficult Terrain', 'Unarmed Strike', 'Opportunity Attacks?', 'Critical Hit',
   'Initiative', 'Expertise', 'Bloodied', 'Armor Class', 'Difficulty Class', 'Cover',
-  // "Action" itself only as a rules phrase; on its own "action" is usually plain English.
+  // Lowercase "action" is usually plain English, so only these forms count.
   'Action', 'an action',
   // Rolls
   'Ability Checks?', 'Attack Rolls?', 'D20 Tests?', 'Damage Rolls?', 'Death Saving Throws?', 'Spell Attacks?',
@@ -37,91 +36,105 @@ const TERMS = [
   'Experience Points', 'Carrying Capacity', 'Dead', 'Stable',
 ];
 
-type pattern = [kind: string, source: RegExp];
+type Pattern = [kind: string, source: RegExp];
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Longer names first, so "Hit Point Dice" wins over "Hit Points".
 const longestFirst = (names: string[]) => [...names].sort((a, b) => b.length - a.length);
 
-// Names of one kind: multi-word ones anywhere, one-word ones only before one of nouns
-// ("Light cantrip") or after "cast ". Matches the name alone, so it's what gets the link.
+// Multi-word names match anywhere, but one-word names (Light, Shield) only before a noun like "cantrip" or after "cast ".
+// Only the name itself is matched, so it is what gets highlighted.
 function namePattern(names: string[], nouns: string): RegExp | null {
-  const multi = longestFirst(names.filter(n => /\s/.test(n))).map(escape);
-  const single = longestFirst(names.filter(n => !/\s/.test(n))).map(escape);
-  const parts = [];
-  if (multi.length) parts.push(`\\b(?:${multi.join('|')})(?![\\w(])`);
-  if (single.length) parts.push(`(?:(?<=\\bcast )|\\b)(?:${single.join('|')})(?= (?:${nouns})\\b)`, `(?<=\\bcast )(?:${single.join('|')})\\b`);
-  return parts.length ? new RegExp(parts.join('|')) : null;
+  const multiWord = longestFirst(names.filter(name => /\s/.test(name))).map(escapeRegExp);
+  const singleWord = longestFirst(names.filter(name => !/\s/.test(name))).map(escapeRegExp);
+  const alternatives = [];
+  if (multiWord.length) alternatives.push(`\\b(?:${multiWord.join('|')})(?![\\w(])`);
+  if (singleWord.length) {
+    alternatives.push(
+      `(?:(?<=\\bcast )|\\b)(?:${singleWord.join('|')})(?= (?:${nouns})\\b)`,
+      `(?<=\\bcast )(?:${singleWord.join('|')})\\b`,
+    );
+  }
+  return alternatives.length ? new RegExp(alternatives.join('|')) : null;
 }
 
-// The patterns, in the order they're tried at each position; the first group that matches
-// names the class. Names go before terms, so "Cone of Cold" is a spell rather than "Cone".
-const STATIC_BEFORE: pattern[] = [
+// Patterns are tried in order at each position, and names precede terms so "Cone of Cold" is a spell, not "Cone".
+const STATIC_BEFORE: Pattern[] = [
   ['rules-dice', /\b\d*d(?:4|6|8|10|12|20|100)\b(?:\s?[+−-]\s?\d+\b)?|\bDC \d+\b/],
   ['rules-measure', /\b\d+(?:-foot|-mile|\s(?:feet|foot|miles?))\b/],
 ];
-const STATIC_AFTER: pattern[] = [
+const STATIC_AFTER: Pattern[] = [
   ['rules-condition', new RegExp(`\\b(?:${CONDITIONS.join('|')})\\b`)],
   ['rules-term', new RegExp(`\\b(?:${longestFirst(TERMS).join('|')})\\b`)],
 ];
 
-export interface compiled { patterns: pattern[]; any: RegExp }
-const compile = (patterns: pattern[]): compiled =>
-  ({ patterns, any: new RegExp(patterns.map(([, p]) => `(${p.source})`).join('|'), 'g') });
+// The patterns plus one global regex with a capture group per pattern.
+export interface Compiled { patterns: Pattern[]; any: RegExp }
+
+const compile = (patterns: Pattern[]): Compiled =>
+  ({ patterns, any: new RegExp(patterns.map(([, pattern]) => `(${pattern.source})`).join('|'), 'g') });
+
 const BASIC = compile([...STATIC_BEFORE, ...STATIC_AFTER]);
-// Built once per loaded glossary.
-const withNames = new WeakMap<glossary, compiled>();
-export function patternsFor(terms: glossary | null): compiled {
+// Compiled once per loaded glossary.
+const compiledByGlossary = new WeakMap<Glossary, Compiled>();
+
+export function patternsFor(terms: Glossary | null): Compiled {
   if (!terms) return BASIC;
-  let found = withNames.get(terms);
-  if (!found) {
-    const named: pattern[] = [];
-    const add = (kind: string, p: RegExp | null) => p && named.push([kind, p]);
+  let compiled = compiledByGlossary.get(terms);
+  if (!compiled) {
+    const named: Pattern[] = [];
+    const add = (kind: string, pattern: RegExp | null) => pattern && named.push([kind, pattern]);
     add('rules-spell', namePattern(terms.spells, 'spell|cantrip|spells'));
     add('rules-feat', namePattern(terms.feats, 'feat'));
     add('rules-language', namePattern(terms.languages, 'language'));
-    // Skills are written capitalised ("a Wisdom (Perception) check"), so the name alone is enough.
-    if (terms.skills.length) add('rules-skill', new RegExp(`\\b(?:${longestFirst(terms.skills).map(escape).join('|')})\\b`));
-    found = compile([...STATIC_BEFORE, ...named, ...STATIC_AFTER]);
-    withNames.set(terms, found);
+    // Skills are always capitalised ("a Wisdom (Perception) check"), so the bare name is enough.
+    if (terms.skills.length) add('rules-skill', new RegExp(`\\b(?:${longestFirst(terms.skills).map(escapeRegExp).join('|')})\\b`));
+    compiled = compile([...STATIC_BEFORE, ...named, ...STATIC_AFTER]);
+    compiledByGlossary.set(terms, compiled);
   }
-  return found;
+  return compiled;
 }
 
-// The glossary key for a match of a kind, or null.
-export function keyFor(terms: glossary, kind: string, text: string): string | null {
+// The kind of the pattern whose capture group produced this match of a Compiled regex.
+export function kindOfMatch(patterns: Pattern[], match: RegExpMatchArray): string {
+  return patterns[match.slice(1).findIndex(Boolean)][0];
+}
+
+// The glossary key for a match of the given kind, or null.
+export function keyFor(terms: Glossary, kind: string, text: string): string | null {
   const prefix = { 'rules-spell': 'spell:', 'rules-feat': 'feat:', 'rules-language': 'language:' }[kind];
   if (prefix) return terms.terms.has(prefix + text.toLowerCase()) ? prefix + text.toLowerCase() : null;
   return kind === 'rules-measure' ? null : termKey(terms, text);
 }
 
-// Every rule and condition the glossary defines, as the packs name it, with or without a
-// plural ending. Case matters: "Cover" the rule, not "cover" the verb.
-const byName = new WeakMap<glossary, RegExp | null>();
-function namesPattern(terms: glossary): RegExp | null {
-  let found = byName.get(terms);
-  if (found === undefined) {
-    const names = [...terms.terms].filter(([key]) => !key.includes(':')).map(([, d]) => d.name);
-    found = names.length ? new RegExp(`\\b(${longestFirst(names).map(escape).join('|')})(?:e?s)?\\b`, 'g') : null;
-    byName.set(terms, found);
+// Every rule and condition name the glossary defines, optionally plural.
+// Case matters, so "Cover" the rule matches but "cover" the verb doesn't.
+const namesPatternByGlossary = new WeakMap<Glossary, RegExp | null>();
+function namesPattern(terms: Glossary): RegExp | null {
+  let pattern = namesPatternByGlossary.get(terms);
+  if (pattern === undefined) {
+    const names = [...terms.terms].filter(([key]) => !key.includes(':')).map(([, definition]) => definition.name);
+    pattern = names.length ? new RegExp(`\\b(${longestFirst(names).map(escapeRegExp).join('|')})(?:e?s)?\\b`, 'g') : null;
+    namesPatternByGlossary.set(terms, pattern);
   }
-  return found;
+  return pattern;
 }
 
-export interface termMatch { start: number; end: number; key: string }
+export interface TermMatch { start: number; end: number; key: string }
 
-// Every stretch of text the glossary defines: what RulesText would underline, then any other
-// rule or condition named outright ("Proficiency", "Skill").
-export function termsIn(text: string, terms: glossary): termMatch[] {
-  const out: termMatch[] = [];
+// Every defined stretch of text: what RulesText would highlight, then any other rule or condition named outright.
+export function termsIn(text: string, terms: Glossary): TermMatch[] {
+  const matches: TermMatch[] = [];
   const { patterns, any } = patternsFor(terms);
   for (const match of text.matchAll(any)) {
-    const key = keyFor(terms, patterns[match.slice(1).findIndex(Boolean)][0], match[0]);
-    if (key) out.push({ start: match.index ?? 0, end: (match.index ?? 0) + match[0].length, key });
+    const key = keyFor(terms, kindOfMatch(patterns, match), match[0]);
+    if (key) matches.push({ start: match.index ?? 0, end: (match.index ?? 0) + match[0].length, key });
   }
   const names = namesPattern(terms);
   for (const match of names ? text.matchAll(names) : []) {
     const start = match.index ?? 0, end = start + match[0].length;
-    if (!out.some(m => m.start < end && start < m.end)) out.push({ start, end, key: match[1].toLowerCase() });
+    const overlaps = matches.some(existing => existing.start < end && start < existing.end);
+    if (!overlaps) matches.push({ start, end, key: match[1].toLowerCase() });
   }
-  return out;
+  return matches;
 }

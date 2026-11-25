@@ -2,7 +2,7 @@ import { portraitUrl } from '../../api/characters';
 import './CharacterPortrait.css';
 
 // A character's portrait in a square frame, or their initial when they have none.
-// size: the frame's width and height in pixels.
+// size is the frame's side in pixels.
 export function CharacterPortrait({ characterId, name, version, size = 40 }: {
   characterId: string;
   name: string;

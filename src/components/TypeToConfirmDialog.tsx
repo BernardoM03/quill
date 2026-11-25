@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 import './DeleteCampaignDialog.css'
 
-// A modal that keeps its danger button disabled until the user types `phrase` exactly.
-// onConfirm does the work; its rejection's server message is shown in the dialog.
+// A modal whose danger button stays disabled until the user types `phrase` exactly.
+// If onConfirm rejects, its server message shows in the dialog.
 export default function TypeToConfirmDialog({ title, phrase, confirmLabel, busyLabel, onConfirm, onClose, children }: {
   title: string
   phrase: string

@@ -1,16 +1,16 @@
 import { Fragment, useState, type ReactNode } from 'react';
 
-import type { characterSummary, playState, sheetFeature, sheetSpell } from '../../api/characters';
+import type { CharacterSummary, PlayState, SheetFeature, SheetSpell } from '../../api/characters';
 import { useEntry } from '../../packs/usePacks';
 import { RulesText } from '../RulesText';
-import type { sheetInfo } from './InfoPanel';
-import { Pips, type playChange } from './SheetPlay';
+import type { SheetInfo } from './InfoPanel';
+import { Pips, type PlayChange } from './SheetPlay';
 import { SheetTerm } from './SheetTerm';
 import './Sheet.css';
 
-type tabId = 'actions' | 'spells' | 'inventory' | 'features' | 'background' | 'notes' | 'extras';
+type TabId = 'actions' | 'spells' | 'inventory' | 'features' | 'background' | 'notes' | 'extras';
 
-const TABS: [tabId, string][] = [
+const TABS: [TabId, string][] = [
   ['actions', 'Actions'], ['spells', 'Spells'], ['inventory', 'Inventory'], ['features', 'Features'],
   ['background', 'Background'], ['notes', 'Notes'], ['extras', 'Extras'],
 ];
@@ -20,12 +20,12 @@ const RECHARGE: Record<string, string> = { long: 'Long Rest', short: 'Short Rest
 const ACTIVATION: Record<string, string> = {
   action: 'Action', bonusAction: 'Bonus Action', reaction: 'Reaction', free: 'Free', special: 'Special', passive: 'Passive',
 };
-// The actions any character can take in combat (SRD 5.2, Actions).
+// The actions any character can take in combat, per SRD 5.2.
 const COMBAT_ACTIONS = ['Attack', 'Dash', 'Disengage', 'Dodge', 'Help', 'Hide', 'Influence', 'Magic', 'Ready', 'Search', 'Study', 'Utilize'];
 
 const signed = (n: number | null | undefined) => (n == null ? '—' : n >= 0 ? `+${n}` : `${n}`);
 
-// A row of filter chips; the first is "All".
+// A row of filter chips, the first being "All".
 function Filters<T extends string>({ options, value, onChange }: { options: [T, string][], value: T, onChange: (v: T) => void }) {
   return (
     <div className="details-filters" role="group" aria-label="Filter">
@@ -46,10 +46,9 @@ function Section({ title, aside, children }: { title: string, aside?: ReactNode,
   );
 }
 
-// How many uses of a limited-use feature are left: boxes to tick (ticked = spent) for a few,
-// or − / + with the number left for a pool (Lay On Hands).
+// Remaining uses of a limited-use feature, as tick boxes for a few or a − / + counter for a pool (Lay On Hands).
 function Uses({ feature, state, canEdit, onChange }: {
-  feature: sheetFeature, state: playState, canEdit: boolean, onChange: playChange,
+  feature: SheetFeature, state: PlayState, canEdit: boolean, onChange: PlayChange,
 }) {
   const uses = feature.uses!;
   const spent = state.featureUses[feature.id] ?? 0;
@@ -78,9 +77,8 @@ function Uses({ feature, state, canEdit, onChange }: {
   );
 }
 
-// A name that opens its rules text in the panel beside the sheet; clicking the one that's
-// open closes it.
-function InfoButton({ info, openInfo, onInfo }: { info: sheetInfo } & infoProps) {
+// A name that toggles its rules text in the panel beside the sheet.
+function InfoButton({ info, openInfo, onInfo }: { info: SheetInfo } & InfoProps) {
   const open = openInfo === info.id;
   return (
     <button type="button" className={`details-feature__name${open ? ' details-feature__name--on' : ''}`}
@@ -88,10 +86,10 @@ function InfoButton({ info, openInfo, onInfo }: { info: sheetInfo } & infoProps)
   );
 }
 
-// One feature: its name (opens its rules text beside the sheet), where it's from, any uses.
+// One feature with its source and any uses.
 function FeatureEntry({ feature, state, canEdit, onChange, meta, ...info }: {
-  feature: sheetFeature, state: playState, canEdit: boolean, onChange: playChange, meta?: string,
-} & infoProps) {
+  feature: SheetFeature, state: PlayState, canEdit: boolean, onChange: PlayChange, meta?: string,
+} & InfoProps) {
   return (
     <li className="details-feature">
       <div className="details-feature__head">
@@ -103,16 +101,16 @@ function FeatureEntry({ feature, state, canEdit, onChange, meta, ...info }: {
   );
 }
 
-function sourceLabel(f: sheetFeature): string {
+function sourceLabel(f: SheetFeature): string {
   if (f.source === 'species') return 'Species trait';
   if (f.source === 'feat') return 'Origin feat';
   return `${f.source === 'subclass' ? 'Subclass' : 'Class'} · Level ${f.level ?? 1}`;
 }
 
-type actionFilter = 'all' | 'action' | 'bonusAction' | 'reaction' | 'other' | 'limited';
+type ActionFilter = 'all' | 'action' | 'bonusAction' | 'reaction' | 'other' | 'limited';
 
-function ActionsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps) {
-  const [filter, setFilter] = useState<actionFilter>('all');
+function ActionsTab({ character, canEdit, onChange, openInfo, onInfo }: TabProps) {
+  const [filter, setFilter] = useState<ActionFilter>('all');
   const { state } = character;
   const actionable = character.features.filter(f => f.activation !== 'passive' || f.uses);
   const shown = actionable.filter(f =>
@@ -123,7 +121,7 @@ function ActionsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps
   const str = character.abilities?.STR?.currentModifier ?? null;
   const prof = character.stats?.proficiencyBonus ?? null;
   const showDeathSaves = state.currentHp === 0 || state.deathSaves.successes > 0 || state.deathSaves.failures > 0;
-  const setDeathSaves = (d: playState['deathSaves']) => onChange({ deathSaves: d }, { deathSaves: d });
+  const setDeathSaves = (d: PlayState['deathSaves']) => onChange({ deathSaves: d }, { deathSaves: d });
 
   return (
     <>
@@ -137,7 +135,7 @@ function ActionsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps
           </div>
         </Section>
       )}
-      <Filters<actionFilter> value={filter} onChange={setFilter} options={[
+      <Filters<ActionFilter> value={filter} onChange={setFilter} options={[
         ['all', 'All'], ['action', 'Action'], ['bonusAction', 'Bonus Action'], ['reaction', 'Reaction'], ['other', 'Other'], ['limited', 'Limited Use'],
       ]} />
       {(filter === 'all' || filter === 'action') && (
@@ -180,7 +178,7 @@ function ActionsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps
   );
 }
 
-function SpellsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps) {
+function SpellsTab({ character, canEdit, onChange, openInfo, onInfo }: TabProps) {
   const { state, spells } = character;
   const casting = character.stats?.spellcasting;
   const slotLevels = Object.keys(state.spellSlots).sort();
@@ -233,13 +231,12 @@ function SpellsTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps)
   );
 }
 
-// "1st Level · Evocation · Concentration", then how it's cast: the line under a spell's name
-// in the panel beside the sheet.
-function spellMeta(s: sheetSpell, tags: string): string {
+// The line under a spell's name in the side panel, such as "1st Level · Evocation · Concentration".
+function spellMeta(s: SheetSpell, tags: string): string {
   return [ORDINALS[s.level]?.replace('Cantrips', 'Cantrip'), tags, s.castingTime, s.range, s.duration].filter(Boolean).join(' · ');
 }
 
-function SpellTable({ spells, ...info }: { spells: sheetSpell[] } & infoProps) {
+function SpellTable({ spells, ...info }: { spells: SheetSpell[] } & InfoProps) {
   return (
     <table className="details-table details-table--spells">
       <thead><tr><th>Name</th><th>Time</th><th>Range</th><th>Duration</th></tr></thead>
@@ -264,18 +261,18 @@ function SpellTable({ spells, ...info }: { spells: sheetSpell[] } & infoProps) {
   );
 }
 
-type featureFilter = 'all' | 'class' | 'species' | 'feat';
+type FeatureFilter = 'all' | 'class' | 'species' | 'feat';
 
-function FeaturesTab({ character, canEdit, onChange, openInfo, onInfo }: tabProps) {
-  const [filter, setFilter] = useState<featureFilter>('all');
-  const groups: [featureFilter, string, sheetFeature[]][] = [
+function FeaturesTab({ character, canEdit, onChange, openInfo, onInfo }: TabProps) {
+  const [filter, setFilter] = useState<FeatureFilter>('all');
+  const groups: [FeatureFilter, string, SheetFeature[]][] = [
     ['class', 'Class Features', character.features.filter(f => f.source === 'class' || f.source === 'subclass')],
     ['species', 'Species Traits', character.features.filter(f => f.source === 'species')],
     ['feat', 'Feats', character.features.filter(f => f.source === 'feat')],
   ];
   return (
     <>
-      <Filters<featureFilter> value={filter} onChange={setFilter}
+      <Filters<FeatureFilter> value={filter} onChange={setFilter}
         options={[['all', 'All'], ['class', 'Class Features'], ['species', 'Species Traits'], ['feat', 'Feats']]} />
       {groups.filter(([id]) => filter === 'all' || filter === id).map(([id, title, list]) => (
         <Section key={id} title={title}>
@@ -301,12 +298,12 @@ function detailText(details: Record<string, unknown>, key: string): string {
   return typeof value === 'string' || typeof value === 'number' ? String(value).trim() : '';
 }
 
-// A block of the character's own writing, or a muted line saying where to add it.
+// The character's own writing, or a muted hint saying where to add it.
 function Writing({ text, empty }: { text: string, empty: string }) {
   return text ? <p className="details-writing">{text}</p> : <p className="details-empty">{empty}</p>;
 }
 
-function BackgroundTab({ character }: tabProps) {
+function BackgroundTab({ character }: TabProps) {
   const details = (character.draft.details ?? {}) as Record<string, unknown>;
   const backgroundId = typeof character.draft.background === 'string' ? character.draft.background : '';
   const { entry: background } = useEntry('origins', backgroundId);
@@ -343,7 +340,7 @@ function BackgroundTab({ character }: tabProps) {
   );
 }
 
-function NotesTab({ character }: tabProps) {
+function NotesTab({ character }: TabProps) {
   const details = (character.draft.details ?? {}) as Record<string, unknown>;
   const sections: [string, string][] = [
     ['organizations', 'Organizations'], ['allies', 'Allies'], ['enemies', 'Enemies'], ['backstory', 'Backstory'], ['other', 'Other'],
@@ -367,26 +364,24 @@ function NotesTab({ character }: tabProps) {
   );
 }
 
-interface infoProps {
-  // The id of the feature or spell whose text is open beside the sheet, if one is.
+interface InfoProps {
+  // The feature or spell whose text is open beside the sheet.
   openInfo: string | null,
-  // Open that text beside the sheet; null closes it.
-  onInfo: (info: sheetInfo | null) => void,
+  // Opens that text beside the sheet, or closes it when given null.
+  onInfo: (info: SheetInfo | null) => void,
 }
 
-interface tabProps extends infoProps {
-  character: characterSummary,
+interface TabProps extends InfoProps {
+  character: CharacterSummary,
   canEdit: boolean,
-  onChange: playChange,
+  onChange: PlayChange,
 }
 
-// The sheet's Details panel: the character's actions, spells, features, background and notes,
-// a tab each. A feature's or spell's rules text opens beside the sheet rather than in the
-// list. Limited-use features and spell slots are tracked here; inventory and extras will be
-// once they're stored.
-export function DetailsPanel({ error, ...props }: tabProps & { error: string | null }) {
-  const [tab, setTab] = useState<tabId>('actions');
-  const body: Record<tabId, ReactNode> = {
+// The sheet's tabbed Details panel for actions, spells, features, background and notes.
+// Rules text opens beside the sheet, and limited-use features and spell slots are tracked here.
+export function DetailsPanel({ error, ...props }: TabProps & { error: string | null }) {
+  const [tab, setTab] = useState<TabId>('actions');
+  const body: Record<TabId, ReactNode> = {
     actions: <ActionsTab {...props} />,
     spells: <SpellsTab {...props} />,
     inventory: <p className="details-empty details-empty--center">Inventory isn’t tracked yet. Equipment and coins will show here.</p>,

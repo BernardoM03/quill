@@ -1,19 +1,19 @@
 import { useState } from 'react';
 
-import { saveScoreAdjustments, type scoreAdjustment, type sheetAbility } from '../../api/characters';
+import { saveScoreAdjustments, type ScoreAdjustment, type SheetAbility } from '../../api/characters';
 import './AbilityScores.css';
 
-const ABILITIES: [scoreAdjustment['ability'], string][] = [
+const ABILITIES: [ScoreAdjustment['ability'], string][] = [
   ['STR', 'Strength'], ['DEX', 'Dexterity'], ['CON', 'Constitution'],
   ['INT', 'Intelligence'], ['WIS', 'Wisdom'], ['CHA', 'Charisma'],
 ];
-const MODES: [scoreAdjustment['mode'], string][] = [
+const MODES: [ScoreAdjustment['mode'], string][] = [
   ['atLeast', 'Becomes at least'], ['set', 'Becomes exactly'], ['add', 'Changes by'],
 ];
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
-function describe(a: scoreAdjustment): string {
+function describe(a: ScoreAdjustment): string {
   if (a.mode === 'add') return `${a.ability} ${signed(a.value)}`;
   return `${a.ability} ${a.mode === 'set' ? '=' : '≥'} ${a.value}`;
 }
@@ -23,26 +23,25 @@ function errorMessage(err: unknown): string {
   return response?.data?.error ?? 'Couldn’t save. Try again.';
 }
 
-// The sheet's six abilities, one box each: the current score large, its modifier (what's
-// rolled with) in the small box beneath. Highlighted while a temporary effect changes it; hovering shows the
-// character's own score and where it comes from.
-export function AbilityBoxes({ abilities }: { abilities: Record<string, sheetAbility> }) {
+// The six ability boxes, each showing the current score with its modifier beneath.
+// A box is highlighted while a temporary effect changes it, and hovering explains the score.
+export function AbilityBoxes({ abilities }: { abilities: Record<string, SheetAbility> }) {
   return (
     <div className="sheet-abilities" role="group" aria-label="Ability scores">
       {ABILITIES.map(([code, label]) => {
-        const a = abilities[code];
-        const changed = a && a.current !== a.total;
+        const ability = abilities[code];
+        const changed = ability && ability.current !== ability.total;
         // Where the score comes from, shown on hover: base, then each permanent increase.
-        const breakdown = a && a.base != null
-          ? [changed ? `Own score ${a.total}` : null, `Base ${a.base}`,
-             ...a.increases.map(inc => `${signed(inc.amount)} ${inc.source}`)].filter(Boolean).join('\n')
+        const breakdown = ability && ability.base != null
+          ? [changed ? `Own score ${ability.total}` : null, `Base ${ability.base}`,
+             ...ability.increases.map(inc => `${signed(inc.amount)} ${inc.source}`)].filter(Boolean).join('\n')
           : undefined;
         return (
           <div key={code} className={changed ? 'sheet-ability sheet-ability--changed' : 'sheet-ability'}
             title={breakdown ? `${label}\n${breakdown}` : label}>
             <span className="sheet-ability__name"><abbr title={label} aria-label={label}>{code}</abbr></span>
-            <span className="sheet-ability__score" aria-label="Score">{a?.current ?? '—'}</span>
-            <span className="sheet-ability__mod" aria-label="Modifier">{a?.currentModifier != null ? signed(a.currentModifier) : '—'}</span>
+            <span className="sheet-ability__score" aria-label="Score">{ability?.current ?? '—'}</span>
+            <span className="sheet-ability__mod" aria-label="Modifier">{ability?.currentModifier != null ? signed(ability.currentModifier) : '—'}</span>
           </div>
         );
       })}
@@ -50,24 +49,24 @@ export function AbilityBoxes({ abilities }: { abilities: Record<string, sheetAbi
   );
 }
 
-// Temporary effects (a magic item, a curse, a spell): they change the current score only,
-// and are added and removed here. onChange gets the abilities with the effects applied.
+// Temporary effects such as magic items, curses or spells, which change only the current score.
+// onChange receives the abilities with the effects applied.
 export function TemporaryEffects({ characterId, adjustments, readOnly = false, onChange }: {
   characterId: string;
-  adjustments: scoreAdjustment[];
+  adjustments: ScoreAdjustment[];
   // Shows the effects without the add and remove controls (anyone but the owner).
   readOnly?: boolean;
-  onChange: (abilities: Record<string, sheetAbility>, adjustments: scoreAdjustment[]) => void;
+  onChange: (abilities: Record<string, SheetAbility>, adjustments: ScoreAdjustment[]) => void;
 }) {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
-  const [ability, setAbility] = useState<scoreAdjustment['ability']>('STR');
-  const [mode, setMode] = useState<scoreAdjustment['mode']>('atLeast');
+  const [ability, setAbility] = useState<ScoreAdjustment['ability']>('STR');
+  const [mode, setMode] = useState<ScoreAdjustment['mode']>('atLeast');
   const [value, setValue] = useState('19');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function save(next: scoreAdjustment[]) {
+  function save(next: ScoreAdjustment[]) {
     setSaving(true);
     setError(null);
     return saveScoreAdjustments(characterId, next)
@@ -112,11 +111,11 @@ export function TemporaryEffects({ characterId, adjustments, readOnly = false, o
         <form className="sheet-effects__form" onSubmit={handleAdd}>
           <input className="sheet-effects__name" aria-label="Effect name" placeholder="Belt of Hill Giant Strength"
             value={name} maxLength={60} required autoFocus onChange={e => setName(e.target.value)} />
-          <select className="rules-select" aria-label="Ability" value={ability} onChange={e => setAbility(e.target.value as scoreAdjustment['ability'])}>
+          <select className="rules-select" aria-label="Ability" value={ability} onChange={e => setAbility(e.target.value as ScoreAdjustment['ability'])}>
             {ABILITIES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
           </select>
           <select className="rules-select" aria-label="How it changes the score" value={mode}
-            onChange={e => setMode(e.target.value as scoreAdjustment['mode'])}>
+            onChange={e => setMode(e.target.value as ScoreAdjustment['mode'])}>
             {MODES.map(([m, label]) => <option key={m} value={m}>{label}</option>)}
           </select>
           <input className="sheet-effects__value" type="number" aria-label="Value" required

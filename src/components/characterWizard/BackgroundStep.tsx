@@ -1,5 +1,5 @@
 import type {
-  backgroundOption, characterChoice, choicePicks, featDetail, originRules, takenOptions,
+  BackgroundOption, CharacterChoice, ChoicePicks, FeatDetail, OriginRules, TakenOptions,
 } from '../../api/characters';
 import { AbilityIncreaseField } from './AbilityIncreaseField';
 import { activeChoices } from './activeChoices';
@@ -11,19 +11,16 @@ import { RuleSwitch } from './RuleSwitch';
 const FEAT_CHOICE = 'origin-feat';
 const EQUIPMENT_CHOICE = 'starting-equipment';
 
-// The background step: every background the campaign allows, one card at a time. The card
-// shows what the background gives and asks for every choice it brings: ability score
-// increases, its Origin feat (and that feat's own choices), equipment and languages.
-// errorsFor(field): the server's messages for a field ('background', 'backgroundChoice:<id>').
-// rules: the origin rules in force; locked in a campaign (the GM's), the player's in the sandbox.
+// The background step, showing one allowed background at a time with everything it grants and asks for.
+// rules are the origin rules in force, locked in a campaign and editable in the sandbox.
 export function BackgroundStep({ rules, locked, onRuleChange, options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
-  rules: originRules;
+  rules: OriginRules;
   locked: boolean;
-  onRuleChange: (changes: Partial<originRules>) => void;
-  options: backgroundOption[];
+  onRuleChange: (changes: Partial<OriginRules>) => void;
+  options: BackgroundOption[];
   selected: string | null;
-  choices: choicePicks;
-  taken: takenOptions;
+  choices: ChoicePicks;
+  taken: TakenOptions;
   onSelect: (backgroundId: string) => void;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];
@@ -64,14 +61,14 @@ export function BackgroundStep({ rules, locked, onRuleChange, options, selected,
   const feat = background.feat ?? background.originFeats.find(f => f.id === choices[FEAT_CHOICE]);
   const given = background.equipment.find(p => p.label === background.givenEquipment);
 
-  const field = (choice: characterChoice) => choice.kind === 'abilityIncrease' ? (
+  const field = (choice: CharacterChoice) => choice.kind === 'abilityIncrease' ? (
     <AbilityIncreaseField key={choice.id} choice={choice} value={choices[choice.id]} onChoose={onChoose}
       errors={errorsFor(`backgroundChoice:${choice.id}`)} />
   ) : (
     <ChoiceField key={choice.id} choice={choice} field={`backgroundChoice:${choice.id}`} value={choices[choice.id]}
       taken={taken} onChoose={onChoose} errors={errorsFor(`backgroundChoice:${choice.id}`)} />
   );
-  const featEffects = (f: featDetail) => (
+  const featEffects = (f: FeatDetail) => (
     <dl className="pick-card__entries">
       {f.effects.map(e => (
         <div key={e.name} className="pick-entry">

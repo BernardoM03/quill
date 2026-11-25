@@ -1,6 +1,4 @@
-// Saving an allowed-content list. Resolves once saved; rejects with an Error whose message
-// is the server's reason when it refuses the change (e.g. a class left with no cantrips),
-// so each section can show it beside the toggle that caused it.
+// Saves an allowed-content list, rejecting with the server's reason so the section can show it by the toggle.
 export type SaveAllowed = (ids: string[]) => Promise<void>;
 
 export function refusalText(err: unknown): string {

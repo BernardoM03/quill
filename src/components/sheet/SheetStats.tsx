@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import type { sheetStats } from '../../api/characters';
+import type { SheetStats } from '../../api/characters';
 import { SheetTerm } from './SheetTerm';
 import './Sheet.css';
 
@@ -11,9 +11,8 @@ const ABILITY_LABELS: Record<string, string> = {
   STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
 };
 
-// One labelled box on the sheet. area: its place in the sheet's grid (Sheet.css). The title
-// opens its rules beside the sheet when the glossary defines it (term: what to look up, when
-// that isn't the title).
+// One labelled box placed at a named grid area of the sheet.
+// A defined title opens its rules in the side panel, looking up term when it differs from the title.
 export function SheetBox({ area, title, term, className, children }: {
   area: string, title: string, term?: string, className?: string, children: ReactNode,
 }) {
@@ -45,9 +44,8 @@ const SPEED_TERMS: Record<string, string> = {
 
 const SPEED_TYPES = ['walk', 'fly', 'swim', 'climb', 'burrow'] as const;
 
-// Speed, with arrows either side to step through every kind of speed: walking, flying,
-// swimming, climbing, burrowing. One the character doesn't have shows "—".
-function SpeedBox({ stats }: { stats: sheetStats }) {
+// Speed with arrows to step through each movement type, showing "—" for types the character lacks.
+function SpeedBox({ stats }: { stats: SheetStats }) {
   const [index, setIndex] = useState(0);
   const type = SPEED_TYPES[index];
   const speed = stats.speeds.find(s => s.type === type)
@@ -68,7 +66,7 @@ function SpeedBox({ stats }: { stats: sheetStats }) {
 }
 
 // The small number boxes beside the ability scores and under them.
-export function HeadlineStats({ stats }: { stats: sheetStats }) {
+export function HeadlineStats({ stats }: { stats: SheetStats }) {
   return (
     <>
       <StatBox area="proficiency" title="Proficiency" value={signed(stats.proficiencyBonus)} />
@@ -102,9 +100,8 @@ function StatList({ items }: {
   );
 }
 
-// Two columns of three, STR DEX CON down the left and INT WIS CHA down the right: each
-// the proficiency dot, the ability (full name on hover) and the bonus.
-export function SavingThrowsBox({ stats }: { stats: sheetStats }) {
+// Saving throws in two columns of three, each with a proficiency dot, the ability and the bonus.
+export function SavingThrowsBox({ stats }: { stats: SheetStats }) {
   return (
     <SheetBox area="saves" title="Saving Throws">
       <ul className="sheet-saves">
@@ -120,7 +117,7 @@ export function SavingThrowsBox({ stats }: { stats: sheetStats }) {
   );
 }
 
-export function SkillsBox({ stats }: { stats: sheetStats }) {
+export function SkillsBox({ stats }: { stats: SheetStats }) {
   return (
     <SheetBox area="skills" title="Skills">
       <StatList items={stats.skills.map(s => ({ ...s, key: s.id, label: <SheetTerm term={s.name}>{s.name}</SheetTerm> }))} />
@@ -128,7 +125,7 @@ export function SkillsBox({ stats }: { stats: sheetStats }) {
   );
 }
 
-export function SensesBox({ stats }: { stats: sheetStats }) {
+export function SensesBox({ stats }: { stats: SheetStats }) {
   const { senses, spellcasting } = stats;
   const rows: [string, string][] = [
     ['Passive Perception', plain(senses.passivePerception)],
@@ -152,7 +149,7 @@ export function SensesBox({ stats }: { stats: sheetStats }) {
   );
 }
 
-export function ProficienciesBox({ stats }: { stats: sheetStats }) {
+export function ProficienciesBox({ stats }: { stats: SheetStats }) {
   const groups: [string, string[]][] = [
     ['Armor', stats.proficiencies.armor],
     ['Weapons', stats.proficiencies.weapons],

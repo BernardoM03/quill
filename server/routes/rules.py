@@ -5,8 +5,7 @@ from server.rules.settings import LIMITS, RULE_DEFAULTS
 
 bp = Blueprint('rules', __name__)
 
-# The default rules and their limits: what the Character Sandbox uses, and what a
-# campaign falls back to for any rule its GM hasn't changed.
+# The Character Sandbox uses these defaults, and campaigns fall back to them for unchanged rules.
 @bp.get('/rules')
 @require_login
 def get_rules():

@@ -1,28 +1,27 @@
-# A character's description: who they are, how they look, their personality, and notes.
-# Every field is optional free text, except alignment, which is one of ALIGNMENTS.
-
 from server.records import definition
 
-# The fields, their limits and the alignments come from the schema
-# (schemas/records/common.schema.json $defs.details), the source of truth for them.
-def _fields():
-    fields, alignments = {}, []
+# A character's description fields are optional free text, except alignment which must be one of ALIGNMENTS.
+
+ANSWER_MAX_LENGTH = 2000
+
+# Reads each field's max length and the alignments from common.schema.json $defs.details.
+def _load_detail_fields():
+    max_lengths, alignments = {}, []
     for key, field in definition('common', 'details')['properties'].items():
         if 'enum' in field:
-            alignments = [a for a in field['enum'] if a]
-            fields[key] = max(len(a) for a in alignments)
+            alignments = [alignment for alignment in field['enum'] if alignment]
+            max_lengths[key] = max(len(alignment) for alignment in alignments)
         else:
-            text = definition('common', field['$ref'].rsplit('/', 1)[-1]) if '$ref' in field else field
-            fields[key] = text['maxLength']
-    return fields, alignments
+            text_schema = definition('common', field['$ref'].rsplit('/', 1)[-1]) if '$ref' in field else field
+            max_lengths[key] = text_schema['maxLength']
+    return max_lengths, alignments
 
-# Field -> its longest length. alignment is checked against ALIGNMENTS instead.
-FIELDS, ALIGNMENTS = _fields()
+FIELDS, ALIGNMENTS = _load_detail_fields()
 
 def _error(field, message):
     return {'field': field, 'message': message}
 
-# Problems with draft['details'], fields 'details:<key>'.
+# Problems with draft['details'], using fields named 'details:<key>'.
 def details_errors(details):
     if details is None:
         return []
@@ -40,37 +39,37 @@ def details_errors(details):
             errors.append(_error('details:alignment', 'Choose one of the alignments.'))
     return errors
 
-# The details worth saving: known fields, trimmed, without the empty ones.
+# Known, non-blank detail fields, trimmed.
 def clean_details(details):
     if not isinstance(details, dict):
         return {}
-    return {k: v.strip() for k, v in details.items() if k in FIELDS and isinstance(v, str) and v.strip()}
+    return {key: value.strip() for key, value in details.items()
+            if key in FIELDS and isinstance(value, str) and value.strip()}
 
-# Answers to the campaign's custom questions (common.schema.json $defs.answers).
-ANSWER_MAX_LENGTH = 2000
-
-# Problems with draft['answers'] against the campaign's questions, fields 'answer:<id>'.
-# A required question needs a non-blank answer; answers to removed questions are ignored.
+# Problems with draft['answers'], using fields named 'answer:<id>'.
+# Required questions need a non-blank answer, and answers to removed questions are ignored.
 def answer_errors(answers, questions):
     if answers is not None and not isinstance(answers, dict):
         return [_error('answers', 'Answers must be an object.')]
     answers = answers or {}
     errors = []
-    for q in questions:
-        value = answers.get(q['id'])
+    for question in questions:
+        field = f'answer:{question["id"]}'
+        value = answers.get(question['id'])
         if value is not None and not isinstance(value, str):
-            errors.append(_error(f'answer:{q["id"]}', 'Must be text.'))
+            errors.append(_error(field, 'Must be text.'))
         elif value and len(value) > ANSWER_MAX_LENGTH:
-            errors.append(_error(f'answer:{q["id"]}', f'At most {ANSWER_MAX_LENGTH} characters.'))
-        elif q['required'] and not (value or '').strip():
-            errors.append(_error(f'answer:{q["id"]}', 'Your GM needs an answer to this.'))
+            errors.append(_error(field, f'At most {ANSWER_MAX_LENGTH} characters.'))
+        elif question['required'] and not (value or '').strip():
+            errors.append(_error(field, 'Your GM needs an answer to this.'))
     return errors
 
-# The answers worth saving: text, trimmed, without the empty ones. Answers to questions no
-# longer asked are kept (old is what was saved before), so a question put back finds them.
-def clean_answers(answers, questions, old=None):
-    asked = {q['id'] for q in questions}
-    kept = {k: v for k, v in (old or {}).items() if k not in asked}
+# Non-blank answers to the current questions, trimmed.
+# Saved answers to questions no longer asked are kept, so a restored question finds its answer.
+def clean_answers(answers, questions, previous_answers=None):
+    asked = {question['id'] for question in questions}
+    kept = {key: value for key, value in (previous_answers or {}).items() if key not in asked}
     if isinstance(answers, dict):
-        kept.update({k: v.strip() for k, v in answers.items() if k in asked and isinstance(v, str) and v.strip()})
+        kept.update({key: value.strip() for key, value in answers.items()
+                     if key in asked and isinstance(value, str) and value.strip()})
     return kept

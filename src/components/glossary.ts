@@ -1,20 +1,18 @@
 import { loadCollection } from '../packs/loader';
 
-// Definitions for the words RulesText picks out, from the packs: the rules glossary
-// ("Advantage", "Bonus Action", "Cone", ...), the conditions, the skills, and the spells,
-// feats and languages named in rules text. Loaded once per page.
-export interface definition {
+// Definitions for highlighted words, built from the packs' rules, conditions, skills, spells, feats and languages.
+// The glossary is loaded once per page.
+export interface Definition {
   name: string;
-  // A line under the name: a spell's level, school, casting time, ...
+  // A line under the name, such as a spell's level, school and casting time.
   meta?: string;
-  // Markdown, shown with RulesText.
+  // Markdown rendered with RulesText.
   text: string;
 }
 
-export interface glossary {
-  // Keyed by lowercase name; spells, feats and languages as "spell:find familiar" and so on,
-  // so a spell named like a rule (Darkness) doesn't replace the rule.
-  terms: Map<string, definition>;
+export interface Glossary {
+  // Keyed by lowercase name, with prefixes like "spell:" so a spell named like a rule (Darkness) doesn't replace it.
+  terms: Map<string, Definition>;
   // Names to look for in rules text, by kind.
   skills: string[];
   spells: string[];
@@ -22,95 +20,101 @@ export interface glossary {
   languages: string[];
 }
 
-interface ruleEntry { name: string; description?: string }
-interface conditionEntry { name: string; effectGroups?: { name: string; description?: string }[] }
-interface spellEntry {
+interface RuleEntry { name: string; description?: string }
+interface ConditionEntry { name: string; effectGroups?: { name: string; description?: string }[] }
+interface SpellEntry {
   name: string; level: number; school?: string; castingTime?: { type?: string; value?: number; unit?: string };
   range?: { type?: string; distance?: number; unit?: string }; components?: string[]; concentration?: boolean;
   ritual?: boolean; duration?: { value?: number; unit?: string }; description?: string; shortDescription?: string;
 }
-interface featEntry { name: string; category?: string; effectGroups?: { name: string; description?: string }[] }
-interface skillEntry { name: string; ability: string; description?: string; uses?: string }
-interface languageEntry { name: string; rarity?: string; description?: string }
+interface FeatEntry { name: string; category?: string; effectGroups?: { name: string; description?: string }[] }
+interface SkillEntry { name: string; ability: string; description?: string; uses?: string }
+interface LanguageEntry { name: string; rarity?: string; description?: string }
 
 const ABILITIES: Record<string, string> = {
   STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma',
 };
 
-const titleCase = (s: string) => s.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).trim();
+// "bonusAction" becomes "Bonus Action".
+const titleCase = (camelCase: string) => camelCase.replace(/([A-Z])/g, ' $1').replace(/^./, first => first.toUpperCase()).trim();
+// 1st, 2nd, 3rd, 4th and so on, with 11th to 13th as exceptions.
 const ordinal = (n: number) => `${n}${['th', 'st', 'nd', 'rd'][n % 10 > 3 || Math.floor(n / 10) === 1 ? 0 : n % 10]}`;
 
-// "Level 2 Evocation · Action · 90 feet · V, S, M · Instantaneous"
-function spellMeta(s: spellEntry): string {
-  const parts = [s.level === 0 ? `${titleCase(s.school ?? '')} cantrip` : `${ordinal(s.level)}-level ${titleCase(s.school ?? '')}`];
-  const time = s.castingTime;
+// For example "2nd-level Evocation · Action · 90 feet · V, S, M · Instantaneous".
+function spellMeta(spell: SpellEntry): string {
+  const school = titleCase(spell.school ?? '');
+  const parts = [spell.level === 0 ? `${school} cantrip` : `${ordinal(spell.level)}-level ${school}`];
+  const time = spell.castingTime;
   if (time?.type) parts.push(time.value ? `${time.value} ${time.unit ?? titleCase(time.type)}` : titleCase(time.type));
-  const range = s.range;
+  const range = spell.range;
   if (range?.distance) parts.push(`${range.distance} ${range.unit ?? 'feet'}`);
   else if (range?.type) parts.push(titleCase(range.type));
-  if (s.components?.length) parts.push(s.components.map(c => c[0].toUpperCase()).join(', '));
-  const d = s.duration;
-  if (d?.unit) parts.push(`${s.concentration ? 'Concentration, ' : ''}${d.value ? `${d.value} ${d.unit}` : titleCase(d.unit)}`);
-  if (s.ritual) parts.push('Ritual');
+  if (spell.components?.length) parts.push(spell.components.map(component => component[0].toUpperCase()).join(', '));
+  const duration = spell.duration;
+  if (duration?.unit) {
+    const length = duration.value ? `${duration.value} ${duration.unit}` : titleCase(duration.unit);
+    parts.push(`${spell.concentration ? 'Concentration, ' : ''}${length}`);
+  }
+  if (spell.ritual) parts.push('Ritual');
   return parts.join(' · ');
 }
 
 const groupsText = (groups: { name: string; description?: string }[] = []) =>
-  groups.map(g => `**${g.name}.** ${g.description ?? ''}`).join('\n\n');
+  groups.map(group => `**${group.name}.** ${group.description ?? ''}`).join('\n\n');
 
-let glossaryPromise: Promise<glossary> | null = null;
+let glossaryPromise: Promise<Glossary> | null = null;
 
-export function loadGlossary(): Promise<glossary> {
+export function loadGlossary(): Promise<Glossary> {
   if (!glossaryPromise) {
     glossaryPromise = Promise.all([
       loadCollection('rules'), loadCollection('conditions'), loadCollection('spells'),
       loadCollection('feats'), loadCollection('languages'), loadCollection('skills'),
     ]).then(([rules, conditions, spells, feats, languages, skills]) => {
-      const terms = new Map<string, definition>();
-      for (const r of rules.values() as Iterable<ruleEntry>) {
-        if (r.description) terms.set(r.name.toLowerCase(), { name: r.name, text: r.description });
+      const terms = new Map<string, Definition>();
+      for (const rule of rules.values() as Iterable<RuleEntry>) {
+        if (rule.description) terms.set(rule.name.toLowerCase(), { name: rule.name, text: rule.description });
       }
-      // A condition is defined by its effects: "**Can't See.** You can't see ...", one paragraph each.
-      for (const c of conditions.values() as Iterable<conditionEntry>) {
-        const text = groupsText(c.effectGroups);
-        if (text) terms.set(c.name.toLowerCase(), { name: c.name, text });
+      // A condition is defined by its effects, one bold-led paragraph each.
+      for (const condition of conditions.values() as Iterable<ConditionEntry>) {
+        const text = groupsText(condition.effectGroups);
+        if (text) terms.set(condition.name.toLowerCase(), { name: condition.name, text });
       }
-      // A skill: the ability it goes with, then what the pack says about it and its example uses.
       const skillNames: string[] = [];
-      for (const s of skills.values() as Iterable<skillEntry>) {
-        const text = [s.description, s.uses && `**Example uses.** ${s.uses}`].filter(Boolean).join('\n\n');
+      for (const skill of skills.values() as Iterable<SkillEntry>) {
+        const text = [skill.description, skill.uses && `**Example uses.** ${skill.uses}`].filter(Boolean).join('\n\n');
         if (!text) continue;
-        terms.set(s.name.toLowerCase(), { name: s.name, meta: `${ABILITIES[s.ability] ?? s.ability} skill`, text });
-        skillNames.push(s.name);
+        terms.set(skill.name.toLowerCase(), { name: skill.name, meta: `${ABILITIES[skill.ability] ?? skill.ability} skill`, text });
+        skillNames.push(skill.name);
       }
       const spellNames: string[] = [];
-      for (const s of spells.values() as Iterable<spellEntry>) {
-        terms.set(`spell:${s.name.toLowerCase()}`, { name: s.name, meta: spellMeta(s), text: s.shortDescription || s.description || '' });
-        spellNames.push(s.name);
+      for (const spell of spells.values() as Iterable<SpellEntry>) {
+        terms.set(`spell:${spell.name.toLowerCase()}`, { name: spell.name, meta: spellMeta(spell), text: spell.shortDescription || spell.description || '' });
+        spellNames.push(spell.name);
       }
       const featNames: string[] = [];
-      for (const f of feats.values() as Iterable<featEntry>) {
-        terms.set(`feat:${f.name.toLowerCase()}`, {
-          name: f.name, meta: f.category ? `${titleCase(f.category)} feat` : 'Feat', text: groupsText(f.effectGroups),
+      for (const feat of feats.values() as Iterable<FeatEntry>) {
+        terms.set(`feat:${feat.name.toLowerCase()}`, {
+          name: feat.name, meta: feat.category ? `${titleCase(feat.category)} feat` : 'Feat', text: groupsText(feat.effectGroups),
         });
-        featNames.push(f.name);
+        featNames.push(feat.name);
       }
       const languageNames: string[] = [];
-      for (const l of languages.values() as Iterable<languageEntry>) {
-        if (!l.description) continue;
-        terms.set(`language:${l.name.toLowerCase()}`, {
-          name: l.name, meta: l.rarity ? `${titleCase(l.rarity)} language` : 'Language', text: l.description,
+      for (const language of languages.values() as Iterable<LanguageEntry>) {
+        if (!language.description) continue;
+        terms.set(`language:${language.name.toLowerCase()}`, {
+          name: language.name, meta: language.rarity ? `${titleCase(language.rarity)} language` : 'Language', text: language.description,
         });
-        languageNames.push(l.name);
+        languageNames.push(language.name);
       }
       return { terms, skills: skillNames, spells: spellNames, feats: featNames, languages: languageNames };
     });
+    // A failed load is forgotten so the next call retries.
     glossaryPromise.catch(() => { glossaryPromise = null; });
   }
   return glossaryPromise;
 }
 
-// How the text says it -> the glossary entry's name, where they differ.
+// Phrases in rules text mapped to the glossary entry they mean, where the names differ.
 const ALIASES: Record<string, string> = {
   'proficiency bonus': 'proficiency',
   'hit point maximum': 'hit points',
@@ -118,16 +122,16 @@ const ALIASES: Record<string, string> = {
   'an action': 'action',
 };
 
-// The glossary key for a highlighted rules word, or null if the glossary doesn't define it.
-// "Attack action" -> "attack", "saving throws" -> "saving throw", "DC 15" -> "difficulty class".
-export function termKey(g: glossary, text: string): string | null {
+// The glossary key for a highlighted rules word, or null if it isn't defined.
+// For example "Attack action" gives "attack", "saving throws" gives "saving throw" and "DC 15" gives "difficulty class".
+export function termKey(glossary: Glossary, text: string): string | null {
   let key = text.toLowerCase();
   if (/^dc \d+$/.test(key)) key = 'difficulty class';
   key = ALIASES[key] ?? key;
-  // The whole phrase first ("bonus action"), then without " action" ("attack action" -> "attack").
+  // Try the whole phrase first, then without a trailing " action", each also without a plural s.
   for (const candidate of [key, key.replace(/ action$/, '')]) {
-    if (g.terms.has(candidate)) return candidate;
-    if (candidate.endsWith('s') && g.terms.has(candidate.slice(0, -1))) return candidate.slice(0, -1);
+    if (glossary.terms.has(candidate)) return candidate;
+    if (candidate.endsWith('s') && glossary.terms.has(candidate.slice(0, -1))) return candidate.slice(0, -1);
   }
   return null;
 }

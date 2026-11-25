@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
-import { getPendingCharacters, reviewCharacter, type pendingCharacter } from "../api/characters";
+import { getPendingCharacters, reviewCharacter, type PendingCharacter } from "../api/characters";
 import { CharacterPortrait } from "./portrait/CharacterPortrait";
 import "./PendingCharacters.css";
 
@@ -9,11 +9,11 @@ function errorMessage(err: unknown, fallback: string): string {
     return (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? fallback
 }
 
-// The GM's (and admin's) queue of a campaign's characters waiting for approval. Renders
-// nothing for anyone else (the server answers them 404) and nothing while the queue is empty.
+// The GM's queue of characters awaiting approval.
+// Renders nothing for anyone else, or while the queue is empty.
 export default function PendingCharacters({ campaignId }: { campaignId: string }) {
-    const [pending, setPending] = useState<pendingCharacter[] | null>(null)
-    // The character whose reject form is open, and the reason typed into it.
+    const [pending, setPending] = useState<PendingCharacter[] | null>(null)
+    // The character whose reject form is open.
     const [rejecting, setRejecting] = useState<string | null>(null)
     const [reason, setReason] = useState('')
     const [busy, setBusy] = useState<string | null>(null)

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ENCOUNTER_NOTES_MAX_LENGTH, ENCOUNTER_TITLE_MAX_LENGTH, HEX_DESCRIPTION_MAX_LENGTH, HEX_NOTES_MAX_LENGTH,
   MAP_NAME_MAX_LENGTH, MAX_ENCOUNTER_CREATURES, MAX_RANDOM_ENCOUNTERS, MAX_SET_ENCOUNTERS,
-  type encounterCreature, type encounterKind, type hexRecord, type hexStatus, type playerHex,
+  type EncounterCreature, type EncounterKind, type HexRecord, type HexStatus, type PlayerHex,
 } from '../../api/maps';
 import type { Entry } from '../../packs/types';
 import { useCollection } from '../../packs/usePacks';
@@ -12,22 +12,22 @@ import '../DeleteCampaignDialog.css';
 import { hexLabel } from './hexMath';
 import './Maps.css';
 
-const STATUSES: { value: hexStatus, label: string }[] = [
+const STATUSES: { value: HexStatus, label: string }[] = [
   { value: 'hidden', label: 'Hidden' },
   { value: 'scouted', label: 'Scouted' },
   { value: 'visited', label: 'Visited' },
 ];
 
-const KINDS: { value: encounterKind, label: string }[] = [
+const KINDS: { value: EncounterKind, label: string }[] = [
   { value: 'combat', label: 'Combat' },
   { value: 'social', label: 'Social' },
   { value: 'treasure', label: 'Treasure' },
   { value: 'hazard', label: 'Hazard' },
   { value: 'exploration', label: 'Exploration' },
 ];
-const kindLabel = (kind: encounterKind) => KINDS.find(k => k.value === kind)?.label ?? kind;
+const kindLabel = (kind: EncounterKind) => KINDS.find(k => k.value === kind)?.label ?? kind;
 
-type creatureIndex = Map<string, Entry<'creatures'>> | null;
+type CreatureIndex = Map<string, Entry<'creatures'>> | null;
 
 // A Challenge Rating as the rules print it: fractions below 1.
 function challenge(rating: number): string {
@@ -35,32 +35,31 @@ function challenge(rating: number): string {
 }
 
 // "2 × Air Elemental, 1 × Goblin Boss", then the XP they're worth together when known.
-function creatureSummary(list: encounterCreature[], creatures: creatureIndex): string {
+function creatureSummary(list: EncounterCreature[], creatures: CreatureIndex): string {
   const names = list.map(c => `${c.count} × ${creatures?.get(c.creature)?.name ?? c.creature}`).join(', ');
   const xp = list.reduce((sum, c) => sum + c.count * (creatures?.get(c.creature)?.xp ?? 0), 0);
   return xp > 0 ? `${names} (${xp.toLocaleString()} XP)` : names;
 }
 
-// An encounter while it's being written. Both lists use it; a set encounter keeps resolved
-// and a random one weight.
-interface encounterDraft {
-  kind: encounterKind,
+// An encounter being edited, where set encounters use resolved and random ones use weight.
+interface EncounterDraft {
+  kind: EncounterKind,
   title: string,
   notes: string,
-  creatures: encounterCreature[],
+  creatures: EncounterCreature[],
   resolved: boolean,
   weight: number,
 }
 
-type storedEncounter = Omit<encounterDraft, 'resolved' | 'weight'> & { resolved?: boolean, weight?: number };
+type StoredEncounter = Omit<EncounterDraft, 'resolved' | 'weight'> & { resolved?: boolean, weight?: number };
 
-const NEW_ENCOUNTER: encounterDraft = { kind: 'combat', title: '', notes: '', creatures: [], resolved: false, weight: 1 };
+const NEW_ENCOUNTER: EncounterDraft = { kind: 'combat', title: '', notes: '', creatures: [], resolved: false, weight: 1 };
 
 function EncounterForm({ random, initial, creatures, onSubmit, onCancel }: {
   random: boolean,
-  initial: encounterDraft,
-  creatures: creatureIndex,
-  onSubmit: (encounter: encounterDraft) => void,
+  initial: EncounterDraft,
+  creatures: CreatureIndex,
+  onSubmit: (encounter: EncounterDraft) => void,
   onCancel: () => void,
 }) {
   const [draft, setDraft] = useState(initial);
@@ -101,7 +100,7 @@ function EncounterForm({ random, initial, creatures, onSubmit, onCancel }: {
         <label className="map-field">
           Kind
           <select className="map-input" value={draft.kind}
-            onChange={e => setDraft(d => ({ ...d, kind: e.target.value as encounterKind }))}>
+            onChange={e => setDraft(d => ({ ...d, kind: e.target.value as EncounterKind }))}>
             {KINDS.map(k => <option key={k.value} value={k.value}>{k.label}</option>)}
           </select>
         </label>
@@ -173,24 +172,24 @@ function roll<T extends { weight?: number }>(entries: T[]): T {
   return entries[entries.length - 1];
 }
 
-// One of a hex's two encounter lists: the encounters, each with Edit and Remove, and a form
-// to add one. The set list can mark an encounter resolved; the random table can be rolled on.
+// One of a hex's encounter lists with edit, remove and add controls.
+// Set encounters can be marked resolved, and the random table can be rolled on.
 function EncounterSection({ title, random, entries, max, creatures, onChange }: {
   title: string,
   random: boolean,
-  entries: storedEncounter[],
+  entries: StoredEncounter[],
   max: number,
-  creatures: creatureIndex,
-  onChange: (entries: encounterDraft[]) => void,
+  creatures: CreatureIndex,
+  onChange: (entries: EncounterDraft[]) => void,
 }) {
   // The entry being edited, by position, or 'new'.
   const [editing, setEditing] = useState<number | 'new' | null>(null);
-  const [rolled, setRolled] = useState<storedEncounter | null>(null);
+  const [rolled, setRolled] = useState<StoredEncounter | null>(null);
 
-  const drafts: encounterDraft[] = entries.map(e => ({ ...e, resolved: e.resolved ?? false, weight: e.weight ?? 1 }));
+  const drafts: EncounterDraft[] = entries.map(e => ({ ...e, resolved: e.resolved ?? false, weight: e.weight ?? 1 }));
   const totalWeight = drafts.reduce((sum, e) => sum + e.weight, 0);
 
-  function submit(encounter: encounterDraft) {
+  function submit(encounter: EncounterDraft) {
     onChange(editing === 'new' ? [...drafts, encounter] : drafts.map((e, i) => (i === editing ? encounter : e)));
     setEditing(null);
   }
@@ -276,14 +275,14 @@ function errorMessage(err: unknown): string {
 // How long after the last change a hex is saved.
 const SAVE_DELAY = 600;
 
-// The GM's panel for one hex: its status, what players are told, the GM's own notes and its
-// encounters. Changes save by themselves a moment after the last one, and at once when the
-// panel closes or moves to another hex (give it key={the hex} so it starts afresh).
+// The GM's editor for one hex's status, player-facing text, private notes and encounters.
+// Changes autosave shortly after the last edit and immediately when the panel closes.
+// Give it key={hex} so moving to another hex starts afresh.
 export function HexEditor({ col, row, hex, onSave, onClose }: {
   col: number,
   row: number,
-  hex: hexRecord,
-  onSave: (hex: hexRecord) => Promise<unknown>,
+  hex: HexRecord,
+  onSave: (hex: HexRecord) => Promise<unknown>,
   onClose: () => void,
 }) {
   const [draft, setDraft] = useState(hex);
@@ -291,7 +290,7 @@ export function HexEditor({ col, row, hex, onSave, onClose }: {
   const [error, setError] = useState<string | null>(null);
   const { data: creatures } = useCollection('creatures');
   // The newest change not yet sent, and the timer that will send it.
-  const pending = useRef<hexRecord | null>(null);
+  const pending = useRef<HexRecord | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const saveRef = useRef(onSave);
   useEffect(() => { saveRef.current = onSave; });
@@ -307,7 +306,7 @@ export function HexEditor({ col, row, hex, onSave, onClose }: {
       .catch(err => { setError(errorMessage(err)); setSaved('idle'); });
   }
 
-  function change(patch: Partial<hexRecord>) {
+  function change(patch: Partial<HexRecord>) {
     const next = { ...draft, ...patch };
     setDraft(next);
     pending.current = next;
@@ -379,7 +378,7 @@ export function HexInfo({ col, row, hex, onClose }: {
   col: number,
   row: number,
   // Missing for a hex the players haven't scouted or visited.
-  hex: playerHex | undefined,
+  hex: PlayerHex | undefined,
   onClose: () => void,
 }) {
   const label = `Hex ${hexLabel(col, row)}`;

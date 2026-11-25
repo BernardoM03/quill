@@ -7,11 +7,10 @@ import { refusalText, type SaveAllowed } from './saveAllowed';
 import { Toggle } from './Toggle';
 import { toggleId } from './toggleId';
 
-// One collection's allowed entries (species, skills, ...). View mode lists the allowed
-// ones; Edit mode shows a toggle for each. requireOne marks collections characters can't do
-// without (species): the server refuses turning off the last one, and View warns when none are.
-// compact: smaller text and more, narrower columns, for less common settings.
-// allowed: the saved ids, or null for "all".
+// One collection's allowed entries, listed in View mode and toggled in Edit mode.
+// requireOne marks collections characters need, where the server refuses turning off the last entry.
+// compact uses smaller text and more columns for less common settings.
+// allowed holds the saved ids, or null for all.
 export function CollectionSettings({ collection, caption, noun, requireOne = false, compact = false, allowed, onChange }: {
   collection: CollectionName;
   caption: string;

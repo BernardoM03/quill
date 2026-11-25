@@ -1,4 +1,4 @@
-import type { characterChoice } from '../../api/characters';
+import type { CharacterChoice } from '../../api/characters';
 
 const ABILITIES: [string, string][] = [
   ['STR', 'Strength'], ['DEX', 'Dexterity'], ['CON', 'Constitution'],
@@ -25,11 +25,10 @@ function format(spread: Record<string, number>): string {
     .join(',');
 }
 
-// Ability score increases, from a background (3 points, at most +2 on one) or a feat
-// (Ability Score Improvement: 2 points; most others: +1): one box per ability with − and +.
-// Abilities it can't raise are shown but locked. A half-spent spread is saved too; the server says what's missing.
+// Ability increases from a background or feat as one − / + box per ability, with ineligible abilities locked.
+// A partly spent spread is saved too, and the server reports what's missing.
 export function AbilityIncreaseField({ choice, value, onChoose, errors }: {
-  choice: characterChoice;
+  choice: CharacterChoice;
   value: string | string[] | undefined;
   onChoose: (choiceId: string, value: string) => void;
   errors: string[];

@@ -1,4 +1,4 @@
-import type { sheetStats } from '../../api/characters';
+import type { SheetStats } from '../../api/characters';
 import { defenseRows } from './defenses';
 import { DefenseRow } from './SheetPlay';
 import { SidePanel } from './SidePanel';
@@ -6,10 +6,8 @@ import '../DeleteCampaignDialog.css';
 import '../RulesText.css';
 import './Sheet.css';
 
-// Every resistance and immunity the character has, beside the sheet: the full list the
-// Defenses half of the box only has room to start. The headings and each row are rules words
-// with tooltips, like the conditions panel.
-export function DefensesPanel({ defenses, onClose }: { defenses: sheetStats['defenses'] | null, onClose: () => void }) {
+// The full list of resistances and immunities in the side panel, with tooltips on headings and rows.
+export function DefensesPanel({ defenses, onClose }: { defenses: SheetStats['defenses'] | null, onClose: () => void }) {
   const rows = defenseRows(defenses);
   const groups = [
     ['Resistances', 'resistance', rows.filter(r => r.kind === 'R')],

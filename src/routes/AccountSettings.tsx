@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { ACCOUNT_EXPORT_URL, ERASE_PHRASE, deleteAccount } from "../api/account";
-import { getSessionUser, type sessionUser } from "../api/auth";
+import { getSessionUser, type SessionUser } from "../api/auth";
 import BackButton from "../components/BackButton";
 import TypeToConfirmDialog from "../components/TypeToConfirmDialog";
 import "../components/campaignSettings/CampaignSettings.css";
@@ -11,7 +11,7 @@ import "./AccountSettings.css";
 // The signed-in user's account: the name, and deleting the account.
 export default function AccountSettings() {
     const navigate = useNavigate()
-    const [user, setUser] = useState<sessionUser | null>(null)
+    const [user, setUser] = useState<SessionUser | null>(null)
     const [deleting, setDeleting] = useState<'snapshot' | 'erase' | null>(null)
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function AccountSettings() {
             .catch(error => console.error('Error loading account:', error))
     }, [])
 
-    // The server has signed them out; nothing is left to show here.
+    // The server has signed the user out, so leave the page.
     function handleDeleted() {
         navigate('/login', { replace: true })
     }

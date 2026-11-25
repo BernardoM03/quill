@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { MAX_ZOOM, clamp, zoomBy } from './cropMath';
-import { centreCrop, renderPortrait, type squareCrop } from './makePortrait';
+import { centreCrop, renderPortrait, type SquareCrop } from './makePortrait';
 import '../DeleteCampaignDialog.css';
 import './PortraitCropper.css';
 
-// The frame on screen, in CSS pixels. The canvas behind it is drawn at the screen's
-// pixel density so the preview stays sharp.
+// The on-screen frame in CSS pixels, with the canvas drawn at device pixel density to stay sharp.
 const VIEW = 280;
 const KEY_STEP = 0.05; // arrow keys move by this share of the frame
 
-// Lets the player choose which square of the image becomes the portrait: drag to move,
-// slider, wheel or pinch to zoom, arrow keys and +/- from the keyboard. Starts on the
-// largest centred square. onConfirm gets the 256x256 portrait, ready to upload.
+// Picks the square of the image that becomes the portrait, starting from the largest centred square.
+// Drag moves it, the slider, wheel or pinch zooms, and arrow keys and +/- work from the keyboard.
+// onConfirm receives the finished 256x256 portrait.
 export function PortraitCropper({ image, onConfirm, onClose }: {
   image: ImageBitmap;
   onConfirm: (portrait: Blob) => Promise<void>;
@@ -20,7 +19,7 @@ export function PortraitCropper({ image, onConfirm, onClose }: {
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [crop, setCrop] = useState<squareCrop>(() => centreCrop(image));
+  const [crop, setCrop] = useState<SquareCrop>(() => centreCrop(image));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Fingers or the mouse currently on the frame, by pointer id, for dragging and pinching.
@@ -47,8 +46,7 @@ export function PortraitCropper({ image, onConfirm, onClose }: {
     context.drawImage(image, crop.x, crop.y, crop.size, crop.size, 0, 0, pixels, pixels);
   }, [image, crop]);
 
-  // Wheel zoom toward the cursor. Added by hand because React's wheel listener can't
-  // stop the page from scrolling at the same time.
+  // Wheel zooms toward the cursor, attached manually because React's passive wheel listener can't prevent page scrolling.
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

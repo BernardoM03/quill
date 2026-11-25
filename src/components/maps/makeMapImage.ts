@@ -1,6 +1,4 @@
-// Shrinks a picked map image before it's uploaded, as makePortrait does for portraits. The
-// server takes at most 1 MB a request and re-encodes whatever arrives (server/maps.py), so
-// this only has to get the image under that: smaller and more compressed until it fits.
+// Shrinks a map image until it fits the server's 1 MB request limit, since the server re-encodes it anyway.
 import { loadImage } from '../portrait/makePortrait';
 
 // Just under the server's own limit (MAX_UPLOAD_BYTES), leaving room for the form around it.
@@ -15,7 +13,7 @@ function render(image: ImageBitmap, side: number, quality: number): Promise<Blob
   canvas.height = Math.max(1, Math.round(image.height * scale));
   const context = canvas.getContext('2d');
   if (!context) throw new Error('This browser can’t prepare images.');
-  // A see-through image would turn black as it's flattened; put paper behind it.
+  // Transparent areas would flatten to black, so paint white paper behind them.
   context.fillStyle = '#fff';
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.imageSmoothingQuality = 'high';
@@ -23,7 +21,7 @@ function render(image: ImageBitmap, side: number, quality: number): Promise<Blob
   return new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
 }
 
-// The file as an image small enough to upload. Rejects with a message for the user.
+// Rejects with a user-facing message when no attempt is small enough.
 export async function prepareMapImage(file: File): Promise<Blob> {
   const image = await loadImage(file);
   try {

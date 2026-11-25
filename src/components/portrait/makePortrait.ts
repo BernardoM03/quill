@@ -1,18 +1,16 @@
-// Turns a picked image into a small square portrait before it's uploaded: a square part of
-// the image (the crop), scaled to 256x256, as WebP (PNG where the browser can't make WebP).
-// A phone photo of several MB becomes ~10-30 KB, so the upload is quick. The server
-// re-encodes it anyway (server/portraits.py); this just keeps the upload small.
+// Shrinks a picked image to a 256x256 WebP crop (PNG where WebP isn't supported) before upload.
+// A multi-megabyte photo becomes roughly 10-30 KB, and the server re-encodes it anyway.
 
 export const PORTRAIT_SIZE = 256;
 
-// A square in the image's own pixels: its top-left corner and side length.
-export interface squareCrop {
+// A square in the image's own pixels, given by its top-left corner and side length.
+export interface SquareCrop {
   x: number,
   y: number,
   size: number,
 }
 
-// Reads the file into an image, upright: phone cameras store rotation separately.
+// Decodes the file upright, since phone cameras store rotation separately.
 export async function loadImage(file: File): Promise<ImageBitmap> {
   if (!file.type.startsWith('image/')) throw new Error('Choose an image file.');
   try {
@@ -22,13 +20,13 @@ export async function loadImage(file: File): Promise<ImageBitmap> {
   }
 }
 
-// The largest centred square: what the cropper starts with.
-export function centreCrop(image: ImageBitmap): squareCrop {
+// The largest centred square, which the cropper starts with.
+export function centreCrop(image: ImageBitmap): SquareCrop {
   const size = Math.min(image.width, image.height);
   return { x: (image.width - size) / 2, y: (image.height - size) / 2, size };
 }
 
-export async function renderPortrait(image: ImageBitmap, crop: squareCrop): Promise<Blob> {
+export async function renderPortrait(image: ImageBitmap, crop: SquareCrop): Promise<Blob> {
   const canvas = document.createElement('canvas');
   canvas.width = PORTRAIT_SIZE;
   canvas.height = PORTRAIT_SIZE;

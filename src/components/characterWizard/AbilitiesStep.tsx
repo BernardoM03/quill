@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type {
-  abilityMethod, abilityRoll, abilityRules, characterDraft, draftCheck, hpMethod,
+  AbilityMethod, AbilityRoll, AbilityRules, CharacterDraft, DraftCheck, HpMethod,
 } from '../../api/characters';
 import { RuleSwitch } from './RuleSwitch';
 
@@ -10,7 +10,7 @@ const ABILITIES: [string, string][] = [
   ['INT', 'Intelligence'], ['WIS', 'Wisdom'], ['CHA', 'Charisma'],
 ];
 
-const METHOD_LABELS: Record<abilityMethod, string> = {
+const METHOD_LABELS: Record<AbilityMethod, string> = {
   standardArray: 'Standard Array',
   pointBuy: 'Point Buy',
   roll: 'Roll',
@@ -18,7 +18,7 @@ const METHOD_LABELS: Record<abilityMethod, string> = {
   sharedManual: 'GM’s Scores',
 };
 
-const METHOD_HINTS: Record<abilityMethod, string> = {
+const METHOD_HINTS: Record<AbilityMethod, string> = {
   standardArray: 'Assign 15, 14, 13, 12, 10 and 8, one to each ability.',
   pointBuy: 'Every score starts at 8. Spend points to raise them, up to 15.',
   roll: 'Roll 4d6 six times, dropping the lowest die each time, then assign the totals.',
@@ -28,21 +28,19 @@ const METHOD_HINTS: Record<abilityMethod, string> = {
 
 const signed = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
-type abilityFields = Pick<characterDraft, 'abilityMethod' | 'abilityScores' | 'hpMethod' | 'hpRolls'>;
+type AbilityFields = Pick<CharacterDraft, 'abilityMethod' | 'abilityScores' | 'hpMethod' | 'hpRolls'>;
 
-// The ability scores and hit points step. The campaign decides the method for each (the
-// Character Sandbox offers them all); totals and hit points come from the server's check
-// (summary), so what's shown is what will be saved.
-// rolls: the server's ability rolls for this draft, or null. canReroll: the sandbox.
+// The ability scores and hit points step, using the campaign's methods or any method in the sandbox.
+// Totals and hit points come from the server's summary, so what's shown is what will be saved.
 export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, summary, onChange, onRoll, errorsFor }: {
-  rules: abilityRules;
+  rules: AbilityRules;
   level: number;
   hitDie: number | null;
-  fields: abilityFields;
-  rolls: abilityRoll[] | null;
+  fields: AbilityFields;
+  rolls: AbilityRoll[] | null;
   canReroll: boolean;
-  summary: draftCheck['summary'] | null;
-  onChange: (changes: Partial<abilityFields>, field: string) => void;
+  summary: DraftCheck['summary'] | null;
+  onChange: (changes: Partial<AbilityFields>, field: string) => void;
   onRoll: () => Promise<unknown>;
   errorsFor: (field: string) => string[];
 }) {
@@ -60,14 +58,13 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
     }
   }, [method, unset, onChange]);
 
-  // The scores to hand out, for methods that assign a fixed set; null when any score goes.
+  // The fixed set of scores to assign, or null when any score is allowed.
   const pool = method === 'standardArray' ? rules.standardArray
     : method === 'sharedManual' ? rules.sharedScores
     : method === 'roll' ? rolls?.map(r => r.total) ?? null
     : null;
 
-  // What's left of the pool for one ability: each value as many times as the pool has it,
-  // less the times other abilities already use it.
+  // The pool values still free for one ability, after removing those other abilities already use.
   function remaining(code: string): number[] {
     const left = [...(pool ?? [])].sort((a, b) => b - a);
     for (const [other] of ABILITIES) {
@@ -174,15 +171,15 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
 
         <div className="ability-boxes">
           {ABILITIES.map(([code, name]) => {
-            const s = summary?.abilities[code];
+            const abilitySummary = summary?.abilities[code];
             return (
               <div key={code} className="ability-box">
                 <span className="ability-box__code" title={name}>{code}</span>
                 {control(code, name)}
                 <span className="ability-box__total">
-                  {s?.total != null ? <>{s.total} <span className="muted">({signed(s.modifier ?? 0)})</span></> : '—'}
+                  {abilitySummary?.total != null ? <>{abilitySummary.total} <span className="muted">({signed(abilitySummary.modifier ?? 0)})</span></> : '—'}
                 </span>
-                {s?.increases.map((inc, i) => (
+                {abilitySummary?.increases.map((inc, i) => (
                   <span key={i} className="ability-box__bonus">+{inc.amount} {inc.source}</span>
                 ))}
               </div>
@@ -194,7 +191,7 @@ export function AbilitiesStep({ rules, level, hitDie, fields, rolls, canReroll, 
 
       <h3 className="pick-card__section-title">Hit Points</h3>
       <div className="rule-switches">
-        <RuleSwitch<hpMethod> label="After level 1" value={hp} allowed={rules.allowedHpMethods}
+        <RuleSwitch<HpMethod> label="After level 1" value={hp} allowed={rules.allowedHpMethods}
           options={rules.hpMethods.map(m => ({ value: m, label: m === 'automatic' ? 'Fixed Average' : 'Roll' }))}
           onChange={m => onChange({ hpMethod: m }, 'hpMethod')} />
       </div>

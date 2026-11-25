@@ -1,10 +1,10 @@
-import type { choicePicks, speciesOption, takenOptions } from '../../api/characters';
+import type { ChoicePicks, SpeciesOption, TakenOptions } from '../../api/characters';
 import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 
 const titleCase = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
 
-function details(species: speciesOption): string {
+function details(species: SpeciesOption): string {
   const parts: string[] = [];
   if (species.creatureType) parts.push(titleCase(species.creatureType));
   parts.push(species.size.length > 0 ? species.size.map(titleCase).join(' or ') : 'Size of your choice');
@@ -12,14 +12,12 @@ function details(species: speciesOption): string {
   return parts.join(' · ');
 }
 
-// The species step: every species the campaign allows, one card at a time. The card shows
-// everything about the species and every choice it asks for, made right here.
-// errorsFor(field): the server's messages to show for a field ('species', 'choice:<id>').
+// The species step, showing one allowed species at a time with its traits and choices.
 export function SpeciesStep({ options, selected, choices, taken, onSelect, onChoose, errorsFor }: {
-  options: speciesOption[];
+  options: SpeciesOption[];
   selected: string | null;
-  choices: choicePicks;
-  taken: takenOptions;
+  choices: ChoicePicks;
+  taken: TakenOptions;
   onSelect: (speciesId: string) => void;
   onChoose: (choiceId: string, value: string | string[]) => void;
   errorsFor: (field: string) => string[];

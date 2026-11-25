@@ -3,12 +3,12 @@ import { memo, useMemo, useState, type ReactNode } from 'react';
 import { gridSize, hexCentre, hexKey, hexLabel, hexPoints, outlinePath } from './hexMath';
 import './Maps.css';
 
-export interface hexTooltip {
+export interface HexTooltip {
   title: string,
   text?: string,
 }
 
-interface cell {
+interface Cell {
   key: string,
   col: number,
   row: number,
@@ -17,9 +17,8 @@ interface cell {
   dot: boolean,
 }
 
-// Every hex polygon. Memoised: hovering and selecting redraw only the highlights on top,
-// not the thousand-odd hexes underneath.
-const HexLayer = memo(function HexLayer({ cells }: { cells: cell[] }) {
+// Every hex polygon, memoised so hovering and selecting redraw only the highlights on top.
+const HexLayer = memo(function HexLayer({ cells }: { cells: Cell[] }) {
   return (
     <>
       {cells.map(c => <polygon key={c.key} data-hex={c.key} className={c.className} points={c.points} />)}
@@ -34,24 +33,22 @@ const HexLayer = memo(function HexLayer({ cells }: { cells: cell[] }) {
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 
-// A hex map: the land's hexes with their outline over the rest of the grid, drawn as SVG in
-// hex radii. Hovering a hex shows its tooltip; clicking one calls onHexClick. The hexes are
-// one layer handled by a single listener each for hover and click, found through their
-// data-hex. The grid's other hexes are drawn faintly and ignore the pointer, unless
-// seaClickable.
+// An SVG hex map in hex radii, with land hexes and their outline drawn over the faint rest of the grid.
+// One listener each for hover and click finds the hex through its data-hex attribute.
+// Non-land hexes ignore the pointer unless seaClickable is set.
 export function HexMap({ grid, land, classes, dots, seaClickable = false, image, selected, tooltip, onHexClick, label, corner }: {
   grid: { cols: number, rows: number },
   land: [number, number][],
-  // Extra class names per hex key (its status, say). Pass a stable Map.
+  // Extra class names per hex key, such as its status, in a stable Map.
   classes?: Map<string, string>,
-  // Hexes marked with a dot, by key. Pass a stable Set.
+  // Keys of hexes marked with a dot, in a stable Set.
   dots?: Set<string>,
   // Let the hexes that aren't land be hovered and clicked too (to put them on the map).
   seaClickable?: boolean,
-  // The original image behind the hexes; width and height in hex radii.
+  // The original image behind the hexes, sized in hex radii.
   image?: { url: string, width: number, height: number, opacity: number },
   selected?: string | null,
-  tooltip?: (col: number, row: number, isLand: boolean) => hexTooltip | null,
+  tooltip?: (col: number, row: number, isLand: boolean) => HexTooltip | null,
   onHexClick?: (col: number, row: number, isLand: boolean) => void,
   label: string,
   // Shown in the frame's bottom right corner, as the zoom buttons are in its top right.
@@ -63,7 +60,7 @@ export function HexMap({ grid, land, classes, dots, seaClickable = false, image,
   const landKeys = useMemo(() => new Set(land.map(([col, row]) => hexKey(col, row))), [land]);
   const outline = useMemo(() => outlinePath(land, key => landKeys.has(key)), [land, landKeys]);
   const cells = useMemo(() => {
-    const all: cell[] = [];
+    const all: Cell[] = [];
     const add = (col: number, row: number, isLand: boolean) => {
       const key = hexKey(col, row);
       const extra = isLand ? classes?.get(key) : undefined;
@@ -76,9 +73,8 @@ export function HexMap({ grid, land, classes, dots, seaClickable = false, image,
     for (let col = 0; col < grid.cols; col++) {
       for (let row = 0; row < grid.rows; row++) add(col, row, landKeys.has(hexKey(col, row)));
     }
-    // Later polygons draw over earlier ones' shared edges: the sea first, then plain land,
-    // then the hexes with a status, so their stronger borders stay whole.
-    const rank = (c: cell) => (c.className.includes('--sea') ? 0 : classes?.has(c.key) ? 2 : 1);
+    // Later polygons paint over shared edges, so order sea, plain land, then status hexes to keep strong borders whole.
+    const rank = (c: Cell) => (c.className.includes('--sea') ? 0 : classes?.has(c.key) ? 2 : 1);
     return all.sort((a, b) => rank(a) - rank(b));
   }, [grid, landKeys, classes, dots]);
 

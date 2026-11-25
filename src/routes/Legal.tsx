@@ -2,8 +2,7 @@ import BackButton from '../components/BackButton'
 import { usePackManifests } from '../packs/usePacks'
 import './Legal.css'
 
-// The notices every shipped content pack requires, rendered from the manifests
-// themselves so a newly installed pack cannot go un-attributed.
+// Every content pack's required notices, rendered from the manifests so new packs are always attributed.
 export default function Legal() {
   const { data: packs, error } = usePackManifests()
 

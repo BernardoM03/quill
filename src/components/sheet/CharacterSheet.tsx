@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 
-import type { characterSummary, playState } from '../../api/characters';
+import type { CharacterSummary, PlayState } from '../../api/characters';
 import { CharacterPortrait } from '../portrait/CharacterPortrait';
 import { AbilityBoxes } from './AbilityScores';
 import { ConditionsDialog } from './ConditionsDialog';
 import { LongRestDialog, ShortRestDialog } from './RestDialogs';
 import { DefensesPanel } from './DefensesPanel';
 import { DetailsPanel } from './DetailsPanel';
-import { InfoPanel, type sheetInfo } from './InfoPanel';
+import { InfoPanel, type SheetInfo } from './InfoPanel';
 import { SheetInfoContext } from './sheetInfoContext';
-import { DefensesConditionsBox, HitPointsBox, type playChange } from './SheetPlay';
+import { DefensesConditionsBox, HitPointsBox, type PlayChange } from './SheetPlay';
 import { HeadlineStats, ProficienciesBox, SavingThrowsBox, SensesBox, SheetBox, SkillsBox } from './SheetStats';
 import './Sheet.css';
 
@@ -18,18 +18,9 @@ const STATUS_LABELS: Record<string, string> = {
   draft: 'Not submitted', pending: 'Awaiting approval', rejected: 'Sent back',
 };
 
-// The character sheet, laid out like a paper one (the Figma outline "Character Sheet"):
-// a header (portrait, name, who the character is), the ability scores beside proficiency,
-// speed and hit points, then saves, senses and training beside the skills on the left, and
-// initiative, armor class, conditions and the details panel on the right. Narrow screens
-// stack it in play order: hit points and conditions first.
-// Rules words on the sheet (box titles, senses, skills) don't pop up a definition on hover
-// (data-no-terms turns GlossaryTooltips' search off here): clicking one opens it in the panel
-// beside the sheet instead (SheetTerm), and that panel's text has the tooltips.
-// The header portrait as a control (the owner only): with no portrait, clicking it picks an
-// image; with one, it opens a small menu to replace or remove it. Escape or clicking
-// elsewhere closes the menu.
-function PortraitControl({ character, portrait }: { character: characterSummary, portrait: portraitActions }) {
+// The owner's header portrait, which picks an image when empty or opens a replace/remove menu.
+// Escape or clicking elsewhere closes the menu.
+function PortraitControl({ character, portrait }: { character: CharacterSummary, portrait: PortraitActions }) {
   const [open, setOpen] = useState(false);
   const wrapper = useRef<HTMLDivElement>(null);
   const has = character.portraitVersion != null;
@@ -68,25 +59,27 @@ function PortraitControl({ character, portrait }: { character: characterSummary,
   );
 }
 
-export interface portraitActions {
+export interface PortraitActions {
   // Why the last pick or upload failed, shown under the header.
   error: string | null,
   onPick: () => void,
   onRemove: () => void,
 }
 
+// The character sheet, laid out like a paper one, stacking hit points and conditions first on narrow screens.
+// Hover definitions are off here (data-no-terms), so rules words open in the side panel through SheetTerm instead.
 export function CharacterSheet({ character, canEdit, isOwner, stateError, onStateChange, onRested, portrait }: {
-  character: characterSummary,
+  character: CharacterSummary,
   // The owner, the admin or the GM: may change the play state.
   canEdit: boolean,
   // The owner or the admin: may edit the build and temporary effects.
   isOwner: boolean,
   stateError: string | null,
-  onStateChange: playChange,
+  onStateChange: PlayChange,
   // The play state after a short or long rest.
-  onRested: (state: playState) => void,
-  // Makes the header portrait clickable; left out, it's just a picture.
-  portrait?: portraitActions,
+  onRested: (state: PlayState) => void,
+  // Makes the header portrait clickable, which is otherwise just a picture.
+  portrait?: PortraitActions,
 }) {
   const { stats, state } = character;
   const identity = stats?.identity;
@@ -103,7 +96,7 @@ export function CharacterSheet({ character, canEdit, isOwner, stateError, onStat
   const play = { state, canEdit, onChange: onStateChange };
   // The one side panel open beside the sheet, if any: opening another replaces it.
   // A feature's or spell's rules text is one of them.
-  const [panel, setPanel] = useState<'short' | 'long' | 'conditions' | 'defenses' | sheetInfo | null>(null);
+  const [panel, setPanel] = useState<'short' | 'long' | 'conditions' | 'defenses' | SheetInfo | null>(null);
   const info = panel && typeof panel === 'object' ? panel : null;
   const openInfo = info?.id ?? null;
   const infoActions = useMemo(() => ({ openInfo, onInfo: setPanel }), [openInfo]);

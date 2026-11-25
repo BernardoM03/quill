@@ -1,13 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 
-// Goes back to whichever page led here. When there's no earlier page in this app
-// (the page was opened directly, in a new tab, or reached by replacing the entry
-// it was opened on, like an invite link), goes home instead.
+// Goes back to the previous page in this app, or home when there isn't one (a direct link or new tab).
 export default function BackButton({ disabled = false }: { disabled?: boolean }) {
   const navigate = useNavigate()
-  // React Router numbers its history entries from 0 (the first page it loaded) in
-  // history.state.idx; replacing an entry keeps its number. Anything above 0 means
-  // there's an earlier page of ours to go back to.
+  // React Router stores a 0-based entry index in history.state.idx, so anything above 0 has an earlier in-app page.
   const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0
   const hasHistory = idx > 0
 

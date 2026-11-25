@@ -1,22 +1,22 @@
 import { useState } from "react";
 
-import { saveDisguise, type characterDisguise } from "../api/characters";
+import { saveDisguise, type CharacterDisguise } from "../api/characters";
 
-const FIELDS: { key: keyof characterDisguise, label: string, placeholder: (name: string) => string }[] = [
+const FIELDS: { key: keyof CharacterDisguise, label: string, placeholder: (name: string) => string }[] = [
     { key: 'name', label: 'Name', placeholder: name => name },
     { key: 'species', label: 'Species', placeholder: () => 'Your disguise species' },
     { key: 'className', label: 'Class', placeholder: () => 'Your disguise class' },
 ]
 
-// For the owner of a character in a campaign with partyVisibility 'misleading': the false
-// name, species and class the rest of the party sees. Blank fields show the real one.
+// Edits the false name, species and class the party sees under 'misleading' visibility.
+// Blank fields show the real value.
 export function DisguiseEditor({ characterId, name, disguise, onSaved }: {
     characterId: string,
     name: string,
-    disguise: characterDisguise | null,
-    onSaved: (disguise: characterDisguise | null) => void,
+    disguise: CharacterDisguise | null,
+    onSaved: (disguise: CharacterDisguise | null) => void,
 }) {
-    const [values, setValues] = useState<characterDisguise>(disguise ?? {})
+    const [values, setValues] = useState<CharacterDisguise>(disguise ?? {})
     const [busy, setBusy] = useState(false)
     const [message, setMessage] = useState<{ error: boolean, text: string } | null>(null)
 

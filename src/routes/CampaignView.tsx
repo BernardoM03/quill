@@ -3,8 +3,8 @@ import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { getCampaign } from "../api/campaigns";
-import { activateCharacter, getParty, type campaignParty, type characterDisguise, type partyCharacter } from "../api/characters";
-import type { campaignDetails } from "../datatypes/campaignDetails";
+import { activateCharacter, getParty, type CampaignParty, type CharacterDisguise, type PartyCharacter } from "../api/characters";
+import type { CampaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
 import PendingCharacters from "../components/PendingCharacters";
 import CharacterChangeLog from "../components/CharacterChangeLog";
@@ -24,26 +24,25 @@ function describe(c: { species: string | null, className: string | null, level?:
     return [c.species, c.className, c.level !== undefined ? `Level ${c.level}` : null].filter(Boolean).join(' · ')
 }
 
-function hitPoints(c: partyCharacter): string | null {
+function hitPoints(c: PartyCharacter): string | null {
     const { current, max, temp } = c.hitPoints
     if (current === null) return null
     return `HP ${current}${max !== null ? ` / ${max}` : ''}${temp ? ` (+${temp} temp)` : ''}`
 }
 
 // "Shown to the party as …" for the owner, GM and admin under 'misleading'.
-function disguiseNote(c: partyCharacter, disguise: characterDisguise): string {
+function disguiseNote(c: PartyCharacter, disguise: CharacterDisguise): string {
     return [disguise.name ?? c.name, describe({
         species: disguise.species ?? c.species, className: disguise.className ?? c.className,
     })].filter(Boolean).join(', ')
 }
 
-// The campaign's overview for its members: description, the party (everyone's active
-// character, as the campaign's partyVisibility lets the viewer see it), and the viewer's
-// own characters there. Where a player lands after joining.
+// The members' campaign overview with its description, the party and the viewer's own characters.
+// Players land here after joining.
 export default function CampaignView() {
     const { campaignID } = useParams();
-    const [campaign, setCampaign] = useState<campaignDetails | null | undefined>(undefined)
-    const [party, setParty] = useState<campaignParty | null>(null)
+    const [campaign, setCampaign] = useState<CampaignDetails | null | undefined>(undefined)
+    const [party, setParty] = useState<CampaignParty | null>(null)
     const [partyError, setPartyError] = useState<string | null>(null)
     // The character being made active, and why that failed.
     const [activating, setActivating] = useState<string | null>(null)
@@ -85,7 +84,7 @@ export default function CampaignView() {
     }
 
     const mine = new Set(party?.myCharacters.map(c => c.id))
-    // A GM without an active character isn't in the party; players without one still are.
+    // A GM without an active character is left out of the party, while players always appear.
     const members = party?.members.filter(m => m.character || m.role === 'player') ?? []
     const isPlayer = campaign.role === 'player'
 
@@ -108,33 +107,33 @@ export default function CampaignView() {
                 {party && members.length === 0 && <p className="muted">No one has joined yet.</p>}
                 {members.length > 0 && (
                     <ul className="character-list">
-                        {members.map(m => {
-                            const c = m.character
-                            if (!c) {
+                        {members.map(member => {
+                            const character = member.character
+                            if (!character) {
                                 return (
-                                    <li key={m.userId} className="character-row">
+                                    <li key={member.userId} className="character-row">
                                         <div className="character-row__info">
                                             <span className="character-row__name muted">No active character</span>
-                                            <span className="character-row__campaign">Played by {m.playerName}</span>
+                                            <span className="character-row__campaign">Played by {member.playerName}</span>
                                         </div>
                                     </li>
                                 )
                             }
-                            const hp = hitPoints(c)
-                            const conditions = [...c.conditions, ...(c.exhaustion ? [`Exhaustion ${c.exhaustion}`] : [])]
+                            const hp = hitPoints(character)
+                            const conditions = [...character.conditions, ...(character.exhaustion ? [`Exhaustion ${character.exhaustion}`] : [])]
                             return (
-                                <li key={m.userId} className="character-row party__row">
-                                    <CharacterPortrait characterId={c.id} name={c.name} version={c.portraitVersion} size={40} />
+                                <li key={member.userId} className="character-row party__row">
+                                    <CharacterPortrait characterId={character.id} name={character.name} version={character.portraitVersion} size={40} />
                                     <div className="character-row__info">
-                                        {c.sheet
-                                            ? <Link to={`/characters/${c.id}`} className="character-row__name">{c.name}</Link>
-                                            : <span className="character-row__name">{c.name}</span>}
+                                        {character.sheet
+                                            ? <Link to={`/characters/${character.id}`} className="character-row__name">{character.name}</Link>
+                                            : <span className="character-row__name">{character.name}</span>}
                                         <span className="character-row__campaign">
-                                            {[describe(c), `Played by ${mine.has(c.id) ? 'you' : m.playerName}`].filter(Boolean).join(' · ')}
+                                            {[describe(character), `Played by ${mine.has(character.id) ? 'you' : member.playerName}`].filter(Boolean).join(' · ')}
                                         </span>
-                                        {c.disguise && (
+                                        {character.disguise && (
                                             <span className="character-row__campaign party__disguise">
-                                                Shown to the party as {disguiseNote(c, c.disguise)}
+                                                Shown to the party as {disguiseNote(character, character.disguise)}
                                             </span>
                                         )}
                                         {conditions.length > 0 && (
@@ -151,7 +150,7 @@ export default function CampaignView() {
                 )}
             </section>
 
-            {/* Characters belong to a membership; an admin who isn't in the campaign can't make one. */}
+            {/* Characters belong to memberships, so a non-member admin can't create one. */}
             {campaign.role !== 'admin' && (
                 <section className="setting-section">
                     <span className="setting-caption">My Characters</span>
@@ -191,7 +190,7 @@ export default function CampaignView() {
                 </section>
             )}
 
-            {/* Only the GM (or the admin stepping in) can add maps; players see the public ones. */}
+            {/* Only the GM or admin can add maps, while players see the public ones. */}
             {campaignID && <CampaignMaps campaignId={campaignID} canEdit={campaign.role !== 'player'} />}
         </div>
     )

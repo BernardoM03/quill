@@ -5,8 +5,7 @@ import type { CollectionName, Entry } from './types';
 
 type LoadState<T> = { data: T | null; error: Error | null };
 
-// load must be a stable function (a module-level loader), called with key; the effect
-// reruns when either changes.
+// load must be a stable module-level function, and the effect reruns when it or key changes.
 function useLoad<K extends string, T>(key: K, load: (key: K) => Promise<T>): LoadState<T> & { loading: boolean } {
   const [state, setState] = useState<LoadState<T> & { key: string | null }>({ key: null, data: null, error: null });
 

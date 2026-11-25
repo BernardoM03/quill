@@ -1,14 +1,11 @@
-# Backgrounds (the packs' "origins"): what one gives a new character, and the choices it
-# asks for. A background grants ability score increases, an Origin feat, skill and tool
-# proficiencies, and starting equipment; the character's languages are chosen here too.
-# Three campaign rules change what's chosen:
-#   customizeOrigin    the increases may go to any ability, and the skills and tool are picked
-#   originFeat         'background': the background's feat; 'any': any Origin feat
-#   startingEquipment  'equipment' / 'gold': that package for everyone; 'choice': the player's pick
-
 from server.rules import packs
-from server.rules.scores import spread_options
 from server.rules.choices import ABILITY_NAMES, Context, allowed_entries, option, resolve_choice
+from server.rules.scores import spread_options
+
+# A background (the packs' "origins") grants ability increases, an Origin feat, skills, tools and equipment.
+# customizeOrigin lets the increases go anywhere and makes the skills and tool picks.
+# originFeat is 'background' for the background's own feat or 'any' for any Origin feat.
+# startingEquipment is 'equipment' or 'gold' for everyone, or 'choice' for the player's pick.
 
 ABILITY_CHOICE = 'ability-scores'
 FEAT_CHOICE = 'origin-feat'
@@ -18,16 +15,15 @@ EQUIPMENT_CHOICE = 'starting-equipment'
 LANGUAGE_CHOICE = 'languages'
 VARIANT_CHOICE_PREFIX = '$choice:'
 
-# The ways to spread a background's increases over its abilities: +2 to one and +1 to
-# another, or +1 to three. Keys look like "WIS+2,CHA+1": the +2 first, then abilities in
-# the usual order (STR to CHA), which is how the wizard's ability boxes write them.
+# Background increases are +2 to one ability and +1 to another, or +1 to three.
 ABILITY_POINTS = 3
 ABILITY_MAX = 2
+DEFAULT_SKILL_COUNT = 2
 
 def ability_options(abilities):
     return spread_options(abilities, ABILITY_POINTS, ABILITY_MAX)
 
-def _name(entry_id):
+def _item_name(entry_id):
     for collection in ('equipment', 'tools'):
         entry = packs.collection(collection).get(entry_id)
         if entry:
@@ -35,7 +31,7 @@ def _name(entry_id):
     return entry_id
 
 def _item_label(item):
-    label = _name(item['id'])
+    label = _item_name(item['id'])
     variant = item.get('variant')
     if variant:
         label += ' (your choice)' if variant.startswith(VARIANT_CHOICE_PREFIX) else f' ({variant.replace("-", " ").title()})'
@@ -45,20 +41,21 @@ def _item_label(item):
         label += f' ×{item["quantity"]}'
     return label
 
-def _package(package):
-    items = [_item_label(i) for i in package.get('items', [])]
+def _package_view(package):
+    items = [_item_label(item) for item in package.get('items', [])]
     if package.get('gold'):
         items.append(f'{package["gold"]} GP')
     return {'label': package['label'], 'items': items}
 
-def _feat(feat):
+def _feat_view(feat):
     return {
         'id': feat['id'],
         'name': feat['name'],
-        'effects': [{'name': g['name'], 'description': g.get('description', '')} for g in feat.get('effectGroups', [])],
+        'effects': [{'name': group['name'], 'description': group.get('description', '')}
+                    for group in feat.get('effectGroups', [])],
     }
 
-# The fixed languages and the language choice every character makes, from the first pack that sets them.
+# The fixed languages and the language choice, from the first pack that sets them.
 def _languages():
     for manifest in packs.load_manifests():
         languages = (manifest.get('characterCreation') or {}).get('languages')
@@ -66,36 +63,43 @@ def _languages():
             return languages
     return {}
 
-def _names(collection, ids):
+def _names(collection, entry_ids):
     entries = packs.collection(collection)
-    return [entries[i]['name'] if i in entries else i for i in ids]
+    return [entries[entry_id]['name'] if entry_id in entries else entry_id for entry_id in entry_ids]
 
 def background_summary(entry):
     return {'id': entry['id'], 'name': entry['name']}
 
-# Everything the wizard shows for a background, with its choices resolved for the setting.
-# rules: the campaign's rules with defaults. Choice ids are unique within a background,
-# so picks are stored flat, like a class's.
+# The package everyone receives: the one with most gold under 'gold', else the first with items.
+def _given_package(packages, equipment_rule):
+    if equipment_rule == 'gold':
+        return max(packages, key=lambda package: package.get('gold', 0))
+    return next((package for package in packages if package.get('items')), packages[0] if packages else None)
+
+def _ability_choice(abilities):
+    return {
+        'id': ABILITY_CHOICE, 'prompt': 'Choose your ability score increases.', 'count': 1,
+        'options': ability_options(abilities), 'proficientOnly': False,
+        # Rendered as one box per ability, with the points to spend and the most any one may get.
+        'kind': 'abilityIncrease', 'abilities': [ability for ability in ABILITY_NAMES if ability in abilities],
+        'points': ABILITY_POINTS, 'max': ABILITY_MAX,
+    }
+
+# Everything the wizard shows for a background, with choices resolved for the setting.
+# Choice ids are unique within a background, so picks are stored flat like a class's.
 def background_detail(entry, allowed_content, rules, level=1):
     context = Context(allowed_content, level, feat_prerequisites=rules['featPrerequisites'])
     feats = packs.collection('feats')
     customize = rules['customizeOrigin']
     abilities = list(ABILITY_NAMES) if customize else entry.get('abilityScores', [])
-    choices = [{
-        'id': ABILITY_CHOICE, 'prompt': 'Choose your ability score increases.', 'count': 1,
-        'options': ability_options(abilities), 'proficientOnly': False,
-        # Shown as one box per ability rather than a dropdown: the abilities that may be raised,
-        # how many points to spend, and the most any one ability may get.
-        'kind': 'abilityIncrease', 'abilities': [a for a in ABILITY_NAMES if a in abilities],
-        'points': ABILITY_POINTS, 'max': ABILITY_MAX,
-    }]
+    choices = [_ability_choice(abilities)]
 
     skills = (entry.get('skillProficiencies') or {}).get('items', [])
     tools_block = entry.get('toolProficiencies') or {}
     fixed_tools = tools_block.get('items', [])
     if customize:
         choices.append(resolve_choice({'id': SKILL_CHOICE, 'prompt': 'Choose your skill proficiencies.',
-                                       'count': len(skills) or 2, 'fromTypes': ['skill']}, context))
+                                       'count': len(skills) or DEFAULT_SKILL_COUNT, 'fromTypes': ['skill']}, context))
         choices.append(resolve_choice({'id': TOOL_CHOICE, 'prompt': 'Choose your tool proficiency.',
                                        'count': 1, 'fromTypes': ['tool']}, context))
         skills, fixed_tools = [], []
@@ -103,37 +107,36 @@ def background_detail(entry, allowed_content, rules, level=1):
         choices.append(resolve_choice({**tools_block, 'prompt': tools_block.get('prompt', 'Choose your tool proficiency.')},
                                       context))
 
-    # The Origin feat: the background's own, or (originFeat 'any') a pick among every
-    # allowed Origin feat, each of whose own choices shows once it's picked.
+    # Under originFeat 'any' the player picks among allowed Origin feats, each with its own conditional choices.
     own_feat = feats.get(entry.get('featId'))
     feat_choices = []
     origin_feats = []
     if rules['originFeat'] == 'any':
-        origin_feats = sorted((f for f in allowed_entries('feats', allowed_content) if f.get('category') == 'origin'),
-                              key=lambda f: f['name'])
+        origin_feats = sorted((feat for feat in allowed_entries('feats', allowed_content) if feat.get('category') == 'origin'),
+                              key=lambda feat: feat['name'])
         choices.append({
             'id': FEAT_CHOICE, 'prompt': 'Choose your Origin feat.', 'count': 1, 'proficientOnly': False,
-            'options': [option(f['id'], f['name']) for f in origin_feats],
+            'options': [option(feat['id'], feat['name']) for feat in origin_feats],
         })
-        for f in origin_feats:
-            for c in f.get('choices') or []:
-                feat_choices.append({**resolve_choice(c, context), 'condition': {'choice': FEAT_CHOICE, 'option': f['id']}})
+        for feat in origin_feats:
+            for choice in feat.get('choices') or []:
+                feat_choices.append({**resolve_choice(choice, context),
+                                     'condition': {'choice': FEAT_CHOICE, 'option': feat['id']}})
         own_feat = None
     elif own_feat:
-        feat_choices = [resolve_choice(c, context) for c in own_feat.get('choices') or []]
+        feat_choices = [resolve_choice(choice, context) for choice in own_feat.get('choices') or []]
 
     packages = (entry.get('startingEquipment') or {}).get('options', [])
     if rules['startingEquipment'] == 'choice' and len(packages) > 1:
         choices.append({
             'id': EQUIPMENT_CHOICE, 'prompt': 'Choose your starting equipment.', 'count': 1, 'proficientOnly': False,
-            'options': [option(p['label'], f'Package {p["label"]}', ', '.join(_package(p)['items'])) for p in packages],
+            'options': [option(package['label'], f'Package {package["label"]}', ', '.join(_package_view(package)['items']))
+                        for package in packages],
         })
-        given = None
+        given_package_label = None
     else:
-        # 'equipment': the package with items; 'gold': the one with the most gold instead.
-        pick = max(packages, key=lambda p: p.get('gold', 0)) if rules['startingEquipment'] == 'gold' else (
-            next((p for p in packages if p.get('items')), packages[0] if packages else None))
-        given = pick and pick['label']
+        given_package = _given_package(packages, rules['startingEquipment'])
+        given_package_label = given_package and given_package['label']
 
     languages = _languages()
     if languages.get('choose'):
@@ -144,20 +147,19 @@ def background_detail(entry, allowed_content, rules, level=1):
         'id': entry['id'],
         'name': entry['name'],
         'description': entry.get('description', ''),
-        'abilityScores': [ABILITY_NAMES[a] for a in entry.get('abilityScores', [])],
-        # Proficiencies and languages given outright, as ids (fixed) and names (for show).
+        'abilityScores': [ABILITY_NAMES[ability] for ability in entry.get('abilityScores', [])],
+        # Proficiencies and languages given outright, as ids (fixed) and as names for display.
         'fixed': skills + fixed_tools + languages.get('items', []),
         'skills': _names('skills', skills),
         'tools': _names('tools', fixed_tools),
         'languages': _names('languages', languages.get('items', [])),
-        'feat': _feat(own_feat) if own_feat else None,
-        # With originFeat 'any': every Origin feat on offer, to show the one picked.
-        'originFeats': [_feat(f) for f in origin_feats],
-        'equipment': [_package(p) for p in packages],
-        # The package everyone gets under the campaign's rule, or None when the player picks.
-        'givenEquipment': given,
+        'feat': _feat_view(own_feat) if own_feat else None,
+        'originFeats': [_feat_view(feat) for feat in origin_feats],
+        'equipment': [_package_view(package) for package in packages],
+        # None when the player picks the package.
+        'givenEquipment': given_package_label,
         'choices': choices,
-        # The feat's own choices: Magic Initiate's spells. With originFeat 'any', conditional.
+        # The feat's own choices, such as Magic Initiate's spells.
         'featChoices': feat_choices,
     }
 

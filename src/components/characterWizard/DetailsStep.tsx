@@ -1,9 +1,9 @@
-import { CHARACTER_NAME_MAX_LENGTH, type characterDetails } from '../../api/characters';
-import type { campaignQuestion } from '../../datatypes/campaignDetails';
+import { CHARACTER_NAME_MAX_LENGTH, type CharacterDetails } from '../../api/characters';
+import type { CampaignQuestion } from '../../datatypes/campaignDetails';
 
 const SHORT_MAX = 100;
 const LONG_MAX = 5000;
-// server/rules/details.py ANSWER_MAX_LENGTH
+// Matches ANSWER_MAX_LENGTH in server/rules/details.py.
 const ANSWER_MAX = 2000;
 const ALIGNMENTS = [
   'Lawful Good', 'Neutral Good', 'Chaotic Good',
@@ -11,30 +11,27 @@ const ALIGNMENTS = [
   'Lawful Evil', 'Neutral Evil', 'Chaotic Evil',
 ];
 
-type detailKey = keyof characterDetails;
+type DetailKey = keyof CharacterDetails;
 
-// A field's classes. Required ones are highlighted like the required choices on the other
-// steps (an accent edge); pass required for any detail that becomes required.
+// Required fields get the same accent edge as required choices on other steps.
 const fieldClass = (wide: boolean, required = false) =>
   ['details-field', wide && 'details-field--wide', required && 'details-field--required'].filter(Boolean).join(' ');
 
-// The last step: the character's name and description, every part but the name optional.
-// The server checks the same limits (server/rules/details.py).
-// questions: the GM's custom questions, asked under the name; answers: question id -> answer.
-// errorsFor(field): the server's messages for 'name', 'details:<key>' and 'answer:<id>'.
+// The last step, with the required name, optional description fields and the GM's custom questions.
+// errorsFor returns the server's messages for 'name', 'details:<key>' and 'answer:<id>'.
 export function DetailsStep({ name, details, questions, answers, onName, onDetail, onAnswer, errorsFor }: {
   name: string;
-  details: characterDetails;
-  questions: campaignQuestion[];
+  details: CharacterDetails;
+  questions: CampaignQuestion[];
   answers: Record<string, string>;
   onName: (name: string) => void;
-  onDetail: (key: detailKey, value: string) => void;
+  onDetail: (key: DetailKey, value: string) => void;
   onAnswer: (id: string, value: string) => void;
   errorsFor: (field: string) => string[];
 }) {
   const errors = (field: string) => errorsFor(field).map(m => <p key={m} className="campaign-name__error">{m}</p>);
 
-  const short = (key: detailKey, label: string, placeholder?: string, required = false) => (
+  const short = (key: DetailKey, label: string, placeholder?: string, required = false) => (
     <label key={key} className={fieldClass(false, required)}>
       <span className="setting-caption">{label}</span>
       <input className="details-input" value={details[key] ?? ''} maxLength={SHORT_MAX} placeholder={placeholder}
@@ -42,7 +39,7 @@ export function DetailsStep({ name, details, questions, answers, onName, onDetai
       {errors(`details:${key}`)}
     </label>
   );
-  const long = (key: detailKey, label: string, placeholder?: string, required = false) => (
+  const long = (key: DetailKey, label: string, placeholder?: string, required = false) => (
     <label key={key} className={fieldClass(true, required)}>
       <span className="setting-caption">{label}</span>
       <textarea className="details-textarea" value={details[key] ?? ''} maxLength={LONG_MAX} placeholder={placeholder}

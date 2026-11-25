@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 
-import { takeRest, type playState, type restRequest, type restResult } from '../../api/characters';
+import { takeRest, type PlayState, type RestRequest, type RestResult } from '../../api/characters';
 import { useEntry } from '../../packs/usePacks';
 import { RulesText } from '../RulesText';
 import '../DeleteCampaignDialog.css';
@@ -13,15 +13,14 @@ function errorMessage(err: unknown): string {
   return (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Could not take the rest. Try again.';
 }
 
-interface restDialogProps {
+interface RestDialogProps {
   characterId: string,
-  state: playState,
-  onRested: (state: playState) => void,
+  state: PlayState,
+  onRested: (state: PlayState) => void,
   onClose: () => void,
 }
 
-// The frame both rest panels share (in a SidePanel beside the sheet): it stays open after the
-// rest to show what happened, until Done. The × closes it at any time, as does Escape.
+// The side panel frame shared by both rests, which stays open afterwards to show the result until Done.
 function RestDialog({ title, children, actions, result, error, onDismiss, downed }: {
   title: string, children: ReactNode, actions: ReactNode, result: string | null, error: string | null,
   onDismiss: () => void,
@@ -49,9 +48,8 @@ const LONG_REST_RULE = 'srd-5.2:rule/long-rest';
 // Where the Long Rest rule's opening paragraphs end and its benefits begin.
 const BENEFITS = '**Benefits of the Rest.**';
 
-// A rest rule's text exactly as the pack has it (packs/srd-5.2/rules.json), through
-// RulesText like other rules text. part splits the Long Rest rule at its benefits: intro is
-// what comes before them, details the benefits onward; left out, the whole text.
+// A rest rule's text exactly as the pack has it.
+// part splits the Long Rest rule at its benefits into intro and details, or shows the whole text when omitted.
 function RuleDescription({ id, part, className }: { id: string, part?: 'intro' | 'details', className?: string }) {
   const { entry, loading } = useEntry('rules', id);
   if (loading) return null;
@@ -63,11 +61,11 @@ function RuleDescription({ id, part, className }: { id: string, part?: 'intro' |
 }
 
 
-function useRest(characterId: string, onRested: (state: playState) => void) {
+function useRest(characterId: string, onRested: (state: PlayState) => void) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<restResult | null>(null);
-  function rest(body: restRequest) {
+  const [result, setResult] = useState<RestResult | null>(null);
+  function rest(body: RestRequest) {
     setBusy(true);
     setError(null);
     takeRest(characterId, body)
@@ -90,7 +88,7 @@ function Checkbox({ checked, disabled, onChange, children }: {
 }
 
 // Short rest: pick the Hit Point Dice to spend (one box each), the server rolls them.
-export function ShortRestDialog({ characterId, state, onRested, onClose, className, hitDie, conModifier }: restDialogProps & {
+export function ShortRestDialog({ characterId, state, onRested, onClose, className, hitDie, conModifier }: RestDialogProps & {
   className: string | null, hitDie: number | null, conModifier: number,
 }) {
   const { busy, error, result, setResult, rest } = useRest(characterId, onRested);
@@ -169,7 +167,7 @@ export function ShortRestDialog({ characterId, state, onRested, onClose, classNa
 }
 
 // Long rest: everything back, Hit Point Dice under the rule picked.
-export function LongRestDialog({ characterId, state, onRested, onClose }: restDialogProps) {
+export function LongRestDialog({ characterId, state, onRested, onClose }: RestDialogProps) {
   const { busy, error, result, setResult, rest } = useRest(characterId, onRested);
   const [recovery, setRecovery] = useState<'all' | 'half'>('all');
   const [resetMax, setResetMax] = useState(false);
