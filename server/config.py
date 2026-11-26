@@ -1,6 +1,7 @@
 import os
 import secrets
 import tomllib
+from urllib.parse import urlsplit
 
 from server.db import DATA_DIR
 
@@ -69,3 +70,33 @@ def session_days(config):
     if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 365:
         raise ConfigError('lifetime_days in config.toml must be a whole number from 1 to 365.')
     return value
+
+# Hostnames the server answers to; anything else gets a 400, which blocks DNS rebinding.
+# localhost is always allowed, plus the host in QUILL_PUBLIC_URL and any in QUILL_TRUSTED_HOSTS
+# (comma-separated). Ports are ignored, since the Vite proxy forwards localhost:5173.
+def trusted_hosts():
+    hosts = ['localhost', '127.0.0.1']
+    public_url = os.environ.get('QUILL_PUBLIC_URL', '').strip()
+    if public_url:
+        host = urlsplit(public_url).hostname
+        if not host:
+            raise ConfigError(f'QUILL_PUBLIC_URL must be a full URL such as https://quill.example.com, not {public_url!r}.')
+        hosts.append(host)
+    hosts += [h.strip().lower() for h in os.environ.get('QUILL_TRUSTED_HOSTS', '').split(',') if h.strip()]
+    return list(dict.fromkeys(hosts))
+
+# A header set by a reverse proxy holding the real client IP, such as CF-Connecting-IP for a
+# Cloudflare Tunnel. Without it, every visitor would share the proxy's IP and its rate limits.
+# Only set this when the proxy is the sole way in, since anyone reaching the server directly could forge it.
+def client_ip_header():
+    return os.environ.get('QUILL_CLIENT_IP_HEADER', '').strip() or None
+
+# The built frontend (npm run build) to serve alongside the API, for production.
+# Unset in development, where Vite serves the frontend.
+def static_dir():
+    path = os.environ.get('QUILL_STATIC_DIR', '').strip()
+    if not path:
+        return None
+    if not os.path.isfile(os.path.join(path, 'index.html')):
+        raise ConfigError(f'QUILL_STATIC_DIR is {path}, which has no index.html. Run npm run build first.')
+    return os.path.abspath(path)

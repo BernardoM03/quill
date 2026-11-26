@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { getCampaign } from "../api/campaigns";
-import { activateCharacter, cancelSwapRequest, getParty, type CampaignParty, type CharacterDisguise, type PartyCharacter } from "../api/characters";
+import { activateCharacter, cancelSwapRequest, getParty, type CampaignParty, type PartyCharacter } from "../api/characters";
 import type { CampaignDetails } from "../datatypes/campaignDetails";
 import BackButton from "../components/BackButton";
 import PendingCharacters from "../components/PendingCharacters";
