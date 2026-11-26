@@ -2,16 +2,6 @@ import type { ChoicePicks, SpeciesOption, TakenOptions } from '../../api/charact
 import { RulesText } from '../RulesText';
 import { ChoiceField, PickCarousel } from './PickCard';
 
-const titleCase = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
-
-function details(species: SpeciesOption): string {
-  const parts: string[] = [];
-  if (species.creatureType) parts.push(titleCase(species.creatureType));
-  parts.push(species.size.length > 0 ? species.size.map(titleCase).join(' or ') : 'Size of your choice');
-  if (species.speed) parts.push(`Speed ${species.speed} ft`);
-  return parts.join(' · ');
-}
-
 // Choose Species
 // Showing one allowed species at a time with its traits and choices.
 export function SpeciesStep({ options, selected, choices, taken, onSelect, onChoose, errorsFor }: {

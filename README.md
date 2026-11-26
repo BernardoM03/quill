@@ -10,6 +10,11 @@ To be frank, I am mostly designing this application to be able to introduce my o
 
 *I also don't have to clarify or double-check the character sheets and make sure all the rules are being followed.*
 
+## Running Quill
+
+- **Development:** `npm run dev` (Vite + Flask; needs the Python venv described by `scripts/dev-api.js`).
+- **Production:** `docker compose up -d --build`. To publish through a Cloudflare Tunnel, see [documents/Deployment.md](documents/Deployment.md).
+
 ## Legal
 
 ### Quill

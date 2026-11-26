@@ -1,6 +1,8 @@
+import ipaddress
 from datetime import timedelta
 
-from flask import Blueprint, Flask, g, session
+from flask import Blueprint, Flask, g, jsonify, send_from_directory, session
+from werkzeug.exceptions import NotFound
 
 from server import config, ratelimit
 from server.db import connection
@@ -24,8 +26,48 @@ def check_access_declared(app):
     if undeclared:
         raise RuntimeError('API routes without @public, @require_login, @require_member or @require_admin: ' + ', '.join(undeclared))
 
+# Replaces REMOTE_ADDR with the client IP a trusted reverse proxy put in `header`.
+class ClientIpFromHeader:
+    def __init__(self, wsgi_app, header):
+        self.wsgi_app = wsgi_app
+        self.environ_key = 'HTTP_' + header.upper().replace('-', '_')
+
+    def __call__(self, environ, start_response):
+        value = environ.get(self.environ_key, '').strip()
+        try:
+            environ['REMOTE_ADDR'] = str(ipaddress.ip_address(value))
+        except ValueError:
+            pass  # Missing or malformed: keep the socket address.
+        return self.wsgi_app(environ, start_response)
+
+# Serves the built frontend. Unknown paths get index.html so the client-side router can
+# handle them; unknown /api paths stay a JSON 404.
+def register_frontend(app, static_dir):
+    def index():
+        response = send_from_directory(static_dir, 'index.html', max_age=0)
+        response.headers['Cache-Control'] = 'no-cache'
+        return response
+
+    @app.get('/')
+    @app.get('/<path:path>')
+    def frontend(path=''):
+        if path == 'api' or path.startswith('api/'):
+            return jsonify({'error': 'Not found.'}), 404
+        if path and not path.endswith('/'):
+            try:
+                # Vite puts a content hash in every file name under assets/, so they never change.
+                immutable = path.startswith('assets/')
+                response = send_from_directory(static_dir, path, max_age=31536000 if immutable else 3600)
+                if immutable:
+                    response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+                return response
+            except NotFound:
+                pass
+        return index()
+
 def create_app():
-    app = Flask(__name__)
+    # static_folder=None: the frontend, if served at all, goes through register_frontend.
+    app = Flask(__name__, static_folder=None)
     settings = config.load_config()
     # The signed session cookie holds only the user id.
     app.config['SECRET_KEY'] = config.secret_key(settings)
@@ -34,8 +76,7 @@ def create_app():
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = config.secure_cookies(settings)
     # Rejecting other hostnames blocks DNS-rebinding pages from reaching the API.
-    # Ports are ignored, since the Vite proxy forwards the browser's localhost:5173 Host header.
-    app.config['TRUSTED_HOSTS'] = ['localhost', '127.0.0.1']
+    app.config['TRUSTED_HOSTS'] = config.trusted_hosts()
     app.config['MAX_CONTENT_LENGTH'] = 1_000_000
 
     api = Blueprint('api', __name__, url_prefix='/api')
@@ -55,4 +96,19 @@ def create_app():
         api.register_blueprint(module.bp)
     app.register_blueprint(api)
     check_access_declared(app)
+
+    static_dir = config.static_dir()
+    if static_dir:
+        register_frontend(app, static_dir)
+
+    @app.after_request
+    def security_headers(response):
+        response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+        response.headers.setdefault('X-Frame-Options', 'DENY')
+        response.headers.setdefault('Referrer-Policy', 'same-origin')
+        return response
+
+    ip_header = config.client_ip_header()
+    if ip_header:
+        app.wsgi_app = ClientIpFromHeader(app.wsgi_app, ip_header)
     return app
